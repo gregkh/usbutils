@@ -1,0 +1,13 @@
+*~
+autom4te.cache
+config.h
+config.log
+config.status
+.deps
+lsusb
+Makefile
+stamp-*
+.*.swp
+usb.ids.old
+usbmodules
+usbutils-*
