@@ -1,3 +1,7 @@
+2005-03-05 David Brownell <dbrownell@users.sourceforge.net>
+	* lsusb.c: add basic CDC MDLM dumping, to cope with new CDC
+	  conformance lies from a Zaurus C-860
+
 2005-02-11 Thierry Vignaud <tvignaud@mandrakesoft.com>
 	* usbmodules.8: fix --device /proc/usb/usb/BBB/DDD typo
 

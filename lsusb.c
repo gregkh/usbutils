@@ -1567,6 +1567,32 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 		       indent, (buf[11]<<8)|buf[10],
 		       indent, buf[12]);
 		break;
+	case 0x12:		/* MDLM functional desc */
+		if (buf [0] != 21)
+			goto bad;
+		printf("%sCDC MDLM:\n"
+		       "%s  bcdCDC               %x.%02x\n"
+		       "%s  bGUID               ",
+		       indent,
+		       indent, buf[4], buf[3],
+		       indent);
+		/* NOTE there are more traditional byteswap aware UUID-printing
+		 * schemes, something like X0X1X2X3-X4X5-X6X7-X8X9-XaXbXcXdXeXf
+		 * (or maybe it's X3X2X1X0-X5X4-...?) would be better
+		 */
+		dump_bytes(buf + 5, 16);
+		break;
+	case 0x13:		/* MDLM detail desc */
+		if (buf [0] < 5)
+			goto bad;
+		printf("%sCDC MDLM detail:\n"
+		       "%s  bGuidDescriptorType  %02x\n"
+		       "%s  bDetailData         ",
+		       indent,
+		       indent, buf[3],
+		       indent);
+		dump_bytes(buf + 4, buf[0] - 4);
+		break;
 	default:
 		/* FIXME there are about a dozen more descriptor types */
 		printf("%sUNRECOGNIZED: ", indent);
