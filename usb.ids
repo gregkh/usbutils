@@ -4,7 +4,7 @@
 #	Maintained by Vojtech Pavlik <vojtech@suse.cz>
 #	If you have any new entries, send them to the maintainer.
 #
-# $Id: usb.ids,v 1.1 2004/02/20 14:08:27 tsailer Exp $
+# $Id: usb.ids,v 1.2 2004/02/26 00:45:11 tsailer Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -30,6 +30,8 @@
 03ed  Mitel Corp.
 03ee  Mitsumi
 	0000  CD-R/RW Drive
+	641f  WIF-0402C Bluetooth Adapter
+	6440  WML-C52APR Bluetooth Adapter
 03f0  Hewlett-Packard
 	0004  DeskJet 895c
 	0101  ScanJet 4100c
