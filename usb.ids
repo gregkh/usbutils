@@ -4,7 +4,7 @@
 #	Maintained by Vojtech Pavlik <vojtech@suse.cz>
 #	If you have any new entries, send them to the maintainer.
 #
-# $Id: usb.ids,v 1.1 2004/02/20 14:08:27 tsailer Exp $
+# $Id: usb.ids,v 1.1.1.1 2004/02/20 14:08:27 tsailer Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
