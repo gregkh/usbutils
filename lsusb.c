@@ -1348,9 +1348,9 @@ static void dump_hid_device(struct usb_dev_handle *dev, struct usb_interface_des
 	       "          bLength             %5u\n"
 	       "          bDescriptorType     %5u\n"
 	       "          bcdHID              %2x.%02x\n"
-	       "          bCountryCode        %5u\n"
+	       "          bCountryCode        %5u %s\n"
 	       "          bNumDescriptors     %5u\n",
-	       buf[0], buf[1], buf[3], buf[2], buf[4], buf[5]);
+	       buf[0], buf[1], buf[3], buf[2], buf[4], names_countrycode(buf[4]) ? : "Unknown", buf[5]);
 	for (i = 0; i < buf[5]; i++)
 		printf("          bDescriptorType     %5u %s\n"
 		       "          wDescriptorLength   %5u\n", 

@@ -116,6 +116,7 @@ static struct genericstrtable *biass[HASHSZ] = { NULL, };
 static struct genericstrtable *physdess[HASHSZ] = { NULL, };
 static struct genericstrtable *hutus[HASHSZ] = { NULL, };
 static struct genericstrtable *langids[HASHSZ] = { NULL, };
+static struct genericstrtable *countrycodes[HASHSZ] = { NULL, };
 
 /* ---------------------------------------------------------------------- */
 
@@ -162,6 +163,11 @@ const char *names_physdes(u_int8_t ph)
 const char *names_bias(u_int8_t b)
 {
 	return names_genericstrtable(biass, b);
+}
+
+const char *names_countrycode(unsigned int countrycode)
+{
+	return names_genericstrtable(countrycodes, countrycode);
 }
 
 const char *names_vendor(u_int16_t vendorid)
@@ -402,6 +408,11 @@ static int new_bias(const char *name, u_int8_t b)
 	return new_genericstrtable(biass, name, b);
 }
 
+static int new_countrycode(const char *name, unsigned int countrycode)
+{
+	return new_genericstrtable(countrycodes, name, countrycode);
+}
+
 /* ---------------------------------------------------------------------- */
 
 #define DBG(x) 
@@ -552,6 +563,27 @@ static void parse(FILE *f)
 				fprintf(stderr, "Duplicate audio terminal type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u audio terminal type %02x %s\n", linectr, u, cp));
 			continue;
+		}
+		if (buf[0] == 'H' && buf[1] == 'C' && buf[2] == 'C' && isspace(buf[3])) {
+			/* HID Descriptor bCountryCode */
+                        cp =  buf+3;
+                        while (isspace(*cp))
+                                cp++;
+                        if (!isxdigit(*cp)) {
+                                fprintf(stderr, "Invalid HID country code at line %u\n", linectr);
+                                continue;
+                        }
+                        u = strtoul(cp, &cp, 10);
+                        while (isspace(*cp))
+                                cp++;
+                        if (!*cp) {
+                                fprintf(stderr, "Invalid HID country code at line %u\n", linectr);
+                                continue;
+                        }
+                        if (new_countrycode(cp, u))
+                                fprintf(stderr, "Duplicate HID country code at line %u country %02u %s\n", linectr, u, cp);
+                        DBG(printf("line %5u keyboard country code %02u %s\n", linectr, u, cp));
+                        continue;
 		}
 		if (isxdigit(*cp)) {
 			/* vendor */
