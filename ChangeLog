@@ -1,3 +1,10 @@
+2004-10-20 David Brownell <dbrownell@users.sourceforge.net>
+	* lsusb.c: minor formatting updates; add a warning when those HID
+	  descriptors aren't available.
+
+2004-10-20 Aurelien Jarno <aurelien@aurel32.net> 
+	* lsusb.c: bugfixes for reading HID descriptors
+
 2004-10-15 David Brownell <dbrownell@users.sourceforge.net>
 	* lsusb.c: USB 2.0 updates for dual-speed and OTG devices, hubs.
 	  Display all descriptors in the right sequence, and dump ones
@@ -8,11 +15,14 @@
 	Move to CVS at linux-usb.sf.net
 	Label as version 0.12.
 
+2003-12-06 Aurelien Jarno <aurelien@aurel32.net> 
+	Update Debian with libusb based version.
+
 2003-08-31 David Brownell <dbrownell@users.sourceforge.net>
 	* lsusb.c: (against 0.11) recognize CDC descriptors, USB 2.0 updates,
 	  string handling updates, 
 
-2003-??-??  Debian 
+2003-??-??  Aurelien Jarno <aurelien@aurel32.net> 
 	Convert to latest libusb, supporting BSD and Darwin.
 
 2000-11-06  Thomas Sailer  <sailer@eldrich.ee.ethz.ch>
