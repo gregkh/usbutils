@@ -1,2 +1,8 @@
-Thanks to a patch from Aurelien Jarno, usbutils now uses libusb to
-access USB devices
+Thanks to a patch from Aurelien Jarno, usbutils now uses the system's
+libusb to access USB devices, not a private (old) copy of that library.
+
+The "usbmodules" program is now deprecated, and no longer built by default.
+If your Linux 2.4 based system needs it to handle the "coldplug" processing
+(handling devices that exist before the OS is fully operational), you
+can "configure --enable-usbmodules".
+
