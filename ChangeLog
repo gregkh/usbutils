@@ -1,3 +1,9 @@
+2005-01-22 David Brownell <dbrownell@users.sourceforge.net>
+	* lsusb.c:  for hubs, dump port status.
+	* AUTHORS, NEWS, README, lsusb.8:  update/correct
+	* configure.in, Makefile.am: bumped version, use more current
+	  autotools, disable usbmodules by default.
+
 2005-01-05 David Brownell <dbrownell@users.sourceforge.net>
 	* lsusb.c:  handle more descriptors; misplaced comm descriptors
 	  get interpreted; some minor fixes.
