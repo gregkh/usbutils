@@ -1662,7 +1662,7 @@ int main(int argc, char *argv[])
 			"      Selects which device lsusb will examine\n"
 			"  -t\n"
 			"      Dump the physical USB device hierarchy as a tree\n"
-			"  -v, --version\n"
+			"  -V, --version\n"
 			"      Show version of program\n"
 			"\n");
 		exit(1);
