@@ -1785,7 +1785,8 @@ int main(int argc, char *argv[])
 	char *cp;
 	int status;
 
-	while ((c = getopt_long(argc, argv, "D:vxtP:p:s:d:V", long_options, NULL)) != EOF) {
+	while ((c = getopt_long(argc, argv, "D:vxtP:p:s:d:V",
+			long_options, NULL)) != EOF) {
 		switch(c) {
                 case 'V':
                         printf("lsusb (" PACKAGE ")  " VERSION "\n");
@@ -1859,10 +1860,15 @@ int main(int argc, char *argv[])
 			"\n");
 		exit(1);
 	}
-	if ((err = names_init("./usb.ids")) != 0)
+
+	/* by default, print names as well as numbers */
+	if ((err = names_init("./usb.ids")) != 0) {
 		if ((err = names_init(USBIDS_FILE)) != 0) {
-			printf("Error, cannot open USBIDS File \"%s\", %s\n", USBIDS_FILE, strerror(err));
-			exit(1);
+			fprintf(stderr, "%s: cannot open \"%s\", %s\n",
+					argv[0],
+					USBIDS_FILE,
+					strerror(err));
+		}
 	}
 	status = 0;
 
