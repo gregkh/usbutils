@@ -69,12 +69,12 @@ static int do_report_desc = 1;
 static void dump_interface(struct usb_dev_handle *dev, struct usb_interface *interface);
 static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descriptor *interface, struct usb_endpoint_descriptor *endpoint);
 static void dump_audiocontrol_interface(struct usb_dev_handle *dev, unsigned char *buf);
-static void dump_audiostreaming_interface(struct usb_dev_handle *dev, unsigned char *buf);
+static void dump_audiostreaming_interface(unsigned char *buf);
 static void dump_midistreaming_interface(struct usb_dev_handle *dev, unsigned char *buf);
 static char *dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *indent);
 static void dump_hid_device(struct usb_dev_handle *dev, struct usb_interface_descriptor *interface, unsigned char *buf);
-static void dump_audiostreaming_endpoint(struct usb_dev_handle *dev, unsigned char *buf);
-static void dump_midistreaming_endpoint(struct usb_dev_handle *dev, unsigned char *buf);
+static void dump_audiostreaming_endpoint(unsigned char *buf);
+static void dump_midistreaming_endpoint(unsigned char *buf);
 static void dump_hub(char *prefix, unsigned char *p, int has_tt);
 static void dump_ccid_device(unsigned char *buf);
 
@@ -240,7 +240,10 @@ static void dump_junk(unsigned char *buf, const char *indent, unsigned int len)
  * General config descriptor dump
  */
 
-static void dump_device(struct usb_dev_handle *dev, struct usb_device_descriptor *descriptor, unsigned int flags)
+static void dump_device(
+	struct usb_dev_handle *dev,
+	struct usb_device_descriptor *descriptor
+)
 {
 	char vendor[128], product[128];
 	char cls[128], subcls[128], proto[128];
@@ -374,7 +377,7 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 								dump_audiocontrol_interface(dev, buf);
 								break;
 							case 2:
-								dump_audiostreaming_interface(dev, buf);
+								dump_audiostreaming_interface(buf);
 								break;
 							case 3:
 								dump_midistreaming_interface(dev, buf);
@@ -464,9 +467,9 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 			switch (buf[1]) {
 			case USB_DT_CS_ENDPOINT:
 				if (interface->bInterfaceClass == 1 && interface->bInterfaceSubClass == 2)
-					dump_audiostreaming_endpoint(dev, buf);
+					dump_audiostreaming_endpoint(buf);
 				else if (interface->bInterfaceClass == 1 && interface->bInterfaceSubClass == 3)
-					dump_midistreaming_endpoint(dev, buf);
+					dump_midistreaming_endpoint(buf);
 				break;
 			case USB_DT_CS_INTERFACE:
 				/* MISPLACED DESCRIPTOR ... less indent */
@@ -725,7 +728,7 @@ static void dump_audiocontrol_interface(struct usb_dev_handle *dev, unsigned cha
 	}
 }
 
-static void dump_audiostreaming_interface(struct usb_dev_handle *dev, unsigned char *buf)
+static void dump_audiostreaming_interface(unsigned char *buf)
 {
 	static const char *fmtItag[] = { "TYPE_I_UNDEFINED", "PCM", "PCM8", "IEEE_FLOAT", "ALAW", "MULAW" };
 	static const char *fmtIItag[] = { "TYPE_II_UNDEFINED", "MPEG", "AC-3" };
@@ -961,7 +964,7 @@ static void dump_audiostreaming_interface(struct usb_dev_handle *dev, unsigned c
 	}
 }
 
-static void dump_audiostreaming_endpoint(struct usb_dev_handle *dev, unsigned char *buf)
+static void dump_audiostreaming_endpoint(unsigned char *buf)
 {
 	static const char *lockdelunits[] = { "Undefined", "Milliseconds", "Decoded PCM samples", "Reserved" };
 	unsigned int lckdelidx;
@@ -1114,7 +1117,7 @@ static void dump_midistreaming_interface(struct usb_dev_handle *dev, unsigned ch
 	}
 }
 
-static void dump_midistreaming_endpoint(struct usb_dev_handle *dev, unsigned char *buf)
+static void dump_midistreaming_endpoint(unsigned char *buf)
 {
 	unsigned int j;
 
@@ -1771,14 +1774,14 @@ static void do_otg(struct usb_config_descriptor *config)
 			? "    HNP (Host Negotiation Protocol)\n" : "");
 }
 
-static void dumpdev(struct usb_device *dev, unsigned int flags)
+static void dumpdev(struct usb_device *dev)
 {
 	struct usb_dev_handle *udev;
 	int i;
 
 	udev = usb_open(dev);
 	if (udev) {
-		dump_device(udev, &dev->descriptor, flags);
+		dump_device(udev, &dev->descriptor);
 		if (dev->config) {
 			for (i = 0; i < dev->descriptor.bNumConfigurations;
 					i++) {
@@ -1816,7 +1819,7 @@ static int dump_one_device(const char *path, unsigned int flags)
 					       dev->descriptor.idProduct, 
 					       vendor, 
 					       product);
-	dumpdev(dev, flags);
+	dumpdev(dev);
 	return 0;
 }
 
@@ -1848,7 +1851,7 @@ static int list_devices(int busnum, int devnum, int vendorid, int productid, uns
 					dev->descriptor.idProduct,
 					vendor, product);
 			if (verblevel > 0)
-				dumpdev(dev, flags);
+				dumpdev(dev);
 		}
 	}
 	return(status);

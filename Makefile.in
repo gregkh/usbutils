@@ -181,7 +181,7 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AM_CPPFLAGS = -DUSBIDS_FILE='"@datadir@/usb.ids"'
-AM_CFLAGS = -Wall -W
+AM_CFLAGS = -Wall -W -Wunused
 lsusb_SOURCES = lsusb.c \
 	names.c names.h \
 	devtree.c devtree.h list.h \
