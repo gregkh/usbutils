@@ -1,19 +1,30 @@
-SUBDIRS =
+# Process this file with 'automake' to create 'Makefile.in'
 
-INCLUDES = 
+AM_CPPFLAGS = -DUSBIDS_FILE='"@datadir@/usb.ids"'
 
-sbin_PROGRAMS = lsusb usbmodules
+AM_CFLAGS = -Wall
 
-noinst_HEADERS = names.h usbdevice_fs.h devtree.h list.h usbmodules.h usbmisc.h
+sbin_PROGRAMS = lsusb
 
-lsusb_SOURCES = lsusb.c names.c devtree.c usbmisc.c
-lsusb_LDADD = @LIBOBJS@
-
-usbmodules_SOURCES = usbmodules.c usbmisc.c
-usbmodules_LDADD = @LIBOBJS@
+lsusb_SOURCES = lsusb.c \
+	names.c names.h \
+	devtree.c devtree.h list.h \
+	usbmisc.c usbmisc.h
 
 data_DATA = usb.ids
 
-man_MANS = lsusb.8 usbmodules.8
+man_MANS = lsusb.8
 
-EXTRA_DIST = $(man_MANS) $(data_DATA) usbutils.spec getopt.h getopt.c getopt1.c
+# usbmodules is needed only with 2.4 based hotplugging, and is DEPRECATED 
+
+EXTRA_PROGRAMS = usbmodules
+
+usbmodules_SOURCES = usbmodules.c usbmodules.h \
+	usbmisc.c usbmisc.h
+
+if USBMODULES
+	sbin_PROGRAMS += usbmodules
+	man_MANS += usbmodules.8
+endif
+
+EXTRA_DIST = $(man_MANS) $(data_DATA) usbmodules.8
