@@ -27,4 +27,4 @@ if USBMODULES
 	man_MANS += usbmodules.8
 endif
 
-EXTRA_DIST = $(man_MANS) $(data_DATA) usbmodules.8
+EXTRA_DIST = $(man_MANS) $(data_DATA) usbmodules.8 update-usbids.sh
