@@ -1309,7 +1309,7 @@ static void dump_report_desc(unsigned char *b, int l)
 	char *types[4] = { "Main", "Global", "Local", "reserved" };
 	char indent[] = "                            ";
 
-	printf("	  Report Descriptor: (length is %d)\n", l);
+	printf("          Report Descriptor: (length is %d)\n", l);
 	for(i = 0; i < l; ) {
 		t = b[i];
 		bsize = b[i] & 0x03;
@@ -1400,36 +1400,50 @@ static void dump_hid_device(struct usb_dev_handle *dev, struct usb_interface_des
 	       "          bcdHID              %2x.%02x\n"
 	       "          bCountryCode        %5u %s\n"
 	       "          bNumDescriptors     %5u\n",
-	       buf[0], buf[1], buf[3], buf[2], buf[4], names_countrycode(buf[4]) ? : "Unknown", buf[5]);
+	       buf[0], buf[1], buf[3], buf[2], buf[4],
+	       names_countrycode(buf[4]) ? : "Unknown", buf[5]);
 	for (i = 0; i < buf[5]; i++)
 		printf("          bDescriptorType     %5u %s\n"
 		       "          wDescriptorLength   %5u\n", 
-		       buf[6+3*i], names_hid(buf[6+3*i]), buf[7+3*i] | (buf[8+3*i] << 8));
+		       buf[6+3*i], names_hid(buf[6+3*i]),
+		       buf[7+3*i] | (buf[8+3*i] << 8));
 	dump_junk(buf, "        ", 6+3*buf[5]);
 	if (!do_report_desc)
 		return;
 	
 	for (i = 0; i < buf[5]; i++) {
-		if (buf[6+3*i] != USB_DT_REPORT) /* we are just interested in report descriptors*/
+		/* we are just interested in report descriptors*/
+		if (buf[6+3*i] != USB_DT_REPORT)
 			continue;
 		len = buf[7+3*i] | (buf[8+3*i] << 8);
 		if (len > sizeof(dbuf)) {
 			printf("report descriptor too long\n");
 			continue;
 		}
-		if ((n = usb_control_msg(dev, 
-					 USB_ENDPOINT_IN | USB_TYPE_STANDARD | USB_RECIP_DEVICE, 
+		if (usb_claim_interface(dev, interface->bInterfaceNumber) == 0) {
+			if ((n = usb_control_msg(dev, 
+					 USB_ENDPOINT_IN | USB_TYPE_STANDARD
+					 	| USB_RECIP_INTERFACE, 
 					 USB_REQ_GET_DESCRIPTOR, 
 					 (USB_DT_REPORT << 8), 
 					 interface->bInterfaceNumber,
 					 dbuf, 
 					 len, 
 					 CTRL_TIMEOUT)) > 0)
-			dump_report_desc(dbuf, n);
+				dump_report_desc(dbuf, n);
+			usb_release_interface(dev, interface->bInterfaceNumber);
+		} else {
+			/* recent Linuxes require claim() for RECIP_INTERFACE,
+			 * so "rmmod hid" will often make these available.
+			 */
+			printf( "         Report Descriptors: \n"
+				"           ** UNAVAILABLE **\n");
+		}
 	}
 }
 
-static char *dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *indent)
+static char *
+dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *indent)
 {
 	int		tmp;
 	char		str [128];
