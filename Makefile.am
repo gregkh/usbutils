@@ -23,8 +23,8 @@ usbmodules_SOURCES = usbmodules.c usbmodules.h \
 	usbmisc.c usbmisc.h
 
 if USBMODULES
-	sbin_PROGRAMS += usbmodules
-	man_MANS += usbmodules.8
+    sbin_PROGRAMS += usbmodules
+    man_MANS += usbmodules.8
 endif
 
 EXTRA_DIST = $(man_MANS) $(data_DATA) usbmodules.8 update-usbids.sh
