@@ -299,7 +299,7 @@ static void dump_config(struct usb_dev_handle *dev, struct usb_config_descriptor
 			default:
 				/* often a misplaced class descriptor */
 				printf("    UNRECOGNIZED: ");
-				dump_bytes(buf, size);
+				dump_bytes(buf, buf[0]);
 				break;
 			}
 			size -= buf[0];
@@ -382,7 +382,7 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 			default:
 				/* often a misplaced class descriptor */
 				printf("      UNRECOGNIZED: ");
-				dump_bytes(buf, size);
+				dump_bytes(buf, buf[0]);
 				break;
 			}
 			size -= buf[0];
@@ -451,13 +451,26 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 				else if (interface->bInterfaceClass == 1 && interface->bInterfaceSubClass == 3)
 					dump_midistreaming_endpoint(dev, buf);
 				break;
+			case USB_DT_CS_INTERFACE:
+				/* MISPLACED DESCRIPTOR ... less indent */
+				switch (interface->bInterfaceClass) {
+				case USB_CLASS_COMM:
+				case USB_CLASS_DATA:	// comm data
+					dump_comm_descriptor(dev, buf,
+						"      ");
+					break;
+				default:
+					printf("        INTERFACE CLASS: ");
+					dump_bytes(buf, buf[0]);
+				}
+				break;
 			case USB_DT_OTG:
 				/* handled separately */
 				break;
 			default:
 				/* often a misplaced class descriptor */
 				printf("        UNRECOGNIZED: ");
-				dump_bytes(buf, size);
+				dump_bytes(buf, buf[0]);
 				break;
 			}
 			size -= buf[0];
@@ -1499,6 +1512,19 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 			printf("%d ", buf [tmp]);
 		printf("\n");
 		break;
+	case 0x07:		/* country selection functional desc */
+		if (buf [0] < 6 || (buf[0] & 1) != 0)
+			goto bad;
+		get_string(dev, str, sizeof str, buf[3]);
+		printf("%sCountry Selection:\n"
+		       "%s  iCountryCodeRelDate     %4d %s\n",
+		       indent,
+		       indent, buf[3], (buf[3] && *str) ? str : "(?\?)");
+		for (tmp = 4; tmp < buf [0]; tmp += 2) {
+			printf("%s  wCountryCode          0x%02x%02x\n",
+				indent, buf[tmp], buf[tmp + 1]);
+		}
+		break;
 	case 0x0f:		/* ethernet functional desc */
 		if (buf [0] != 13)
 			goto bad;
@@ -1567,6 +1593,8 @@ static void do_dualspeed(struct usb_dev_handle *fd)
 			USB_REQ_GET_DESCRIPTOR,
 			USB_DT_DEVICE_QUALIFIER << 8, 0,
 			buf, sizeof buf, CTRL_TIMEOUT);
+	if (ret < 0 && errno != EPIPE)
+		perror ("can't get device qualifier");
 
 	/* all dual-speed devices have a qualifier */
 	if (ret != sizeof buf
@@ -1597,6 +1625,37 @@ static void do_dualspeed(struct usb_dev_handle *fd)
 	       buf[7], buf[8]);
 
 	/* FIXME also show the OTHER_SPEED_CONFIG descriptors */
+}
+
+static void do_debug(struct usb_dev_handle *fd)
+{
+	unsigned char buf [4];
+	int ret;
+	
+	ret = usb_control_msg(fd,
+			USB_ENDPOINT_IN | USB_TYPE_STANDARD | USB_RECIP_DEVICE, 
+			USB_REQ_GET_DESCRIPTOR,
+			USB_DT_DEBUG << 8, 0,
+			buf, sizeof buf, CTRL_TIMEOUT);
+	if (ret < 0 && errno != EPIPE)
+		perror ("can't get debug descriptor");
+
+	/* some high speed devices are also "USB2 debug devices", meaning
+	 * you can use them with some EHCI implementations as another kind
+	 * of system debug channel:  like JTAG, RS232, or a console.
+	 */
+	if (ret != sizeof buf
+			|| buf[0] != ret
+			|| buf[1] != USB_DT_DEBUG)
+		return;
+
+	printf("Debug descriptor:\n"
+	       "  bLength              %4u\n"
+	       "  bDescriptorType      %4u\n"
+	       "  bDebugInEndpoint     0x%02x\n"
+	       "  bDebugOutEndpoint    0x%02x\n",
+	       buf[0], buf[1],
+	       buf[2], buf[3]);
 }
 
 static unsigned char *find_otg(unsigned char *buf, int buflen)
@@ -1670,8 +1729,10 @@ static void dumpdev(struct usb_device *dev, unsigned int flags)
 		}
 		if (dev->descriptor.bDeviceClass == USB_CLASS_HUB)
 			do_hub(udev, dev->descriptor.bDeviceProtocol);
-		if (dev->descriptor.bcdUSB >= 0x0200)
+		if (dev->descriptor.bcdUSB >= 0x0200) {
 			do_dualspeed(udev);
+			do_debug(udev);
+		}
 		usb_close(udev);
 	}
 	else
@@ -1722,12 +1783,11 @@ static int list_devices(int busnum, int devnum, int vendorid, int productid, uns
 			get_product_string(product, sizeof(product), dev->descriptor.idVendor, dev->descriptor.idProduct);
 			if (verblevel > 0)
 				printf("\n");
-			printf("Bus %s Device %s: ID %04x:%04x %s %s\n", bus->dirname, 
-					                                 dev->filename, 
-									 dev->descriptor.idVendor, 
-									 dev->descriptor.idProduct, 
-									 vendor, 
-									 product);
+			printf("Bus %s Device %s: ID %04x:%04x %s %s\n",
+					bus->dirname, dev->filename,
+					dev->descriptor.idVendor,
+					dev->descriptor.idProduct,
+					vendor, product);
 			if (verblevel > 0)
 				dumpdev(dev, flags);
 		}
