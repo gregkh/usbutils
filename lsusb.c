@@ -198,7 +198,7 @@ static int get_audioterminal_string(char *buf, size_t size, u_int16_t termt)
 
 /* ---------------------------------------------------------------------- */
 
-static void dump_junk2(unsigned char *buf, unsigned int len)
+static void dump_bytes(unsigned char *buf, unsigned int len)
 {
 	unsigned int i;
 
@@ -282,6 +282,30 @@ static void dump_config(struct usb_dev_handle *dev, struct usb_config_descriptor
 		printf("      Remote Wakeup\n");
 	printf("    MaxPower            %5umA\n", config->MaxPower * 2);
 
+	/* avoid re-ordering or hiding descriptors for display */
+	if (config->extralen) {
+		int		size = config->extralen;
+		unsigned char	*buf = config->extra;
+
+		while (size >= 2) {
+			if (buf[0] < 2) {
+				dump_junk("        ", buf, size);
+				break;
+			}
+			switch (buf[1]) {
+			case USB_DT_OTG:
+				/* handled separately */
+				break;
+			default:
+				/* often a misplaced class descriptor */
+				printf("    UNRECOGNIZED: ");
+				dump_bytes(buf, size);
+				break;
+			}
+			size -= buf[0];
+			buf += buf[0];
+		}
+	}
 	for (i = 0 ; i < config->bNumInterfaces ; i++)
 		dump_interface(dev, &config->interface[i]);
 }
@@ -313,9 +337,7 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 	       interface->bInterfaceSubClass, subcls, interface->bInterfaceProtocol, proto,
 	       interface->iInterface, ifstr);
 
-	for (i = 0 ; i < interface->bNumEndpoints ; i++)
-		dump_endpoint(dev, interface, &interface->endpoint[i]);
-	
+	/* avoid re-ordering or hiding descriptors for display */
 	if (interface->extralen)
 	{
 		size = interface->extralen;
@@ -323,11 +345,11 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 		while (size >= 2 * sizeof(u_int8_t))
 		{
 			if (buf[0] < 2) {
-				fprintf(stderr, "invalid descriptor length of %d\n", buf[0]);
-				return;
-			}
-			else if (buf[1] == USB_DT_CS_INTERFACE)
-			{
+				dump_junk("      ", buf, size);
+				break;
+			} 
+			switch (buf[1]) {
+			case USB_DT_CS_INTERFACE:
 				switch(interface->bInterfaceClass) {
 					case USB_CLASS_AUDIO:
 						switch(interface->bInterfaceSubClass) {
@@ -347,18 +369,28 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 							"      ");
 						break;
 				}
-			}
-			else if (buf[1] == USB_DT_HID)
-			{
+				break;
+			case USB_DT_HID:
 				if (interface->bInterfaceClass == USB_CLASS_HID)
 					dump_hid_device(dev, interface, buf);
 				if (interface->bInterfaceClass == 0x0b)
 					dump_ccid_device(buf);
+				break;
+			case USB_DT_OTG:
+				/* handled separately */
+				break;
+			default:
+				/* often a misplaced class descriptor */
+				printf("      UNRECOGNIZED: ");
+				dump_bytes(buf, size);
+				break;
 			}
 			size -= buf[0];
 			buf += buf[0];
 		}
 	}
+	for (i = 0 ; i < interface->bNumEndpoints ; i++)
+		dump_endpoint(dev, interface, &interface->endpoint[i]);
 }
 
 static void dump_interface(struct usb_dev_handle *dev, struct usb_interface *interface)
@@ -401,6 +433,7 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 	       "        bSynchAddress       %5u\n",
 	       endpoint->bRefresh, endpoint->bSynchAddress);
 	
+	/* avoid re-ordering or hiding descriptors for display */
 	if (endpoint->extralen)
 	{
 		size = endpoint->extralen;
@@ -408,13 +441,24 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 		while (size >= 2 * sizeof(u_int8_t))
 		{
 			if (buf[0] < 2) {
-				fprintf(stderr, "invalid descriptor length of %d\n", buf[0]);
-				return;
-			} else if (buf[1] == USB_DT_CS_ENDPOINT) {
+				dump_junk("        ", buf, size);
+				break;
+			}
+			switch (buf[1]) {
+			case USB_DT_CS_ENDPOINT:
 				if (interface->bInterfaceClass == 1 && interface->bInterfaceSubClass == 2)
 					dump_audiostreaming_endpoint(dev, buf);
 				else if (interface->bInterfaceClass == 1 && interface->bInterfaceSubClass == 3)
 					dump_midistreaming_endpoint(dev, buf);
+				break;
+			case USB_DT_OTG:
+				/* handled separately */
+				break;
+			default:
+				/* often a misplaced class descriptor */
+				printf("        UNRECOGNIZED: ");
+				dump_bytes(buf, size);
+				break;
 			}
 			size -= buf[0];
 			buf += buf[0];
@@ -609,7 +653,7 @@ static void dump_audiocontrol_interface(struct usb_dev_handle *dev, unsigned cha
 			printf("          Enable Processing\n");
 		printf("        iProcessing         %5u %s\n"
 		       "        Process-Specific    ", buf[12+j+k], term);
-		dump_junk2(buf+(13+j+k), buf[0]-(13+j+k));
+		dump_bytes(buf+(13+j+k), buf[0]-(13+j+k));
 		break;
 
 	case 0x08:  /* EXTENSION_UNIT */
@@ -646,7 +690,7 @@ static void dump_audiocontrol_interface(struct usb_dev_handle *dev, unsigned cha
 	default:
 		printf("(unknown)\n"
 		       "        Invalid desc subtype:");
-		dump_junk2(buf+3, buf[0]-3);
+		dump_bytes(buf+3, buf[0]-3);
 		break;
 	}
 }
@@ -760,7 +804,7 @@ static void dump_audiostreaming_interface(struct usb_dev_handle *dev, unsigned c
 		default:
 			printf("(unknown)\n"
 			       "        Invalid desc format type:");
-			dump_junk2(buf+4, buf[0]-4);
+			dump_bytes(buf+4, buf[0]-4);
 		}
 		break;
 
@@ -876,13 +920,13 @@ static void dump_audiostreaming_interface(struct usb_dev_handle *dev, unsigned c
 		default:
 			printf("(unknown)\n"
 			       "        Invalid desc format type:");
-			dump_junk2(buf+4, buf[0]-4);
+			dump_bytes(buf+4, buf[0]-4);
 		}
 		break;
 
 	default:
 		printf("        Invalid desc subtype:");
-		dump_junk2(buf+3, buf[0]-3);
+		dump_bytes(buf+3, buf[0]-3);
 		break;
 	}
 }
@@ -1035,7 +1079,7 @@ static void dump_midistreaming_interface(struct usb_dev_handle *dev, unsigned ch
 
 	default:
 		printf("\n        Invalid desc subtype: ");
-		dump_junk2(buf+3, buf[0]-3);
+		dump_bytes(buf+3, buf[0]-3);
 		break;
 	}
 }
@@ -1247,8 +1291,8 @@ static void dump_ccid_device(unsigned char *buf)
         printf("        bMaxCCIDBusySlots   %5u\n", buf[53]);
 
         if (buf[0] > 54) {
-                fputs("        junk             ", stdout);
-                dump_junk2(buf+54, buf[0]-54);
+		fputs("        junk             ", stdout);
+		dump_bytes(buf+54, buf[0]-54);
         }
 }
 
@@ -1463,13 +1507,17 @@ static char *dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf
 		       indent, (buf[11]<<8)|buf[10],
 		       indent, buf[12]);
 		break;
-		/* FIXME there are about a dozen more descriptor types */
 	default:
-		return "unsupported comm descriptor";
+		/* FIXME there are about a dozen more descriptor types */
+		printf("%sUNRECOGNIZED: ", indent);
+		dump_bytes(buf, buf[0]);
+		return "unrecognized comm descriptor";
 	}
 	return 0;
 
   bad:
+	printf("%sinvalid: ", indent);
+	dump_bytes(buf, buf[0]);
 	return "corrupt comm descriptor";
 }
 
