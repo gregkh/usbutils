@@ -1890,7 +1890,7 @@ int main(int argc, char *argv[])
 			long_options, NULL)) != EOF) {
 		switch(c) {
                 case 'V':
-                        printf("lsusb (" PACKAGE ")  " VERSION "\n");
+                        printf("lsusb (" PACKAGE ") " VERSION "\n");
                         exit(0);
                         
 		case 'v':
