@@ -46,6 +46,14 @@
 #include <getopt.h>
 
 
+/* from USB 2.0 spec and updates */
+#define USB_DT_DEVICE_QUALIFIER		0x06
+#define USB_DT_OTHER_SPEED_CONFIG	0x07
+#define USB_DT_OTG			0x09
+#define USB_DT_DEBUG			0x0a
+#define USB_DT_INTERFACE_ASSOCIATION	0x0b
+
+/* convention suggested by common class spec */
 #define USB_DT_CS_INTERFACE		0x24
 #define USB_DT_CS_ENDPOINT		0x25
 
@@ -335,7 +343,8 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 						}
 						break;
 					case USB_CLASS_COMM:
-						dump_comm_descriptor(dev, buf, "        ");
+						dump_comm_descriptor(dev, buf,
+							"      ");
 						break;
 				}
 			}
@@ -365,7 +374,7 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 	static const char *typeattr[] = { "Control", "Isochronous", "Bulk", "Interrupt" };
 	static const char *syncattr[] = { "None", "Asynchronous", "Adaptive", "Synchronous" };
 	static const char *usage[] = { "Data", "Feedback", "Implicit feedback Data", "(reserved)" };
-	static const char *hb[] = { "once", "twice", "three times", "(?\?)" };
+	static const char *hb[] = { "1x", "2x", "3x", "(?\?)" };
 	char *buf;
 	int size;
 
@@ -377,13 +386,14 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 	       "          Transfer Type            %s\n"
 	       "          Synch Type               %s\n"
 	       "          Usage Type               %s\n"
-	       "        wMaxPacketSize     0x%04x  bytes %d %s\n"
+	       "        wMaxPacketSize     0x%04x  %s %d bytes\n"
 	       "        bInterval           %5u\n",
 	       endpoint->bLength, endpoint->bDescriptorType, endpoint->bEndpointAddress, endpoint->bEndpointAddress & 0x0f, 
 	       (endpoint->bEndpointAddress & 0x80) ? "IN" : "OUT", endpoint->bmAttributes, 
 	       typeattr[endpoint->bmAttributes & 3], syncattr[(endpoint->bmAttributes >> 2) & 3], 
 	       usage[(endpoint->bmAttributes >> 4) & 3], endpoint->wMaxPacketSize,
-	       endpoint->wMaxPacketSize & 0x3ff, hb[(endpoint->wMaxPacketSize >> 1) & 3],
+	       hb[(endpoint->wMaxPacketSize >> 11) & 3],
+	       endpoint->wMaxPacketSize & 0x3ff,
 	       endpoint->bInterval);
 	/* only for audio endpoints */
 	if (endpoint->bLength == 9) 
@@ -405,8 +415,6 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 					dump_audiostreaming_endpoint(dev, buf);
 				else if (interface->bInterfaceClass == 1 && interface->bInterfaceSubClass == 3)
 					dump_midistreaming_endpoint(dev, buf);
-			} else if (buf[1] == USB_DT_HUB) {
-				dump_hub("       ", buf, 0);
 			}
 			size -= buf[0];
 			buf += buf[0];
@@ -1106,8 +1114,6 @@ static void dump_hub(char *prefix, unsigned char *p, int has_tt)
 
 static void dump_ccid_device(unsigned char *buf)
 {
-	unsigned int j, tlength, capssize;
-	unsigned long caps;
         unsigned int us;
 
 	if (buf[0] < 54) {
@@ -1404,13 +1410,13 @@ static char *dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf
 			printf("%s    call management\n", indent);
 		if (buf[3] & 0x02)
 			printf("%s    use DataInterface\n", indent);
-		printf("%s  bDataInterface        %d\n", indent, buf[4]);
+		printf("%s  bDataInterface          %d\n", indent, buf[4]);
 		break;
 	case 0x02:		/* acm functional desc */
 		if (buf [0] != 4)
 			goto bad;
 		printf("%sCDC ACM:\n"
-		       "%s  bmCapabilities       %02x\n",
+		       "%s  bmCapabilities       0x%02x\n",
 		       indent,
 		       indent, buf[3]);
 		if (buf[3] & 0x08)
@@ -1444,15 +1450,15 @@ static char *dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf
 		tmp |= buf [5]; tmp <<= 8;
 		tmp |= buf [4];
 		printf("%sCDC Ethernet:\n"
-		       "%s  iMacAddress             %d %s\n"
+		       "%s  iMacAddress             %10d %s\n"
 		       "%s  bmEthernetStatistics    0x%08x\n",
 		       indent,
 		       indent, buf[3], (buf[3] && *str) ? str : "(?\?)",
 		       indent, tmp);
 		/* FIXME dissect ALL 28 bits */
-		printf("%s  wMaxSegmentSize         %d\n"
-		       "%s  wNumberMCFilters        0x%04x\n"
-		       "%s  bNumberPowerFilters     %d\n",
+		printf("%s  wMaxSegmentSize         %10d\n"
+		       "%s  wNumberMCFilters            0x%04x\n"
+		       "%s  bNumberPowerFilters     %10d\n",
 		       indent, (buf[9]<<8)|buf[8],
 		       indent, (buf[11]<<8)|buf[10],
 		       indent, buf[12]);
@@ -1469,21 +1475,145 @@ static char *dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf
 
 /* ---------------------------------------------------------------------- */
 
+static void do_hub(struct usb_dev_handle *fd, unsigned has_tt)
+{
+	unsigned char buf [7];
+	int ret;
+	
+	ret = usb_control_msg(fd,
+			USB_ENDPOINT_IN | USB_TYPE_CLASS | USB_RECIP_DEVICE,
+			USB_REQ_GET_DESCRIPTOR,
+			0x29 << 8, 0,
+			buf, sizeof buf, CTRL_TIMEOUT);
+	if (ret != sizeof buf) {
+		/* Linux returns this for suspended devices */
+		if (errno != EHOSTUNREACH)
+			perror ("can't get hub descriptor");
+		return;
+	}
+	dump_hub("", buf, has_tt);
+}
+
+static void do_dualspeed(struct usb_dev_handle *fd)
+{
+	unsigned char buf [10];
+	char cls[128], subcls[128], proto[128];
+	int ret;
+	
+	ret = usb_control_msg(fd,
+			USB_ENDPOINT_IN | USB_TYPE_STANDARD | USB_RECIP_DEVICE, 
+			USB_REQ_GET_DESCRIPTOR,
+			USB_DT_DEVICE_QUALIFIER << 8, 0,
+			buf, sizeof buf, CTRL_TIMEOUT);
+
+	/* all dual-speed devices have a qualifier */
+	if (ret != sizeof buf
+			|| buf[0] != ret
+			|| buf[1] != USB_DT_DEVICE_QUALIFIER)
+		return;
+
+	get_class_string(cls, sizeof(cls),
+			buf[4]);
+	get_subclass_string(subcls, sizeof(subcls),
+			buf[4], buf[5]);
+	get_protocol_string(proto, sizeof(proto),
+			buf[4], buf[5], buf[6]);
+	printf("Device Qualifier (for other device speed):\n"
+	       "  bLength             %5u\n"
+	       "  bDescriptorType     %5u\n"
+	       "  bcdUSB              %2x.%02x\n"
+	       "  bDeviceClass        %5u %s\n"
+	       "  bDeviceSubClass     %5u %s\n"
+	       "  bDeviceProtocol     %5u %s\n"
+	       "  bMaxPacketSize0     %5u\n"
+	       "  bNumConfigurations  %5u\n",
+	       buf[0], buf[1],
+	       buf[3], buf[2],
+	       buf[4], cls,
+	       buf[5], subcls,
+	       buf[6], proto, 
+	       buf[7], buf[8]);
+
+	/* FIXME also show the OTHER_SPEED_CONFIG descriptors */
+}
+
+static unsigned char *find_otg(unsigned char *buf, int buflen)
+{
+	if (!buf)
+		return 0;
+	while (buflen >= 3) {
+		if (buf[0] == 3 && buf[1] == USB_DT_OTG)
+			return buf;
+		if (buf[0] > buflen)
+			return 0;
+		buflen -= buf[0];
+		buf += buf[0];
+	}
+	return 0;
+}
+
+static void do_otg(struct usb_config_descriptor *config)
+{
+	unsigned	i, j, k;
+	unsigned char	*desc;
+
+	/* each config of an otg device has an OTG descriptor */
+	desc = find_otg(config->extra, config->extralen);
+	for (i = 0; !desc && i < config->bNumInterfaces; i++) {
+		struct usb_interface *intf;
+
+		intf = &config->interface [i];
+		for (j = 0; !desc && j < intf->num_altsetting; j++) {
+			struct usb_interface_descriptor *alt;
+
+			alt = &intf->altsetting[j];
+			desc = find_otg(alt->extra, alt->extralen);
+			for (k = 0; !desc && k < alt->bNumEndpoints; k++) {
+				struct usb_endpoint_descriptor *ep;
+
+				ep = &alt->endpoint[k];
+				desc = find_otg(ep->extra, ep->extralen);
+			}
+		}
+	}
+	if (!desc)
+		return;
+
+	printf("OTG Descriptor:\n"
+		"  bLength               %3u\n"
+		"  bDescriptorType       %3u\n"
+		"  bmAttributes         0x%02x\n"
+		"%s%s",
+		desc[0], desc[1], desc[2],
+		(desc[2] & 0x01)
+			? "    SRP (Session Request Protocol)\n" : "",
+		(desc[2] & 0x02)
+			? "    HNP (Host Negotiation Protocol)\n" : "");
+}
+
 static void dumpdev(struct usb_device *dev, unsigned int flags)
 {
 	struct usb_dev_handle *udev;
 	int i;
 
 	udev = usb_open(dev);
-	if (dev->config) {
+	if (udev) {
 		dump_device(udev, &dev->descriptor, flags);
-		for (i = 0 ; i < dev->descriptor.bNumConfigurations ; i++) {
-			dump_config(udev, &dev->config[i]);
+		if (dev->config) {
+			for (i = 0; i < dev->descriptor.bNumConfigurations;
+					i++) {
+				dump_config(udev, &dev->config[i]);
+			}
+			do_otg(&dev->config[0]);
 		}
+		if (dev->descriptor.bDeviceClass == USB_CLASS_HUB)
+			do_hub(udev, dev->descriptor.bDeviceProtocol);
+		if (dev->descriptor.bcdUSB >= 0x0200)
+			do_dualspeed(udev);
 		usb_close(udev);
 	}
 	else
-		fprintf(stderr, "Couldn't retrieve descriptors\n");
+		fprintf(stderr, "Couldn't open device\n");
 }
 
 /* ---------------------------------------------------------------------- */
