@@ -1,7 +1,7 @@
-.TH lsusb 8 "19 November 2003" "usbutils-0.11" "Linux USB Utilities"
+.TH lsusb 8 "25 January 2005" "usbutils-0.70" "Linux USB Utilities"
 .IX lsusb
 .SH NAME
-lsusb \- list all USB devices
+lsusb \- list USB devices
 .SH SYNOPSIS
 .B lsusb
 [
@@ -9,8 +9,8 @@ lsusb \- list all USB devices
 ]
 .SH DESCRIPTION
 .B lsusb
-is a utility for displaying information about all USB buses in the system and
-all devices connected to them.
+is a utility for displaying information about USB buses in the system and
+the devices connected to them.
 
 To make use of all the features of this program,
 you need to have a Linux kernel
@@ -19,18 +19,13 @@ which supports the /proc/bus/usb interface
 
 .SH OPTIONS
 .TP
-.B \-v
+.B \-v, \-\-verbose
 Tells
 .I lsusb
-to be verbose and display detailed information about all devices.
-You must be root for this to work.
-.TP
-.B \-vv
-Tells
-.I lsusb
-to be very verbose and display even more information (actually everything the
-USB device is able to tell).
-You must be root for this to work.
+to be verbose and display detailed information about the devices shown.
+This includes configuration descriptors for the device's current speed.
+Class descriptors will be shown, when available, for USB device classes
+including hub, audio, HID, communications, and chipcard.
 .TP
 \fB\-s\fP [[\fIbus\fP]\fB:\fP][\fIdevnum\fP]
 Show only devices in specified
@@ -48,16 +43,13 @@ Do not scan the /proc/bus/usb directory,
 instead display only information
 about the device whose device file is given.
 The device file should be something like /proc/bus/usb/001/001.
-This option displays detailed information;
+This option displays detailed information like the \fBv\fP option;
 you must be root to do this.
 .TP
 .B \-t
 Tells
 .I lsusb
 to dump the physical USB device hierarchy as a tree.
-.TP
-.B \-x
-This option is reserved for future use.
 .TP
 .B \-V, \-\-version
 Print  version information on standard output,
@@ -76,14 +68,14 @@ If the specified device is not found, a non-zero exit code is returned.
 
 .SH FILES
 .TP
-.B /usr/share/misc/usb.ids
+.B /usr/share/usb.ids
 A list of all known USB ID's (vendors, products, classes, subclasses and protocols).
 .TP
 .B /proc/bus/usb
 An interface to USB devices provided by the post-2.3.15 Linux
 kernels. Contains per-bus subdirectories with per-device files and a
 .I devices
-file containing a list of all USB devices.
+file displaying some of the descriptors for each USB device.
 This interface is also support by some 2.2 Linux kernels.
 
 .SH SEE ALSO
