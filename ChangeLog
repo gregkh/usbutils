@@ -1,3 +1,20 @@
+2004-10-15 David Brownell <dbrownell@users.sourceforge.net>
+	* lsusb.c: USB 2.0 updates for dual-speed and OTG devices, hubs.
+	  Display all descriptors in the right sequence, and dump ones
+	  we don't (yet) recognize.  Minor cleanups.
+	* usb.ids: update to current version
+
+2004-02-20 Thomas Sailer  <sailer@eldrich.ee.ethz.ch>
+	Move to CVS at linux-usb.sf.net
+	Label as version 0.12.
+
+2003-08-31 David Brownell <dbrownell@users.sourceforge.net>
+	* lsusb.c: (against 0.11) recognize CDC descriptors, USB 2.0 updates,
+	  string handling updates, 
+
+2003-??-??  Debian 
+	Convert to latest libusb, supporting BSD and Darwin.
+
 2000-11-06  Thomas Sailer  <sailer@eldrich.ee.ethz.ch>
 
 	* names.c, lsusb.c: Fixup of Gunther Mayer's patch; do not export
