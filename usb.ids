@@ -6,7 +6,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.3 2004/10/10 22:07:54 dbrownell Exp $
+# $Id: usb.ids,v 1.4 2004/11/11 12:23:27 tsailer Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -69,6 +69,7 @@
 	0701  ScanJet 5300c/5370c
 	0704  DeskJet 825c
 	0705  ScanJet 4400c
+	0717  Color LaserJet 2500
 	0712  DeskJet 1180c
 	0801  ScanJet 7400c
 	0804  DeskJet 816c
@@ -1505,9 +1506,10 @@
 0607  Bridge Information Co., Ltd
 0609  SMK Manufacturing, Inc.
 060a  Worthington Data Solutions, Inc.
-060b  Solid Year (?)
+060b  Solid Year
 	0001  MacAlly Keyboard
-	2101  Solid Year Keyboard
+	2101  Keyboard
+	5811  ACK-571U Wireless USB-Keyboard
 060c  EEH Datalink GmbH
 060f  Joinsoon Electronics Mfg. Co., Ltd
 0611  Totoku Electric Co., Ltd
@@ -2482,8 +2484,9 @@
 0a7e  Octagon Systems Corp.
 0a80  Rexon Technology Corp., Ltd
 0a81  Chesen Electronics Corp.
-	0101 Keyboard
-	0203 Mouse
+	0101  Keyboard
+	0203  Mouse
+	0205  PS/2 to USB Keyboard+Mouse converter
 0a82  Syscan
 	4600  TravelScan 460/464
 0a83  NextComm, Inc.
