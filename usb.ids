@@ -6,7 +6,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.4 2004/11/11 12:23:27 tsailer Exp $
+# $Id: usb.ids,v 1.5 2004/12/11 16:37:52 dbrownell Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -16,6 +16,10 @@
 #	device  device_name				<-- single tab
 #		interface  interface_name		<-- two tabs
 
+0001  Fry's Electronics
+0002  Ingram
+0003  Club Mac
+0004  Nebraska Furniture Mart
 0386  LTS
 	0001  PSX for USB Converter
 03e8  EndPoints, Inc.
@@ -69,7 +73,6 @@
 	0701  ScanJet 5300c/5370c
 	0704  DeskJet 825c
 	0705  ScanJet 4400c
-	0717  Color LaserJet 2500
 	0712  DeskJet 1180c
 	0801  ScanJet 7400c
 	0804  DeskJet 816c
@@ -422,6 +425,7 @@
 	007d  Notebook Optical Mouse
 	007e  Wireless Transceiver for Bluetooth
 	008a  Wireless Keyboard and Mouse
+	008c  Wireless Intellimouse Explorer 2.0
 	0284  Xbox DVD Playback Kit
 0460  Ace Cad Enterprise Co., Ltd
 0461  Primax Electronics, Ltd
@@ -673,6 +677,7 @@
 	220d  CanoScan N670U/N676U/LiDE 20
 	220e  CanoScan N1240U/LiDE 30
 	2213  LiDE 50
+	2611  SmartBase MPC400
 	3041  PowerShot S10
 	3042  CanoScan FS4000US Film Scanner
 	3043  PowerShot S20
@@ -719,7 +724,7 @@
 	307f  Optura 20
 	3081  Optura 10
 	3083  EOS 10D
-	3084  EOS 300D
+	3084  EOS 300D / EOS Digital Rebel
 	3085  PowerShot G5
 	3099  EOS 300D (ptp)
 	309a  PowerShot A80
@@ -937,6 +942,7 @@
 	0001  GC-QX3 Digital Still Camera
 	0004  GR-DVL815U Digital Video Camera
 	0009  GR-DX25EK Digital Video Camera
+	000a  GR-D72 Digital Video Camera
 04f2  Chicony Electronics Co., Ltd
 	0001  KU-8933 Keyboard
 	0002  NT68P81 Keyboard
@@ -1158,6 +1164,7 @@
 	0210  ScanExpress A3 USB
 	0218  BearPaw 2400 TA
 	0219  BearPaw 2400 TA Plus
+	021a  BearPaw 2448 TA Plus
 	021c  BearPaw 1200 CU Plus
 	021d  BearPaw 2400 CU Plus
 	021e  BearPaw 1200 TA/CS
@@ -1266,6 +1273,7 @@
 	0003  Sound Canvas SC-8850
 	0005  Edirol UM-2 MIDI Adapter
 	0011  Edirol UA-5 Sound Capture 
+	002d  VX-2020 Synthesizer
 0583  Padix Co., Ltd (Rockfire)
 	2030  RM-203 USB Nest [mode 1]
 	2031  RM-203 USB Nest [mode 2]
@@ -1293,7 +1301,8 @@
 	9213  MacAlly Kbd Hub
 	9215  AU9814 Hub
 	9254  Hub
-	9380  USB Flash drive
+	9380  Flash drive
+	9382  Acer Flash drive
 	9410  Keyboard
 	9472  Keyboard Hub
 0590  Omron Corp.
@@ -1374,7 +1383,8 @@
 	3002  Scroll Mouse
 05b9  Philips Research Laboratories
 05ba  DigitalPersona, Inc.
-05bc   3G Green Green Globe Co., Ltd
+05bb  Grey Cell Systems
+05bc  3G Green Green Globe Co., Ltd
 	0004  Trackball
 05bd  RAFI GmbH & Co. KG
 05be  Tyco Electronics (Raychem)
@@ -1412,6 +1422,8 @@
 05d0  GE Medical Systems Lunar
 05d1  Brainboxes, Ltd
 05d2  Wave Systems Corp.
+05d3  Tohoku Ricoh Co., Ltd
+05d5  Super Gate Technology Co., Ltd
 05d6  Philips Semiconductors, CICT
 05d7  Thomas & Betts Corp.
 	0099  10Mbps Ethernet [klsi]
@@ -1442,11 +1454,14 @@
 	0080  Jumpdrive Secure 64MB
 	b018  Multi-Card Reader
 05dd  Delta Electronics, Inc.
+05df  Silicon Vision, Inc.
 05e0  Symbol Technologies
 05e1  Syntek Semiconductor Co., Ltd
+05e2  ElecVision, Inc.
 05e3  Genesys Logic, Inc.
 	000a  Keyboard with PS/2 Port
 	000b  Mouse 
+	0100  Nintendo Game Boy Advance SP
 	0120  Pacific Image Electronics PrimeFilm 1800u slide/negative scanner
 	0300  GLUSB98PT Parallel Port
 	0406  Hub
@@ -1459,18 +1474,23 @@
 	0760  Card Reader
 	07A0  Pen Flash
 	1205  Afilias Optical Mouse H3003
+05e4  Red Wing Corp.
 05e5  Fuji Electric Co., Ltd
 05e6  Keithley Instruments
+05e8  ICC, Inc.
 05e9  Kawasaki LSI
 	0008  KL5KUSB101B Ethernet [klsi]
 	0009  Sony 10Mbps Ethernet [pegasus]
 05eb  FFC, Ltd
+05ec  COM21, Inc.
+05ee  Cytechinfo Inc.
 05ef  AVB, Inc. [anko?]
 	020a  Top Shot Pegasus Joystick
 	8884  Mag Turbo Force Wheel
 	8888  Top Shot Force Feedback Racing Wheel
 05f0  Canopus Co., Ltd
 	0101  DA-Port DAC
+05f1  Compass Communications
 05f2  Dexin Corp., Ltd
 05f3  PI Engineering, Inc.
 	0007  Kinesis Advantage PRO MPC/USB Keyboard
@@ -1502,46 +1522,66 @@
 0603  Novatek Microelectronics Corp.
 	6871  Mouse
 0604  Jean Co., Ltd
+0605  Anchor C&C Co., Ltd
 0606  Royal Information Electronics Co., Ltd
 0607  Bridge Information Co., Ltd
+0608  Genrad Ads
 0609  SMK Manufacturing, Inc.
 060a  Worthington Data Solutions, Inc.
-060b  Solid Year
+060b  Solid Year (?)
 	0001  MacAlly Keyboard
-	2101  Keyboard
-	5811  ACK-571U Wireless USB-Keyboard
+	2101  Solid Year Keyboard
 060c  EEH Datalink GmbH
+060d  Auctor Corp.
+060e  Transmonde Technologies, Inc.
 060f  Joinsoon Electronics Mfg. Co., Ltd
+0610  Costar Electronics, Inc.
 0611  Totoku Electric Co., Ltd
 0613  TransAct Technologies, Inc.
 0614  Bio-Rad Laboratories
+0615  Quabbin Wire & Cable Co., Inc.
 0616  Future Techno Designs PVT, Ltd
+0617  Swiss Federal Insitute of Technology
 0618  MacAlly
 	0101  Mouse
 0619  Seiko Instruments, Inc.
+061b  Promptus Communications, Inc.
 061c  Act Labs, Ltd
 061d  Quatech, Inc.
 061e  Nissei Electric Co.
 0620  Alaris, Inc.
 0621  ODU-Steckverbindungssysteme GmbH & Co. KG
+0622  Iotech, Inc.
 0623  Littelfuse, Inc.
 0624  Apex, Inc.
+0625  TiMedia Technology Co., Ltd
 0626  Nippon Systems Development Co., Ltd
+0627  Adomax Technology Co., Ltd
+0628  Tasking Software, Inc.
 0629  Zida Technologies, Ltd
 062a  Creative Labs
 	0001  Notebook Optical Mouse
 062b  Greatlink Electronics Taiwan, Ltd
+062c  Institute for Information Industry
 062d  Taiwan Tai-Hao Enterprises Co., Ltd
 062e  Mainsuper Enterprises Co., Ltd
 062f  Sin Sheng Terminal & Machine, Inc.
+0631  JUJO Electronics Corp.
+0633  Cyrix Corp.
 0634  Micron Technology, Inc.
+0635  Methode Electronics, Inc.
 0636  Sierra Imaging, Inc.
 0638  Avision, Inc.
 	0268  iVina 1200U Scanner
 	026a  Minolta Dimage Scan Dual II
 	0a10  iVina FB1600/UMAX Astra 4500
 	4004  Minolta Dimage Scan Elite II
+0639  Chrontel, Inc.
+063a  Techwin Corp.
+063b  Taugagreining HF
+063c  Yamaichi Electronics Co., Ltd (Sakura)
 063d  Fong Kai Industrial Co., Ltd
+063e  RealMedia Technology, Inc.
 063f  New Technology Cable, Ltd
 0640  Hitex Development Tools
 0641  Woods Industries, Inc.
@@ -1560,22 +1600,30 @@
 	03eb  Inspectrum 128x1024 B VIS Spectrograph
 	03ec  Inspectrum 256x1024 B VIS Spectrograph
 0648  Inside Out Networks
+0649  Weli Science Co., Ltd
 064b  White Mountain DSP, Inc.
 064c  Ji-Haw Industrial Co., Ltd
+064d  TriTech Microelectronics, Ltd
 064e  Suyin Corp.
 064f  WIBU-Systems AG
+0650  Dynapro Systems
 0651  Likom Technology Sdn. Bhd.
 0652  Stargate Solutions, Inc.
+0653  CNF, Inc.
 0654  Granite Microsystems, Inc.
 0655  Space Shuttle Hi-Tech Co., Ltd
 0656  Glory Mark Electronic, Ltd
 0657  Tekcon Electronics Corp.
+0658  Sigma Designs, Inc.
+0659  Aethra
 065a  Optoelectronics Co., Ltd
 	0001  Barcode scanner
+065b  Tracewell Systems
 065e  Silicon Graphics
 065f  Good Way Technology Co., Ltd & GWC technology Inc.
 0660  TSAY-E (BVI) International, Inc.
 0661  Hamamatsu Photonics K.K.
+0662  Kansai Electric Co., Ltd
 0663  Topmax Electronic Co., Ltd
 	0103  CobraPad
 0667  Aiwa Co., Ltd
@@ -1637,6 +1685,7 @@
 	0002  Gigaset 3075 Passive ISDN
 	0005  Mouse with Fingerprint Reader
 	0012  I-Gate 802.11b Adapter
+0682  Victor Company of Japan, Ltd
 0684  Actiontec Electronics, Inc.
 0686  Minolta Co., Ltd
 	4003  Dimage 2330 Zoom
@@ -1649,6 +1698,7 @@
 	400d  Scan Dual III
 	4014  Dimage S414 digital still camera
 068a  Pertech, Inc.
+068b  Potrans International, Inc.
 068e  CH Products, Inc.
 	00e2  HFX OEM Joystick
 	00f2  Flight Sim Pedals
@@ -1674,6 +1724,7 @@
 069b  Thomson, Inc.
 	0704  DCM245 Cable Modem
 	2220  RCA Kazoo RD1000 MP3 Player
+	300a  RCA Lyra MP3 Player
 069d  Hughes Network Systems (HNS)
 	0002  Satellite Device
 069e  Marx
@@ -1695,6 +1746,7 @@
 	0000  Typhoon Webcam 100k [nw8000]
 	d001  ProLink DS3303u WebCam
 	d800  Chicony TwinkleCam
+06a7  MicroStore, Inc.
 06a8  Topaz Systems, Inc.
 	0042  SignatureGem 1X5 Pad
 	0043  SignatureGem 1X5-HID Pad
@@ -1703,6 +1755,7 @@
 06ac  Fujitsu Laboratories of America, Inc.
 06ad  Greatland Electronics Taiwan, Ltd
 06ae  Professional Multimedia Testing Centre
+06af  Harting, Inc. of North America
 06b8  Pixela Corp.
 06b9  Alcatel Telecom
 	4061  Speed Touch ISDN or ADSL Modem
@@ -1727,21 +1780,30 @@
 	20ff  SnapScan e42
 06be  AME Optimedia Technology Co., Ltd
 06bf  Leoco Corp.
-06c2  GLAB Chester
-	0030  RFID Reader
+06c2  Phidgets Inc. (formerly GLAB)
+	0030  PhidgetRFID
 	0038  4-Motor PhidgetServo v3.0
 	0039  1-Motor PhidgetServo v3.0
-	003b  8-Motor PhidgetServo
-	0040  Interface Kit 884
-	0041  Interface Kit 088
-	0042  Interface Kit 32-32-0
-	0043  Interface Kit 0-256-0
-	0048  Receiver Ver 1.0
-	0049  PhidgetLED Ver 1.0
+	003a  8-Motor PhidgetAvancedServo
+	0040  PhidgetInterface Kit 0-0-4
+	0044  PhidgetInterface Kit 0-16-16
+	0045  PhidgetInterface Kit 8-8-8
+	0048  PhidgetStepper (Under Development)
+	0049  PhidgetTextLED Ver 1.0
+	004a  PhidgetLED Ver 1.0
 	004b  PhidgetEncoder Ver 1.0
-	004e  PhidgetPower Ver 1.01
-	0050  PhidgetTextLCD ECMA1010 Ver 1.0
-	0058  PhidgetGraphicLCD Ver 1.0
+	0051  PhidgetInterface Kit 0-5-7 (Custom)
+	0051  PhidgetTextLCD (Custom)
+	0052  PhidgetTextLCD
+	0053  PhidgetTextLCD
+	0053  PhidgetInterfaceKit 0-8-8
+	0058  PhidgetMotorControl Ver 1.0
+	0070  PhidgetTemperatureSensor Ver 1.0
+	0071  PhidgetAccelerometer Ver 1.0
+	0072  PhidgetWeightSensor Ver 1.0
+	0073  PhidgetHumiditySensor
+	0074  PhidgetPHSensor
+	0075  PhidgetGyroscope
 06c4  Bizlink International Corp.
 06c5  Hagenuk, GmbH
 06c6  Infowave Software, Inc.
@@ -1773,6 +1835,7 @@
 	0622  LapLink Gold USB-USB Bridge [net1080]
 06d1  Daewoo Electronics Co., Ltd
 06d3  Mitsubishi Electric Corp.
+06d4  Cisco Systems
 06d5  Toshiba
 	4000  Japanese Keyboard
 06d6  Aashima Technology B.V.
@@ -1795,20 +1858,24 @@
 06ea  Sirius Technologies
 	0001  NetCom Roadster II 56k
 	0002  Roadster II 56k
+06eb  PC Expert Tech. Co., Ltd
 06ef  I.A.C. Geometrische Ingenieurs B.V.
 06f0  T.N.C Industrial Co., Ltd
 06f1  Opcode Systems, Inc.
 06f2  Emine Technology Co.
 06f6  Wintrend Technology Co., Ltd
 06fa  HSD S.r.L
+06fc  Motorola Semiconductor Products Sector
 06fd  Boston Acoustics
 06fe  Gallant Computer, Inc.
 0701  Supercomal Wire & Cable SDN. BHD.
 0703  Bvtech Industry, Inc.
 0705  NKK Corp.
+0706  Ariel Corp.
 0707  Standard Microsystems Corp.
 	0100  2202 Ethernet [klsi]
 	0200  2202 Ethernet [pegasus]
+	ee06  EZ-Connect 802.11g Adapter
 0708  Putercom Co., Ltd
 0709  Silicon Systems, Ltd (SSL)
 070a  Oki Electric Industry Co., Ltd
@@ -1826,8 +1893,10 @@
 	0240  PS/2 to USB Converter
 	0300  BAY-3U1S1P Parallel Port
 	0302  Parallel Port
+0713  Interval Research Corp.
 0714  NewMotion, Inc.
 	0003  ADB to USB convertor
+0717  ZNK Corp.
 0718  Imation Corp.
 0719  Tremon Enterprises Co., Ltd
 071b  Domain Technologies, Inc.
@@ -1838,6 +1907,7 @@
 071c  Xionics Document Technologies, Inc.
 071d  Eicon Networks Corp.
 	1000  Diva ISDN TA
+071e  Ariston Technologies
 0723  Centillium Communications Corp.
 0726  Vanguard International Semiconductor-America
 0729  Amitm
@@ -1859,6 +1929,7 @@
 0736  Lorom Industrial Co., Ltd
 0738  Mad Catz, Inc.
 073b  Suncom Technologies
+073a  Chaplet Systems, Inc.
 073d  Eutron S.p.a.
 	0005  Crypto Token
 073e  NEC, Inc.
@@ -1885,6 +1956,7 @@
 0764  Cyber Power System, Inc.
 0765  X-Rite, Inc.
 0766  Jess-Link Products Co., Ltd
+0767  Tokheim Corp.
 0768  Camtel Technology Corp.
 0769  Surecom Technology Corp.
 076a  Smart Technology Enablers, Inc.
@@ -1899,6 +1971,7 @@
 0775  Longshine Electronics Corp.
 0776  Inalways Corp.
 0777  Comda Enterprise Corp.
+0778  Volex, Inc.
 0779  Fairchild Semiconductor
 077a  Sankyo Seiki Mfg. Co., Ltd
 077b  Linksys
@@ -1989,7 +2062,7 @@
 07b4  Olympus Optical Co., Ltd
 	0100  Camedia C-2100/C-3000 Ultra Zoom Camera
 	0102  Camedia E-10/C-220/C-50 Camera
-	0105  Camedia C-700/C-3040/C-4000 Zoom Camera
+	0105  Camedia C-700/C-750UZ/C-755/C-3040/C-4000 Zoom Camera
 	0114  C-350Z Camera
 	0203  Digital Voice Recorder DW-90
 	0206  Digital Voice Recorder DS-330
@@ -2279,10 +2352,11 @@
 0923  IC Media Corp.
 	010f  SIIG MobileCam
 0924  Xerox
-0925  Wisegroup, Ltd
-	8101  1-Motor PhidgetServo v2.0
-	8104  4-Motor PhidgetServo v2.0
-	8866  MP-8866 Dual USB Joypad
+0925  Lakeview Research
+	8101  Phidgets, Inc., 1-Motor PhidgetServo v2.0
+	8104  Phidgets, Inc., 4-Motor PhidgetServo v2.0
+	8800  WiseGroup Ltd, MP-8800 Quad Joypad
+	8866  WiseGroup Ltd, MP-8866 Dual Joypad
 0927  Summus, Ltd
 0928  Oxford Semiconductor, Ltd
 0929  American Biometric Co.
@@ -2442,6 +2516,7 @@
 0a3a  PentaMedia Co., Ltd
 0a3c  NTT DoCoMo, Inc.
 0a3d  Varo Vision
+0a3f  Swissonic AG
 0a43  Boca Systems, Inc.
 0a46  Davicom Semiconductor, Inc.
 0a47  Hirose Electric
@@ -2484,9 +2559,8 @@
 0a7e  Octagon Systems Corp.
 0a80  Rexon Technology Corp., Ltd
 0a81  Chesen Electronics Corp.
-	0101  Keyboard
-	0203  Mouse
-	0205  PS/2 to USB Keyboard+Mouse converter
+	0101 Keyboard
+	0203 Mouse
 0a82  Syscan
 	4600  TravelScan 460/464
 0a83  NextComm, Inc.
@@ -2526,6 +2600,7 @@
 0ac6  Singing Electrons, Inc.
 0ac7  Panwest Corp.
 0ac8  Z-Star Microelectronics Corp.
+	301b  Sansun SN-510 WebCam [hv713d]
 0ac9  Micro Solutions, Inc.
 	0000  Backpack CD-ReWriter
 	0011  Backpack 40GB Hard Drive 
@@ -3479,6 +3554,7 @@
 2770  NHJ, Ltd
 	9120  Che-ez! Snap / iClick Tiny VGA Digital Camera
 2899  Toptronic Industrial Co., Ltd
+2fb2  Fujitsu, Ltd
 3125  Eagletron
 	0001  TrackerPod Camera Stand
 3176  Whanam Electronics Co., Ltd
@@ -5148,7 +5224,7 @@ L 0061  Nepali
 	02  India
 
 # HID Descriptor bCountryCode
-# HID Specification 1.11 (2001-06-27) page 23   
+# HID Specification 1.11 (2001-06-27) page 23
 #
 # Syntax:
 # HCC country_code keymap_type
