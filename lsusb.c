@@ -1566,7 +1566,7 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 static void do_hub(struct usb_dev_handle *fd, unsigned has_tt)
 {
 	unsigned char buf [7];
-	int ret;
+	int i, ret;
 	
 	ret = usb_control_msg(fd,
 			USB_ENDPOINT_IN | USB_TYPE_CLASS | USB_RECIP_DEVICE,
@@ -1580,6 +1580,47 @@ static void do_hub(struct usb_dev_handle *fd, unsigned has_tt)
 		return;
 	}
 	dump_hub("", buf, has_tt);
+
+	printf(" Hub Port Status:\n");
+	for (i = 0; i < buf[2]; i++) {
+		char stat [4];
+
+		ret = usb_control_msg(fd,
+				USB_ENDPOINT_IN | USB_TYPE_CLASS
+					| USB_RECIP_OTHER,
+				USB_REQ_GET_STATUS, 
+				0, i + 1,
+				stat, sizeof stat,
+				CTRL_TIMEOUT);
+		if (ret < 0) {
+			fprintf(stderr,
+				"cannot read port %d status, %s (%d)\n",
+				i + 1, strerror(errno), errno);
+			break;
+		}
+
+		printf("   Port %d: %02x%02x.%02x%02x", i + 1,
+			stat[3], stat [2],
+			stat[1], stat [0]);
+		/* CAPS are used to highlight "transient" states */
+		printf("%s%s%s%s%s",
+			(stat[2] & 0x10) ? " C_RESET" : "",
+			(stat[2] & 0x08) ? " C_OC" : "",
+			(stat[2] & 0x04) ? " C_SUSPEND" : "",
+			(stat[2] & 0x02) ? " C_ENABLE" : "",
+			(stat[2] & 0x01) ? " C_CONNECT" : "");
+		printf("%s%s%s%s%s%s%s%s%s%s\n",
+			(stat[1] & 0x10) ? " indicator" : "",
+			(stat[1] & 0x08) ? " test" : "",
+			(stat[1] & 0x04) ? " highspeed" : "",
+			(stat[1] & 0x02) ? " lowspeed" : "",
+			(stat[1] & 0x01) ? " power" : "",
+			(stat[0] & 0x10) ? " RESET" : "",
+			(stat[0] & 0x08) ? " oc" : "",
+			(stat[0] & 0x04) ? " suspend" : "",
+			(stat[0] & 0x02) ? " enable" : "",
+			(stat[0] & 0x01) ? " connect" : "");
+	}
 }
 
 static void do_dualspeed(struct usb_dev_handle *fd)
@@ -1895,6 +1936,7 @@ int main(int argc, char *argv[])
 			devdump = optarg;
 			break;
 
+		case '?':
 		default:
 			err++;
 			break;
@@ -1902,11 +1944,9 @@ int main(int argc, char *argv[])
 	}
 	if (err || argc > optind) {
                 fprintf(stderr, "Usage: lsusb [options]...\n"
-			"List all USB devices\n"
-			"\n"
-			"OPTIONS\n"
-			"  -v\n"
-			"      Increase verbosity\n"
+			"List USB devices\n"
+			"  -v, --verbose\n"
+			"      Increase verbosity (show descriptors)\n"
 			"  -s [[bus]:][devnum]\n"
 			"      Show only devices in specified bus and/or devnum\n"
 			"  -d vendor:[product]\n"
@@ -1917,7 +1957,7 @@ int main(int argc, char *argv[])
 			"      Dump the physical USB device hierarchy as a tree\n"
 			"  -V, --version\n"
 			"      Show version of program\n"
-			"\n");
+			);
 		exit(1);
 	}
 
