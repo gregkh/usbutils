@@ -28,7 +28,7 @@ AC_C_INLINE
 AC_STRUCT_TM
 
 # checks for library functions
-AC_CHECK_FUNCS([getopt_long],,AC_LIBOBJ([getopt]) AC_LIBOBJ([getopt1]))
+AC_CHECK_FUNCS([getopt_long],,[AC_LIBOBJ([getopt]) AC_LIBOBJ([getopt1])])
 
 dnl checks for libusb-config
 AC_CHECK_PROG(LIBUSB_CONFIG, libusb-config, yes, no)
