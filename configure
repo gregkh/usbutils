@@ -5150,9 +5150,9 @@ echo "$as_me: error: get libusb 1.8 or newer" >&2;}
 fi
 
 
-# Check whether --enable-usbmod or --disable-usbmod was given.
-if test "${enable_usbmod+set}" = set; then
-  enableval="$enable_usbmod"
+# Check whether --enable-usbmodules or --disable-usbmodules was given.
+if test "${enable_usbmodules+set}" = set; then
+  enableval="$enable_usbmodules"
    case "${enableval}" in
 	yes) usbmod=true ;;
 	no) usbmod=false ;;

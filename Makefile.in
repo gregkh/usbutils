@@ -39,8 +39,10 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-sbin_PROGRAMS = lsusb$(EXEEXT)
+sbin_PROGRAMS = lsusb$(EXEEXT) $(am__EXEEXT_1)
 EXTRA_PROGRAMS = usbmodules$(EXEEXT)
+@USBMODULES_TRUE@am__append_1 = usbmodules
+@USBMODULES_TRUE@am__append_2 = usbmodules.8
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -55,6 +57,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES =
+@USBMODULES_TRUE@am__EXEEXT_1 = usbmodules$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(sbindir)" "$(DESTDIR)$(man8dir)" \
 	"$(DESTDIR)$(datadir)"
 sbinPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
@@ -185,7 +188,7 @@ lsusb_SOURCES = lsusb.c \
 	usbmisc.c usbmisc.h
 
 data_DATA = usb.ids
-man_MANS = lsusb.8
+man_MANS = lsusb.8 $(am__append_2)
 usbmodules_SOURCES = usbmodules.c usbmodules.h \
 	usbmisc.c usbmisc.h
 
@@ -639,9 +642,6 @@ uninstall-man: uninstall-man8
 	uninstall-am uninstall-dataDATA uninstall-info-am \
 	uninstall-man uninstall-man8 uninstall-sbinPROGRAMS
 
-
-@USBMODULES_TRUE@	sbin_PROGRAMS += usbmodules
-@USBMODULES_TRUE@	man_MANS += usbmodules.8
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
