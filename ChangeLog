@@ -1,3 +1,9 @@
+2005-02-11 Thierry Vignaud <tvignaud@mandrakesoft.com>
+	* usbmodules.8: fix --device /proc/usb/usb/BBB/DDD typo
+
+2005-02-02 David Brownell <dbrownell@users.sourceforge.net>
+	* configure.in: fix typo, recommend libusb 0.1.8 not 1.8
+
 2005-01-30 David Brownell <dbrownell@users.sourceforge.net>
 	Fix some more warnings reported by Aurelian, and configure
 	gcc for "-W -Wunused" to discourage more from appearing.

@@ -32,7 +32,7 @@ AC_FUNC_MALLOC
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([getcwd memset getopt_long strchr strerror strstr strtoul uname])
 AC_CHECK_LIB(usb, usb_get_string_simple, ,
-	[AC_MSG_ERROR(get libusb 1.8 or newer)])
+	[AC_MSG_ERROR(get libusb 0.1.8 or newer)])
 
 AC_ARG_ENABLE(usbmodules,
 	[  --enable-usbmodules     build usbmodules (for Linux 2.4)],
