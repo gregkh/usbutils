@@ -87,6 +87,23 @@ static unsigned int convert_le_u32 (const unsigned char *buf)
 
 /* ---------------------------------------------------------------------- */
 
+/* workaround libusb API goofs:  "byte" should never be sign extended;
+ * using "char" is trouble.  Likewise, sizes should never be negative.
+ */
+
+static inline int typesafe_control_msg(usb_dev_handle *dev,
+	unsigned char requesttype, unsigned char request,
+	int value, int index,
+	unsigned char *bytes, unsigned size, int timeout)
+{
+	return usb_control_msg(dev, requesttype, request, value, index,
+		(char *) bytes, (int) size, timeout);
+}
+
+#define usb_control_msg		typesafe_control_msg
+
+/* ---------------------------------------------------------------------- */
+
 int lprintf(unsigned int vl, const char *format, ...)
 {
         va_list ap;
@@ -289,7 +306,7 @@ static void dump_config(struct usb_dev_handle *dev, struct usb_config_descriptor
 
 		while (size >= 2) {
 			if (buf[0] < 2) {
-				dump_junk("        ", buf, size);
+				dump_junk(buf, "        ", size);
 				break;
 			}
 			switch (buf[1]) {
@@ -316,7 +333,7 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 	char ifstr[128];
 	
 	char *buf;
-	int size, i;
+	unsigned size, i;
 
 	get_class_string(cls, sizeof(cls), interface->bInterfaceClass);
 	get_subclass_string(subcls, sizeof(subcls), interface->bInterfaceClass, interface->bInterfaceSubClass);
@@ -345,7 +362,7 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 		while (size >= 2 * sizeof(u_int8_t))
 		{
 			if (buf[0] < 2) {
-				dump_junk("      ", buf, size);
+				dump_junk(buf, "      ", size);
 				break;
 			} 
 			switch (buf[1]) {
@@ -408,7 +425,7 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 	static const char *usage[] = { "Data", "Feedback", "Implicit feedback Data", "(reserved)" };
 	static const char *hb[] = { "1x", "2x", "3x", "(?\?)" };
 	char *buf;
-	int size;
+	unsigned size;
 
 	printf("      Endpoint Descriptor:\n"
 	       "        bLength             %5u\n"
@@ -441,7 +458,7 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 		while (size >= 2 * sizeof(u_int8_t))
 		{
 			if (buf[0] < 2) {
-				dump_junk("        ", buf, size);
+				dump_junk(buf, "        ", size);
 				break;
 			}
 			switch (buf[1]) {
@@ -733,7 +750,7 @@ static void dump_audiostreaming_interface(struct usb_dev_handle *dev, unsigned c
 		if (buf[0] < 7)
 			printf("      Warning: Descriptor too short\n");
 		fmttag = buf[5] | (buf[6] << 8);
-		if (fmttag >= 0 && fmttag <= 5)
+		if (fmttag <= 5)
 			fmtptr = fmtItag[fmttag];
 		else if (fmttag >= 0x1000 && fmttag <= 0x1002)
 			fmtptr = fmtIItag[fmttag & 0xfff];
@@ -826,7 +843,7 @@ static void dump_audiostreaming_interface(struct usb_dev_handle *dev, unsigned c
 		if (buf[0] < 5)
 			printf("      Warning: Descriptor too short\n");
 		fmttag = buf[3] | (buf[4] << 8);
-		if (fmttag >= 0 && fmttag <= 5)
+		if (fmttag <= 5)
 			fmtptr = fmtItag[fmttag];
 		else if (fmttag >= 0x1000 && fmttag <= 0x1002)
 			fmtptr = fmtIItag[fmttag & 0xfff];
@@ -1716,7 +1733,8 @@ static unsigned char *find_otg(unsigned char *buf, int buflen)
 
 static void do_otg(struct usb_config_descriptor *config)
 {
-	unsigned	i, j, k;
+	unsigned	i, k;
+	int		j;
 	unsigned char	*desc;
 
 	/* each config of an otg device has an OTG descriptor */
@@ -1812,10 +1830,10 @@ static int list_devices(int busnum, int devnum, int vendorid, int productid, uns
 	status=1; /* 1 device not found, 0 device found */
 	
 	for (bus = usb_busses; bus; bus = bus->next) {
-		if (busnum != -1 && strtoul(bus->dirname, NULL, 0) != busnum)
+		if (busnum != -1 && strtol(bus->dirname, NULL, 0) != busnum)
 			continue;
 		for (dev = bus->devices; dev; dev = dev->next) {
-			if (devnum != -1 && strtoul(dev->filename, NULL, 0) != devnum)
+			if (devnum != -1 && strtol(dev->filename, NULL, 0) != devnum)
 				continue;
 			if ((vendorid != -1 && vendorid != dev->descriptor.idVendor) || (productid != -1 && productid != dev->descriptor.idProduct))
 				continue;
@@ -1840,18 +1858,22 @@ static int list_devices(int busnum, int devnum, int vendorid, int productid, uns
 
 void devtree_busconnect(struct usbbusnode *bus)
 {
+	bus = bus;	/* reduce compiler warnings */
 }
 
 void devtree_busdisconnect(struct usbbusnode *bus)
 {
+	bus = bus;	/* reduce compiler warnings */
 }
 
 void devtree_devconnect(struct usbdevnode *dev)
 {
+	dev = dev;	/* reduce compiler warnings */
 }
 
 void devtree_devdisconnect(struct usbdevnode *dev)
 {
+	dev = dev;	/* reduce compiler warnings */
 }
 
 static int treedump(void)

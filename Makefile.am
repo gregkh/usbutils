@@ -2,7 +2,7 @@
 
 AM_CPPFLAGS = -DUSBIDS_FILE='"@datadir@/usb.ids"'
 
-AM_CFLAGS = -Wall
+AM_CFLAGS = -Wall -W
 
 sbin_PROGRAMS = lsusb
 
