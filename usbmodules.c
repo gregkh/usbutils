@@ -191,6 +191,9 @@ read_modules_usbmap(char *pathname)
                if (line[0] == '#')
                        continue;
 
+	       if (line[0] == '\n')
+		       continue;
+
                entry = xmalloc(sizeof(struct usbmap_entry));
 
 	       if (!scan_with_flags(line, entry, name) &&
