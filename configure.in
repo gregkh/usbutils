@@ -1,0 +1,75 @@
+dnl Process this file with autoconf to produce a configure script.
+
+# Initialization
+AC_INIT(Makefile.am)
+AM_CONFIG_HEADER(config.h)
+
+AM_INIT_AUTOMAKE(usbutils, 0.12)
+
+# determine the system type
+AC_CANONICAL_HOST
+
+# build time sanity check...
+AM_SANITY_CHECK
+
+# checks for programs
+AC_PROG_CC
+AC_PROG_RANLIB
+AC_PROG_LN_S
+AC_PROG_INSTALL
+
+# checks for header files
+AC_HEADER_STDC
+AC_CHECK_HEADERS(getopt.h sys/ioctl.h syslog.h errno.h)
+
+# checks for typedefs, structures, and compiler characteristics
+AC_C_CONST
+AC_C_INLINE
+AC_STRUCT_TM
+
+# checks for library functions
+AC_CHECK_FUNCS([getopt_long],,AC_LIBOBJ([getopt]) AC_LIBOBJ([getopt1]))
+
+dnl checks for libusb-config
+AC_CHECK_PROG(LIBUSB_CONFIG, libusb-config, yes, no)
+if test "$LIBUSB_CONFIG" = "yes"; then
+  LIBUSB_LDFLAGS=`libusb-config --libs`
+  LIBUSB_CFLAGS=`libusb-config --cflags`
+  LIBUSB_VERSION=`libusb-config --version`
+else
+  AC_MSG_ERROR([libusb not found!])
+fi
+	  
+
+dnl set USBIDS_FILE in config.h.
+if test "x${datadir}" = 'x${prefix}/share'; then
+  if test "x${prefix}" = "xNONE"; then
+    AC_DEFINE_UNQUOTED(USBIDS_FILE, "${ac_default_prefix}/share/usb.ids", [location of usb.ids])
+  else
+    AC_DEFINE_UNQUOTED(USBIDS_FILE, "${prefix}/share/usb.ids", [location of usb.ids])
+  fi
+else
+  AC_DEFINE_UNQUOTED(USBIDS_FILE, "${datadir}/usb.ids", [location of usb.ids])
+fi
+
+# some extra flags
+CFLAGS="$CFLAGS -Wall $LIBUSB_CFLAGS"
+LDFLAGS="$LDFLAGS $LIBUSB_LDFLAGS"
+
+# pass flags
+AC_SUBST(CFLAGS)
+AC_SUBST(LDFLAGS)
+
+AC_OUTPUT([Makefile])
+
+AC_MSG_RESULT([
+
+usbutils-$VERSION is now configured for $canonical_host_type
+
+  Build:                $build
+  Host:                 $host
+  Source directory:     $srcdir
+  Installation prefix:  $prefix
+  C compiler:           $CC $CFLAGS
+  
+])

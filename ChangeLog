@@ -1,0 +1,40 @@
+2000-11-06  Thomas Sailer  <sailer@eldrich.ee.ethz.ch>
+
+	* names.c, lsusb.c: Fixup of Gunther Mayer's patch; do not export
+	internal storage arch out of names.h; formatting beautification;
+	fixed several memory leaks and scribbles
+
+2000-11-05  Gunther Mayer <Gunther.Mayer@t-online.de>
+	* lsusb.c: Hub Descriptor decode
+	* usb.std: New
+	* lsusb.c: HID Report Descriptor decode
+	* lsusb.c: String Descriptors w/ LANGID, assume Unicode-ASCII for the moment
+
+2000-11-03  Adam J. Richter  <adam@yggdrasil.com>
+
+	* lsusb.c: Retry usb_control.
+
+1999-12-03  Thomas Sailer  <sailer@spaceballs.ee.ethz.ch>
+
+	* lsusb.c: bogus error checks for open calls, reported by Matthew Darm
+
+1999-09-17  Thomas Sailer  <sailer@ife.ee.ethz.ch>
+
+	* configure.in: bumped version number.
+
+	* usbutils.spec: likewise.
+
+	* names.c: added parsing routines for terminal types to be listed in usb.ids
+
+	* names.h: likewise.
+
+	* lsusb.c (dump_audiocontrol_interface): likewise.
+
+1999-09-16  Thomas Sailer  <sailer@ife.ee.ethz.ch>
+
+	* lsusb.c (dump_audiocontrol_interface): fixed a couple of forgotten printf arguments
+
+1999-09-13  Thomas Sailer  <sailer@ife.ee.ethz.ch>
+
+	* Created package
+

@@ -1,0 +1,2 @@
+Thanks to a patch from Aurelien Jarno, usbutils now uses libusb to
+access USB devices
