@@ -1,3 +1,8 @@
+2005-01-05 David Brownell <dbrownell@users.sourceforge.net>
+	* lsusb.c:  handle more descriptors; misplaced comm descriptors
+	  get interpreted; some minor fixes.
+	* usb.ids: update to current version
+
 2004-12-11 David Brownell <dbrownell@users.sourceforge.net>
 	* update-usbids.sh:  add, based on update-pciids.sh
 

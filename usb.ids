@@ -6,7 +6,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.5 2004/12/11 16:37:52 dbrownell Exp $
+# $Id: usb.ids,v 1.6 2005/01/06 20:25:04 dbrownell Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -150,6 +150,8 @@
 	1001  Mustek BearPaw 2400 Scanner
 0401  National Registry, Inc.
 0402  ALi Corp.
+	5621 USB 2.0 Storage Device
+	5632 USB 2.0 Host-to-Host Link
 0403  Future Technology Devices International, Ltd
 	0000  H4SMK 7 Port Hub
 	6001  8-bit FIFO
@@ -170,6 +172,7 @@
 	0027  MultiSync Monitor
 	0058  HighSpeed Hub
 	0059  HighSpeed Hub
+	006a  Conceptronic USB Harddisk Box
 	55aa  Hub
 	55ab  Hub [iMac kbd]
 	efbe  P!cty 900 [HP DJ]
@@ -272,6 +275,7 @@
 0420  Chips and Technologies
 0421  Nokia Mobile Phones
 	0401  6650 GSM Phone
+	0410  6630 Imaging Smartphone
 	0800  Connectivity Cable DKU-5
 0422  ADI Systems, Inc.
 0423  Computer Access Technology Corp.
@@ -731,6 +735,7 @@
 	309b  Digital IXUS (ptp)
 	309c  PowerShot S1 IS
 	30ba  PowerShot S410 Digital Elph
+	30eb  EOS 20D
 04aa  DaeWoo Telecom, Ltd
 04ab  Chromatic Research
 04ac  Micro Audiometrics Corp.
@@ -766,6 +771,7 @@
 	3004  Media Access Pro Keyboard
 	3100  NetVista Mouse
 	3103  ScrollPoint Pro Mouse
+	3107  ThinkPad 800dpi Optical Travel Mouse
 	3109  Optical ScrollPoint Pro Mouse
 	4427  Portable CD ROM
 	4525  Double sided CRT
@@ -1006,6 +1012,7 @@
 050f  KC Technology, Inc.
 	0003  KC82C160S Hub
 	0180  KC-180 IrDA Dongle
+	0190  KC2190 USB Host-to-Host cable
 0510  Sejin Electron, Inc.
 0511  N'Able (DataBook) Technologies, Inc.
 0512  Hualon Microelectronics Corp.
@@ -1129,6 +1136,7 @@
 0552  Philips Monitors
 0553  STMicroelectronics Imaging Division (VLSI Vision)
 	0002  CPiA WebCam
+	0151  Digital Blue QX5 Microscope
 	0202  Aiptek PenCam 1
 0554  Dictaphone Corp.
 0555  ANAM S&T Co., Ltd
@@ -1243,6 +1251,7 @@
 	4d21  Hauppauge WinTV-USB II (PAL)
 	4d22  Hauppauge WinTV-USB II (PAL) Model 566
 	4d23  Hauppauge WinTV-USB France 4D23
+	4d26  Hauppauge WinTv-USB Model 40209 rev B243
 	4d30  Hauppauge WinTV-USB with FM USA radio Model 602
 	4d31  Hauppauge WinTV-USB III (PAL) with FM radio Model 568
 	4d32  Hauppauge WinTV-USB III (PAL) FM Model 573
@@ -1588,6 +1597,7 @@
 0642  VIA Medical Corp.
 0644  TEAC Corp.
 	0000  Floppy
+	800D  TASCAM Portastudio DP-01FX
 0645  Who? Vision Systems, Inc.
 0646  UMAX
 0647  Acton Research Corp.
@@ -1688,15 +1698,17 @@
 0682  Victor Company of Japan, Ltd
 0684  Actiontec Electronics, Inc.
 0686  Minolta Co., Ltd
-	4003  Dimage 2330 Zoom
+	4003  Dimage 2330 Zoom Camera
 	4004  Scan Elite II
-	4006  Dimage 7 digital still camera
-	4007  Dimage S304 digital still camera
-	4009  Dimage X digital still camera
-	400a  Dimage S404 digital still camera
-	400b  Dimage 7i digital still camera
+	4006  Dimage 7 Camera
+	4007  Dimage S304 Camera
+	4009  Dimage X Camera
+	400a  Dimage S404 Camera
+	400b  Dimage 7i Camera
 	400d  Scan Dual III
-	4014  Dimage S414 digital still camera
+	4014  Dimage S414 Camera
+	4015  Dimage XT Camera [storage]
+	4016  Dimage XT Camera [remote mode]
 068a  Pertech, Inc.
 068b  Potrans International, Inc.
 068e  CH Products, Inc.
@@ -1793,9 +1805,7 @@
 	004a  PhidgetLED Ver 1.0
 	004b  PhidgetEncoder Ver 1.0
 	0051  PhidgetInterface Kit 0-5-7 (Custom)
-	0051  PhidgetTextLCD (Custom)
 	0052  PhidgetTextLCD
-	0053  PhidgetTextLCD
 	0053  PhidgetInterfaceKit 0-8-8
 	0058  PhidgetMotorControl Ver 1.0
 	0070  PhidgetTemperatureSensor Ver 1.0
@@ -1992,7 +2002,8 @@
 	0621  SDDR-86 Imagemate 6-in-1 Reader
 	0810  SDDR-75 ImageMate CF-SM Reader
 	0830  ImageMate CF/MMC/SD Reader
-	8185  SDCZ2-nnn Cruzer Mini flash-RAM drive
+	5150  SDCZ2 Cruzer Mini Flash Drive (thin)
+	8185  SDCZ2 Cruzer Mini Flash Drive (older, thick)
 	8889  SDDR-88 Imagemate 8-in-1 Reader
 0782  Trackerball
 0784  Vivitar, Inc.
@@ -2178,7 +2189,7 @@
 	0020  Palm I705
 	0040  Palm M125
 	0050  Palm M130
-	0060  Palm Tungsten T
+	0060  Palm Tungsten T / Zire 71
 	0080  Palm 
 0832  Kouwell Electronics Corp.
 0833  Sourcenext Corp.
@@ -2228,6 +2239,7 @@
 086a  Emagic Soft-und Hardware GmbH
 086c  DeTeWe - Deutsche Telephonwerke AG & Co.
 	1001  Eumex 504PC ISDN TA
+	1055  Eumex 220 ISDN TA
 086e  System TALKS, Inc.
 086f  MEC IMEX, Inc.
 0870  Metricom
@@ -2426,6 +2438,8 @@
 0993  Gemstar eBook Group, Ltd
 	0001  REB1100 eBook Reader
 0996  Integrated Telecom Express, Inc.
+099a  Zippy Technology Corp.
+	610c  EL-610 Super Mini Electron luminescent Keyboard
 09a3  PairGain Technologies
 09a4  Contech Research, Inc.
 09a5  VCON Telecommunications
@@ -2466,6 +2480,7 @@
 09d9  KRF Tech, Ltd
 09da  A4 Tech Co., Ltd
 	001a  Wireless Mouse & RXM-15 Receiver
+	002a  Wireless Optical Mouse NB-30
 09db  Measurement Computing Corp.
 09dc  Aimex Corp.
 09dd  Fellowes, Inc.
@@ -2497,7 +2512,8 @@
 0a0b  Cybex Computer Products Co.
 0a11  Xentec, Inc.
 0a12  Cambridge Silicon Radio, Ltd
-	0001  Bluetooth Dongle
+	0001  Bluetooth Dongle (HCI mode)
+	1000  Bluetooth Dongle (HID proxy mode)
 0a13  Telebyte, Inc.
 0a14  Spacelabs Medical, Inc.
 0a15  Scalar Corp.
@@ -3185,6 +3201,8 @@
 0f32  YFC-BonEagle Electric Co., Ltd
 0f37  Kokuyo Co., Ltd
 0f38  Nien-Yi Industrial Corp.
+0f3d  Airprime, Incorporated
+	0112  CDMA 1xEVDO PC Card, PC 5220
 0f41  RDC Semiconductor Co., Ltd
 0f42  Nital Consulting Services, Inc.
 0f4b  St. John Technology Co., Ltd
@@ -3216,6 +3234,8 @@
 0f8f  Soma Networks
 0f97  CviLux Corp.
 0f98  CyberBank Corp.
+0f9c  Hyun Won, Inc.
+	0332  mobiBLU DAH-1200 MP3/Ogg Player
 0f9e  Lucent Technologies
 0fa3  Starconn Electronic Co., Ltd
 0fa4  ATL Technology
@@ -3411,9 +3431,13 @@
 118f  You Yang Technology Co., Ltd
 1190  Tripace
 1191  Loyalty Founder Enterprise Co., Ltd
+1196  Yankee Robotics, LLC
+	0010 Trifid Camera without code
+	0011 Trifid Camera
 1197  Technoimagia Co., Ltd
 1198  StarShine Technology Corp.
 1199  Sierra Wireless, Inc.
+	0112  CDMA 1xEVDO PC Card, AirCard 580
 119a  ZHAN QI Technology Co., Ltd
 11a3  Technovas Co., Ltd
 11aa  GlobalMedia Group, LLC
@@ -3421,6 +3445,8 @@
 11db  Topfield Co., Ltd.
 	1000  PVR
 	1100  PVR
+11f5  Siemens AG (?)
+	0003  Mobile phone USB cable
 1209  InterBiometrics
 	1001  USB Hub
 	1002  USB Relais
@@ -3455,6 +3481,8 @@
 	0203  EasiDock 200 Printer Port
 13d2  Shark Multimedia
 	0400  Pocket Ethernet [klsi]
+1462  Micro Star International
+	5512  MegaStick-1 Flash Stick
 147a  Formosa Industrial Computing, Inc.
 1484  Elsa AG [hex]
 	1746  Ecomo 19H99 Monitor
@@ -3497,6 +3525,8 @@
 	8000  EZ-USB
 	8002  2x Serial Port
 	8093  PortGear Serial Port
+1657  Struck Innovative Systeme GmbH
+	3150  SIS3150 USB2.0 to VME interface
 1668  Actiontec Electronics, Inc. [hex]
 	0333  Modem
 	0408  Prism2.5 802.11b Adapter
@@ -3532,6 +3562,7 @@
 	2822  V.120e GSM Phone
 	3002  A835 GSM Phone
 	3802  C330 GSM Phone
+	600c  A768i GSM Phone
 22b9  eTurboTouch Technology, Inc.
 22ba  Technology Innovation Holdings, Ltd
 2304  Pinnacle Systems, Inc. [hex]
