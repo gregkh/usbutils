@@ -1,3 +1,9 @@
+2005-04-14 David Brownell <dbrownell@users.sourceforge.net>
+	* lsusb.c: add some more CDC WHCM dumping, matching a Sony 3G phone
+
+2005-03-28 Aurelien Jarno <aurelien@aurel32.net> 
+	* lsusb.c: disallow decimal product and vendor codes (hex only)
+
 2005-03-05 David Brownell <dbrownell@users.sourceforge.net>
 	* lsusb.c: add basic CDC MDLM dumping, to cope with new CDC
 	  conformance lies from a Zaurus C-860

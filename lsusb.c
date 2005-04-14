@@ -1519,6 +1519,9 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 		if (buf[3] & 0x01)
 			printf("%s    get/set/clear comm features\n", indent);
 		break;
+	// case 0x03:		/* direct line management */
+	// case 0x04:		/* telephone ringer */
+	// case 0x05:		/* telephone call and line state reporting */
 	case 0x06:		/* union desc */
 		if (buf [0] < 5)
 			goto bad;
@@ -1545,6 +1548,26 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 				indent, buf[tmp], buf[tmp + 1]);
 		}
 		break;
+	case 0x08:		/* telephone operational modes */
+		if (buf [0] != 4)
+			goto bad;
+		printf("%sCDC Telephone operations:\n"
+		       "%s  bmCapabilities       0x%02x\n",
+		       indent,
+		       indent, buf[3]);
+		if (buf[3] & 0x04)
+			printf("%s    computer centric mode\n", indent);
+		if (buf[3] & 0x02)
+			printf("%s    standalone mode\n", indent);
+		if (buf[3] & 0x01)
+			printf("%s    simple mode\n", indent);
+		break;
+	// case 0x09:		/* USB terminal */
+	// case 0x0a:		/* network channel terminal */
+	// case 0x0b:		/* protocol unit */
+	// case 0x0c:		/* extension unit */
+	// case 0x0d:		/* multi-channel management */
+	// case 0x0e:		/* CAPI control management*/
 	case 0x0f:		/* ethernet functional desc */
 		if (buf [0] != 13)
 			goto bad;
@@ -1566,6 +1589,15 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 		       indent, (buf[9]<<8)|buf[8],
 		       indent, (buf[11]<<8)|buf[10],
 		       indent, buf[12]);
+		break;
+	// case 0x10:		/* ATM networking */
+	case 0x11:		/* WHCM functional desc */
+		if (buf[0] != 5)
+			goto bad;
+		printf("%sCDC WHCM:\n"
+		       "%s  bcdVersion           %x.%02x\n",
+		       indent,
+		       indent, buf[4], buf[3]);
 		break;
 	case 0x12:		/* MDLM functional desc */
 		if (buf [0] != 21)
@@ -1593,6 +1625,27 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 		       indent);
 		dump_bytes(buf + 4, buf[0] - 4);
 		break;
+	case 0x14:		/* device management functional desc */
+		if (buf[0] != 7)
+			goto bad;
+		printf("%sCDC Device Management:\n"
+		       "%s  bcdVersion           %x.%02x\n"
+		       "%s  wMaxCommand          %d\n",
+		       indent,
+		       indent, buf[4], buf[3],
+		       indent, (buf[6]<<8)| buf[5]);
+		break;
+	case 0x15:		/* OBEX functional desc */
+		if (buf[0] != 5)
+			goto bad;
+		printf("%sCDC OBEX:\n"
+		       "%s  bcdVersion           %x.%02x\n",
+		       indent,
+		       indent, buf[4], buf[3]);
+		break;
+	// case 0x16:		/* command set functional desc */
+	// case 0x17:		/* command set detail desc */
+	// case 0x18:		/* telephone control model functional desc */
 	default:
 		/* FIXME there are about a dozen more descriptor types */
 		printf("%sUNRECOGNIZED: ", indent);
@@ -1978,9 +2031,9 @@ int main(int argc, char *argv[])
 			}
 			*cp++ = 0;
 			if (*optarg)
-				vendor = strtoul(optarg, NULL, 0);
+				vendor = strtoul(optarg, NULL, 16);
 			if (*cp)
-				product = strtoul(cp, NULL, 0);
+				product = strtoul(cp, NULL, 16);
 			break;
 
 		case 'D':
@@ -2001,7 +2054,8 @@ int main(int argc, char *argv[])
 			"  -s [[bus]:][devnum]\n"
 			"      Show only devices in specified bus and/or devnum\n"
 			"  -d vendor:[product]\n"
-			"      Show only devices with the specified vendor and product ID\n"
+			"      Show only devices with the specified vendor and\n"
+			"      product ID numbers (in hexadecimal)\n"
 			"  -D device\n"
 			"      Selects which device lsusb will examine\n"
 			"  -t\n"
