@@ -335,7 +335,7 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 	char cls[128], subcls[128], proto[128];
 	char ifstr[128];
 	
-	char *buf;
+	unsigned char *buf;
 	unsigned size, i;
 
 	get_class_string(cls, sizeof(cls), interface->bInterfaceClass);
@@ -427,7 +427,7 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 	static const char *syncattr[] = { "None", "Asynchronous", "Adaptive", "Synchronous" };
 	static const char *usage[] = { "Data", "Feedback", "Implicit feedback Data", "(reserved)" };
 	static const char *hb[] = { "1x", "2x", "3x", "(?\?)" };
-	char *buf;
+	unsigned char *buf;
 	unsigned size;
 
 	printf("      Endpoint Descriptor:\n"
@@ -1682,7 +1682,7 @@ static void do_hub(struct usb_dev_handle *fd, unsigned has_tt)
 
 	printf(" Hub Port Status:\n");
 	for (i = 0; i < buf[2]; i++) {
-		char stat [4];
+		unsigned char stat [4];
 
 		ret = usb_control_msg(fd,
 				USB_ENDPOINT_IN | USB_TYPE_CLASS
@@ -1882,7 +1882,7 @@ static void dumpdev(struct usb_device *dev)
 
 /* ---------------------------------------------------------------------- */
 
-static int dump_one_device(const char *path, unsigned int flags)
+static int dump_one_device(const char *path)
 {
 	struct usb_device *dev;
 	char vendor[128], product[128];
@@ -1902,7 +1902,7 @@ static int dump_one_device(const char *path, unsigned int flags)
 	return 0;
 }
 
-static int list_devices(int busnum, int devnum, int vendorid, int productid, unsigned int flags)
+static int list_devices(int busnum, int devnum, int vendorid, int productid)
 {
 	struct usb_bus *bus;
 	struct usb_device *dev;
@@ -2088,8 +2088,8 @@ int main(int argc, char *argv[])
  		verblevel += 1 - VERBLEVEL_DEFAULT;
 		status = treedump();
 	} else if (devdump)
-		status = dump_one_device(devdump, 0);
+		status = dump_one_device(devdump);
 	else
-		status = list_devices(bus, devnum, vendor, product, 0);
+		status = list_devices(bus, devnum, vendor, product);
 	return status;
 }
