@@ -1,3 +1,11 @@
+2005-05-14 David Brownell <dbrownell@users.sourceforge.net>
+	Label as version 0.71
+	* usb.ids: update to current version
+
+2005-05-13 Toby Ernst <tee@sgi.com>
+	* lsusb.c: /proc/bus/usb/BBB/DDD numbers are decimal not octal
+	* lsusb.8: ditto
+
 2005-04-29 Olaf Hering <olh@suse.de>
 	* lsusb.c: fix some compiler warnings
 
