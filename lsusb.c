@@ -1912,16 +1912,23 @@ static int list_devices(int busnum, int devnum, int vendorid, int productid)
 	status=1; /* 1 device not found, 0 device found */
 	
 	for (bus = usb_busses; bus; bus = bus->next) {
-		if (busnum != -1 && strtol(bus->dirname, NULL, 0) != busnum)
+		if (busnum != -1 && strtol(bus->dirname, NULL, 10) != busnum)
 			continue;
 		for (dev = bus->devices; dev; dev = dev->next) {
-			if (devnum != -1 && strtol(dev->filename, NULL, 0) != devnum)
+			if (devnum != -1 && strtol(dev->filename, NULL, 10)
+					!= devnum)
 				continue;
-			if ((vendorid != -1 && vendorid != dev->descriptor.idVendor) || (productid != -1 && productid != dev->descriptor.idProduct))
+			if ((vendorid != -1 && vendorid
+						!= dev->descriptor.idVendor)
+					|| (productid != -1 && productid
+						!= dev->descriptor.idProduct))
 				continue;
 			status = 0;
-			get_vendor_string(vendor, sizeof(vendor), dev->descriptor.idVendor);
-			get_product_string(product, sizeof(product), dev->descriptor.idVendor, dev->descriptor.idProduct);
+			get_vendor_string(vendor, sizeof(vendor),
+					dev->descriptor.idVendor);
+			get_product_string(product, sizeof(product),
+					dev->descriptor.idVendor,
+					dev->descriptor.idProduct);
 			if (verblevel > 0)
 				printf("\n");
 			printf("Bus %s Device %s: ID %04x:%04x %s %s\n",
@@ -2052,7 +2059,8 @@ int main(int argc, char *argv[])
 			"  -v, --verbose\n"
 			"      Increase verbosity (show descriptors)\n"
 			"  -s [[bus]:][devnum]\n"
-			"      Show only devices in specified bus and/or devnum\n"
+			"      Show only devices with specified device and/or\n"
+			"      bus numbers (in decimal)\n"
 			"  -d vendor:[product]\n"
 			"      Show only devices with the specified vendor and\n"
 			"      product ID numbers (in hexadecimal)\n"
