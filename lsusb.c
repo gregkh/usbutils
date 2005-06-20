@@ -1207,10 +1207,12 @@ static void dump_ccid_device(unsigned char *buf)
         putchar('\n');
 
         printf("        nMaxSlotIndex       %5u\n"
-                "        bVoltageSupport     %5u  %s\n",
+                "        bVoltageSupport     %5u  %s%s%s\n",
                 buf[4],
-                buf[5], (buf[5] == 1? "5.0V" : buf[5] == 2? "3.0V"
-                         : buf[5] == 3? "1.8V":"?"));
+                buf[5],
+               (buf[5] & 1) ? "5.0V " : "",
+               (buf[5] & 2) ? "3.0V " : "",
+               (buf[5] & 4) ? "1.8V " : "");
 
         us = convert_le_u32 (buf+6);
         printf("        dwProtocols         %5u ", us);

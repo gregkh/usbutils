@@ -6,7 +6,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.7 2005/05/14 20:46:17 dbrownell Exp $
+# $Id: usb.ids,v 1.8 2005/06/20 06:34:34 dbrownell Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -1132,6 +1132,7 @@
 	a4a4  Linux-USB user-mode bulk source/sink
 	a4a5  Linux-USB File Storage Gadget
 	a4a6  Linux-USB Serial Gadget
+	a4a7  Linux-USB Serial Gadget (CDC ACM mode)
 0526  Temic MHS S.A.
 0527  ALTRA
 0528  ATI Technologies, Inc.
@@ -1438,6 +1439,7 @@
 	0050  Zip CD 650 Writer
 	0053  CDRW55292EXT CD-RW External Drive
 	006d  HipZip MP3 Player
+	015d  Super DVD Writer
 	1052  DVD+RW External Drive
 059c  A-Trend Technology Co., Ltd
 059d  Advanced Input Devices
@@ -2194,6 +2196,7 @@
 07b1  IMP, Inc.
 07b2  Motorola BCS, Inc.
 	4100  SB4100 Cable Modem
+	5120  Surfboard SB5120 USB Cable Modem (RNDIS)
 07b3  Plustek, Inc.
 	0001  OpticPro 1212U Scanner
 	0010  OpticPro U12 Scanner
@@ -2475,6 +2478,9 @@
 08f1  CTI Electronics Corp.
 08f5  SysTec Co., Ltd
 08f6  Logic 3 International, Ltd
+08f7  Vernier
+	0001  LabPro
+	0002  EasyTemp
 08f8  Keen Top International Enterprise Co., Ltd
 08f9  Wipro Technologies
 08fa  Caere
@@ -3890,6 +3896,7 @@
 	1105  iFP-500 series mp3 player (ums firmware)
 413c  Dell Computer Corp.
 	1002  Keyboard Hub
+	2002  SK-8125 Keyboard
 	2100  SK-3106 Keyboard
 	2101  SmartCard Reader Keyboard
 	4001  Axim X5
@@ -3977,6 +3984,8 @@ C 02  Communications
 	09  Device Management
 	0a  Mobile Direct Line
 	0b  OBEX
+	0c  Ethernet Emulation
+		07  Ethernet Emulation (EEM)
 C 03  Human Interface Devices
 	00  No Subclass
 		00  None
@@ -4044,9 +4053,15 @@ C dc  Diagnostic
 C e0  Wireless
 	01  Radio Frequency
 		01  Bluetooth
+		02  Ultra WideBand Radio Control
+	02  Wireless USB Wire Adapter
+		01  Host Wire Adapter Control/Data Streaming
+		02  Device Wire Adapter Control/Data Streaming
+		03  Device Wire Adapter Isochronous Streaming
 C ef  Miscellaneous Device
 	02  Common Class
 		01  Interface Association
+		02  Wire Adapter Multifunction Peripheral
 C fe  Application Specific Interface
 	01  Device Firmware Update
 	02  IRDA Bridge
