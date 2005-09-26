@@ -1,3 +1,9 @@
+2005-09-26 David Brownell <dbrownell@users.sourceforge.net>
+	* lsusb.c: dump device status; start dumping wireless info.  don't
+	  yet dump security, BOS, "endpoint companion", or other new
+	  descriptors.  (Security can work without wireles support...)
+	* usb.ids: update to current version
+
 2005-06-19 Aurelien Jarno <aurelien@aurel32.net> 
 	* lsusb.c: correct dump of CCID supported voltages
 

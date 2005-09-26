@@ -38,6 +38,11 @@
 #include <stdarg.h>
 #include <usb.h>
 
+/* NOTE:  that should be <libusb.h> and it should include
+ * <linux/usb_ch9.h> ... without it, we keep accumulating
+ * potentially broken variants of standard types ...
+ */
+
 #include "names.h"
 #include "devtree.h"
 #include "usbmisc.h"
@@ -296,10 +301,16 @@ static void dump_config(struct usb_dev_handle *dev, struct usb_config_descriptor
 	       config->bLength, config->bDescriptorType, config->wTotalLength,
 	       config->bNumInterfaces, config->bConfigurationValue, config->iConfiguration,
 	       cfg, config->bmAttributes);
+	if (!(config->bmAttributes & 0x80))
+		printf("      (Missing must-be-set bit!)\n");
 	if (config->bmAttributes & 0x40)
 		printf("      Self Powered\n");
+	else
+		printf("      (Bus Powered)\n");
 	if (config->bmAttributes & 0x20)
 		printf("      Remote Wakeup\n");
+	if (config->bmAttributes & 0x10)
+		printf("      Battery Powered\n");
 	printf("    MaxPower            %5umA\n", config->MaxPower * 2);
 
 	/* avoid re-ordering or hiding descriptors for display */
@@ -1815,7 +1826,7 @@ static unsigned char *find_otg(unsigned char *buf, int buflen)
 	return 0;
 }
 
-static void do_otg(struct usb_config_descriptor *config)
+static int do_otg(struct usb_config_descriptor *config)
 {
 	unsigned	i, k;
 	int		j;
@@ -1841,7 +1852,7 @@ static void do_otg(struct usb_config_descriptor *config)
 		}
 	}
 	if (!desc)
-		return;
+		return 0;
 
 	printf("OTG Descriptor:\n"
 		"  bLength               %3u\n"
@@ -1853,22 +1864,161 @@ static void do_otg(struct usb_config_descriptor *config)
 			? "    SRP (Session Request Protocol)\n" : "",
 		(desc[2] & 0x02)
 			? "    HNP (Host Negotiation Protocol)\n" : "");
+	return 1;
+}
+
+static void
+dump_device_status(struct usb_dev_handle *fd, int otg, int wireless)
+{
+	unsigned char status[8];
+	int ret;
+
+	ret = usb_control_msg(fd, USB_ENDPOINT_IN | USB_TYPE_STANDARD
+				| USB_RECIP_DEVICE,
+			USB_REQ_GET_STATUS, 
+			0, 0,
+			status, 2,
+			CTRL_TIMEOUT);
+	if (ret < 0) {
+		fprintf(stderr,
+			"cannot read device status, %s (%d)\n",
+			strerror(errno), errno);
+		return;
+	}
+
+	printf("Device Status:     0x%02x%02x\n",
+			status[1], status[0]);
+	if (status[0] & (1 << 0))
+		printf("  Self Powered\n");
+	else
+		printf("  (Bus Powered)\n");
+	if (status[0] & (1 << 1))
+		printf("  Remote Wakeup Enabled\n");
+	if (status[0] & (1 << 2)) {
+		/* for high speed devices */
+		if (!wireless)
+			printf("  Test Mode\n");
+		/* for devices with Wireless USB support */
+		else
+			printf("  Battery Powered\n");
+	}
+	/* if both HOST and DEVICE support OTG */
+	if (otg) {
+		if (status[0] & (1 << 3))
+			printf("  HNP Enabled\n");
+		if (status[0] & (1 << 4))
+			printf("  HNP Capable\n");
+		if (status[0] & (1 << 5))
+			printf("  ALT port is HNP Capable\n");
+	}
+	/* for high speed devices with debug descriptors */
+	if (status[0] & (1 << 6))
+		printf("  Debug Mode\n");
+
+	if (!wireless)
+		return;
+
+	/* Wireless USB exposes FIVE different types of device status,
+	 * accessed by distinct wIndex values.
+	 */
+	ret = usb_control_msg(fd, USB_ENDPOINT_IN | USB_TYPE_STANDARD
+				| USB_RECIP_DEVICE,
+			USB_REQ_GET_STATUS, 
+			0, 1 /* wireless status */,
+			status, 1,
+			CTRL_TIMEOUT);
+	if (ret < 0) {
+		fprintf(stderr,
+			"cannot read wireless %s, %s (%d)\n",
+			"status",
+			strerror(errno), errno);
+		return;
+	}
+	printf("Wireless Status:     0x%02x\n", status[0]);
+	if (status[0] & (1 << 0))
+		printf("  TX Drp IE\n");
+	if (status[0] & (1 << 1))
+		printf("  Transmit Packet\n");
+	if (status[0] & (1 << 2))
+		printf("  Count Packets\n");
+	if (status[0] & (1 << 3))
+		printf("  Capture Packet\n");
+
+	ret = usb_control_msg(fd, USB_ENDPOINT_IN | USB_TYPE_STANDARD
+				| USB_RECIP_DEVICE,
+			USB_REQ_GET_STATUS, 
+			0, 2 /* Channel Info */,
+			status, 1,
+			CTRL_TIMEOUT);
+	if (ret < 0) {
+		fprintf(stderr,
+			"cannot read wireless %s, %s (%d)\n",
+			"channel info",
+			strerror(errno), errno);
+		return;
+	}
+	printf("Channel Info:        0x%02x\n", status[0]);
+
+	/* 3=Received data: many bytes, for count packets or capture packet */
+
+	ret = usb_control_msg(fd, USB_ENDPOINT_IN | USB_TYPE_STANDARD
+				| USB_RECIP_DEVICE,
+			USB_REQ_GET_STATUS, 
+			0, 3 /* MAS Availability */,
+			status, 8,
+			CTRL_TIMEOUT);
+	if (ret < 0) {
+		fprintf(stderr,
+			"cannot read wireless %s, %s (%d)\n",
+			"MAS info",
+			strerror(errno), errno);
+		return;
+	}
+	printf("MAS Availability:    ");
+	dump_bytes(status, 8);
+
+	ret = usb_control_msg(fd, USB_ENDPOINT_IN | USB_TYPE_STANDARD
+				| USB_RECIP_DEVICE,
+			USB_REQ_GET_STATUS, 
+			0, 5 /* Current Transmit Power */,
+			status, 2,
+			CTRL_TIMEOUT);
+	if (ret < 0) {
+		fprintf(stderr,
+			"cannot read wireless %s, %s (%d)\n",
+			"transmit power",
+			strerror(errno), errno);
+		return;
+	}
+	printf("Transmit Power:\n");
+	printf(" TxNotification:     0x%02x\n", status[0]);
+	printf(" TxBeacon:     :     0x%02x\n", status[1]);
+}
+
+static int do_wireless(struct usb_dev_handle *fd)
+{
+	/* FIXME fetch and dump BOS etc */
+	return 0;
 }
 
 static void dumpdev(struct usb_device *dev)
 {
 	struct usb_dev_handle *udev;
 	int i;
+	int otg, wireless;
 
+	otg = wireless = 0;
 	udev = usb_open(dev);
 	if (udev) {
 		dump_device(udev, &dev->descriptor);
+		if (dev->descriptor.bcdUSB >= 0x0250)
+			wireless = do_wireless(udev);
 		if (dev->config) {
+			otg = do_otg(&dev->config[0]) || otg;
 			for (i = 0; i < dev->descriptor.bNumConfigurations;
 					i++) {
 				dump_config(udev, &dev->config[i]);
 			}
-			do_otg(&dev->config[0]);
 		}
 		if (dev->descriptor.bDeviceClass == USB_CLASS_HUB)
 			do_hub(udev, dev->descriptor.bDeviceProtocol);
@@ -1876,6 +2026,7 @@ static void dumpdev(struct usb_device *dev)
 			do_dualspeed(udev);
 			do_debug(udev);
 		}
+		dump_device_status(udev, otg, wireless);
 		usb_close(udev);
 	}
 	else
