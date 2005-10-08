@@ -1,3 +1,6 @@
+2005-10-08 David Brownell <dbrownell@users.sourceforge.net>
+	* lsusb.c: dump interface associations
+
 2005-09-26 David Brownell <dbrownell@users.sourceforge.net>
 	* lsusb.c: dump device status; start dumping wireless info.  don't
 	  yet dump security, BOS, "endpoint companion", or other new

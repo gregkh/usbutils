@@ -3,8 +3,9 @@
 /*
  *      lsusb.c  --  lspci like utility for the USB bus
  *
- *      Copyright (C) 1999, 2000, 2001, 2003
+ *      Copyright (C) 1999-2001, 2003
  *        Thomas Sailer (t.sailer@alumni.ethz.ch)
+ *      Copyright (C) 2003-2005 David Brownell
  *
  *      This program is free software; you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -19,8 +20,6 @@
  *      You should have received a copy of the GNU General Public License
  *      along with this program; if not, write to the Free Software
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- *
  */
 
 /*****************************************************************************/
@@ -284,6 +283,32 @@ static void dump_device(
 	       descriptor->iProduct, prod, descriptor->iSerialNumber, serial, descriptor->bNumConfigurations);
 }
 
+static void dump_association(struct usb_dev_handle *dev, unsigned char *buf)
+{
+	char cls[128], subcls[128], proto[128];
+	char func[128];
+
+	get_class_string(cls, sizeof(cls), buf[4]);
+	get_subclass_string(subcls, sizeof(subcls), buf[4], buf[5]);
+	get_protocol_string(proto, sizeof(proto), buf[4], buf[5], buf[6]);
+	get_string(dev, func, sizeof(func), buf[7]);
+	printf("    Interface Association:\n"
+	       "      bLength             %5u\n"
+	       "      bDescriptorType     %5u\n"
+	       "      bFirstInterface     %5u\n"
+	       "      bInterfaceCount     %5u\n"
+	       "      bFunctionClass      %5u %s\n"
+	       "      bFunctionSubClass   %5u %s\n"
+	       "      bFunctionProtocol   %5u %s\n"
+	       "      iFunction           %5u %s\n",
+	       buf[0], buf[1],
+	       buf[2], buf[3],
+	       buf[4], cls,
+	       buf[5], subcls,
+	       buf[6], proto,
+	       buf[7], func);
+}
+
 static void dump_config(struct usb_dev_handle *dev, struct usb_config_descriptor *config)
 {
 	char cfg[128];
@@ -326,6 +351,9 @@ static void dump_config(struct usb_dev_handle *dev, struct usb_config_descriptor
 			switch (buf[1]) {
 			case USB_DT_OTG:
 				/* handled separately */
+				break;
+			case USB_DT_INTERFACE_ASSOCIATION:
+				dump_association(dev, buf);
 				break;
 			default:
 				/* often a misplaced class descriptor */
@@ -409,6 +437,9 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 				break;
 			case USB_DT_OTG:
 				/* handled separately */
+				break;
+			case USB_DT_INTERFACE_ASSOCIATION:
+				dump_association(dev, buf);
 				break;
 			default:
 				/* often a misplaced class descriptor */
@@ -497,6 +528,9 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 				break;
 			case USB_DT_OTG:
 				/* handled separately */
+				break;
+			case USB_DT_INTERFACE_ASSOCIATION:
+				dump_association(dev, buf);
 				break;
 			default:
 				/* often a misplaced class descriptor */
