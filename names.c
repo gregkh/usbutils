@@ -79,6 +79,12 @@ struct audioterminal {
 	char name[1];
 };
 
+struct videoterminal {
+	struct videoterminal *next;
+	u_int16_t termt;
+	char name[1];
+};
+
 struct genericstrtable {
         struct genericstrtable *next;
         unsigned int num;
@@ -109,6 +115,7 @@ static struct class *classes[HASHSZ] = { NULL, };
 static struct subclass *subclasses[HASHSZ] = { NULL, };
 static struct protocol *protocols[HASHSZ] = { NULL, };
 static struct audioterminal *audioterminals[HASHSZ] = { NULL, };
+static struct videoterminal *videoterminals[HASHSZ] = { NULL, };
 static struct genericstrtable *hiddescriptors[HASHSZ] = { NULL, };
 static struct genericstrtable *reports[HASHSZ] = { NULL, };
 static struct genericstrtable *huts[HASHSZ] = { NULL, };
@@ -236,6 +243,17 @@ const char *names_audioterminal(u_int16_t termt)
 	return NULL;
 }
 
+const char *names_videoterminal(u_int16_t termt)
+{
+	struct videoterminal *vt;
+
+	vt = videoterminals[hashnum(termt)];
+	for (; vt; vt = vt->next)
+		if (vt->termt == termt)
+			return vt->name;
+	return NULL;
+}
+
 /* ---------------------------------------------------------------------- */
 
 static int new_vendor(const char *name, u_int16_t vendorid)
@@ -353,6 +371,25 @@ static int new_audioterminal(const char *name, u_int16_t termt)
 	at->termt = termt;
 	at->next = audioterminals[h];
 	audioterminals[h] = at;
+	return 0;
+}
+
+static int new_videoterminal(const char *name, u_int16_t termt)
+{
+	struct videoterminal *vt;
+	unsigned int h = hashnum(termt);
+
+	vt = videoterminals[h];
+	for (; vt; vt = vt->next)
+		if (vt->termt == termt)
+			return -1;
+	vt = malloc(sizeof(struct videoterminal) + strlen(name));
+	if (!vt)
+		return -1;
+	strcpy(vt->name, name);
+	vt->termt = termt;
+	vt->next = videoterminals[h];
+	videoterminals[h] = vt;
 	return 0;
 }
 
@@ -562,6 +599,27 @@ static void parse(FILE *f)
 			if (new_audioterminal(cp, u))
 				fprintf(stderr, "Duplicate audio terminal type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u audio terminal type %02x %s\n", linectr, u, cp));
+			continue;
+		}
+		if (buf[0] == 'V' && buf[1] == 'T' && isspace(buf[2])) {
+			/* video terminal type spec */
+			cp = buf+3;
+			while (isspace(*cp))
+				cp++;
+			if (!isxdigit(*cp)) {
+				fprintf(stderr, "Invalid video terminal type at line %u\n", linectr);
+				continue;
+			}
+			u = strtoul(cp, &cp, 16);
+			while (isspace(*cp))
+				cp++;
+			if (!*cp) {
+				fprintf(stderr, "Invalid video terminal type at line %u\n", linectr);
+				continue;
+			}
+			if (new_videoterminal(cp, u))
+				fprintf(stderr, "Duplicate video terminal type spec at line %u terminal type %04x %s\n", linectr, u, cp);
+			DBG(printf("line %5u video terminal type %02x %s\n", linectr, u, cp));
 			continue;
 		}
 		if (buf[0] == 'H' && buf[1] == 'C' && buf[2] == 'C' && isspace(buf[3])) {

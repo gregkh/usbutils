@@ -6,7 +6,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.9 2005/09/26 22:17:37 dbrownell Exp $
+# $Id: usb.ids,v 1.10 2005/10/22 06:22:41 dbrownell Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -5795,3 +5795,22 @@ HCC 32  UK
 HCC 33  US
 HCC 34  Yugoslavia
 HCC 35  Turkish-F
+
+# List of Video Class Terminal Types
+
+# Syntax:
+# VT terminal_type  terminal_type_name
+
+VT 0100  USB Vendor Specific
+VT 0101  USB Streaming
+VT 0200  Input Vendor Specific
+VT 0201  Camera Sensor
+VT 0202  Sequential Media
+VT 0300  Output Vendor Specific
+VT 0301  Generic Display
+VT 0302  Sequential Media
+VT 0400  External Vendor Specific
+VT 0401  Composite Video
+VT 0402  S-Video
+VT 0403  Component Video
+

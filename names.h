@@ -37,6 +37,7 @@ extern const char *names_class(u_int8_t classid);
 extern const char *names_subclass(u_int8_t classid, u_int8_t subclassid);
 extern const char *names_protocol(u_int8_t classid, u_int8_t subclassid, u_int8_t protocolid);
 extern const char *names_audioterminal(u_int16_t termt);
+extern const char *names_videoterminal(u_int16_t termt);
 extern const char *names_hid(u_int8_t hidd);
 extern const char *names_reporttag(u_int8_t rt);
 extern const char *names_huts(unsigned int data);

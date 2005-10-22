@@ -1,3 +1,8 @@
+2005-10-21 Laurent Pinchart <laurent.pinchart@skynet.be>
+	* lsusb.c: add Video Class support, standard GUID printing
+	* names.c: support video terminal tags
+	* usb.ids: updated with video terminal tags
+
 2005-10-08 David Brownell <dbrownell@users.sourceforge.net>
 	* lsusb.c: dump interface associations
 
