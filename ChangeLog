@@ -1,3 +1,7 @@
+2005-11-03 David Brownell <dbrownell@users.sourceforge.net>
+	* lsusb.c: better diagnostics: for invalid CDC descriptors of a
+	  type we know, show that type with the message.
+
 2005-10-21 Laurent Pinchart <laurent.pinchart@skynet.be>
 	* lsusb.c: add Video Class support, standard GUID printing
 	* names.c: support video terminal tags

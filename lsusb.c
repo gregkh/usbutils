@@ -1949,9 +1949,11 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 {
 	int		tmp;
 	char		str [128];
+	char		*type;
 
 	switch (buf[2]) {
 	case 0:
+		type = "Header";
 		if (buf[0] != 5)
 			goto bad;
 		printf("%sCDC Header:\n"
@@ -1960,6 +1962,7 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 		       indent, buf[4], buf[3]);
 		break;
 	case 0x01:		/* call management functional desc */
+		type = "Call Management";
 		if (buf [0] != 5)
 			goto bad;
 		printf("%sCDC Call Management:\n"
@@ -1973,6 +1976,7 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 		printf("%s  bDataInterface          %d\n", indent, buf[4]);
 		break;
 	case 0x02:		/* acm functional desc */
+		type = "ACM";
 		if (buf [0] != 4)
 			goto bad;
 		printf("%sCDC ACM:\n"
@@ -1992,6 +1996,7 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 	// case 0x04:		/* telephone ringer */
 	// case 0x05:		/* telephone call and line state reporting */
 	case 0x06:		/* union desc */
+		type = "Union";
 		if (buf [0] < 5)
 			goto bad;
 		printf("%sCDC Union:\n"
@@ -2005,6 +2010,7 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 		printf("\n");
 		break;
 	case 0x07:		/* country selection functional desc */
+		type = "Country Selection";
 		if (buf [0] < 6 || (buf[0] & 1) != 0)
 			goto bad;
 		get_string(dev, str, sizeof str, buf[3]);
@@ -2018,6 +2024,7 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 		}
 		break;
 	case 0x08:		/* telephone operational modes */
+		type = "Telephone Operations";
 		if (buf [0] != 4)
 			goto bad;
 		printf("%sCDC Telephone operations:\n"
@@ -2038,6 +2045,7 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 	// case 0x0d:		/* multi-channel management */
 	// case 0x0e:		/* CAPI control management*/
 	case 0x0f:		/* ethernet functional desc */
+		type = "Ethernet";
 		if (buf [0] != 13)
 			goto bad;
 		get_string(dev, str, sizeof str, buf[3]);
@@ -2061,6 +2069,7 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 		break;
 	// case 0x10:		/* ATM networking */
 	case 0x11:		/* WHCM functional desc */
+		type = "WHCM version";
 		if (buf[0] != 5)
 			goto bad;
 		printf("%sCDC WHCM:\n"
@@ -2069,6 +2078,7 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 		       indent, buf[4], buf[3]);
 		break;
 	case 0x12:		/* MDLM functional desc */
+		type = "MDLM";
 		if (buf [0] != 21)
 			goto bad;
 		printf("%sCDC MDLM:\n"
@@ -2079,6 +2089,7 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 		       indent, get_guid(buf + 5));
 		break;
 	case 0x13:		/* MDLM detail desc */
+		type = "MDLM detail";
 		if (buf [0] < 5)
 			goto bad;
 		printf("%sCDC MDLM detail:\n"
@@ -2090,6 +2101,7 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 		dump_bytes(buf + 4, buf[0] - 4);
 		break;
 	case 0x14:		/* device management functional desc */
+		type = "Device Management";
 		if (buf[0] != 7)
 			goto bad;
 		printf("%sCDC Device Management:\n"
@@ -2100,6 +2112,7 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 		       indent, (buf[6]<<8)| buf[5]);
 		break;
 	case 0x15:		/* OBEX functional desc */
+		type = "OBEX";
 		if (buf[0] != 5)
 			goto bad;
 		printf("%sCDC OBEX:\n"
@@ -2112,14 +2125,14 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 	// case 0x18:		/* telephone control model functional desc */
 	default:
 		/* FIXME there are about a dozen more descriptor types */
-		printf("%sUNRECOGNIZED: ", indent);
+		printf("%sUNRECOGNIZED CDC: ", indent);
 		dump_bytes(buf, buf[0]);
 		return "unrecognized comm descriptor";
 	}
 	return 0;
 
-  bad:
-	printf("%sinvalid: ", indent);
+bad:
+	printf("%sINVALID CDC (%s): ", indent, type);
 	dump_bytes(buf, buf[0]);
 	return "corrupt comm descriptor";
 }
