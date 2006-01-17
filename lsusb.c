@@ -1652,7 +1652,7 @@ static void dump_hub(char *prefix, unsigned char *p, int has_tt)
 		printf(" 0x%02x", p[7+i]);
 	printf("\n%s  PortPwrCtrlMask   ", prefix);
  	for(j = 0; j < l; j++)
- 		printf(" 0x%02x ", p[7+i+j]);
+ 		printf(" 0x%02x", p[7+i+j]);
  	printf("\n");
 }
 
@@ -2141,7 +2141,7 @@ bad:
 
 static void do_hub(struct usb_dev_handle *fd, unsigned has_tt)
 {
-	unsigned char buf [7];
+	unsigned char buf [12];
 	int i, ret;
 	
 	ret = usb_control_msg(fd,
@@ -2149,7 +2149,7 @@ static void do_hub(struct usb_dev_handle *fd, unsigned has_tt)
 			USB_REQ_GET_DESCRIPTOR,
 			0x29 << 8, 0,
 			buf, sizeof buf, CTRL_TIMEOUT);
-	if (ret != sizeof buf) {
+	if (ret < 0) {
 		/* Linux returns this for suspended devices */
 		if (errno != EHOSTUNREACH)
 			perror ("can't get hub descriptor");

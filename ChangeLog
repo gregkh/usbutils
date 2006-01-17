@@ -1,3 +1,8 @@
+2006-01-17  NIIBE Yutaka  <gniibe@fsij.org>
+        * lsusb.c (dump_hub): Format string fix.
+        (do_hub): Allocate enough space for the hub descriptor.
+        Check return value in different way.
+
 2005-11-03 David Brownell <dbrownell@users.sourceforge.net>
 	* lsusb.c: better diagnostics: for invalid CDC descriptors of a
 	  type we know, show that type with the message.
