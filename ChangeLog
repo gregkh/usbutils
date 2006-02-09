@@ -1,7 +1,17 @@
+2006-02-06 Laurent Pinchart <laurent.pinchart@skynet.be>
+	* lsusb.c: update video support, show camera info
+
+2006-02-06 Vojtech Pavlik <vojtech@suse.cz>
+	* usb.ids: updated 
+
+2006-02-01 David Brownell <dbrownell@users.sourceforge.net>
+	* lsusb.c: allow longer variable length bitfields in hub descriptors;
+	  ignore all clearly-broken hub descriptors
+
 2006-01-17  NIIBE Yutaka  <gniibe@fsij.org>
-        * lsusb.c (dump_hub): Format string fix.
-        (do_hub): Allocate enough space for the hub descriptor.
-        Check return value in different way.
+	* lsusb.c (dump_hub): Format string fix.
+	  (do_hub): Allocate enough space for the hub descriptor.
+	  Check return value in different way.
 
 2005-11-03 David Brownell <dbrownell@users.sourceforge.net>
 	* lsusb.c: better diagnostics: for invalid CDC descriptors of a

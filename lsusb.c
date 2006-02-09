@@ -70,6 +70,8 @@
 #define CTRL_RETRIES	 2
 #define CTRL_TIMEOUT	(5*1000)	/* milliseconds */
 
+#define	HUB_STATUS_BYTELEN	3	/* max 3 bytes status = hub + 23 ports */
+
 static const char *procbususb = "/proc/bus/usb";
 static unsigned int verblevel = VERBLEVEL_DEFAULT;
 static int do_report_desc = 1;
@@ -1236,6 +1238,14 @@ static void dump_videocontrol_interface(struct usb_dev_handle *dev, unsigned cha
 		"White Balance Component, Auto", "Digital Multiplier", "Digital Multiplier Limit",
 		"Analog Video Standard", "Analog Video Lock Status"
 	};
+	static const char *camctrlnames[] = {
+		"Scanning Mode", "Auto-Exposure Mode", "Auto-Exposure Priority",
+		"Exposure Time (Absolute)", "Exposure Time (Relative)", "Focus (Absolute)",
+		"Focus (Relative)", "Iris (Absolute)", "Iris (Relative)", "Zoom (Absolute)",
+		"Zoom (Relative)", "PanTilt (Absolute)", "PanTilt (Relative)",
+		"Roll (Absolute)", "Roll (Relative)", "Reserved", "Reserved", "Focus, Auto",
+		"Privacy"
+	};
 	static const char *stdnames[] = {
 		"None", "NTSC - 525/60", "PAL - 625/50", "SECAM - 625/50",
 		"NTSC - 625/50", "PAL - 525/60" };
@@ -1273,8 +1283,9 @@ static void dump_videocontrol_interface(struct usb_dev_handle *dev, unsigned cha
 		printf("(INPUT_TERMINAL)\n");
 		get_string(dev, term, sizeof(term), buf[7]);
 		termt = buf[4] | (buf[5] << 8);
+		n = termt == 0x0201 ? 7 : 0;
 		get_videoterminal_string(termts, sizeof(termts), termt);
-		if (buf[0] < 8)
+		if (buf[0] < 8 + n)
 			printf("      Warning: Descriptor too short\n");
 		printf("        bTerminalID         %5u\n"
 		       "        wTerminalType      0x%04x %s\n"
@@ -1282,8 +1293,23 @@ static void dump_videocontrol_interface(struct usb_dev_handle *dev, unsigned cha
 		       buf[3], termt, termts, buf[6]);
 		printf("        iTerminal           %5u %s\n",
 		       buf[7], term);
-		/* TODO: handle additional data */
-		dump_junk(buf, "        ", 8);
+		if (termt == 0x0201) {
+			n += buf[14];
+			printf("        wObjectiveFocalLengthMin  %5u\n"
+			       "        wObjectiveFocalLengthMax  %5u\n"
+			       "        wOcularFocalLength        %5u\n"
+			       "        bControlSize              %5u\n",
+			       buf[8] | (buf[9] << 8), buf[10] | (buf[11] << 8),
+			       buf[12] | (buf[13] << 8), buf[14]);
+			ctrls = 0;
+			for (i = 0; i < 3 && i < buf[14]; i++)
+				ctrls = (ctrls << 8) | buf[8+n-i-1];
+			printf("        bmControls           0x%08x\n", ctrls);
+			for (i = 0; i < 19; i++)
+				if ((ctrls >> i) & 1)
+					printf("          %s\n", camctrlnames[i]);
+		}
+		dump_junk(buf, "        ", 8+n);
 		break;
 
 	case 0x03:  /* OUTPUT_TERMINAL */
@@ -1525,7 +1551,8 @@ static void dump_videostreaming_interface(unsigned char *buf)
 		       buf[9] | (buf[10] << 8) | (buf[11] << 16) | (buf[12] << 24),
 		       buf[13] | (buf[14] << 8) | (buf[15] << 16) | (buf[16] << 24),
 		       buf[17] | (buf[18] << 8) | (buf[19] << 16) | (buf[20] << 24),
-		       buf[23], buf[25]);
+		       buf[21] | (buf[22] << 8) | (buf[23] << 16) | (buf[24] << 24),
+		       buf[25]);
 		if (buf[25] == 0)
 			printf("        dwMinFrameInterval          %9u\n"
 			       "        dwMaxFrameInterval          %9u\n"
@@ -1647,6 +1674,8 @@ static void dump_hub(char *prefix, unsigned char *p, int has_tt)
 	printf("%s  bPwrOn2PwrGood      %3u * 2 milli seconds\n", prefix, p[5]);
 	printf("%s  bHubContrCurrent    %3u milli Ampere\n", prefix, p[6]);
 	l= (p[2] >> 3) + 1; /* this determines the variable number of bytes following */
+	if (l > HUB_STATUS_BYTELEN)
+	 	l = HUB_STATUS_BYTELEN;
 	printf("%s  DeviceRemovable   ", prefix);
 	for(i = 0; i < l; i++) 
 		printf(" 0x%02x", p[7+i]);
@@ -2141,7 +2170,8 @@ bad:
 
 static void do_hub(struct usb_dev_handle *fd, unsigned has_tt)
 {
-	unsigned char buf [12];
+	unsigned char buf [7 /* base descriptor */
+			+ 2 /* bitmasks */ * HUB_STATUS_BYTELEN ];
 	int i, ret;
 	
 	ret = usb_control_msg(fd,
@@ -2149,9 +2179,13 @@ static void do_hub(struct usb_dev_handle *fd, unsigned has_tt)
 			USB_REQ_GET_DESCRIPTOR,
 			0x29 << 8, 0,
 			buf, sizeof buf, CTRL_TIMEOUT);
-	if (ret < 0) {
-		/* Linux returns this for suspended devices */
-		if (errno != EHOSTUNREACH)
+	if (ret < 9 /* at least one port's bitmasks */) {
+		if (ret >= 0)
+			fprintf(stderr,
+				"incomplete hub descriptor, %d bytes\n",
+				ret);
+		/* Linux returns EHOSTUNREACH for suspended devices */
+		else if (errno != EHOSTUNREACH)
 			perror ("can't get hub descriptor");
 		return;
 	}
