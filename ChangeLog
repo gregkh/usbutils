@@ -1,3 +1,9 @@
+2006-02-13 Bjorn Augustsson <august@chalmers.se>
+	* lsusb.c: (HID) prettyprinting of Unit and Unit Exponent Global items
+
+2006-02-13 David Brownell <dbrownell@users.sourceforge.net>
+	* lsusb.c: whitespace fixes
+
 2006-02-06 Laurent Pinchart <laurent.pinchart@skynet.be>
 	* lsusb.c: update video support, show camera info
 
