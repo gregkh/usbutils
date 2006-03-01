@@ -15,16 +15,16 @@ data_DATA = usb.ids
 
 man_MANS = lsusb.8
 
-# usbmodules is needed only with 2.4 based hotplugging, and is DEPRECATED 
+# usbmodules is needed only with 2.4 based hotplugging, and is OBSOLETE 
 
-EXTRA_PROGRAMS = usbmodules
+# EXTRA_PROGRAMS = usbmodules
 
-usbmodules_SOURCES = usbmodules.c usbmodules.h \
-	usbmisc.c usbmisc.h
+#usbmodules_SOURCES = usbmodules.c usbmodules.h \
+#	usbmisc.c usbmisc.h
 
-if USBMODULES
-    sbin_PROGRAMS += usbmodules
-    man_MANS += usbmodules.8
-endif
+#if USBMODULES
+#    sbin_PROGRAMS += usbmodules
+#    man_MANS += usbmodules.8
+#endif
 
-EXTRA_DIST = $(man_MANS) $(data_DATA) usbmodules.8 update-usbids.sh
+EXTRA_DIST = $(man_MANS) $(data_DATA) update-usbids.sh

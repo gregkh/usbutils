@@ -1,10 +1,10 @@
 %define name    usbutils
-%define version 0.12
+%define version 0.72
 %define release 1
 Name:		%{name}
 Version:	%{version}
 Release:        %{release}
-Source:		http://usb.cs.tum.edu/download/%{name}-%{version}.tar.gz
+Source:		http://prdownloads.sourceforge.net/linux-usb/${name}-${version}.tar.gz
 Copyright:	GNU GPL
 Buildroot: 	/tmp/%{name}-%{version}-root
 ExclusiveOS: 	Linux
@@ -13,11 +13,11 @@ Group: Applications/System
 BuildPrereq: libusb-devel
 
 %description
-This package contains an utility for inspecting
-devices connected to an USB bus.
+This package contains "lsusb", a utility for inspecting
+devices connected to systems serving as USB hosts.
 
-It requires kernel version 2.3.99-pre7 or newer (supporting
-the /proc/bus/usb interface).
+It requires a Linux kernel with support for /proc/bus/usb
+interface.  
 
 %prep
 %setup -q

@@ -1,3 +1,12 @@
+2006-02-28 David Brownell <dbrownell@users.sourceforge.net>
+	* configure.in, lsusb.8: version 0.72
+	* configure, other autoconf stuff: regenerate 
+
+2006-02-18 David Brownell <dbrownell@users.sourceforge.net>
+	* usbutils.spec: minor corrections; we still don't use this though.
+	* usbmodules.c, usbmodules.8: obsolete, don't build or distribute
+	  it any more.  Any 2.4 based systems should use old usbutils.
+
 2006-02-13 Bjorn Augustsson <august@chalmers.se>
 	* lsusb.c: (HID) prettyprinting of Unit and Unit Exponent Global items
 

@@ -17,7 +17,7 @@
 # Process this file with 'automake' to create 'Makefile.in'
 
 
-SOURCES = $(lsusb_SOURCES) $(usbmodules_SOURCES)
+SOURCES = $(lsusb_SOURCES)
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -39,10 +39,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-sbin_PROGRAMS = lsusb$(EXEEXT) $(am__EXEEXT_1)
-EXTRA_PROGRAMS = usbmodules$(EXEEXT)
-@USBMODULES_TRUE@am__append_1 = usbmodules
-@USBMODULES_TRUE@am__append_2 = usbmodules.8
+sbin_PROGRAMS = lsusb$(EXEEXT)
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -57,7 +54,6 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES =
-@USBMODULES_TRUE@am__EXEEXT_1 = usbmodules$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(sbindir)" "$(DESTDIR)$(man8dir)" \
 	"$(DESTDIR)$(datadir)"
 sbinPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
@@ -66,9 +62,6 @@ am_lsusb_OBJECTS = lsusb.$(OBJEXT) names.$(OBJEXT) devtree.$(OBJEXT) \
 	usbmisc.$(OBJEXT)
 lsusb_OBJECTS = $(am_lsusb_OBJECTS)
 lsusb_LDADD = $(LDADD)
-am_usbmodules_OBJECTS = usbmodules.$(OBJEXT) usbmisc.$(OBJEXT)
-usbmodules_OBJECTS = $(am_usbmodules_OBJECTS)
-usbmodules_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I.
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -76,8 +69,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(lsusb_SOURCES) $(usbmodules_SOURCES)
-DIST_SOURCES = $(lsusb_SOURCES) $(usbmodules_SOURCES)
+SOURCES = $(lsusb_SOURCES)
+DIST_SOURCES = $(lsusb_SOURCES)
 man8dir = $(mandir)/man8
 NROFF = nroff
 MANS = $(man_MANS)
@@ -148,8 +141,6 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-USBMODULES_FALSE = @USBMODULES_FALSE@
-USBMODULES_TRUE = @USBMODULES_TRUE@
 VERSION = @VERSION@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_STRIP = @ac_ct_STRIP@
@@ -188,11 +179,20 @@ lsusb_SOURCES = lsusb.c \
 	usbmisc.c usbmisc.h
 
 data_DATA = usb.ids
-man_MANS = lsusb.8 $(am__append_2)
-usbmodules_SOURCES = usbmodules.c usbmodules.h \
-	usbmisc.c usbmisc.h
+man_MANS = lsusb.8
 
-EXTRA_DIST = $(man_MANS) $(data_DATA) usbmodules.8 update-usbids.sh
+# usbmodules is needed only with 2.4 based hotplugging, and is OBSOLETE 
+
+# EXTRA_PROGRAMS = usbmodules
+
+#usbmodules_SOURCES = usbmodules.c usbmodules.h \
+#	usbmisc.c usbmisc.h
+
+#if USBMODULES
+#    sbin_PROGRAMS += usbmodules
+#    man_MANS += usbmodules.8
+#endif
+EXTRA_DIST = $(man_MANS) $(data_DATA) update-usbids.sh
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -274,9 +274,6 @@ clean-sbinPROGRAMS:
 lsusb$(EXEEXT): $(lsusb_OBJECTS) $(lsusb_DEPENDENCIES) 
 	@rm -f lsusb$(EXEEXT)
 	$(LINK) $(lsusb_LDFLAGS) $(lsusb_OBJECTS) $(lsusb_LDADD) $(LIBS)
-usbmodules$(EXEEXT): $(usbmodules_OBJECTS) $(usbmodules_DEPENDENCIES) 
-	@rm -f usbmodules$(EXEEXT)
-	$(LINK) $(usbmodules_LDFLAGS) $(usbmodules_OBJECTS) $(usbmodules_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -288,7 +285,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lsusb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/names.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/usbmisc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/usbmodules.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
