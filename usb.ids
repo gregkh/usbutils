@@ -6,7 +6,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.11 2006/02/09 07:35:34 dbrownell Exp $
+# $Id: usb.ids,v 1.12 2006/05/04 00:20:40 dbrownell Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -4322,9 +4322,10 @@ C 08  Mass Storage
 		50  Bulk (Zip)
 C 09  Hub
 	00  Unused
+		00  Full speed hub
 		01  Single TT
 		02  TT per port
-C 0a  Data
+C 0a  CDC Data
 	00  Unused
 		30  I.430 ISDN BRI
 		31  HDLC
@@ -4353,18 +4354,26 @@ C e0  Wireless
 	01  Radio Frequency
 		01  Bluetooth
 		02  Ultra WideBand Radio Control
+		03  RNDIS
 	02  Wireless USB Wire Adapter
 		01  Host Wire Adapter Control/Data Streaming
 		02  Device Wire Adapter Control/Data Streaming
 		03  Device Wire Adapter Isochronous Streaming
 C ef  Miscellaneous Device
+	01  ?
+		01  Microsoft ActiveSync
+		02  Palm Sync
 	02  Common Class
 		01  Interface Association
 		02  Wire Adapter Multifunction Peripheral
+	03  ?
+		01  Cable Based Association
 C fe  Application Specific Interface
 	01  Device Firmware Update
 	02  IRDA Bridge
 	03  Test and Measurement
+		01  TMC
+		02  USB488
 C ff  Vendor Specific Class
 	ff  Vendor Specific Subclass
 		ff  Vendor Specific Protocol

@@ -35,6 +35,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <utils.h>
 #include <usb.h>
 
 /* NOTE:  that should be <libusb.h> and it should include
@@ -363,8 +364,10 @@ static void dump_config(struct usb_dev_handle *dev, struct usb_config_descriptor
 	       "    bConfigurationValue %5u\n"
 	       "    iConfiguration      %5u %s\n"
 	       "    bmAttributes         0x%02x\n",
-	       config->bLength, config->bDescriptorType, config->wTotalLength,
-	       config->bNumInterfaces, config->bConfigurationValue, config->iConfiguration,
+	       config->bLength, config->bDescriptorType,
+	       le16_to_cpu(config->wTotalLength),
+	       config->bNumInterfaces, config->bConfigurationValue,
+	       config->iConfiguration,
 	       cfg, config->bmAttributes);
 	if (!(config->bmAttributes & 0x80))
 		printf("      (Missing must-be-set bit!)\n");
@@ -524,6 +527,7 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 	static const char *hb[] = { "1x", "2x", "3x", "(?\?)" };
 	unsigned char *buf;
 	unsigned size;
+	unsigned wmax = le16_to_cpu(endpoint->wMaxPacketSize);
 
 	printf("      Endpoint Descriptor:\n"
 	       "        bLength             %5u\n"
@@ -538,9 +542,8 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 	       endpoint->bLength, endpoint->bDescriptorType, endpoint->bEndpointAddress, endpoint->bEndpointAddress & 0x0f,
 	       (endpoint->bEndpointAddress & 0x80) ? "IN" : "OUT", endpoint->bmAttributes,
 	       typeattr[endpoint->bmAttributes & 3], syncattr[(endpoint->bmAttributes >> 2) & 3],
-	       usage[(endpoint->bmAttributes >> 4) & 3], endpoint->wMaxPacketSize,
-	       hb[(endpoint->wMaxPacketSize >> 11) & 3],
-	       endpoint->wMaxPacketSize & 0x3ff,
+	       usage[(endpoint->bmAttributes >> 4) & 3],
+	       wmax, hb[(wmax >> 11) & 3], wmax & 0x3ff,
 	       endpoint->bInterval);
 	/* only for audio endpoints */
 	if (endpoint->bLength == 9)
@@ -2165,7 +2168,22 @@ dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *inden
 			printf("%s    simple mode\n", indent);
 		break;
 	// case 0x09:		/* USB terminal */
-	// case 0x0a:		/* network channel terminal */
+	case 0x0a:		/* network channel terminal */
+		type = "Network Channel Terminal";
+		if (buf [0] != 7)
+			goto bad;
+		get_string(dev, str, sizeof str, buf[4]);
+		printf("%sNetwork Channel Terminal:\n"
+		       "%s  bEntityId               %3d\n"
+		       "%s  iName                   %3d %s\n"
+		       "%s  bChannelIndex           %3d\n"
+		       "%s  bPhysicalInterface      %3d\n",
+		       indent,
+		       indent, buf[3],
+		       indent, buf[4], str,
+		       indent, buf[5],
+		       indent, buf[6]);
+		break;
 	// case 0x0b:		/* protocol unit */
 	// case 0x0c:		/* extension unit */
 	// case 0x0d:		/* multi-channel management */
