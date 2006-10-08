@@ -6,7 +6,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.12 2006/05/04 00:20:40 dbrownell Exp $
+# $Id: usb.ids,v 1.13 2006/10/08 21:10:56 tsailer Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -582,6 +582,7 @@
 	08b2  QuickCam Pro 4000
 	08b3  QuickCam Zoom
 	08b4  QuickCam Zoom
+	08da  QuickCam Messanger
 	08f0  QuickCam Messenger
 	0900  ClickSmart 310
 	0901  ClickSmart 510
