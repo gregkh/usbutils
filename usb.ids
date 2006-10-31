@@ -6,7 +6,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.13 2006/10/08 21:10:56 tsailer Exp $
+# $Id: usb.ids,v 1.14 2006/10/31 20:47:30 dbrownell Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -29,7 +29,18 @@
 03ea  Data Broadcasting Corp.
 03eb  Atmel Corp.
 	2002  Mass Storage Device
+	2015  at90usbkey sample firmware (HID keyboard)
+	2018  at90usbkey sample firmware (CDC ACM)
+	2019  stk525 sample firmware (microphone)
+	201c  at90usbkey sample firmware (HID mouse)
+	201d  at90usbkey sample firmware (HID generic)
+	2022  at90usbkey sample firmware (composite device)
 	2103  JTAG ICE mkII
+	2104  AVR ISP mkII
+	2107  AVR Dragon
+	2ffb  at90usb AVR DFU bootloader
+	2ffd  at89c5130/c5131 DFU bootloader
+	2fff  at89c5132/c51snd1c DFU bootloader
 	3301  at43301 4-port Hub
 	3312  4-port Hub
 	5601  at76c510 Prism-II 802.11b Access Point
@@ -4077,6 +4088,8 @@
 1706  BlueView Technologies, Inc.
 1733  Cellink Technology Co., Ltd
 	0101  RF Wireless Optical Mouse OP-701
+17b3  Grey Innovation
+	0004  Linux-USB Midi Gadget
 17eb  Cornice, Inc.
 1822  Twinhan
 	3201  VisionDTV USB-Ter/HAMA USB DVB-T device cold
@@ -4089,6 +4102,9 @@
 	5641  TSAM-004 Presentation Remote
 1977  T-Logic
 	0111  TL203 MP3 Player and Voice Recorder
+1995  Trillium Technology Pty. Ltd.
+	3202  REC-ADPT-USB (recorder)
+	3203  REC-A-ADPT-USB (recorder)
 1ebb  NuCORE Technology, Inc.
 2001  D-Link Corp. [hex]
 	3200  DWL-120 802.11b (Atmel RFMD503A) [usbvnetr]
