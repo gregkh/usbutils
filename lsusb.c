@@ -35,7 +35,8 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <utils.h>
+#include <asm/byteorder.h>
+#define le16_to_cpu	__le16_to_cpu
 #include <usb.h>
 
 /* NOTE:  that should be <libusb.h> and it should include
