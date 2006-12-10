@@ -242,10 +242,21 @@ static int get_videoterminal_string(char *buf, size_t size, u_int16_t termt)
 static const char *get_guid(unsigned char *buf)
 {
 	static char guid[39];
-	sprintf(guid, "{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}",
-	       buf[3], buf[2], buf[1], buf[0], buf[5], buf[4], buf[7], buf[6],
-	       buf[8], buf[9], buf[10], buf[11], buf[12], buf[13], buf[14],
-	       buf[15]);
+
+	/* NOTE:  see RFC 4122 for more information about GUID/UUID
+	 * structure.  The first fields fields are historically big
+	 * endian numbers, dating from Apollo mc68000 workstations.
+	 */
+	sprintf(guid, "{%02x%02x%02x%02x"
+			"-%02x%02x"
+			"-%02x%02x"
+			"-%02x%02x"
+			"-%02x%02x%02x%02x%02x%02x}",
+	       buf[0], buf[1], buf[2], buf[3],
+	       buf[4], buf[5],
+	       buf[6], buf[7],
+	       buf[8], buf[9],
+	       buf[10], buf[11], buf[12], buf[13], buf[14], buf[15]);
 	return guid;
 }
 
