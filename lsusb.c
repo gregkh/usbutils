@@ -2853,14 +2853,29 @@ int main(int argc, char *argv[])
 	}
 
 	/* by default, print names as well as numbers */
+#ifdef HAVE_LIBZ
+	if ((err = names_init("./usb.ids.gz")) != 0) {
+		if ((err = names_init("./usb.ids")) != 0) {
+			if ((err = names_init(USBIDS_DIR"/usb.ids.gz")) != 0) {
+				if ((err = names_init(USBIDS_DIR"/usb.ids.gz")) != 0) {
+					fprintf(stderr, "%s: cannot open \"%s\", %s\n",
+							argv[0],
+							USBIDS_DIR"/usb.ids.gz",
+							strerror(err));
+				}
+			}
+		}
+	}
+#else
 	if ((err = names_init("./usb.ids")) != 0) {
-		if ((err = names_init(USBIDS_FILE)) != 0) {
+		if ((err = names_init(USBIDS_DIR"/usb.ids")) != 0) {
 			fprintf(stderr, "%s: cannot open \"%s\", %s\n",
 					argv[0],
-					USBIDS_FILE,
+					USBIDS_DIR"/usb.ids",
 					strerror(err));
 		}
 	}
+#endif
 	status = 0;
 
 	usb_init();

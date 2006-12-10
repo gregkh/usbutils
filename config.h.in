@@ -43,6 +43,9 @@
 /* Define to 1 if you have the `usb' library (-lusb). */
 #undef HAVE_LIBUSB
 
+/* Define to 1 if you have the `z' library (-lz). */
+#undef HAVE_LIBZ
+
 /* Define to 1 if your system has a GNU libc compatible `malloc' function, and
    to 0 otherwise. */
 #undef HAVE_MALLOC

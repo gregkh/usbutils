@@ -38,6 +38,19 @@
 #include "config.h"
 #endif
 
+#ifdef HAVE_LIBZ
+#include <zlib.h>
+#define 	usb_file				gzFile
+#define 	usb_fopen(path, mode) 		gzopen(path, mode)
+#define 	usb_fgets(s, size, stream)	gzgets(stream, s, size)
+#define 	usb_close(f)			gzclose(f)
+#else
+#define 	usb_file				FILE*
+#define 	usb_fopen(path, mode)		fopen(path, mode)
+#define 	usb_fgets(s, size, stream)	fgets(s, size, stream)
+#define 	usb_close(f)			fclose(f)
+#endif
+
 #include "names.h"
 
 
@@ -454,14 +467,14 @@ static int new_countrycode(const char *name, unsigned int countrycode)
 
 #define DBG(x) 
 
-static void parse(FILE *f)
+static void parse(usb_file f)
 {
 	char buf[512], *cp;
 	unsigned int linectr = 0;
 	int lastvendor = -1, lastclass = -1, lastsubclass = -1, lasthut=-1, lastlang=-1;
 	unsigned int u;
 
-	while (fgets(buf, sizeof(buf), f)) {
+	while (usb_fgets(buf, sizeof(buf), f)) {
 		linectr++;
 		/* remove line ends */
 		if ((cp = strchr(buf, 13)))
@@ -785,12 +798,12 @@ static void parse(FILE *f)
 
 int names_init(char *n)
 {
-	FILE *f;
+	usb_file f;
 	
-	if (!(f = fopen(n, "r"))) {
+	if (!(f = usb_fopen(n, "r"))) {
 		return errno;
 	}
 	parse(f);
-	fclose(f);
+	usb_close(f);
 	return 0;
 }
