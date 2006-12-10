@@ -6,7 +6,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.14 2006/10/31 20:47:30 dbrownell Exp $
+# $Id: usb.ids,v 1.15 2006/12/10 20:25:50 dbrownell Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -272,6 +272,9 @@
 	0027  WLI-USB-KS11G 802.11b Adapter
 0412  Award Software International
 0413  Leadtek Research, Inc.
+	6025  WinFast DTV Dongle (cold state)
+	6026  WinFast DTV Dongle (warm state)
+	6f00  WinFast DTV Dongle (STK7700P based)
 0414  Giga-Byte Technology Co., Ltd
 0416  Winbond Electronics Corp.
 	0961  AVL Flash Card Reader
@@ -753,7 +756,7 @@
 	0021  S200 Scanner
 	0033  801.11b Adapter [orinoco]
 	0051  KU-0133 Easy Access Interner Keyboard
-	505a  SA-11x0 based Linux Device, or Itsy (experimental)
+	505a  Linux-USB "CDC Subset" Device, or Itsy (experimental)
 	8511  iPAQ Networking 10/100 Ethernet [pegasus2]
 04a0  Digital Equipment Corp.
 04a1  SystemSoft Corp.
@@ -888,6 +891,7 @@
 	30ec  EOS 20D (ptp)
 	30ee  EOS 350D
 	30ef  EOS 350D (ptp)
+	3138  PowerShot A710 IS
 04aa  DaeWoo Telecom, Ltd
 04ab  Chromatic Research
 04ac  Micro Audiometrics Corp.
@@ -4022,6 +4026,7 @@
 	0001  Avermedia AverTV DVBT USB1.1 (cold)
 	0002  Avermedia AverTV DVBT USB1.1 (warm)
 	0201  AVermedia/Yakumo/Hama/Typhoon DVB-T USB2.0 (cold)
+	0221  AVermedia DVBT Tuner Dongle
 	0301  AVermedia/Yakumo/Hama/Typhoon DVB-T USB2.0 (warm)
 14c2  Gemlight Computer, Ltd
 1518  Cheshire Engineering Corp.
@@ -4339,7 +4344,7 @@ C 08  Mass Storage
 		50  Bulk (Zip)
 C 09  Hub
 	00  Unused
-		00  Full speed hub
+		00  Full speed (or root) hub
 		01  Single TT
 		02  TT per port
 C 0a  CDC Data
