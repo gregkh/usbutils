@@ -6,7 +6,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.15 2006/12/10 20:25:50 dbrownell Exp $
+# $Id: usb.ids,v 1.16 2007/04/24 15:07:13 tsailer Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -3494,6 +3494,7 @@
 	e007  OnlyDisk U222 Pendrive
 0dd9  HighSpeed Surfing
 0dda  Integrated Circuit Solution, Inc.
+	2026  USB to SATA/IDE adapter
 0ddb  Tamarack, Inc.
 0ddd  Datelink Technology Co., Ltd
 0dde  Ubicom, Inc.
