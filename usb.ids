@@ -6,7 +6,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.16 2007/04/24 15:07:13 tsailer Exp $
+# $Id: usb.ids,v 1.17 2007/04/25 08:46:21 tsailer Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -3494,7 +3494,7 @@
 	e007  OnlyDisk U222 Pendrive
 0dd9  HighSpeed Surfing
 0dda  Integrated Circuit Solution, Inc.
-	2026  USB to SATA/IDE adapter
+	2026  USB2.0 Card Reader
 0ddb  Tamarack, Inc.
 0ddd  Datelink Technology Co., Ltd
 0dde  Ubicom, Inc.
@@ -4034,6 +4034,8 @@
 	0001  HDReye High Dynamic Range Camera
 	0002  HDReye (before firmware loads)
 1520  Bitwire Corp.
+152d  ???
+	2338  USB to (S)ATA/ATAPI Bridge
 152e  LG (HLDS)
 	e001  GSA-5120D DVD-RW
 1546  U-Blox AG
