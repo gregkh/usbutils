@@ -6,7 +6,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.17 2007/04/25 08:46:21 tsailer Exp $
+# $Id: usb.ids,v 1.18 2007/05/04 09:56:28 tsailer Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -530,9 +530,19 @@
 	008c  Wireless Intellimouse Explorer 2.0
 	00b9  Wireless Optical Mouse 3.0
 	00bd  Fingerprint Reader
+	0202  Xbox Controller
 	0284  Xbox DVD Playback Kit
+	0285  Xbox Controller S
 	0288  Xbox Controller S Hub
 	0289  Xbox Controller S
+	028b  Xbox360 DVD Emulator
+	028d  Xbox360 Memory Unit 64MB
+	028e  Xbox360 Controller
+	028f  Xbox360 Wireless Controller
+	0290  Xbox360 Performance Pipe (PIX)
+	029c  Xbox360 HD-DVD Drive
+	029d  Xbox360 HD-DVD Drive
+	029e  Xbox360 HD-DVD Memory Unit
 0460  Ace Cad Enterprise Co., Ltd
 0461  Primax Electronics, Ltd
 	0300  G2-300 Scanner
@@ -3676,6 +3686,16 @@
 0f68  Kobe Steel, Ltd
 0f69  Dionex Corp.
 0f6a  Vibren Technologies, Inc.
+0f6e  INTELLIGENT SYSTEMS
+	0100  GameBoy Color Emulator
+	0201  GameBoy Advance Flash Gang Writer
+	0202  GameBoy Advance Capture
+	0300  Gamecube DOL Viewer
+	0400  NDS Emulator
+	0401  NDS UIC
+	0402  NDS Writer
+	0403  NDS Capture
+	0404  NDS Emulator (Lite)
 0f73  DFI
 0f7c  DQ Technology, Inc.
 0f7d  NetBotz, Inc.
