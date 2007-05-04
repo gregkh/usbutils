@@ -3,10 +3,11 @@
 #
 #	Maintained by Vojtech Pavlik <vojtech@suse.cz>
 #	If you have any new entries, send them to the maintainer.
+#	Send entries as patches (diff -u old new).
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.18 2007/05/04 09:56:28 tsailer Exp $
+# $Id: usb.ids,v 1.19 2007/05/04 10:15:04 tsailer Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -45,6 +46,7 @@
 	3312  4-port Hub
 	5601  at76c510 Prism-II 802.11b Access Point
 	5603  Cisco 7920 WiFi IP Phone
+	6124  at91sam SAMBA bootloader
 	7603  at76c503a D-Link DWL-120 802.11b Adapter
 	7605  at76c503a 802.11b Adapter
 	7606  at76c505 802.11b Adapter
@@ -354,9 +356,11 @@
 	040f  6230 GSM Phone
 	0410  6630 Imaging Smartphone
 	0415  9300 GSM Smartphone
+	0418  E-70 (PC-Suite mode)
 	041a  9500 GSM Communicator (RNDIS)
 	041b  9300 GSM Smartphone (RNDIS)
 	0429  6230i Camera Phone
+	0435  E-70 (IP Passthrough/RNDIS mode)
 	0800  Connectivity Cable DKU-5
 0422  ADI Systems, Inc.
 0423  Computer Access Technology Corp.
