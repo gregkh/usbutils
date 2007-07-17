@@ -555,7 +555,7 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 	       (endpoint->bEndpointAddress & 0x80) ? "IN" : "OUT", endpoint->bmAttributes,
 	       typeattr[endpoint->bmAttributes & 3], syncattr[(endpoint->bmAttributes >> 2) & 3],
 	       usage[(endpoint->bmAttributes >> 4) & 3],
-	       wmax, hb[(wmax >> 11) & 3], wmax & 0x3ff,
+	       wmax, hb[(wmax >> 11) & 3], wmax & 0x7ff,
 	       endpoint->bInterval);
 	/* only for audio endpoints */
 	if (endpoint->bLength == 9)

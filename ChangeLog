@@ -1,3 +1,6 @@
+2007-07-17 David Brownell <dbrownell@users.sourceforge.net>
+	* lsusb.c: use correct endpoint maxpacket mask
+
 2006-12-10 Aurelien Jarno <aurelien@aurel32.net> 
 	* lsusb.c, names.c, Makefile.am, configure.in: gzipped usb.ids
 	* configure, other autoconf stuff: regenerate 
