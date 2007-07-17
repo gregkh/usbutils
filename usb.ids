@@ -7,7 +7,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.20 2007/06/25 00:48:10 dbrownell Exp $
+# $Id: usb.ids,v 1.21 2007/07/17 15:23:06 dbrownell Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -1256,6 +1256,7 @@
 	a4a5  Linux-USB File Storage Gadget
 	a4a6  Linux-USB Serial Gadget
 	a4a7  Linux-USB Serial Gadget (CDC ACM mode)
+	a4a8  Linux-USB Printer Gadget
 0526  Temic MHS S.A.
 0527  ALTRA
 0528  ATI Technologies, Inc.
