@@ -1,3 +1,6 @@
+2007-08-28 Brandon Philips <brandon@ifup.org>
+	* lsusb.c: Fix the offsets for the video class descriptors.
+
 2007-07-17 David Brownell <dbrownell@users.sourceforge.net>
 	* lsusb.c: use correct endpoint maxpacket mask
 

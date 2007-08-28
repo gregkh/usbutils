@@ -1512,7 +1512,7 @@ static void dump_videostreaming_interface(unsigned char *buf)
 		n = buf[12];
 		if (buf[0] < 13+p*n)
 			printf("      Warning: Descriptor too short\n");
-		printf("        bNumFormarts                    %5u\n"
+		printf("        bNumFormats                    %5u\n"
 		       "        wTotalLength                    %5u\n"
 		       "        bEndPointAddress                %5u\n"
 		       "        bmInfo                          %5u\n"
@@ -1521,10 +1521,12 @@ static void dump_videostreaming_interface(unsigned char *buf)
 		       "        bTriggerSupport                 %5u\n"
 		       "        bTriggerUsage                   %5u\n"
 		       "        bControlSize                    %5u\n",
-		       p, buf[5] | (buf[6] << 8), buf[7], buf[8], buf[9],
-		       buf[10], buf[11], buf[12], n);
+		       p, buf[4] | (buf[5] << 8), buf[6], buf[7], buf[8],
+		       buf[9], buf[10], buf[11], n);
 		for(i = 0; i < p; i++)
-			printf("        bmaControls(%2u)                 %5u\n", i, buf[13+p*n]);
+			printf(
+			"        bmaControls(%2u)                 %5u\n",
+				i, buf[13+p*n]);
 		dump_junk(buf, "        ", 13+p*n);
 		break;
 
@@ -1539,9 +1541,11 @@ static void dump_videostreaming_interface(unsigned char *buf)
 		       "        bEndpointAddress            %5u\n"
 		       "        bTerminalLink               %5u\n"
 		       "        bControlSize                %5u\n",
-		       p, buf[4] | (buf[5] << 8), buf[6], buf[8], n);
+		       p, buf[4] | (buf[5] << 8), buf[6], buf[7], n);
 		for(i = 0; i < p; i++)
-			printf("        bmaControls(%2u)             %5u\n", i, buf[9+p*n]);
+			printf(
+			"        bmaControls(%2u)             %5u\n",
+				i, buf[9+p*n]);
 		dump_junk(buf, "        ", 9+p*n);
 		break;
 
