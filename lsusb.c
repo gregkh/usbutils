@@ -412,7 +412,7 @@ static void dump_config(struct usb_dev_handle *dev, struct usb_config_descriptor
 				break;
 			default:
 				/* often a misplaced class descriptor */
-				printf("    UNRECOGNIZED: ");
+				printf("    ** UNRECOGNIZED: ");
 				dump_bytes(buf, buf[0]);
 				break;
 			}
@@ -476,6 +476,8 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 							case 3:
 								dump_midistreaming_interface(dev, buf);
 								break;
+							default:
+								goto dump;
 						}
 						break;
 					case USB_CLASS_COMM:
@@ -490,18 +492,25 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 							case 2:
 								dump_videostreaming_interface(buf);
 								break;
+							default:
+								goto dump;
 						}
 						break;
 					default:
-						printf("      Class specific interface descriptor for " \
-							"class %u is unsupported\n", interface->bInterfaceClass);
+						goto dump;
 				}
 				break;
 			case USB_DT_HID:
-				if (interface->bInterfaceClass == USB_CLASS_HID)
+				switch (interface->bInterfaceClass) {
+				case USB_CLASS_HID:
 					dump_hid_device(dev, interface, buf);
-				if (interface->bInterfaceClass == 0x0b)
+					break;
+				case 0x0b:
 					dump_ccid_device(buf);
+					break;
+				default:
+					goto dump;
+				}
 				break;
 			case USB_DT_OTG:
 				/* handled separately */
@@ -510,8 +519,9 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 				dump_association(dev, buf);
 				break;
 			default:
+dump:
 				/* often a misplaced class descriptor */
-				printf("      UNRECOGNIZED: ");
+				printf("      ** UNRECOGNIZED: ");
 				dump_bytes(buf, buf[0]);
 				break;
 			}
@@ -602,7 +612,7 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 				break;
 			default:
 				/* often a misplaced class descriptor */
-				printf("        UNRECOGNIZED: ");
+				printf("        ** UNRECOGNIZED: ");
 				dump_bytes(buf, buf[0]);
 				break;
 			}
@@ -2858,18 +2868,18 @@ int main(int argc, char *argv[])
 
 	/* by default, print names as well as numbers */
 #ifdef HAVE_LIBZ
-	if ((err = names_init("./usb.ids.gz")) != 0) {
-		if ((err = names_init("./usb.ids")) != 0) {
-			if ((err = names_init(USBIDS_DIR"/usb.ids.gz")) != 0) {
-				if ((err = names_init(USBIDS_DIR"/usb.ids.gz")) != 0) {
-					fprintf(stderr, "%s: cannot open \"%s\", %s\n",
-							argv[0],
-							USBIDS_DIR"/usb.ids.gz",
-							strerror(err));
-				}
-			}
-		}
-	}
+	err = names_init("./usb.ids");
+	if (err != 0)
+		err = names_init("./usb.ids.gz");
+	if (err != 0)
+		err = names_init(USBIDS_DIR "/usb.ids");
+	if (err != 0)
+		err = names_init(USBIDS_DIR "/usb.ids.gz");
+	if (err != 0)
+		fprintf(stderr, "%s: cannot open \"%s\", %s\n",
+				argv[0],
+				USBIDS_DIR"/usb.ids",
+				strerror(err));
 #else
 	if ((err = names_init("./usb.ids")) != 0) {
 		if ((err = names_init(USBIDS_DIR"/usb.ids")) != 0) {
