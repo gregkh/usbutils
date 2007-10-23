@@ -171,18 +171,6 @@ lsusb_SOURCES = lsusb.c \
 	usbmisc.c usbmisc.h
 
 man_MANS = lsusb.8
-
-# usbmodules is needed only with 2.4 based hotplugging, and is OBSOLETE 
-
-# EXTRA_PROGRAMS = usbmodules
-
-#usbmodules_SOURCES = usbmodules.c usbmodules.h \
-#	usbmisc.c usbmisc.h
-
-#if USBMODULES
-#    sbin_PROGRAMS += usbmodules
-#    man_MANS += usbmodules.8
-#endif
 EXTRA_DIST = $(man_MANS) usb.ids update-usbids.sh
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -592,8 +580,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-info-am uninstall-local uninstall-man \
-	uninstall-sbinPROGRAMS
+uninstall-am: uninstall-info-am uninstall-man uninstall-sbinPROGRAMS
 
 uninstall-man: uninstall-man8
 
@@ -609,18 +596,14 @@ uninstall-man: uninstall-man8
 	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-info-am uninstall-local uninstall-man \
-	uninstall-man8 uninstall-sbinPROGRAMS
+	uninstall-am uninstall-info-am uninstall-man uninstall-man8 \
+	uninstall-sbinPROGRAMS
 
 
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(datadir)
 @HAVE_ZLIB_TRUE@	gzip -c -9 $(srcdir)/usb.ids > $(DESTDIR)$(datadir)/usb.ids.gz
 @HAVE_ZLIB_FALSE@	$(INSTALL_DATA) $(srcdir)/usb.ids $(DESTDIR)$(datadir)/usb.ids
-
-uninstall-local:
-	rm -f $(DESTDIR)$(datadir)/usb.ids $(DESTDIR)$(datadir)/usb.ids.gz	
-	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(datadir) >/dev/null 2>&1
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -1,3 +1,14 @@
+2007-10-23 David Brownell <dbrownell@users.sourceforge.net>
+	* usb.ids: update to current version (with new maintainer)
+	* lsusb.c: Stop hiding unrecognized/misplaced class specific
+	  descriptors.  Don't require compressed format for usb.ids
+	  files; when an uncompressed one is there (probably installed
+	  by hand), prefer it.
+	* Makefile.am: remove broken uninstall code, 2.4-only usbmodules
+	* configure.in, lsusb.8: version 0.73; syntax fix for disble-zlib
+	  helpstring
+	* Makefile.in, configure: autoreconf
+
 2007-08-28 Brandon Philips <brandon@ifup.org>
 	* lsusb.c: Fix the offsets for the video class descriptors.
 
