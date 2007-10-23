@@ -21,20 +21,4 @@ else
 	$(INSTALL_DATA) $(srcdir)/usb.ids $(DESTDIR)$(datadir)/usb.ids
 endif
 
-uninstall-local:
-	rm -f $(DESTDIR)$(datadir)/usb.ids $(DESTDIR)$(datadir)/usb.ids.gz	
-	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(datadir) >/dev/null 2>&1
-
-# usbmodules is needed only with 2.4 based hotplugging, and is OBSOLETE 
-
-# EXTRA_PROGRAMS = usbmodules
-
-#usbmodules_SOURCES = usbmodules.c usbmodules.h \
-#	usbmisc.c usbmisc.h
-
-#if USBMODULES
-#    sbin_PROGRAMS += usbmodules
-#    man_MANS += usbmodules.8
-#endif
-
 EXTRA_DIST = $(man_MANS) usb.ids update-usbids.sh
