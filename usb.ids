@@ -7,7 +7,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.22 2007/10/23 21:43:08 dbrownell Exp $
+# $Id: usb.ids,v 1.23 2007/10/30 02:43:59 dbrownell Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -763,6 +763,8 @@
 	c517  LX710 Cordless Desktop Laser
 	c518  MX610 Laser Cordless Mouse
 	c521  MX620 Laser Cordless Mouse
+	c626  3DConnexion Space Navigator 3D Mouse
+	c627  3DConnexion Space Explorer 3D Mouse
 	c703  Elite Keyboard Y-RP20 + Mouse MX900 (Bluetooth)
 	c709  BT Mini-Receiver (HCI mode)
 	c70b  BT Mini-Receiver (HID proxy mode)
@@ -822,6 +824,7 @@
 	1005  TurboBall
 	1009  Orbit TrackBall for Mac
 	101f  PocketMouse Pro
+	1020  Expert Mouse Trackball
 	2010  Wireless Presentation Remote
 	4005  Gravis Eliminator GamePad Pro
 	4006  Gravis Eliminator AfterShock
@@ -3292,6 +3295,8 @@
 0a22  Century Semiconductor USA, Inc.
 0a2c  AK-Modul-Bus Computer GmbH
 	0008  GPIO Ports
+0a34  TG3 Electronics, Inc.
+	0110  Deck 82-key backlit keyboard
 0a39  Gilat Satellite Networks, Ltd
 0a3a  PentaMedia Co., Ltd
 0a3c  NTT DoCoMo, Inc.
@@ -4532,7 +4537,7 @@
 13fe  Kingston Technology Company Inc.
 	1a00  512MB/1GB Flash Drive
 	1a23  512MB Flash Drive
-	1d00  DataTraveler 2.0 1GB Flash Drive
+	1d00  DataTraveler 2.0 1GB/4GB Flash Drive
 1453  Radio Shack
 	4026  26-183 Serial Cable
 1462  Micro Star International

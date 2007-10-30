@@ -1,3 +1,7 @@
+2007-10-29 Robin H. Johnson <robbat2@gentoo.org>
+	* update-usbids.sh: add "-q" (quiet) option for cron jobs;
+	  skip filesystems that are readonly
+
 2007-10-23 David Brownell <dbrownell@users.sourceforge.net>
 	* usb.ids: update to current version (with new maintainer)
 	* lsusb.c: Stop hiding unrecognized/misplaced class specific

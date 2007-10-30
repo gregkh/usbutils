@@ -2,13 +2,23 @@
 
 # see also update-pciids.sh (fancier)
 
+[ "$1" = "-q" ] && quiet="true" || quiet="false"
+
 set -e
 SRC="http://www.linux-usb.org/usb.ids"
 DEST=usb.ids
 
-if which wget >/dev/null ; then
+# if usb.ids is read-only (because the filesystem is read-only),
+# then just skip this whole process.
+if ! touch ${DEST} >&2 >/dev/null ; then
+	${quiet} || echo "${DEST} is read-only, exiting."
+	exit 0
+fi
+
+if which wget >/dev/null 2>&1 ; then
 	DL="wget -O $DEST.new $SRC"
-elif which lynx >/dev/null ; then
+	${quiet} && DL="$DL -q"
+elif which lynx >/dev/null 2>&1 ; then
 	DL="eval lynx -source $SRC >$DEST.new"
 else
 	echo >&2 "update-usbids: cannot find wget nor lynx"
@@ -33,4 +43,4 @@ if [ -f $DEST ] ; then
 fi
 mv $DEST.new $DEST
 
-echo "Done."
+${quiet} || echo "Done."
