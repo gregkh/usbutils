@@ -35,13 +35,29 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdarg.h>
+
+#ifdef __FreeBSD__
+
+#include <machine/endian.h>
+#if _BYTE_ORDER == _LITTLE_ENDIAN
+#define le16_to_cpu(x) (x)
+#else
+#define le16_to_cpu	__bswap16
+#endif
+
+#else	/* Linux */
+
 #include <asm/byteorder.h>
 #define le16_to_cpu	__le16_to_cpu
+
+#endif
+
 #include <usb.h>
 
 /* NOTE:  that should be <libusb.h> and it should include
- * <linux/usb_ch9.h> ... without it, we keep accumulating
+ * <linux/usb/ch9.h> ... without it, we keep accumulating
  * potentially broken variants of standard types ...
+ * also <linux/usb/cdc.h>, <linux/usb/audio.h>, etc
  */
 
 #include "names.h"

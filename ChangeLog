@@ -1,3 +1,6 @@
+2007-10-31 Joe Peterson <lavajoe@gentoo.org>
+	* lsusb.c: compile on FreeBSD
+
 2007-10-29 Robin H. Johnson <robbat2@gentoo.org>
 	* update-usbids.sh: add "-q" (quiet) option for cron jobs;
 	  skip filesystems that are readonly
