@@ -1,3 +1,11 @@
+2007-11-05 David Brownell <dbrownell@users.sourceforge.net>
+	* configure, config.h.in: autoreconf
+	* usb.ids: update to current version
+
+2007-11-05 Joe Peterson <lavajoe@gentoo.org>
+	* configure.in, lsusb.c: use autotools instead of hard-coded
+	  check for __FreeBSD__.
+
 2007-10-31 Joe Peterson <lavajoe@gentoo.org>
 	* lsusb.c: compile on FreeBSD
 

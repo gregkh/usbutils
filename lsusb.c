@@ -36,8 +36,11 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#ifdef __FreeBSD__
+#if defined(HAVE_ASM_BYTEORDER_H)
+#include <asm/byteorder.h>
+#define le16_to_cpu	__le16_to_cpu
 
+#elif defined(HAVE_MACHINE_ENDIAN_H)
 #include <machine/endian.h>
 #if _BYTE_ORDER == _LITTLE_ENDIAN
 #define le16_to_cpu(x) (x)
@@ -45,11 +48,8 @@
 #define le16_to_cpu	__bswap16
 #endif
 
-#else	/* Linux */
-
-#include <asm/byteorder.h>
-#define le16_to_cpu	__le16_to_cpu
-
+#else
+#error no le16_to_cpu implementation is available
 #endif
 
 #include <usb.h>

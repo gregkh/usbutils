@@ -7,7 +7,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.23 2007/10/30 02:43:59 dbrownell Exp $
+# $Id: usb.ids,v 1.24 2007/11/06 07:00:25 dbrownell Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -122,6 +122,7 @@
 	1617  LaserJet 3015
 	1904  DeskJet 3820
 	1c17  Color LaserJet 2550l
+	1d17  LaserJet 1320
 	1e11  PSC-950
 	2002  Hub
 	2004  DeskJet 640c
@@ -147,6 +148,7 @@
 	4302  PhotoSmart 850 (ptp)
 	4402  PhotoSmart 935 (ptp)
 	4502  PhotoSmart 945 (PTP mode)
+	4505  ScanJet G4010
 	5004  DeskJet 995c
 	5611  PhotoSmart C3180
 	5911  PhotoSmart C6180
@@ -200,6 +202,7 @@
 	5602  Video Camera Controller
 	5603  USB 2.0 Q-tec Webcam 300
 	5621  USB 2.0 Storage Device
+	5627  Welland ME-740PS USB2 3.5" Power Saving Enclosure
 	5632  USB 2.0 Host-to-Host Link
 	5635  USB 2.0 Flash Card Reader
 	5636  USB 2.0 Storage Device
@@ -414,6 +417,7 @@
 	0410  6630 Imaging Smartphone
 	0415  9300 GSM Smartphone
 	0418  E-70 (PC-Suite mode)
+	0419  E-60 (PC-Suite mode)
 	041a  9500 GSM Communicator (RNDIS)
 	041b  9300 GSM Smartphone (RNDIS)
 	041e  6680
@@ -421,6 +425,7 @@
 	0429  6230i MultiMedia Card
 	0431  770 Internet Tablet
 	0435  E-70 (IP Passthrough/RNDIS mode)
+	0436  E-60 (IP Passthrough/RNDIS mode)
 	043a  N70 USB Phone Parent
 	046e  6110 Navigator
 	04c3  N800 Internet Tablet
@@ -600,6 +605,7 @@
 	0040  Wheel Mouse Optical
 	0047  IntelliMouse Explorer 3.0
 	0048  Office Keyboard 1.0A
+	0053  Optical Mouse
 	0059  Wireless IntelliMouse Explorer
 	006e  MN510 802.11b Adapter
 	007d  Notebook Optical Mouse
@@ -709,7 +715,8 @@
 	0950  Pocket Camera
 	0960  ClickSmart 420
 	0970  Pocket750
-	0a01  Logitech USB Headset
+	0a01  USB Headset
+	0a04  V20 portable speakers (USB powered)
 	0b02  BT Mini-Receiver (HID proxy mode)
 	bfe4  Premium Optical Wheel Mouse
 	c000  N43 [Pilot Mouse]
@@ -721,6 +728,7 @@
 	c00e  M-BJ69 Optical Wheel Mouse
 	c012  Optical Mouse
 	c016  M-UV69a Optical Wheel Mouse
+	c01a  M-BQ85 Optical Wheel Mouse
 	c01b  MX310 Optical Mouse
 	c01d  MX510 Optical Mouse
 	c01e  MX518 Optical Mouse
@@ -1491,6 +1499,7 @@
 	042a  eToken R2 v2.5.4.x
 	050c  eToken Pro v4.1.5.x
 	0514  eToken Pro v4.2.5.4
+	0600  eToken Pro 64k (4.2)
 052a  Crescent Heart Software
 052b  Tekom Technologies, Inc.
 	0801  Yakumo MegaImage 37
@@ -1579,11 +1588,13 @@
 	0169  Clie PEG-TJ35 PDA Serial
 	016a  Clie PEG-TJ35 PDA Mass Storage
 	019e  Micro Vault 1.0G Mass Storage
+	01bd  MRW62E Multi-Card Reader/Writer
 	01c3  NW-E55 Network Walkman
 	01d0  DVD+RW External Drive DRU-700A
 	01fa  Sony IC Recorder (P)
 	01fb  NW-E405 Network Walkman
 	023b  DVD+RW External Drive DRU-800UL
+	0243  MicroVault Flash Drive
 	02ae  PlayStation 3 Memory Card Adaptor
 	02af  Handycam DCR-DVD306E
 	02d2  PSP
@@ -1895,6 +1906,7 @@
 	120A  iPod Nano
 	1260  iPod Nano 2.Gen
 	1300  iPod Shuffle
+	1301  iPod Shuffle 2.Gen
 	8202  HCF V.90 Data/Fax Modem
 	8203  Bluetooth HCI
 	8204  Bluetooth HCI [Bluetooth 2.0 + EDR, build-in]
@@ -2529,6 +2541,7 @@
 	0003  ADB to USB convertor
 0717  ZNK Corp.
 0718  Imation Corp.
+	0084  USB Flash Drive Mini
 0719  Tremon Enterprises Co., Ltd
 071b  Domain Technologies, Inc.
 	0002  DTI-56362-USB Digital Interface Unit
@@ -2652,6 +2665,7 @@
 	8889  SDDR-88 Imagemate 8-in-1 Reader
 	8989  ImageMate 12-in-1 Reader
 	9999  SDDR-99 5-in-1 Reader
+	b2b3  SDDR-103 MobileMate SD+ Reader
 0782  Trackerball
 0783  C3PO
 	0003  LTC31 SmartCard Reader
@@ -2795,11 +2809,12 @@
 	000c  SM/CF Card Reader
 	000d  SM/CF Card Reader
 	0200  6-in-1 Card Reader
+	0300  6-in-1 Card Reader
 	0301  6-in-1 Card Reader
 07cd  Elektor
 	0001  USBuart Serial Port
 07cf  Casio Computer Co., Ltd
-	1001  QV-8000SX/5700/3000EX Digicam
+	1001  QV-8000SX/5700/3000EX Digicam; Exilim EX-M20
 	1003  Exilim EX-S500
 	1004  Exilim EX-Z120
 	2002  E-125 Cassiopeia Pocket PC
@@ -2908,6 +2923,7 @@
 	4220  WG111 WiFi (v1)
 	4230  MA111 WiFi
 	4240  WG111 WiFi (v2)
+	4260  WG111v3 802.11g Adapter [realtek RTL8187B]
 	6a00  WG111 WiFi (v2)
 084d  Minton Optic Industry Co., Inc.
 	0001  Jenoptik JD800i
@@ -3084,6 +3100,7 @@
 0912  Voquette, Inc.
 0915  GlobeSpan, Inc.
 0917  SmartDisk Corp.
+	0206  FireFly 20G HDD
 0919  Tiger Electronics
 	0100  Fast Flicks Digital Camera
 091e  Garmin International
@@ -3150,6 +3167,7 @@
 0951  Kingston Technology
 	000a  KNU101TX 100baseTX Ethernet
 	1600  Data Traveler II Pen Drive
+	1603  Data Traveler 1GB Pen Drive
 0954  RPM Systems Corp.
 0955  NVidia Corp.
 0956  BSquare Corp.
@@ -3446,6 +3464,7 @@
 0aff  Jump Zone Network Products, Inc.
 0b05  ASUSTek Computer, Inc.
 	1706  WL-167G 802.11g Adapter [ralink]
+	1723  WL-167G v2 802.11g Adapter [ralink]
 0b0c  Todos Data System AB
 	0009 Todos Argos Mini II Smart Card Reader
 0b0e  GN Netcom
@@ -4529,6 +4548,8 @@
 	000b  WUSB11 v4.0 802.11b Adapter
 	0011  WUSB54GP v4.0 802.11g Adapter
 	0018  USB200M 10/100 Ethernet Adapter
+	0020  WUSB54GC 802.11g Adapter [ralink rt73]
+	0024  WUSBF54G v1.1 802.11g Adapter w/ Wi-Fi Finder
 13d2  Shark Multimedia
 	0400  Pocket Ethernet [klsi]
 13d3  IMC Networks
@@ -4538,6 +4559,11 @@
 	1a00  512MB/1GB Flash Drive
 	1a23  512MB Flash Drive
 	1d00  DataTraveler 2.0 1GB/4GB Flash Drive
+1403  ????
+	0001  Digital Photo Frame
+1415  Nam Tai E&E Products Ltd. or OmniVision Technologies, Inc.
+	0000  Sony SingStar USBMIC
+	2000  Sony Playstation Eye
 1453  Radio Shack
 	4026  26-183 Serial Cable
 1462  Micro Star International
@@ -4625,6 +4651,8 @@
 	2441  BMDC-2 IBM Bluetooth III w.56k
 1669  PiKRON Ltd. [hex]
 	1001  uLan2USB Converter - PS1 protocol
+1679  Total Phase
+	2001  Beagle USB 12 Protocol Analyzer
 1690  Askey Computer Corp. [hex]
 	0101  Creative Modem Blaster DE5670
 	0103  Askey 1456 VQE-R3 Modem [conexant]
@@ -4729,6 +4757,7 @@
 	0210  Pinnacle Studio PCTV USB (PAL) with FM radio
 	0212  Pinnacle Studio PCTV USB (NTSC)
 	0214  Pinnacle Studio PCTV USB (PAL) with FM radio
+	0227  Pinnacle TV for Mac, HD Stick
 	0300  Pinnacle Studio Linx Video input cable (NTSC)
 	0301  Pinnacle Studio Linx Video input cable (PAL)
 	0419  Pinnacle PCTV Bungee USB (PAL) with FM radio
@@ -4815,6 +4844,8 @@
 	1026  Crystal Bar Flash Drive
 4670  EMS Production
 	9394  Game Cube USB Memory Adaptor 64M
+4855  Memorex
+	7288  Ultra Traveldrive 160G 2.5" HDD
 5032  Grandtec
 	0bb8  Grandtec USB1.1 DVB-T (cold)
 	0bb9  Grandtec USB1.1 DVB-T (warm)

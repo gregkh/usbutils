@@ -4138,7 +4138,9 @@ done
 
 
 
-for ac_header in fcntl.h stdlib.h string.h sys/ioctl.h sys/param.h unistd.h getopt.h errno.h
+
+
+for ac_header in fcntl.h stdlib.h string.h sys/ioctl.h sys/param.h unistd.h getopt.h errno.h asm/byteorder.h machine/endian.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if eval "test \"\${$as_ac_Header+set}\" = set"; then
