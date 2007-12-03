@@ -42,10 +42,10 @@
 
 #elif defined(HAVE_MACHINE_ENDIAN_H)
 #include <machine/endian.h>
-#if _BYTE_ORDER == _LITTLE_ENDIAN
-#define le16_to_cpu(x) (x)
-#else
+#ifdef WORDS_BIGENDIAN
 #define le16_to_cpu	__bswap16
+#else
+#define le16_to_cpu(x) (x)
 #endif
 
 #else
@@ -1538,7 +1538,7 @@ static void dump_videostreaming_interface(unsigned char *buf)
 		n = buf[12];
 		if (buf[0] < 13+p*n)
 			printf("      Warning: Descriptor too short\n");
-		printf("        bNumFormats                    %5u\n"
+		printf("        bNumFormats                     %5u\n"
 		       "        wTotalLength                    %5u\n"
 		       "        bEndPointAddress                %5u\n"
 		       "        bmInfo                          %5u\n"

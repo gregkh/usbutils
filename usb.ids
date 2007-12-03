@@ -7,7 +7,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.24 2007/11/06 07:00:25 dbrownell Exp $
+# $Id: usb.ids,v 1.25 2007/12/03 21:27:16 dbrownell Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -21,6 +21,8 @@
 0002  Ingram
 0003  Club Mac
 0004  Nebraska Furniture Mart
+0145  Unknown
+	0112  Card Reader
 0204  Chipsbank Microelectronics Co., Ltd
 	6025  CBM2080 Flash drive controller
 	6026  CBM1180 Flash drive controller
@@ -57,6 +59,8 @@
 	7605  at76c503a 802.11b Adapter
 	7606  at76c505 802.11b Adapter
 	7611  at76c510 rfmd2948 802.11b Access Point
+	7613  WL-1130 USB
+	7614  AT76c505a Wireless Adapter
 03ec  Iwatsu America, Inc.
 03ed  Mitel Corp.
 03ee  Mitsumi
@@ -66,6 +70,7 @@
 	6901  SmartDisk FDD
 03f0  Hewlett-Packard
 	0004  DeskJet 895c
+	0024  KU-0316 Keyboard
 	0101  ScanJet 4100c
 	0102  PhotoSmart S20
 	0104  DeskJet 880c/970c
@@ -81,8 +86,10 @@
 	0205  ScanJet 3300c
 	0207  CD-Writer Plus 8200e
 	020c  Multimedia Keyboard
+	0212  DeskJet 1220C
 	0304  DeskJet 810c/812c
 	0305  ScanJet 4300c
+	0307  CD-Writer+ CD-4e
 	0311  OfficeJet G85xi
 	0317  LaserJet 1200
 	0401  ScanJet 5200c
@@ -104,13 +111,15 @@
 	0804  DeskJet 816c
 	0901  ScanJet 2300c
 	0904  DeskJet 845c
+	0b01  Scanjet 82x0C
+	0b17  Laserjet 2300d
 	1004  DeskJet 970c/970cse
 	1005  ScanJet 5400c
-	1016  Jornada 548 / iPAQ HW6515 Pocket PC 
+	1016  Jornada 548 / iPAQ HW6515 Pocket PC
 	1104  DeskJet 959c
 	1105  ScanJet 5470c
 	1116  Jornada 568 Pocket PC
-	1151  750xi Printer/Scanner/Copier
+	1151  PSC-750xi Printer/Scanner/Copier
 	1204  DeskJet 930c
 	1305  ScanJet 4570c
 	1312  Deskjet 460
@@ -120,6 +129,7 @@
 	1504  DeskJet 920c
 	1604  DeskJet 940c
 	1617  LaserJet 3015
+	1801  Inkjet P-2000U
 	1904  DeskJet 3820
 	1c17  Color LaserJet 2550l
 	1d17  LaserJet 1320
@@ -131,8 +141,10 @@
 	2205  ScanJet 3500c
 	2304  DeskJet 656c
 	2305  ScanJet 3970c
+	2524  LP3065 30" Monitor Hub
 	2811  PSC-2100
 	2d11  OfficeJet 6110
+	3005  ScanJet 4670v
 	3102  PhotoSmart P1100 Printer w/ Card Reader
 	3104  DeskJet 960c
 	3304  DeskJet 990c
@@ -150,6 +162,7 @@
 	4502  PhotoSmart 945 (PTP mode)
 	4505  ScanJet G4010
 	5004  DeskJet 995c
+	5511  Deskjet F300 series
 	5611  PhotoSmart C3180
 	5911  PhotoSmart C6180
 	6004  DeskJet 5550
@@ -175,6 +188,7 @@
 	7702  PhotoSmart R817 (PTP mode)
 	7a02  PhotoSmart M415 (PTP mode)
 	7b02  PhotoSmart M23 (PTP mode)
+	811c  Ethernet HN210E
 	8604  Deskjet 5440
 	a004  DeskJet 5850c
 	bef4  NEC Picty760
@@ -184,6 +198,7 @@
 03f1  Genoa Technology
 03f2  Oak Technology, Inc.
 03f3  Adaptec, Inc.
+	0020  AWN-8020 WLAN
 03f4  Diebold, Inc.
 03f5  Siemens Electromechanical
 03f8  Epson Imaging Technology Center
@@ -218,25 +233,44 @@
 	8372  FT8U100AX Serial Port
 	c630  lcd2usb interface
 	c7d0  RR-CirKits LocoBuffer-USB
+	cc48  product FTDI TACTRIX_OPENPORT_13M 0xcc48 OpenPort 1.3 Mitsubishi
+	cc49  product FTDI TACTRIX_OPENPORT_13S 0xcc49 OpenPort 1.3 Subaru
+	cc4a  product FTDI TACTRIX_OPENPORT_13U 0xcc4a OpenPort 1.3 Universal
+	e888  Expert ISDN Control USB
+	e889  USB-RS232 OptoBridge
+	e88a  Expert mouseCLOCK USB II
+	e88b  Precision Clock MSF USB
+	e88c  Expert mouseCLOCK USB II HBG
 	ea90  Eclo 1-Wire Adapter
 	f208  Papenmeier Braille-Display
+	f918  Ant8 Logic Probe
+	fa00  Matrix Orbital USB Serial
+	fa01  Matrix Orbital MX2 or MX3
+	fa02  Matrix Orbital MX4 or MX5
+	fa03  Matrix Orbital VK/LK202 Family
+	fa04  Matrix Orbital VK/LK204 Family
+	fc08  Crystalfontz CFA-632 USB LCD
+	fc09  Crystalfontz CFA-634 USB LCD
+	fc0b  Crystalfontz CFA-633 USB LCD
+	fc0c  Crystalfontz CFA-631 USB LCD
+	fc0d  Crystalfontz CFA-635 USB LCD
 	fc82  SEMC DSS-20 SyncStation
 	fd48  ShipModul MiniPlex-4xUSB NMEA Multiplexer
 	ff08  ToolHouse LoopBack Adapter
 0404  NCR Corp.
-	0310 K590 Printer, Self-Service
-	0311 7167 Printer, Receipt/Slip
-	0312 7197 Printer Receipt
-	0320 5932-USB Keyboard
-	0321 5953-USB Dynakey
-	0322 5932-USB Enhanced Keyboard
-	0323 5932-USB Enhanced Keyboard, Flash-Recovery/Download
-	0324 5953-USB Enhanced Dynakey
-	0325 5953-USB Enhanced Dynakey Flash-Recovery/Download
-	0328 K016: USB-MSR ISO 3-track MSR: POS Standard (See HID pages)
-	0329 K018: USB-MSR JIS 2-Track MSR: POS Standard
-	032a K016: USB-MSR ISO 3-Track MSR: HID Keyboard Mode
-	032b K016/K018: USB-MSR Flash-Recovery/Download
+	0310  K590 Printer, Self-Service
+	0311  7167 Printer, Receipt/Slip
+	0312  7197 Printer Receipt
+	0320  5932-USB Keyboard
+	0321  5953-USB Dynakey
+	0322  5932-USB Enhanced Keyboard
+	0323  5932-USB Enhanced Keyboard, Flash-Recovery/Download
+	0324  5953-USB Enhanced Dynakey
+	0325  5953-USB Enhanced Dynakey Flash-Recovery/Download
+	0328  K016: USB-MSR ISO 3-track MSR: POS Standard (See HID pages)
+	0329  K018: USB-MSR JIS 2-Track MSR: POS Standard
+	032a  K016: USB-MSR ISO 3-Track MSR: HID Keyboard Mode
+	032b  K016/K018: USB-MSR Flash-Recovery/Download
 0405  Synopsys, Inc.
 0406  Fujitsu-ICL Computers
 0407  Fujitsu Personal Systems, Inc.
@@ -310,6 +344,8 @@
 	058d  C340
 	058e  V530
 	058f  V550
+	05b3  EasyShare Z710 Camera
+	410d  EasyShare G600 Printer Dock
 	5010  Wireless Adapter
 040b  Weltrend Semiconductor
 	6510  Weltrend Bar Code Reader
@@ -321,8 +357,21 @@
 040f  Echo Speech Corp.
 0411  MelCo., Inc.
 	0001  LUA-TX Ethernet [pegasus]
+	0005  LUA-TX Ethernet
+	0009  LUA2-TX Ethernet
+	0012  LUA-KTX Ethernet
 	0016  WLI-USB-S11 802.11b Adapter
+	001c  USB-IDE Bridge: DUB-PxxG
 	0027  WLI-USB-KS11G 802.11b Adapter
+	003d  LUA-U2-KTX Ethernet
+	005e  WLI-U2-KG54-YB WLAN
+	0066  WLI-U2-KG54 WLAN
+	0067  WLI-U2-KG54-AI WLAN
+	008b  Nintendo Wi-Fi
+	00b3  PC-OP-RS1 RemoteStation
+	00d8  WLI-U2-SG54HP
+	00d9  WLI-U2-G54HP
+	00da  WLI-U2-KG54L
 0412  Award Software International
 0413  Leadtek Research, Inc.
 	6025  WinFast DTV Dongle (cold state)
@@ -339,8 +388,8 @@
 	551e  Keyboard
 	551f  Keyboard w/ Sys and Media
 	5521  Keyboard
-	7723  SD Card Reader
 	6481  16-bit Scanner
+	7723  SD Card Reader
 0417  Symbios Logic
 0418  AST Research
 0419  Samsung Info. Systems America, Inc.
@@ -356,6 +405,7 @@
 	1050  GamePad Cobra
 	3010  SoundBlaster MP3+
 	3020  SoundBlaster Audigy 2 NX
+	3040  Soundblaster SB0490
 	4003  VideoBlaster WebCam Go Plus [W9967CF]
 	4004  Nomad II MG
 	4005  WebCam Blaster Go ES
@@ -392,6 +442,7 @@
 	4116  MuVo^2
 	4117  Nomad MuVo TX
 	411b  Zen Touch
+	411c  Nomad MuVo USB 2.0
 	411d  Zen
 	411e  Zen Micro
 	4123  Zen Portable Media Center
@@ -407,9 +458,14 @@
 	4139  Zen Nano Plus
 	413c  Zen MicroPhoto
 	4151  Zen Vision:M (mtp)
+	4155  Zen Stone plus
 041f  LCS Telegraphics
 0420  Chips and Technologies
+	1307  Celly SIM Card Reader
 0421  Nokia Mobile Phones
+	0018  6288 GSM Smartphone
+	0019  6288 GSM Smartphone (imaging mode)
+	001a  6288 GSM Smartphone (file transfer mode)
 	0401  6650 GSM Phone
 	0405  9500 GSM Communicator
 	040b  N-Gage GSM Phone
@@ -438,6 +494,7 @@
 	000d  USB Chief Analyzer
 	1237  Andromeda Hub
 0424  Standard Microsystems Corp.
+	2020  USB Hub
 	20fc  6-in-1 Card Reader
 	2228  9-in-2 Card Reader
 	223a  8-in-1 Card Reader
@@ -468,6 +525,7 @@
 0434  Samsung Info. Systems America, Inc.
 0435  Hyundai Electronics America
 0436  Taugagreining HF
+	0005  CameraMate (DPCM_USB)
 0437  Framatome Connectors USA
 0438  Advanced Micro Devices, Inc.
 0439  Voice Technologies Group
@@ -490,6 +548,7 @@
 	0069  X74/X75 Printer
 	0072  X6170 Printer
 	0095  E220 Printer
+	00bb  2300 Series
 043e  LG Electronics USA, Inc.
 	42bd  Flatron 795FT Plus Monitor
 	4a4d  Flatron 915FT Plus Monitor
@@ -527,6 +586,7 @@
 	2046  TUSB2046 Hub
 	2077  TUSB2077 Hub
 	3410  TUSB3410 Microcontroller
+	3f02  SMC WSKP100 Wi-Fi Phone
 	5409  Frontier Labs NEX IA+ Digital Audio Player
 	6000  AU5 ADSL Modem (pre-reenum)
 	6001  AU5 ADSL Modem
@@ -572,8 +632,23 @@
 	7012  WebCAM USB2.0
 0459  Adobe Systems, Inc.
 045a  SONICblue, Inc.
+	07da  Supra Express 56K modem
 	0b4a  SupraMax 2890 56K Modem [Lucent Atlas]
 	0b68  SupraMax 56K Modem
+	5001  Rio 600 MP3 Player
+	5002  Rio 800 MP3 Player
+	5003  Nike Psa/Play MP3 Player
+	5005  Rio S10 MP3 Player
+	5006  Rio S50 MP3 Player
+	5007  Rio S35 MP3 Player
+	5008  Rio 900 MP3 Player
+	5009  Rio S30 MP3 Player
+	500d  Fuse MP3 Player
+	500e  Chiba MP3 Player
+	500f  Cali MP3 Player
+	5010  Rio S11 MP3 Player
+	503f  Cali256 MP3 Player
+	5202  Rio Riot MP3 Player
 	5210  Rio Karma Music Player
 	5220  Rio Nitrus MP3 Player
 045b  Hitachi, Ltd
@@ -586,6 +661,7 @@
 	0014  Digital Sound System 80
 	001a  SideWinder Precision Racing Wheel
 	001b  SideWinder Force Feedback 2 Joystick
+	001c  Internet Keyboard Pro
 	001d  Natural Keyboard Pro
 	001e  IntelliMouse Explorer
 	0023  Trackball Optical
@@ -608,6 +684,7 @@
 	0053  Optical Mouse
 	0059  Wireless IntelliMouse Explorer
 	006e  MN510 802.11b Adapter
+	007a  10/100 USB NIC
 	007d  Notebook Optical Mouse
 	007e  Wireless Transceiver for Bluetooth
 	0080  Digital Media Pro Keyboard
@@ -674,6 +751,7 @@
 046a  Cherry GmbH
 	0001  My3000 Keyboard
 	0003  My3000 Hub
+	0004  CyBoard Keyboard
 	0005  XX33 SmartCard Reader Keyboard
 	0023  Cymotion Master Linux Keyboard
 046b  American Megatrends, Inc.
@@ -692,6 +770,7 @@
 	0890  QuickCam Traveler
 	08a0  QuickCam IM
 	08a2  Labtec WebCam Pro
+	08ae  Quickcam for Notebooks
 	08b0  QuickCam 3000 Pro [pwc]
 	08b1  QuickCam Notebook Pro
 	08b2  QuickCam Pro 4000
@@ -699,9 +778,12 @@
 	08b4  QuickCam Zoom
 	08b5  QuickCam Sphere
 	08ce  QuickCam Pro 5000
+	08d7  QuickCam Communicate STX
 	08d9  QuickCam Connect
 	08da  QuickCam Messanger
 	08f0  QuickCam Messenger
+	08f5  QuickCam Messenger Communicate
+	08f6  Quickcam Messenger Plus
 	0900  ClickSmart 310
 	0901  ClickSmart 510
 	0903  ClickSmart 820
@@ -709,6 +791,7 @@
 	0920  QuickCam Express
 	0921  Labtec WebCam
 	0928  Quickcam Express
+	0929  Labtec WebCam Pro
 	092a  QuickCam for Notebooks
 	092c  QuickCam Chat
 	092f  QuickCam express Plus
@@ -725,7 +808,7 @@
 	c004  WingMan Gaming Mouse
 	c00b  MouseMan Wheel
 	c00c  Optical Wheel Mouse
-	c00e  M-BJ69 Optical Wheel Mouse
+	c00e  M-BJ58/M-BJ69 Optical Wheel Mouse
 	c012  Optical Mouse
 	c016  M-UV69a Optical Wheel Mouse
 	c01a  M-BQ85 Optical Wheel Mouse
@@ -735,6 +818,7 @@
 	c025  MX500 Optical Mouse
 	c030  iFeel Mouse
 	c032  MouseMan iFeel
+	c03d  M-BT69a Pilot Optical Mouse
 	c03e  Premium Optical Wheel Mouse
 	c03f  UltraX Optical Mouse
 	c202  WingMan Formula
@@ -745,8 +829,13 @@
 	c20c  WingMan Precision
 	c20d  WingMan Attack 2
 	c211  iTouch Cordless Reciever
+	c214  ATK3 (Attack III Joystick)
+	c215  Extreme 3D Pro
 	c216  Dual Action Gamepad
 	c218  Logitech RumblePad 2 USB
+	c221  G15 Keyboard / Keyboard
+	c222  G15 Keyboard / LCD
+	c223  G15 Keyboard / USB Hub
 	c281  WingMan Force
 	c283  WingMan Force 3D
 	c285  WingMan Strike Force 3D
@@ -757,6 +846,7 @@
 	c303  iTouch Keyboard
 	c308  Internet Navigator Keyboard
 	c309  Internet Keyboard
+	c315  Classic New Touch Keyboard
 	c401  TrackMan Marble Wheel
 	c402  Marble Mouse (2-button)
 	c404  TrackMan Wheel
@@ -770,6 +860,7 @@
 	c50e  MX-1000 Cordless Mouse Receiver
 	c517  LX710 Cordless Desktop Laser
 	c518  MX610 Laser Cordless Mouse
+	c51a  MX Revolution/G7 Cordless Mouse
 	c521  MX620 Laser Cordless Mouse
 	c626  3DConnexion Space Navigator 3D Mouse
 	c627  3DConnexion Space Explorer 3D Mouse
@@ -802,6 +893,8 @@
 	0701  150P1 TFT Display
 	0811  JR24 CDRW
 	1120  Creative Rhomba MP3 player
+	1236  SNU5600
+	1552  ISP 1581 Hi-Speed USB MPEG2 Encoder Reference Kit
 	1801  Diva MP3 player
 0472  Chicony Electronics Co., Ltd
 	0065  PFU-65 Keyboard
@@ -821,6 +914,7 @@
 	0002  QuickClip
 0479  Advanced Peripheral Laboratories
 047a  Semtech Corp.
+	0004  ScreenCoder UR7HCTS2-USB
 047b  Silitek Corp.
 	0002  Keyboard and Mouse
 	0101  BlueTooth Keyboard and Mouse
@@ -848,8 +942,13 @@
 0481  Zenith Data Systems
 0482  Kyocera Corp.
 	000e  FS-1020D Printer
+	0100  Finecam S3x
+	0101  Finecam S4
 	0103  Finecam S5
+	0105  Finecam L3
+	0203  AH-K3001V
 0483  SGS Thomson Microelectronics
+	0137  BeWAN ADSL USB ST (blue or green)
 	1307  Cytronix 6in1 card reader
 	163d  Cool Icam Digi-MP3
 	2016  Fingerprint Reader
@@ -876,6 +975,12 @@
 0497  Smile International
 0498  Capetronic (Kaohsiung) Corp.
 0499  Yamaha Corp.
+	1000  UX256 MIDI I/F
+	1008  UX96 MIDI I/F
+	4000  NetVolante RTA54i Broadband&ISDN Router
+	4001  NetVolante RTW65b Broadband Wireless Router
+	4002  NetVolante RTW65i Broadband&ISDN Wireless Router
+	4004  NetVolante RTA55i Broadband VoIP Router
 	6001  CRW2200UX Lightspeed 2 External CD-RW Drive
 049a  Gandalf Technologies, Ltd
 049b  Curtis Computer Products
@@ -891,6 +996,7 @@
 	0032  802.11b Adapter [ipaq h5400]
 	0033  802.11b Adapter [orinoco]
 	0051  KU-0133 Easy Access Interner Keyboard
+	504a  Personal Jukebox PJB100
 	505a  Linux-USB "CDC Subset" Device, or Itsy (experimental)
 	8511  iPAQ Networking 10/100 Ethernet [pegasus2]
 04a0  Digital Equipment Corp.
@@ -898,6 +1004,8 @@
 04a2  FirePower Systems
 04a3  Trident Microsystems, Inc.
 04a4  Hitachi, Ltd
+	0004  DVD-CAM DZ-MV100A Camcorder
+	001e  DVDCAM USB HS Interface
 04a5  Acer Peripherals Inc. (now BenQ Corp.)
 	0001  Keyboard
 	12a6  AcerScan C310U
@@ -918,6 +1026,9 @@
 	300a  Benq 3410
 	300c  Benq 1016
 	3019  Benq DC C40
+	6003  ATA/ATAPI Adapter
+	9000  AWL300 Wireless Adapter
+	9001  AWL400 Wireless Adapter
 	9213  Kbd Hub
 04a6  Nokia Display Products
 04a7  Visioneer
@@ -966,6 +1077,7 @@
 	2216  CanoScan 3200F
 	2217  CanoScan 5200F
 	221e  CanoScan 8400F
+	2220  CanoScan LIDE 25
 	2225  CanoScan LiDE 70
 	2611  SmartBase MPC400
 	262b  LaserShot LBP-1120 Printer
@@ -1105,9 +1217,9 @@
 	012e  Coolpix 5600 (ptp)
 	0130  Coolpix 4600 (ptp)
 	0135  Coolpix 5900 (ptp)
-	0142  Coolpix P2 (ptp)
 	0136  Coolpix 7900 (storage)
 	0137  Coolpix 7900 (ptp)
+	0142  Coolpix P2 (ptp)
 	0202  Coolpix SQ (ptp)
 	0203  Coolpix 4200 (mass storage mode)
 	0204  Coolpix 4200 (ptp)
@@ -1151,6 +1263,8 @@
 	0000  Dacal DC-101 CD Library
 	0001  Mouse
 	0002  CY7C63x0x Thermometer
+	0101  Keyboard/Hub
+	0bad  MetaGeek Wi-Spy
 	1002  CY7C63001 R100 FM Radio
 	5500  HID->COM RS232 Adapter
 	6560  CY7C65640 USB-2.0 "TetraHub"
@@ -1191,16 +1305,28 @@
 	011d  Perfection 1260 Photo
 	011e  Perfection 1660 Photo
 	011f  Perfection 1670
+	0120  Perfection 1270 scanner
 	0121  Perfection 2480 Photo
+	0122  Perfection 3590 scanner
+	012a  Perfection 4990 Photo scanner
 	0202  Receipt Printer M129C
 	0402  PhotoPC 850z
 	0403  PhotoPC 3000z
 	0601  Stylus Photo 875DC Card Reader
 	0602  Stylus Photo 895 Card Reader
-	0801  Stylus CX5200
+	0801  Stylus CX5200/CX5400/CX6600
 	0802  Stylus CX3200
+	0805  Stylus CX6400
+	0808  Stylus CX5200
 	080c  ME100
+	080e  CX-3500/3600/3650 MFP
+	080f  Stylus Photo RX425 scanner
 	0811  Stylus Photo RX620 all-in-one
+	0820  CX4200 MP scanner
+	082b  Stylus DX5050
+	082e  0x082e  DX-60x0 MFP scanner
+	082f  Stylus DX4050
+	083f  Stylus DX4450
 04b9  Rainbow Technologies, Inc.
 	0300  SafeNet USB SuperPro/UltraPro
 	1000  iKey 1000 Token
@@ -1210,13 +1336,26 @@
 	1300  iKey 3000 Token
 04ba  Toucan Systems, Ltd
 04bb  I-O Data Device, Inc.
+	0204  DVD Multi-plus unit iU-CD2
+	0206  DVD Multi-plus unit DVR-UEH8
+	0314  USB-SSMRW SD-card
+	031e  USB-SDRW SD-card
+	0901  USB ETT
 	0904  ET/TX Ethernet [pegasus]
 	0913  ET/TX-S Ethernet [pegasus2]
+	0919  USB WN-B11
 	0922  IOData AirPort WN-B11/USBS 802.11b
+	0930  ETG-US2
+	0a03  Serial USB-RSAQ1
 04bd  Toshiba Electronics Taiwan Corp.
 04be  Telia Research AB
 04bf  TDK Corp.
 	0100  MediaReader CF
+	0115  USB-PDC Adapter UPA9664
+	0116  USB-cdmaOne Adapter UCA1464
+	0117  USB-PHS Adapter UHA6400
+	0118  USB-PHS Adapter UPA6400
+	0309  Bluetooth USB dongle
 	0320  Bluetooth Adapter
 04c1  U.S. Robotics (3Com)
 	0082  OfficeConnect Analog Modem
@@ -1230,6 +1369,7 @@
 	1029  fi-4010c Scanner
 	1041  fi-4120c Scanner
 	1042  fi-4220c Scanner
+	105b  AH-F401U Air H device
 	10e0  fi-5120c Scanner
 04c6  Toshiba America Electronic Components
 04c7  Micro Macro Technologies
@@ -1268,6 +1408,7 @@
 	0177  Finepix F10 Camera (Disk mode)
 	0179  Finepix F10 Camera (PTP mode)
 	0192  FinePix E900
+	01c6  FinePix A820
 04cc  Philips Semiconductors
 	1122  Hub
 	1521  USB 2.0 Hub
@@ -1275,11 +1416,13 @@
 04cd  Tatung Co. Of America
 04ce  ScanLogic Corp.
 	0002  SL11R-IDE IDE Bridge
+	0300  Phantom 336CX - C3 scanner
 04cf  Myson Century, Inc.
-	8818  USB2.0 to ATAPI Bridge Controller 
+	8818  USB2.0 to ATAPI Bridge Controller
 04d0  Digi International
 04d1  ITT Canon
 04d2  Altec Lansing Technologies
+	0070  ADA70 Speakers
 	0311  ADA-310 Speakers
 	ff05  ADA-305 Speakers
 04d3  VidUS, Inc.
@@ -1288,9 +1431,16 @@
 04d6  Mentor Graphics
 04d7  Oki Semiconductor
 04d8  Microchip Technology, Inc.
+	0002  USB-LCD 2x20
 	8000  In-Circuit Debugger
 04d9  Holtek Semiconductor, Inc.
 04da  Panasonic (Matsushita)
+	0901  LS-120 Camera
+	0d01  CD-R Drive KXL-840AN
+	0d09  CD-R Drive KXL-RW32AN
+	0d0a  CD-R Drive KXL-CB20AN
+	0d0e  DVD-ROM & CD-R/RW
+	1b00  MultiMediaCard
 	2121  EB-VS6
 	2319  NV-GS15 (webcam mode)
 	2372  Lumix DMC-FZ10 Camera
@@ -1311,6 +1461,7 @@
 	9050  Zaurus C-860 PDA
 	9056  Viewcam Z
 	90f2  Sharp 3G GSM USB Control
+	9123  W-ZERO3 ES Smartphone
 04de  MindShare, Inc.
 04df  Interlink Electronics
 04e1  Iiyama North America, Inc.
@@ -1326,6 +1477,10 @@
 	0005  eUSB SmartMedia/CompactFlash Card Reader
 	0006  eUSB SmartMedia Card Reader
 	0007  Hifd
+	0009  eUSB ATA/ATAPI Adapter
+	000a  eUSB CompactFlash Adapter
+	000b  eUSCSI Bridge
+	000c  eUSCSI Bridge
 	0101  eUSB ATA Bridge
 	0325  eUSB ORCA Quad Reader
 	0500  Veridicom 5thSense Fingerprint Sensor and eUSB SmartCard
@@ -1342,11 +1497,13 @@
 	0110  Connect3D Flash Drive
 	0111  Connect3D Flash Drive
 	1003  MP3 Player and Recorder
+	3008  ML-6060 laser printer
 	300c  ML-1210 Printer
 	323a  ML-1710 Printer
 	324c  ML-1740 Printer
 	3260  CLP-510 Color Laser Printer
 	3268  ML-1610 Mono Laser Printer
+	5050  YP-U2 MP3 Player
 	5a03  Yepp MP3 Player
 	6601  Z100 Mobile Phone
 	663f  SGH-E720
@@ -1363,6 +1520,7 @@
 	0008  GZ-MG30AA/MC500E Digital Video Camera
 	0009  GR-DX25EK Digital Video Camera
 	000a  GR-D72 Digital Video Camera
+	3008  MP-PRX1 Ethernet
 04f2  Chicony Electronics Co., Ltd
 	0001  KU-8933 Keyboard
 	0002  NT68P81 Keyboard
@@ -1396,6 +1554,7 @@
 	0561  Flexcam 100
 	504a  SPCA504a Digital Camera
 	504b  Aiptek, 1.3 mega PockerCam
+	5330  Digitrex 2110
 	5331  Vivitar Vivicam 10
 	7333  Finet Technology Palmpix DC-85
 	ffff  PureDigital Ritz Disposable
@@ -1410,10 +1569,14 @@
 0503  Hitachi America, Ltd
 0504  Hayes Microcomputer Products
 0506  3Com Corp.
+	009d  HomeConnect Camera
 	00a0  3CREB96 Bluetooth Adapter
-	03e8  3C19250 Ethernet [klsi]
-	0a11  3CRWE254G72 802.11g Adapter
 	00df  3Com Home Connect lite
+	03e8  3C19250 Ethernet [klsi]
+	0a01  3CRSHEW696 Wireless Adapter
+	0a11  3CRWE254G72 802.11g Adapter
+	11f8  HomeConnect 3C460
+	3021  U.S.Robotics 56000 Voice FaxModem Pro
 	4601  3C460B 10/100 Ethernet Adapter
 	f002  3CP4218 ADSL Modem (pre-init)
 	f003  3CP4218 ADSL Modem
@@ -1427,6 +1590,9 @@
 050c  InnoMedia, Inc.
 050d  Belkin Components
 	0012  Bluetooth USB Adapter F8T012
+	0050  F5D6050 802.11b Wireless Adapter
+	0081  FBT001v2 Bluetooth
+	0084  FBT003v2 Bluetooth
 	0102  Flip KVM
 	0103  F5U103 Serial Adapter [etek]
 	0108  F1DE108B KVM
@@ -1436,12 +1602,23 @@
 	0208  USBView II Video Adapter [nt1004]
 	0224  F5U224 USB 2.0 4-Port Hub
 	0234  F5U234 USB 2.0 4-Port Hub
+	0237  F5U237 USB 2.0 7-Port Hub
+	0240  F5U240 USB 2.0 CF Card Reader
+	0257  F5U257 Serial
+	0409  F5U409 Serial
+	0551  F6C550-AVR UPS
 	0803  Nostromo 1745 GamePad
 	0805  Nostromo N50 GamePad
 	1203  F5U120-PC Serial Port
-	3101  F1DF102U Flip Hub
-	3201  F1DF102U Flip KVM
+	3101  F1DF102U/F1DG102U Flip Hub
+	3201  F1DF102U/F1DG102U Flip KVM
+	4050  ZD1211B
+	5055  F5D5055
 	7050  F5D7050 ver 1000 WiFi
+	7051  F5D7051 54g USB Network Adapter
+	705a  F5D7050A Wireless Adapter
+	705c  F5D7050 v4000 Wireless Adapter
+	905b  F5D9050 ver 3 Wireless Adapter
 050e  Neon Technology, Inc.
 050f  KC Technology, Inc.
 	0003  KC82C160S Hub
@@ -1464,7 +1641,7 @@
 051b  Silicon Graphics
 051c  Shuttle, Inc.
 051d  American Power Conversion
-	0002  Uninterruptible Power Supply 
+	0002  Uninterruptible Power Supply
 051e  Scientific Atlanta, Inc.
 051f  IO Systems (Elite Electronics), Inc.
 0520  Taiwan Semiconductor Manufacturing Co.
@@ -1474,6 +1651,7 @@
 0524  Sola Electronics
 0525  Netchip Technology, Inc.
 	1080  NET1080 USB-USB Bridge
+	a140  USB Clik! 40
 	a4a0  Linux-USB "Gadget Zero"
 	a4a1  Linux-USB Ethernet Gadget
 	a4a2  Linux-USB Ethernet/RNDIS Gadget
@@ -1559,10 +1737,11 @@
 054a  Fujitsu Microelectronics, Inc.
 054b  New Media Corp.
 054c  Sony Corp.
-	0010  DSC-S30/S70/S75/F505V/F505/FD92 Cybershot/Mavica Digital Camera
+	0010  DSC-S30/S70/S75/F505V/F505/FD92/W1 Cybershot/Mavica Digital Camera
 	0023  CD Writer
 	0024  Mavica CD-1000 Camera
 	0025  NW-MS7 Walkman MemoryStick Reader
+	002b  Portable USB Harddrive V2
 	002c  USB Floppy Disk Drive
 	002d  MSAC-US1 MemoryStick Reader
 	002e  Sony HandyCam MemoryStick Reader
@@ -1574,12 +1753,14 @@
 	0069  Memorystick MSC-U03 Reader
 	006d  Clie PEG-T425 PDA Mass Storage
 	008b  Micro Vault 64M Mass Storage
+	0095  Sony Clie s360
 	0099  Clie NR70 PDA Mass Storage
 	009a  Clie NR70 PDA Serial
 	00c0  Handycam DCR-30
 	00c8  MZ-N710 Minidisc Walkman
 	00ca  MZ-DN430 Minidisc Walkman
 	00cb  MSAC-US20 Memory Stick Reader
+	00da  Sony Clie nx60
 	0105  Micro Vault Hub
 	0107  VCC-U01 Visual Communication Camera
 	0144  Clie PEG-TH55 PDA
@@ -1595,6 +1776,7 @@
 	01fb  NW-E405 Network Walkman
 	023b  DVD+RW External Drive DRU-800UL
 	0243  MicroVault Flash Drive
+	029b  PRS-500 eBook reader
 	02ae  PlayStation 3 Memory Card Adaptor
 	02af  Handycam DCR-DVD306E
 	02d2  PSP
@@ -1620,6 +1802,7 @@
 	2006  UC-1284B Printer Port
 	2007  UC-110T 100Mbps Ethernet [pegasus]
 	2008  UC-232A Serial Port [pl2303]
+	2009  UC-210T Ethernet
 	2202  CS124U Miniview II KVM Switch
 	2600  IDE Bridge
 	4000  DSB-650 10Mbps Ethernet [klsi]
@@ -1678,6 +1861,7 @@
 	0003  @Home Networks Ethernet [klsi]
 	0005  Enet2 Ethernet [klsi]
 0566  Monterey International Corp.
+	2802  Kbd Hub
 0567  Xyratex International, Ltd
 0568  Quartz Ingenierie
 0569  SegaSoft
@@ -1685,6 +1869,7 @@
 	0000  PenPartner
 	0010  Graphire
 	0011  Graphire 2
+	0013  Graphire 3 4x5
 	0020  Intuos 4x5
 	0021  Intuos 6x8
 	0022  Intuos 9x12
@@ -1702,7 +1887,14 @@
 	0001  Monitor
 056e  Elecom Co., Ltd
 	0002  29UO Mouse
+	200c  LD-USB/TX
 	4002  Laneed 100Mbps Ethernet LD-USB/TX [pegasus]
+	4005  LD-USBL/TX
+	400b  LD-USB/TX
+	4010  LD-USB20
+	5003  UC-SGT
+	5004  UC-SGT
+	abc1  LD-USB/TX
 056f  Korea Data Systems Co., Ltd
 	cd00  CDM-751 CD organizer
 0570  Epson America
@@ -1773,6 +1965,7 @@
 057d  Shark Multimedia, Inc.
 057e  Nintendo Co., Ltd
 057f  QuickShot, Ltd
+	6238  USB StrikePad
 0580  Denron, Inc.
 0581  Racal Data Group
 0582  Roland Corp.
@@ -1781,6 +1974,8 @@
 	0005  Edirol UM-2 MIDI Adapter
 	0009  Edirol UM-1SX MIDI Adapter
 	0011  Edirol UA-5 Sound Capture
+	0014  EDIROL UM-880 MIDI I/F (native)
+	0015  EDIROL UM-880 MIDI I/F (generic)
 	002d  VX-2020 Synthesizer
 0583  Padix Co., Ltd (Rockfire)
 	2030  RM-203 USB Nest [mode 1]
@@ -1792,11 +1987,18 @@
 	688f  QF-688uv Windstorm Pro Joystick
 	7070  QF-707u Bazooka Joystick
 0584  RATOC System, Inc.
+	b000  REX-USB60
 0585  FlashPoint Technology, Inc.
 0586  ZyXEL Communications Corp.
 	1000  Omni NET Modem / ISDN TA
+	1500  Omni 56K Plus
+	2011  Scorpion-980N keyboard
 	330e  USB Broadband ADSL Modem Rev 1.10
 	3401  ZyAIR G-220
+	3407  G-200 v2
+	3409  AG-225H
+	340a  M-202
+	340f  G-220 v2
 0587  America Kotobuki Electronics Industries, Inc.
 0588  Sapien Design
 0589  Victron
@@ -1810,7 +2012,7 @@
 	5492  Hub
 	6232  Hi-Speed 16-in-1 Flash Card Reader/Writer
 	6362  Hi-Speed 21-in-1 Flash Card Reader/Writer (Internal/External)
-	6387  Transcend JetFlash 110 USB 2.0 Flash Drive (2GB)
+	6387  Transcend JetFlash Flash Drive
 	9213  MacAlly Kbd Hub
 	9215  AU9814 Hub
 	9254  Hub
@@ -1828,7 +2030,8 @@
 0593  Incite
 0594  Princeton Graphic Systems
 0595  Zoran Microelectronics, Ltd
-	1001 Digitrex DSC-1300/DSC-2100 (mass storage mode)
+	1001  Digitrex DSC-1300/DSC-2100 (mass storage mode)
+	4343  Digital Camera EX-20 DSC
 0596  MicroTouch Systems, Inc.
 	0001  Touchscreen
 0597  Trisignal Communications
@@ -1856,12 +2059,13 @@
 	0323  LaCie d2 Drive USB2
 	0641  Mobile Hard drvie
 	a601  HardDrive
+	a602  CD R/W
 05a0  Vetronix Corp.
 05a1  USC Corp.
 05a2  Fuji Film Microdevices Co., Ltd
 05a3  ARC International
 05a4  Ortek Technology, Inc.
-	9731  MCK-600W Keyboard
+	9731  MCK-600W/MCK-800USB Keyboard
 05a5  Sampo Technology Corp.
 05a6  Cisco Systems, Inc.
 05a7  Bose Corp.
@@ -1879,39 +2083,49 @@
 	0202  ATA Bridge
 	081a  ATA Bridge
 	0cda  ATA Bridge for CD-R/RW
+	5701  USB Storage Adapter V2
 05ac  Apple Computer, Inc.
 	0201  Apple USB Keyboard [Alps or Logitech, M2452]
 	0202  Apple Keyboard [ALPS]
 	0205  Apple Extended Keyboard [Mitsumi]
 	0206  Apple Extended Keyboard [Mitsumi]
 	020b  Apple Pro Keyboard [Mitsumi, A1048/US layout]
+	020c  Apple Extended Keyboard [Mitsumi]
 	020d  Apple Pro Keyboard [Mitsumi, A1048/JIS layout]
 	020e  Apple Internal Keyboard/Trackpad
 	020f  Apple Internal Keyboard/Trackpad
+	021b  Apple Internal Keyboard/Trackpad
 	0220  Apple Aluminum Keyboard
 	0301  Apple USB Mouse [Mitsumi, M4848]
 	0302  Apple Optical Mouse [Fujitsu]
 	0304  Apple Optical USB Mouse [Mitsumi]
 	0306  Apple Optical USB Mouse [Fujitsu]
+	1000  Bluetooth HCI MacBookPro (HID mode)
 	1001  Apple Keyboard Hub [ALPS]
 	1002  Apple Extended Keyboard Hub [Mitsumi]
 	1003  Hub in Apple Pro Keyboard [Mitsumi, A1048]
 	1006  Hub in Apple Aluminum Keyboard
 	1101  Speakers
 	1201  3G iPod
+	1202  iPod 2G
 	1203  Apple iPod 4.Gen Grayscale 40G
 	1204  iPod [Photo]
 	1205  iPod Mini 1.Gen/2.Gen
+	1206  iPod '06'
+	1207  iPod '07'
+	1208  iPod '08'
 	1209  iPod Video
-	120A  iPod Nano
+	120a  iPod Nano
 	1260  iPod Nano 2.Gen
 	1300  iPod Shuffle
 	1301  iPod Shuffle 2.Gen
 	8202  HCF V.90 Data/Fax Modem
 	8203  Bluetooth HCI
 	8204  Bluetooth HCI [Bluetooth 2.0 + EDR, build-in]
+	8205  Bluetooth HCI MacBookPro
 	8206  Bluetooth USB Host Controller
 	8240  IR Receiver [build-in]
+	8300  Built-in iSight (no firmware loaded)
 	8501  Built-in iSight [Micron]
 	912f  Hub in Apple 30" Cinema Display
 	9221  Apple 30" Cinema Display
@@ -1940,6 +2154,9 @@
 05c1  Kawasaki Microelectronics, Inc.
 05c2  Media Phonics (Suisse) S.A.
 05c5  Digi International, Inc.
+	0002  AccelePort USB 2
+	0004  AccelePort USB 4
+	0008  AccelePort USB 8
 05c6  Qualcomm, Inc.
 	3100  CDMA Wireless Modem/Phone
 	3196  CDMA Wireless Modem
@@ -1993,7 +2210,7 @@
 	0099  10Mbps Ethernet [klsi]
 05d8  Ultima Electronics Corp.
 	4001  Artec Ultima 2000
-	4002  Artec Ultima 2000 (GT6801 based)/Lifetec LT9385 Scanner
+	4002  Artec Ultima 2000 (GT6801 based)/Lifetec LT9385/ScanMagic 1200 UB Plus Scanner
 	4003  Artec E+ 48U
 	4004  Artec E+ Pro
 	4008  Trust Easy Webscan 19200
@@ -2010,6 +2227,7 @@
 	0099  ScanMaker X6/X6U
 	009a  Phantom C6
 	00a0  Phantom 336CX/C3 (#2)
+	00a3  ScanMaker V6USL
 	00b6  ScanMaker V6UPL
 	1006  Jenoptik JD350 entrance
 	1011  NHJ Che-ez! Kiss Digital Camera
@@ -2023,15 +2241,27 @@
 	80a3  ScanMaker V6USL (#2)
 	80ac  ScanMaker V6UL/SpicyU
 05db  Sun Corp. (Suntac?)
+	0003  SUNTAC U-Cable type D2
+	0005  SUNTAC U-Cable type P1
+	0009  SUNTAC Slipper U
+	000a  SUNTAC Ir-Trinity
+	000b  SUNTAC U-Cable type A3
+	0011  SUNTAC U-Cable type A4
 05dc  Lexar Media, Inc.
+	0001  jumpSHOT CompactFlash Reader
 	0080  Jumpdrive Secure 64MB
 	0200  JumpDrive 2.0 Pro
 	0300  Jumpdrive Geysr
 	a410  JumpDrive 128MB/256MB
+	b002  USB CF Reader
 	b018  Multi-Card Reader
 05dd  Delta Electronics, Inc.
+	ff31  AWU-120
 05df  Silicon Vision, Inc.
 05e0  Symbol Technologies
+	1200  DS6608 Bar Code Scanner
+	2000  MC3090 Rugged Mobile Computer
+	200d  MC70 Rugged Mobile Computer
 05e1  Syntek Semiconductor Co., Ltd
 05e2  ElecVision, Inc.
 05e3  Genesys Logic, Inc.
@@ -2041,10 +2271,11 @@
 	0120  Pacific Image Electronics PrimeFilm 1800u slide/negative scanner
 	0300  GLUSB98PT Parallel Port
 	0406  Hub
+	0501  GL620USB Host-Host interface
 	0502  GL620USB GeneLink USB-USB Bridge
 	0604  USB 1.1 Hub
 	0605  USB 2.0 Hub [ednet]
-	0606  D-Link DUB-H4 USB 2.0 Hub
+	0606  USB 2.0 Hub / D-Link DUB-H4 USB 2.0 Hub
 	0608  USB-2.0 4-Port HUB
 	0660  USB 2.0 Hub
 	0700  SIIG US2256 CompactFlash Card Reader
@@ -2057,6 +2288,7 @@
 	0760  USB 2.0 Card Reader/Writer
 	07A0  Pen Flash
 	1205  Afilias Optical Mouse H3003
+	fd21  3M TL20 Temperature Logger
 05e4  Red Wing Corp.
 05e5  Fuji Electric Co., Ltd
 05e6  Keithley Instruments
@@ -2095,6 +2327,7 @@
 	daae  Game Shark
 05fe  Chic Technology Corp.
 	0001  Mouse
+	0003  Cypress USB Mouse
 	0005  Viewmaster 4D Browser Mouse
 	0007  Twinhead Mouse
 	0009  Inland Pro 4500/5000 Mouse
@@ -2118,6 +2351,8 @@
 	0001  MacAlly Keyboard
 	2101  Keyboard
 	5811  ACK-571U Wireless Keyboard
+	6001  SolidTek USB 2p HUB
+	6002  SolidTek USB Keyboard
 	a001  Maxwell Compact Pc PM3
 060c  EEH Datalink GmbH
 060d  Auctor Corp.
@@ -2166,6 +2401,7 @@
 0634  Micron Technology, Inc.
 0635  Methode Electronics, Inc.
 0636  Sierra Imaging, Inc.
+	0003  Vivicam 35Xx
 0638  Avision, Inc.
 	0268  iVina 1200U Scanner
 	026a  Minolta Dimage Scan Dual II
@@ -2230,6 +2466,7 @@
 066b  Linksys, Inc.
 	0105  SCM eUSB SmartMedia Card Reader
 	010a  Melco MCR-U2 SmartMedia / CompactFlash Reader
+	200c  USB10TX
 	2202  USB10TX Ethernet [pegasus]
 	2203  USB100TX Ethernet [pegasus]
 	2204  USB100TX HomePNA Ethernet [pegasus]
@@ -2237,6 +2474,7 @@
 	2211  WUSB11 802.11b Adapter
 	2212  WUSB11v2.5 802.11b Adapter
 	2213  WUSB12v1.1 802.11b Adapter
+	400b  USB10TX
 066d  Entrega, Inc.
 066e  Acer Semiconductor America, Inc.
 066f  SigmaTel, Inc.
@@ -2247,6 +2485,7 @@
 	4210  STIr4210 IrDA Bridge
 	8000  SigmaTel MSCN USB Device [MP3 Player]
 	8004  MSCNMMC MP3 Player
+	8008  i-Bead 100 MP3 Player
 	8202  Jens of Sweden / I-BEAD 150M/150H MP3 player
 	8206  Digital MP3 Music Player
 0672  Labtec, Inc.
@@ -2257,6 +2496,7 @@
 0674  Key Mouse Electronic Enterprise Co., Ltd
 0675  Draytech
 	0110  Vigor 128 ISDN TA
+	0550  Vigor550
 0676  Teles AG
 0677  Aiwa Co., Ltd
 	0fa1  TD-U8000 Tape Drive
@@ -2264,6 +2504,7 @@
 067b  Prolific Technology, Inc.
 	0000  PL2301 USB-USB Bridge
 	0001  PL2302 USB-USB Bridge
+	04bb  PL2303 Serial (IODATA USB-RSAQ2)
 	2303  PL2303 Serial Port
 	2305  PL2305 Parallel Port
 	2307  PL2307 USB-ATAPI4 Bridge
@@ -2274,7 +2515,9 @@
 	2507  PL2507 Hi-speed USB to IDE bridge controller
 	2515  Flash Disk Embedded Hub
 	2517  Flash Disk Mass Storage Device
-	3507  PL3507 ATAPI6 Bridge 
+	3507  PL3507 ATAPI6 Bridge
+	aaa0  Prolific Pharos
+	aaa2  PL2303 Serial Adapter (IODATA USB-RSAQ3)
 067c  Efficient Networks, Inc.
 	1001  Siemens SpeedStream 100MBps Ethernet
 	1022  Siemens SpeedStream 1022 802.11b Adapter
@@ -2288,10 +2531,14 @@
 	0002  Gigaset 3075 Passive ISDN
 	0005  ID-Mouse with Fingerprint Reader
 	0012  I-Gate 802.11b Adapter
+	001b  WLL013
 	002b  A-100-I ADSL Modem
+	0034  0x0034  GSM module MC35
+	3c06  54g USB Network Adapter
 0682  Victor Company of Japan, Ltd
 0684  Actiontec Electronics, Inc.
 0686  Minolta Co., Ltd
+	4001  Dimage 2300
 	4003  Dimage 2330 Zoom Camera
 	4004  Scan Elite II
 	4006  Dimage 7 Camera
@@ -2302,6 +2549,7 @@
 	400b  Dimage 7i Camera
 	400c  Dimage F100 Camera
 	400d  Scan Dual III
+	400e  Dimage 5400
 	400f  Dimage 7Hi Camera
 	4010  Dimage Xi Camera
 	4011  Dimage F300 Camera
@@ -2309,6 +2557,7 @@
 	4014  Dimage S414 Camera
 	4015  Dimage XT Camera [storage]
 	4016  Dimage XT Camera [remote mode]
+	4017  Dimage E223
 	4018  Dimage Z1  Camera
 	401a  Dimage A1 Camera
 	401c  Dimage X20 Camera
@@ -2317,7 +2566,9 @@
 068b  Potrans International, Inc.
 068e  CH Products, Inc.
 	00e2  HFX OEM Joystick
+	00f1  Pro Throttle
 	00f2  Flight Sim Pedals
+	00f3  Fighterstick
 	00ff  Flight Sim Yoke
 	0500  GameStick 3D
 	0501  CH Pro Pedals
@@ -2357,11 +2608,13 @@
 	0200  Xbox Adrenalin Hub
 	0241  Xbox Adrenalin Gamepad
 	0422  ST90 Joystick
+	0460  ST290 Pro Flight Stick
 	052d  P750 Gamepad
 	053f  X36F Flightstick
 	100a  SP550 Pad and Joystick Combo
 	100b  SP550 Pad
 	3509  P3000 RF GamePad
+	8021  Eclipse II Keyboard
 	ff0c  Cyborg Force Rumble Pad
 	ffb5  Cyborg Evo Force Joystick
 06a4  Xiamen Doowell Electron Co., Ltd
@@ -2449,18 +2702,24 @@
 	010a  USA-49W serial adapter
 	010b  USA-19Qi serial adapter [no firmware]
 	010c  USA-19Qi serial adapter
+	010d  USA-19Q serial Adapter (no firmware)
+	010e  USA-19Q serial Adapter
 	010f  USA-28 PDA
 	0110  USA-28Xb PDA
+	0111  USA-18 serial Adapter
 	0112  USA-18X PDA
 	0113  USA-28Xb PDA [no firmware]
 	0114  USA-28Xa PDA [no firmware]
 	0115  USA-28Xa PDA
+	0116  USA-18XA serial Adapter (no firmware)
+	0117  USA-18XA serial Adapter
 	0118  USA-19QW PDA [no firmware]
 	0119  USA-19QW PDA
 	011a  USA-49Wlc serial adapter [no firmware]
-	012a  USA-49Wlc serial adapter
 	0121  USA-19hs serial adapter
+	012a  USA-49Wlc serial adapter
 	0201  Digital Media Remote
+	0202  UIA-11 remote control
 06cf  SpheronVR AG
 	1010  PanoCam 10
 	1012  PanoCam 12/12X
@@ -2490,6 +2749,7 @@
 	f107  MT5634ZBA-USB-V92 MultiModemUSB
 06e1  ADS Technologies, Inc.
 	0008  UBS-10BT Ethernet [klsi]
+	0009  UBS-10BT Ethernet
 	a190  Instand VCD Usb Capture
 06e4  Alcatel Microelectronics
 06e6  Tiger Jet Network, Inc.
@@ -2505,6 +2765,9 @@
 06f8  Guillemot Corp.
 	a300  Dual Analog Leader GamePad
 	c000  Hercules Muse Pocket
+	e000  HWGUSB2-54 WLAN
+	e010  HWGUSB2-54-LB
+	e020  HWGUSB2-54V2-AP
 06fa  HSD S.r.L
 06fc  Motorola Semiconductor Products Sector
 06fd  Boston Acoustics
@@ -2516,9 +2779,11 @@
 0707  Standard Microsystems Corp.
 	0100  2202 Ethernet [klsi]
 	0200  2202 Ethernet [pegasus]
+	0201  EZ Connect USB Ethernet
 	ee06  EZ-Connect 802.11g Adapter
 	ee13  EZ-Connect 802.11g Adapter
 0708  Putercom Co., Ltd
+	047e  USB-1284 BRIDGE
 0709  Silicon Systems, Ltd (SSL)
 070a  Oki Electric Industry Co., Ltd
 070d  Comoss Electronic Co., Ltd
@@ -2566,21 +2831,21 @@
 0732  Goldfull Electronics & Telecommunications Corp.
 0733  ViewQuest Technologies, Inc.
 	0110  VQ110
-	1311  Digital Dream Epsilon 1.3
-	2211  Jenoptik
 	0401  CS330 WebCam
 	0402  M-318B WebCam
 	0430  Intel Pro Share WebCam
 	0631  Hercules Dualpix
 	1310  Epsilon 1.3/Jenoptik JD C1.3/UMAX AstraPix 470
+	1311  Digital Dream Epsilon 1.3
+	2211  Jenoptik
 0734  Lasat Communications A/S
 	0001  560V Modem
 0735  Asuscom Network
 	c541  ISDN TA 280
 0736  Lorom Industrial Co., Ltd
 0738  Mad Catz, Inc.
-073b  Suncom Technologies
 073a  Chaplet Systems, Inc.
+073b  Suncom Technologies
 073d  Eutron S.p.a.
 	0005  Crypto Token
 073e  NEC, Inc.
@@ -2608,12 +2873,15 @@
 	1030  Midisport 8x8
 0764  Cyber Power System, Inc.
 	0005  Cyber Power UPS
+	0501  CP1500 AVR UPS
 0765  X-Rite, Inc.
 0766  Jess-Link Products Co., Ltd
 0767  Tokheim Corp.
 0768  Camtel Technology Corp.
-	0006 Camtel Technology USB TV Genie Pro FM Model TVB330
+	0006  Camtel Technology USB TV Genie Pro FM Model TVB330
 0769  Surecom Technology Corp.
+	11f3  RT2570
+	31f3  RT2573
 076a  Smart Technology Enablers, Inc.
 076b  OmniKey AG
 	0596  CardMan 2020
@@ -2636,14 +2904,16 @@
 077c  Forward Electronics Co., Ltd
 	0005  NEC Keyboard
 077d  Griffin Technology
+	0223  IMic Audio In/Out
+	0405  iMate, ADB Adapter
 	0410  PowerMate
 	041a  PowerWave
-	0223  IMic Audio In/Out
 077f  Well Excellent & Most Corp.
 0781  SanDisk Corp.
 	0001  SDDR-05a ImageMate CompactFlash Reader
 	0002  SDDR-31 ImageMate II CompactFlash Reader
 	0005  SDDR-05b (CF II) ImageMate CompactFlash Reader
+	0100  ImageMate SDDR-12
 	0200  SDDR-09 (SSFDC) ImageMate SmartMedia Reader [eusb]
 	0400  SecureMate SD/MMC Reader
 	0621  SDDR-86 Imagemate 6-in-1 Reader
@@ -2684,6 +2954,8 @@
 	0001  MN128mini-V ISDN TA
 	0003  MN128mini-J ISDN TA
 0789  Logitec Corp.
+	0033  DVD Multi-plus unit LDR-H443SU2
+	00b3  DVD Multi-plus unit LDR-H443U2
 078b  Happ Controls, Inc.
 	0010  Driving UGCI
 	0020  Flying UGCI
@@ -2708,6 +2980,9 @@
 0798  Optelec
 	0001  Braille Voyager
 079b  Sagem
+	0027  USB-Serial Controller
+	004a  XG-760A
+	0062  XG-76NA
 079d  Alfadata Computer Corp.
 	0201  GamePort Adapter
 07a1  Digicom S.p.A.
@@ -2716,13 +2991,21 @@
 07a3  Onnto Corp.
 07a4  Be, Inc.
 07a6  ADMtek, Inc.
+	07c2  AN986A Ethernet
 	0986  AN986 Pegasus Ethernet
 	8511  ADM8511 Pegasus II Ethernet
+	8513  AN8513 Ethernet
+	8515  AN8515 Ethernet
 07aa  Corega K.K.
 	0001  Ether USB-T Ethernet [klsi]
 	0004  FEther USB-TX Ethernet [pegasus]
+	000c  WirelessLAN USB-11
+	000d  FEther USB-TXS
 	0012  Stick-11 802.11b Adapter
+	0017  FEther USB2-TX
+	001a  ULUSB-11 Key
 	7613  Stick-11 V2 802.11b Adapter
+	9601  FEther USB-TXC
 07ab  Freecom Technologies
 	fc01  IDE bridge
 	fc03  USB2-IDE IDE bridge
@@ -2730,6 +3013,7 @@
 	0004  SCSI-DB25 SCSI Bridge [shuttle]
 	0005  SCSI-HD50 SCSI Bridge [shuttle]
 	0006  CameraMate SmartMedia and CompactFlash Card Reader [eusb/shuttle]
+	fc01  Freecom USB-IDE
 07b0  Trust Technologies
 	0001  ISDN TA
 07b1  IMP, Inc.
@@ -2756,9 +3040,9 @@
 	0105  Camedia C-310Z/C-700/C-750UZ/C-755/C-765UZ/C-3040/C-4000/C-5050Z/D-560/C-3020Z Zoom Camera
 	0109  C-370Z/D-535Z/X-450
 	0112  MAUSB-100 xD Card Reader
-	0113  mju 500
+	0113  Mju 500
 	0114  C-350Z Camera
-	0118  Mju Digital 500
+	0118  Mju Mini Digital/Mju Digital 500 Camera
 	0203  Digital Voice Recorder DW-90
 	0206  Digital Voice Recorder DS-330
 	0207  Digital Voice Recorder & Camera W-10
@@ -2770,10 +3054,27 @@
 07b6  Marubun Corp.
 07b7  TIME Interconnect, Ltd
 07b8  D-Link Corp.
+	110c  XX1
+	200c  XX2
 	4000  DU-E10 Ethernet [klsi]
 	4002  DU-E100 Ethernet [pegasus]
+	4003  1/10/100 Ethernet Adapter
+	4004  XX4
+	4007  XX5
+	400b  XX6
+	400c  XX7
+	401a  RTL8151
 	4102  USB 1.1 10/100M Fast Ethernet Adapter
+	4104  XX9
+	420a  UF200 Ethernet
+	6001  WL54
 	abc1  DU-E10 Ethernet [pegasus]
+	b000  BWU613
+	b21b  HWU54DM
+	b21c  RT2573
+	b21d  RT2573
+	b21e  RT2573
+	b21f  WUG2700
 	f101  DSB-560 Modem [atlas]
 07bc  Canon Computer Systems, Inc.
 07bd  Webgear, Inc.
@@ -2784,12 +3085,16 @@
 	1501  IO-Warrior 24
 	1502  IO-Warrior 48
 	1503  IO-Warrior 28
+07c1  Keisokugiken
+	0068  HKS-0200 USBDAQ
 07c4  Datafab Systems, Inc.
 	a000  CompactFlash Card Reader
 	a001  CompactFlash & SmartMedia Card Reader [eusb]
 	a002  Disk Drive
+	a003  Datafab-based Reader
 	a005  CompactFlash & SmartMedia Card Reader
 	a006  SmartMedia Card Reader
+	a103  MDSM-B reader
 	a109  LC1 CompactFlash & SmartMedia Card Reader
 	a200  DF-UT-06 Hama MMC/SD Reader
 	a400  CompactFlash & Microdrive Reader
@@ -2799,6 +3104,7 @@
 07c7  Powertech Industrial Co., Ltd
 07c8  B.U.G., Inc.
 07c9  Allied Telesyn International
+	b100  AT-USB100
 07ca  AVerMedia Technologies, Inc.
 07cb  Kingmax Technology, Inc.
 07cc  Carry Computer Eng., Co., Ltd
@@ -2811,6 +3117,7 @@
 	0200  6-in-1 Card Reader
 	0300  6-in-1 Card Reader
 	0301  6-in-1 Card Reader
+	0330  WINTERREADER Reader
 07cd  Elektor
 	0001  USBuart Serial Port
 07cf  Casio Computer Co., Ltd
@@ -2827,6 +3134,9 @@
 	0003  Fusion Model DVC-50 Rev 1 (NTSC)
 	0004  DVC-800 (PAL) Grabber
 07d1  D-Link System
+	3c03  DWL-G122 802.11g Adapter [ralink rt73]
+	3c04  WUA-1340
+	f101  DBT-122 Bluetooth
 07d2  Aptio Products, Inc.
 07d3  Cyberdata Corp.
 07d7  GCC Technologies, Inc.
@@ -2847,11 +3157,15 @@
 07ec  Taiyo Electric Wire & Cable Co., Ltd
 07ee  Torex Retail (formerly Logware)
 	0002  Cash Drawer I/F
+07ef  STSN
+	0001  Internet Access Device
 07f6  Circuit Assembly Corp.
 07f7  Century Corp.
+	011e  Century USB Disk Enclosure
 07f9  Dotop Technology, Inc.
 07fa  Draytek
 	0778  miniVigor 128 ISDN TA
+	1012  BeWAN ADSL USB ST (grey)
 07fd  Mark of the Unicorn
 	0000  FastLane MIDI Interface
 0801  Mag-Tek
@@ -2884,22 +3198,30 @@
 0829  DirecTV Broadband, Inc. (Telocity)
 082d  Handspring
 	0100  Visor
+	0200  Handspring Treo
 	0300  Treo 600
 0830  Palm, Inc.
+	0001  Palm m500
 	0002  Palm M505
 	0003  Palm M515
 	0020  Palm I705
+	0031  Palm Tungsten Z
 	0040  Palm M125
 	0050  Palm M130
 	0060  Palm Tungsten T / Zire 71
+	0061  Palm Zire 31
+	0070  Palm Zire
 	0080  USB Serial Adapter [for Palm III series to sync via USB]
 0832  Kouwell Electronics Corp.
 0833  Sourcenext Corp.
+	012e  KeikaiDenwa 8 with charger
+	039f  KeikaiDenwa 8
 0835  Action Star Enterprise Co., Ltd
 0839  Samsung Techwin Co., Ltd
 	0005  Digimax Camera
 	0008  Digimax 230 Camera
 	0009  Digimax 340
+	000a  Digimax 410
 	000e  Digimax 360
 	0010  Digimax 300
 	1003  Digimax 210SE
@@ -2908,7 +3230,11 @@
 	3000  Digimax 35 MP3
 083a  Accton Technology Corp.
 	1046  10/100 Ethernet [pegasus]
+	3501  2664W
+	3503  T-Sinus 111 Wireless Adapter
+	4505  SMCWUSB-G
 	5046  SpeedStream 10/100 Ethernet [pegasus]
+	e501  ZD1211B
 083f  Global Village
 	b100  TelePort V.90 Fax/Modem
 0840  Argosy Research, Inc.
@@ -2917,6 +3243,9 @@
 0844  Welland Industrial Co., Ltd
 0846  NetGear, Inc.
 	1001  EA101 Ethernet [klsi]
+	1002  Ethernet
+	1020  Ethernet 10/100, USB1.1
+	1040  USB 2.0 Ethernet
 	4110  MA111 WiFi (v1)
 	4200  WG121 WiFi (v1)
 	4210  WG121 WiFi (v2)
@@ -2924,6 +3253,8 @@
 	4230  MA111 WiFi
 	4240  WG111 WiFi (v2)
 	4260  WG111v3 802.11g Adapter [realtek RTL8187B]
+	4300  WG111U
+	4301  WG111U (no firmware)
 	6a00  WG111 WiFi (v2)
 084d  Minton Optic Industry Co., Inc.
 	0001  Jenoptik JD800i
@@ -2941,6 +3272,8 @@
 	1542  SiPix Blink
 	1543  Maxell WS30 Slim Digital Camera
 0852  CSEM
+0853  Topre Corporation
+	0100  HHKB Professional
 0854  ActiveWire, Inc.
 	0100  I/O Board
 	0101  I/O Board, rev1
@@ -2951,6 +3284,8 @@
 085a  Xircom
 	0001  Portstation Dual Serial Port
 	0003  Portstation Paraller Port
+	0008  Ethernet
+	0009  Ethernet
 	000b  Portstation Dual PS/2 Port
 	0299  Colorvision, Inc. Monitor Spyder
 	8027  PGSDB9 Serial Port
@@ -2971,8 +3306,10 @@
 	1003  TA33 ISDN TA
 	1055  Eumex 220 ISDN TA
 086e  System TALKS, Inc.
+	1920  SGC-X2UL
 086f  MEC IMEX, Inc.
 0870  Metricom
+	0001  Ricochet GS
 0871  SanDisk, Inc.
 	0001  SDDR-01 Compact Flash Reader
 	0002  SDDR-31 Compact Flash Reader
@@ -2982,6 +3319,7 @@
 0879  Comtrol Corp.
 087c  Adesso/Kbtek America, Inc.
 087d  Jaton Corp.
+	5704  Ethernet
 087e  Fujitsu Computer Products of America
 087f  Virtual IP Group, Inc.
 0880  APT Technologies, Inc.
@@ -3009,7 +3347,8 @@
 	2904  PCM2904 Audio Codec
 08bd  Citizen Watch Co., Ltd
 08c3  Precise Biometrics
-	0101  Precise 100 MC FingerPrint and SmartCard Reader
+	0101  100 MC FingerPrint and SmartCard Reader
+	0402  200 MC FingerPrint and SmartCard Reader
 08c4  Proxim, Inc.
 08c7  Key Nice Enterprise Co., Ltd
 08c8  2Wire, Inc.
@@ -3037,6 +3376,7 @@
 08cf  Productivity Enhancement Products
 08d1  smartBridges, Inc.
 	0001  smartNIC Ethernet [catc]
+	0003  smartNIC 2 PnP Ethernet
 08d3  Virtual Ink
 08d4  Fujitsu Siemens Computers
 	0009  SCR SmartCard Reader
@@ -3046,6 +3386,7 @@
 	0987  USBLP-100 HomePNA Ethernet [pegasus]
 	0988  USBEL-100 Ethernet [pegasus]
 	8511  USBE-100 Ethernet [pegasus2]
+	90ff  USB2AR Ethernet
 08de  ???
 	7a01  802.11b Adapter
 08df  Spyrus, Inc.
@@ -3068,6 +3409,9 @@
 	abba  USB Driver for Bluetooth Wireless Technology
 08ec  M-Systems Flash Disk Pioneers
 	0010  DiskOnKey
+	0011  DiskOnKey
+	0015  Kingston DataTraveler ELITE
+	0016  Kingston DataTraveler U3
 08ee  CCSI/Hesso
 08f0  Corex Technologies
 08f1  CTI Electronics Corp.
@@ -3088,10 +3432,14 @@
 0906  Faraday Technology Corp.
 0909  Audio-Technica Corp.
 090a  Trumpion Microelectronics, Inc.
+	1001  T33520 USB Flash Card Controller
+	1100  Comotron C3310 MP3 player
+	1200  MP3 player
 	1540  Digitex Container Flash Disk
 090b  Neurosmith
 090c  Feiya Technology Corp.
 	1000  Memory Bar
+	1132  5-in-1 Card Reader
 090d  Multiport Computer Vertriebs GmbH
 090e  Shining Technology, Inc.
 090f  Fujitsu Devices, Inc.
@@ -3108,12 +3456,14 @@
 	0004  Garmin iQue 3600
 0920  Echelon Co.
 0921  GoHubs, Inc.
+	1001  GoCOM232 Serial
 0922  Dymo-CoStar Corp.
 	0007  LabelWriter 330
 	0009  LabelWriter 310
 0923  IC Media Corp.
 	010f  SIIG MobileCam
 0924  Xerox
+	ffef  WorkCenter M15
 0925  Lakeview Research
 	8101  Phidgets, Inc., 1-Motor PhidgetServo v2.0
 	8104  Phidgets, Inc., 4-Motor PhidgetServo v2.0
@@ -3128,6 +3478,7 @@
 	0009  Gigabeat F/X (HDD audio player)
 	000C  Gigabeat F (mtp)
 	0010  Gigabeat S (mtp)
+	0706  PocketPC e740
 	6519  Kingston DataTraveler 2.0 USB Stick
 	6533  512M USB Stick
 	653c  Kingston DataTraveler 2.0 USB Stick (512M)
@@ -3141,12 +3492,15 @@
 093a  Pixart Imaging, Inc.
 	010e  Digital camera, CD302N/Elta Medi@ digi-cam/HE-501A
 	010f  Argus DC-1610/DC-1620/Emprex PCD3600/Philips P44417B keychain camera/Precision Mini,Model HA513A/Vivitar Vivicam 55
-	2468  Easy Snap Snake Eye WebCam
+	2468  Cammaestro 2.5DU/X-EYE/Orite SC-120/ICGear TravelCam/Easy Snap Snake Eye WebCam
 	2500  USB Optical Mouse
+	2600  Typhoon Easycam USB 330K (newer)/Typhoon Easycam USB 2.0 VGA 1.3M/Sansun SN-508
 093b  Plextor Corp.
+	0011  PlexWriter 40/12/40U
 	0042  PX-712UF DVD RW
 093c  Intrepid Control Systems, Inc.
 	0601  ValueCAN
+	0701  NeoVI Blue vehicle bus interface
 093d  InnoSync, Inc.
 093e  J.S.T. Mfg. Co., Ltd
 093f  Olympia Telecom Vertriebs GmbH
@@ -3164,10 +3518,15 @@
 	1105  USB One
 094b  Linkup Systems Corp.
 094d  Cable Television Laboratories
+094f  Yano
+	0101  U640MO-03
+	05fc  METALWEAR-HDD
 0951  Kingston Technology
+	0008  Ethernet
 	000a  KNU101TX 100baseTX Ethernet
 	1600  Data Traveler II Pen Drive
-	1603  Data Traveler 1GB Pen Drive
+	1601  Data Traveler II+ Pen Drive
+	1603  Data Traveler 1GB/2GB Pen Drive
 0954  RPM Systems Corp.
 0955  NVidia Corp.
 0956  BSquare Corp.
@@ -3175,6 +3534,7 @@
 0958  CompuLink Research, Inc.
 0959  Cologne Chip AG
 095a  Portsmith
+	3003  Express Ethernet
 095b  Medialogic Corp.
 095c  K-Tec Electronics
 095d  Polycom, Inc.
@@ -3192,6 +3552,7 @@
 0978  Beckhoff GmbH
 0979  Jeilin Technology Corp., Ltd
 097a  Minds At Work LLC
+	0001  Digital Wallet
 097b  Knudsen Engineering, Ltd
 097c  Marunix Co., Ltd
 097d  Rosun Technologies, Inc.
@@ -3248,6 +3609,8 @@
 09d2  Vreelin Engineering, Inc.
 09d3  Com One
 	0001  ISDN TA
+09d7  Novatel Wireless
+	0100  NovAtel FlexPack GPS receiver
 09d9  KRF Tech, Ltd
 09da  A4 Tech Co., Ltd
 	0006  Optical Mouse WOP-35 / Trust 450L Optical Mouse
@@ -3289,10 +3652,13 @@
 0a12  Cambridge Silicon Radio, Ltd
 	0001  Bluetooth Dongle (HCI mode)
 	1000  Bluetooth Dongle (HID proxy mode)
+	ffff  USB Bluetooth Device in DFU State
 0a13  Telebyte, Inc.
 0a14  Spacelabs Medical, Inc.
 0a15  Scalar Corp.
 0a16  Trek Technology (S) PTE, Ltd
+	1111  ThumbDrive
+	8888  IBM USB Memory Key
 	9988  Trek2000 TD-G2
 0a17  Pentax Corp.
 	0004  Pentax Optio 330
@@ -3322,6 +3688,7 @@
 0a3f  Swissonic AG
 0a43  Boca Systems, Inc.
 0a46  Davicom Semiconductor, Inc.
+	0268  ST268
 0a47  Hirose Electric
 0a48  I/O Interconnect
 	3258  Dane Elec zMate SD Reader
@@ -3344,6 +3711,7 @@
 	200a  Bluetooth dongle
 	2033  BCM2033 Bluetooth
 	2035  BCM2035 Bluetooth
+	2101  A-Link BlueUsbA2 Bluetooth
 0a5d  Diatrend Corp.
 0a5f  Zebra
 	0009  LP2844 Printer
@@ -3388,14 +3756,30 @@
 0aa5  First International Digital
 0aa6  Perception Digital, Ltd
 	0101  Hercules Jukebox
-0aa7  Wincor Nixdorf GmbH & Co KG
-	0200  POS Display BA63
-	0201  POS Display BA66
-	0300  POS Printer TH210
-	0302  POS Printer TH220
-	0305  Lottery Printer XiPrintPlus
-	0306  POS Printer TH320
-	0308  POS Printer TH420
+0aa7  Wincor Nixdorf International GmbH
+	0100  POS Keyboard, TA58P-USB
+	0101  POS Keyboard, TA85P-USB
+	0102  POS Keyboard, TA59-USB
+	0103  POS Keyboard, TA60-USB
+	0104  SNIkey Keyboard, SNIKey-KB-USB
+	0200  Operator Display, BA63-USB
+	0201  Operator Display, BA66-USB
+	0202  Operator Display & Scanner, XiCheck-BA63
+	0203  Operator Display & Scanner, XiCheck-BA66
+	0204  Graphics Operator Display, BA63GV
+	0300  POS Printer (printer class mode), TH210
+	0301  POS Printer (native mode), TH210
+	0302  POS Printer (printer class mode), TH220
+	0303  POS Printer (native mode), TH220
+	0304  POS Printer, TH230
+	0305  Lottery Printer, XiPrintPlus
+	0306  POS Printer (printer class mode), TH320
+	0307  POS Printer (native mode), TH320
+	0308  POS Printer (printer class mode), TH420
+	0309  POS Printer (native mode), TH420
+	030a  POS Printer, TH200B
+	0400  Lottery Scanner, Xiscan S
+	0401  Lottery Scanner, Xiscan 3
 	4304  Banking Printer TP07
 0aa8  TriGem Computer, Inc.
 0aa9  Baromtec Co.
@@ -3451,7 +3835,9 @@
 	5010  ND5010 Card Reader
 0af0  Option
 	5000  UMTS Card
+	6000  GlobeTrotter 3G datacard
 	6300  GT 3G Quad UMTS/GPRS Card
+	6600  GlobeTrotter 3G+ datacard
 0af6  Silver I Co., Ltd
 0af7  B2C2, Inc.
 	0101  Digital TV USB Receiver (DVB-S/T/C / ATSC)
@@ -3464,9 +3850,13 @@
 0aff  Jump Zone Network Products, Inc.
 0b05  ASUSTek Computer, Inc.
 	1706  WL-167G 802.11g Adapter [ralink]
+	1707  WL-167g Wireless Adapter
+	170c  WL-159g
+	171b  A9T wireless
 	1723  WL-167G v2 802.11g Adapter [ralink]
+	1724  RT2573
 0b0c  Todos Data System AB
-	0009 Todos Argos Mini II Smart Card Reader
+	0009  Todos Argos Mini II Smart Card Reader
 0b0e  GN Netcom
 0b0f  AVID Technology
 0b10  Pcally
@@ -3486,16 +3876,22 @@
 0b33  Contour Design, Inc.
 0b37  Hitachi ULSI Systems Co., Ltd
 0b39  Omnidirectional Control Technology, Inc.
+	0109  USB TO Ethernet
+	0421  Serial
 0b3a  IPaxess
 0b3b  Tekram Technology Co., Ltd
 	1601  Allnet 0193 802.11b Adapter
 	1602  ZyXEL ZyAIR B200 802.11b Adapter
 	1612  AIR.Mate 2@net 802.11b Adapter
 	1620  Allnet USB 2.0 Wireless Network Adapter
+	1630  QuickWLAN
+	5630  ZD1211
+	6630  ZD1211
 0b3c  Olivetti Techcenter
 	a010  Simple_Way Printer/Scanner/Copier
 0b3e  Kikusui Electronics Corp.
 0b41  Hal Corp.
+	0011  Crossam2+USB IR commander
 0b43  Play.com, Inc.
 	0003  PS2 Controller Converter
 0b47  Sportbug.com, Inc.
@@ -3548,8 +3944,12 @@
 0b88  Sigma Koki Co., Ltd, Technology Center
 0b89  Advanced Digital Broadcast, Ltd
 0b95  ASIX Electronics Corp.
+	1720  10/100 Ethernet
+	1780  AX88178
+	7720  AX88772
 0b96  Sewon Telecom
 0b97  O2 Micro, Inc.
+	7761  Oz776 1.1 Hub
 	7762  Oz776 SmartCard Reader
 0b98  Playmates Toys, Inc.
 0b99  Audio International, Inc.
@@ -3560,11 +3960,13 @@
 0baf  U.S. Robotics
 	00eb  USR1120 802.11b Adapter
 	0118  U5 802.11g Adapter
+	0121  USR5423 WLAN
 	6112  FaxModem Model 5633
 0bb0  Concord Camera Corp.
 	5007  3340z/Rollei DC3100
 0bb1  Infinilink Corp.
 0bb2  Ambit Microsystems Corp.
+	0302  WLAN
 	6098  USB Cable Modem
 0bb3  Ofuji Technology
 0bb4  High Tech Computer Corp.
@@ -3573,6 +3975,10 @@
 	0a02  Himalaya GSM/GPRS Pocket PC
 	0a07  Magician PocketPC SmartPhone / O2 XDA
 	0a51  SPV C400 / T-Mobile SDA GSM/GPRS Pocket PC
+	0b04  Hermes / TyTN / T-Mobile MDA Vario II / O2 Xda Trion
+	0b06  Athena / Advantage x7500 / Dopod U1000 / T-Mobile AMEO
+	0b0c  Elf / Touch / P3450 / T-Mobile MDA Touch / O2 Xda Nova / Dopod S1
+	0bce  Vario MDA
 0bb5  Murata Manufacturing Co., Ltd
 0bb6  Network Alchemy
 0bb7  Joytech Computer Co., Ltd
@@ -3598,6 +4004,7 @@
 0bd7  Andrew Pargeter & Associates
 	a021  Amptek DP4 multichannel signal analyzer
 0bda  Realtek Semiconductor Corp.
+	0111  Card Reader
 	8150  RTL8150 Fast Ethernet Adapter
 	8151  RTL8151 Adapteon Business Mobile Networks BV
 0bdb  Ericsson Business Mobile Networks BV
@@ -3614,6 +4021,7 @@
 0bf1  Intracom S.A.
 0bf2  Konexx
 0bf6  Addonics Technologies, Inc.
+	a001  Cable 205
 	a002  IDE Bridge
 0bf7  Sunny Giken, Inc.
 0bf8  Fujitsu Siemens Computers
@@ -3666,6 +4074,8 @@
 	184c  VoIP Phone
 	6001  Genius VideoCAM NB
 	6005  Sweex Mini WebCam
+	600d  TwinkleCam USB camera
+	6028  Typhoon Easycam USB 330K (older)
 	6029  Triplex i-mini PC Camera
 	602a  Meade ETX-105EC Camera
 	602c  Clas Ohlson TWC-30XOP WebCam
@@ -3681,7 +4091,7 @@
 0c53  ViewPLUS, Inc.
 0c54  Glory, Ltd
 0c55  Spectrum Digital, Inc.
-	0510 Spectrum Digital XDS510 JTAG Debugger
+	0510  Spectrum Digital XDS510 JTAG Debugger
 0c56  Billion Bright, Ltd
 0c57  Imaginative Design Operation Co., Ltd
 0c58  Vidar Systems Corp.
@@ -3713,6 +4123,7 @@
 0c7a  Wing-Span Enterprise Co., Ltd
 0c86  NDA Technologies, Inc.
 0c88  Kyocera Wireless Corp.
+	17da  Qualcomm Kyocera CDMA Technologies MSM
 0c89  Honda Tsushin Kogyo Co., Ltd
 0c8a  Pathway Connectivity, Inc.
 0c8b  Wavefly Corp.
@@ -3720,6 +4131,8 @@
 0c8d  Tempo
 0c8e  Cesscom Co., Ltd
 0c8f  Applied Microsystems
+0c98  Berkshire Products, Inc.
+	1140  USB PC Watchdog
 0c99  Innochips Co., Ltd
 0c9a  Hanwool Robotics Corp.
 0c9b  Jobin Yvon, Inc.
@@ -3770,12 +4183,23 @@
 0cd8  JS Digitech, Inc.
 0cd9  Hitachi Shin Din Cable, Ltd
 0cde  Z-Com
+	0001  M4Y-750
 	0002  XI-725/726 Prism2.5 802.11b Adapter
 	0005  XI-735 Prism3 802.11b Adapter
 	0006  Medion 40900 802.11b Adapter
+	0011  ZD1211
+	0012  AR5523
+	0013  AR5523 driver (no firmware)
+	001a  ZD1211B
 0cf1  e-Conn Electronic Co., Ltd
 0cf2  ENE Technology, Inc.
 0cf3  Atheros Communications, Inc.
+	0001  AR5523
+	0002  AR5523 (no firmware)
+	0003  AR5523
+	0004  AR5523 (no firmware)
+	0005  AR5523
+	0006  AR5523 (no firmware)
 0cf4  Fomtex Corp.
 0cf5  Cellink Co., Ltd
 0cf6  Compucable Corp.
@@ -3875,6 +4299,7 @@
 	1270  Wolverine SixPac 6000
 	1300  Flash Disk
 	1320  PS2031 Flash Disk
+	1400  Attache 256MB USB 2.0 Flash Drive
 	1420  PS2044 Pen Drive
 	1470  Vosonic X's-Drive II+ VP2160
 	1900  USB Thumb Drive
@@ -3894,6 +4319,11 @@
 0d8d  Promotion & Display Technology, Ltd
 0d8e  Global Sun Technology, Inc.
 	7100  802.11b Adapter
+	7110  WL-210
+	7801  AR5523
+	7802  AR5523 (no firmware)
+	7811  AR5523
+	7812  AR5523 (no firmware)
 	7a01  PRISM25 802.11b Adapter
 0d8f  Pitney Bowes
 0d90  Sure-Fire Electrical Corp.
@@ -3930,13 +4360,24 @@
 0db0  Micro Star International
 	1967  Bluetooth Dongle
 	4011  Medion Flash XL V2.0 Card Reader
+	6823  UB11B/MS-6823 802.11b Wi-Fi adapter
+	6861  MSI-6861 802.11g WiFi adapter
+	6865  RT2570
+	6869  RT2570
+	6874  RT2573
+	6877  RT2573
+	6970  Bluetooth adapter
 	697a  Bluetooth Dongle
 	6982  Medion Flash XL V2.7A Card Reader
+	a861  RT2573
+	a874  RT2573
 	a970  Bluetooth dongle
 0db1  Wen Te Electronics Co., Ltd
 0db2  Shian Hwi Plug Parts, Plastic Factory
 0db3  Tekram Technology Co., Ltd
 0db4  Chung Fu Chen Yeh Enterprise Corp.
+0db7  ELCON Systemtechnik
+	0002  Goldpfeil P-LAN
 0dbe  Jiuh Shiuh Precision Industry Co., Ltd
 0dbf  Quik Tech Solutions
 	021b  USB-2.0 IDE Adapter
@@ -3959,6 +4400,7 @@
 0dd5  California Micro Devices
 0dd7  Kocom Co., Ltd
 0dd8  Netac Technology Co., Ltd
+	1060  USB-CF-Card
 	e007  OnlyDisk U222 Pendrive
 0dd9  HighSpeed Surfing
 0dda  Integrated Circuit Solution, Inc.
@@ -3973,7 +4415,11 @@
 0dee  Lifetime Memory Products
 0def  Full Rise Electronic Co., Ltd
 0df6  Sitecom Europe B.V.
+	061c  LN-028
 	9071  zd1211 802.11g Adapter
+	9075  ZD1211B
+	90ac  WL-172
+	9712  WL-113 rev 2
 0df7  Mobile Action Technology, Inc.
 	0620  MA-620 Infrared Adapter
 	0700  MA-700 Bluetooth Adapter
@@ -4045,10 +4491,11 @@
 0e72  Hsi-Chin Electronics Co., Ltd
 0e75  TVS Electronics, Ltd
 0e79  Archos, Inc.
-	1106  Pocket Medai Assistant - PMA400 
+	1106  Pocket Medai Assistant - PMA400
 0e7b  On-Tech Industry Co., Ltd
 0e7e  Gmate, Inc.
 	0001  Yopy 3000 PDA
+	1001  YP3X00 PDA
 0e82  Ching Tai Electric Wire & Cable Co., Ltd
 0e8c  Well Force Electronic Co., Ltd
 0e90  WiebeTech, LLC
@@ -4075,6 +4522,9 @@
 0ea7  MSL Enterprises Corp.
 0ea8  CenDyne, Inc.
 0ead  Humax Co., Ltd
+0eb0  NovaTech
+	9020  NovaTech NV-902W
+	9021  RT2573
 0eb1  WIS Technologies, Inc.
 0eb2  Y-S Electronic Co., Ltd
 0eb3  Saint Technology Corp.
@@ -4118,8 +4568,8 @@
 	2202  Flash Disk
 0ef6  Yield Microelectronics Corp.
 0ef7  SM Tech Co., Ltd (Tulip)
-0efe  Wem Technology, Inc.
 0efd  Oasis Semiconductor
+0efe  Wem Technology, Inc.
 0f06  Visual Frontier Enterprise Co., Ltd
 0f08  CSL Wire & Plug (Shen Zhen) Co.
 0f0c  CAS Corp.
@@ -4163,6 +4613,7 @@
 0f60  NTK, Ltd
 0f61  Varian, Inc.
 0f62  Acrox Technologies Co., Ltd
+	1001  Targus Mini Trackball Optical Mouse
 0f68  Kobe Steel, Ltd
 0f69  Dionex Corp.
 0f6a  Vibren Technologies, Inc.
@@ -4181,6 +4632,8 @@
 0f7d  NetBotz, Inc.
 0f7e  Fluke Corp.
 0f88  VTech Holdings, Ltd
+	3012  RT2570
+	3014  ZD1211B
 0f8b  Yazaki Corp.
 0f8c  Young Generation International Corp.
 0f8d  Uniwill Computer Corp.
@@ -4247,7 +4700,7 @@
 	6005  T5100
 	6800  CDMA Modem
 1005  Apacer Technology, Inc.
-	b113  Handy Steno 2.0 (256MB)
+	b113  Handy Steno 2.0/HT203
 1006  iRiver, Ltd.
 	3001  iHP-100
 	3002  iHP-120/140 MP3 Player
@@ -4282,6 +4735,7 @@
 102a  Ramos Technology Co., Ltd
 102b  Infotronic America, Inc.
 102c  Etoms Electronics Corp.
+	6251  Q-Cam
 102d  Winic Corp.
 1031  Comax Technology, Inc.
 1032  C-One Technology Corp.
@@ -4293,6 +4747,12 @@
 1043  iCreate Technologies Corp.
 	8006  Flash Disk 32-256 MB
 1044  Chu Yuen Enterprise Co., Ltd
+	8001  GN-54G
+	8002  GN-BR402W
+	8003  GN-WLBM101
+	8007  GN-WBKG
+	8008  GN-WB01GS
+	800a  GN-WI05GS
 1046  Winbond Electronics Corp. [hex]
 	9967  W9967CF/W9968CF WebCam IC
 104c  AMCO TEC International, Inc.
@@ -4302,6 +4762,10 @@
 1056  Hsin Chen Ent Co., Ltd
 1057  ON Semiconductor
 1058  Western Digital Technologies, Inc.
+	0200  Firewire USB Combo
+	0400  External HDD
+	0500  USB HUB
+	0901  MyBook External HDD
 	1001  External Hard Disk
 1059  Giesecke & Devrient GmbH
 105c  Hong Ji Electric Wire & Cable (Dongguan) Co., Ltd
@@ -4311,11 +4775,14 @@
 1060  Easthome Industrial Co., Ltd
 1063  Motorola Electronics Taiwan, Ltd [hex]
 	1555  MC141555 Hub
+	4100  SB4100 USB Cable Modem
 1065  CCYU Technology
 	2136  EasyDisk ED1064
 106a  Loyal Legend, Ltd
 106c  Curitel Communications, Inc.
+	1101  CDMA 2000 1xRTT USB modem (HX-550C)
 	2101  AudioVox 8900 Cell Phone
+	3701  Broadband Wireless modem
 106d  San Chieh Manufacturing, Ltd
 106e  ConectL
 106f  Money Controls
@@ -4350,6 +4817,7 @@
 10bb  TM Technology, Inc.
 10bc  Dinging Technology Co., Ltd
 10bd  TMT Technology, Inc.
+	1427  Ethernet
 10bf  SmartHome
 	0001  SmartHome PowerLinc
 10c4  Cygnal Integrated Products, Inc.
@@ -4358,15 +4826,17 @@
 10cb  Eratech
 10cc  GBM Connector Co., Ltd
 10cd  Kycon, Inc.
+10ce  Silicon Labs
+	ea6a  MobiData EDGE USB Modem
 10cf  Velleman Components, Inc.
-	5500 8055 Experiment Interface Board (address=0)
-	5501 8055 Experiment Interface Board (address=1)
-	5502 8055 Experiment Interface Board (address=2)
-	5503 8055 Experiment Interface Board (address=3)
+	5500  8055 Experiment Interface Board (address=0)
+	5501  8055 Experiment Interface Board (address=1)
+	5502  8055 Experiment Interface Board (address=2)
+	5503  8055 Experiment Interface Board (address=3)
 10d1  Hottinger Baldwin Measurement
-	0101 USB-Module for Spider8, CP32
-	0202 CP22 - Communication Processor
-	0301 CP42 - Communication Processor
+	0101  USB-Module for Spider8, CP32
+	0202  CP22 - Communication Processor
+	0301  CP42 - Communication Processor
 10d4  Man Boon Manufactory, Ltd
 10d5  Uni Class Technology Co., Ltd
 10d6  Actions Semiconductor Co., Ltd
@@ -4381,8 +4851,6 @@
 10fb  Pictos Technologies, Inc.
 10fd  Anubis Electronics, Ltd
 	804d  Typhoon Webshot II Webcam [zc0301]
-1a0a  ...
-	badd  USB OTG Compliance test device
 1100  VirTouch, Ltd
 	0001  VTPlayer VTP-1 Braille Mouse
 1101  EasyPass Industrial Co., Ltd
@@ -4398,6 +4866,7 @@
 112e  Master Hill Electric Wire and Cable Co., Ltd
 112f  Cellon International, Inc.
 1130  Tenx Technology, Inc.
+	f211  USB audio headset
 1131  Integrated System Solution Corp.
 	1001  KY-BT100 Bluetooth Adapter
 1132  Toshiba Corp., Digital Media Equipment [hex]
@@ -4412,6 +4881,8 @@
 113d  Mapower Electronics Co., Ltd
 1141  V One Multimedia, Pte., Ltd
 1142  CyberScan Technologies, Inc.
+1145  Japan Radio Company
+	0001  AirH PHONE AH-J3001V/J3002V
 1147  Ever Great Electric Wire and Cable Co., Ltd
 114b  Sphairon Access Systems GmbH
 	0110  Turbolink UB801R WLAN USB Adapter
@@ -4419,6 +4890,7 @@
 114d  Alpha Imaging Technology Corp.
 1162  Secugen Corp.
 1163  DeLorme Publishing, Inc.
+	0100  Earthmate GPS
 1164  YUAN High-Tech Development Co., Ltd
 1165  Telson Electronics Co., Ltd
 1166  Bantam Interactive Technologies
@@ -4436,21 +4908,24 @@
 	4008  56k FaxModem
 	504a  PJB-100 Personal Jukebox
 1184  Kyocera Elco Corp.
+1189  Acer Communications & Multimedia
+	0893  EP-1427X-2 Ethernet Adapter
 118f  You Yang Technology Co., Ltd
 1190  Tripace
 1191  Loyalty Founder Enterprise Co., Ltd
 1196  Yankee Robotics, LLC
-	0010 Trifid Camera without code
-	0011 Trifid Camera
+	0010  Trifid Camera without code
+	0011  Trifid Camera
 1197  Technoimagia Co., Ltd
 1198  StarShine Technology Corp.
 1199  Sierra Wireless, Inc.
 	0112  CDMA 1xEVDO PC Card, AirCard 580
+	0218  MC5720 Wireless Modem
 119a  ZHAN QI Technology Co., Ltd
 119b  ruwido austria GmbH
 	0400  Infrared Keyboard V2.01
 11a0  Chipcon AS
-	eb11 CC2400EB 2.0 ZigBee Sniffer
+	eb11  CC2400EB 2.0 ZigBee Sniffer
 11a3  Technovas Co., Ltd
 11aa  GlobalMedia Group, LLC
 11ab  Exito Electronics Co., Ltd
@@ -4458,7 +4933,11 @@
 	1000  PVR
 	1100  PVR
 11f5  Siemens AG (?)
+	0001  SX1
 	0003  Mobile phone USB cable
+	0004  X75
+11f6  Prolific
+	2001  Willcom WSIM
 11f7  Alcatel (?)
 	02df  TD10 Mobile phone USB cable
 1209  InterBiometrics
@@ -4482,10 +4961,12 @@
 	0103  G-720 Keyboard
 	0201  A4Tech SWOP-3 Mouse
 	a001  JP260 PC Game Pad
+	c002  Wireless Optical Mouse
 126e  Strobe Data, Inc.
 126f  TwinMOS
 	1325  Mobile Disk
 	2168  Mobile Disk III
+	a006  G240
 1275  Xaxero Marine Software Engineering, Ltd.
 	0002  WeatherFax 2000 Demodulator
 	0080  SkyEye Weather Satellite Receiver
@@ -4496,6 +4977,8 @@
 1293  Belkin Components [hex]
 	0002  F5U002 Parallel Port [uss720]
 	2101  104-key keyboard
+129b  CyberTAN Technology
+	1666  TG54USB
 12d1  Huawei Technologies Co., Ltd.
 	1001  E620 USB Modem
 	1003  E220 HSDPA Modem
@@ -4535,20 +5018,33 @@
 	0201  EasiDock 200 Keyboard and Mouse Port
 	0202  EasiDock 200 Serial Port
 	0203  EasiDock 200 Printer Port
+	0204  Ethernet
+	0304  EasiDock Ethernet
 134e  Digby's Bitpile, Inc. DBA D Bit
 1370  Swissbit
 	6828  Victorinox Flash Drive
+1371  Dick Smith Electronics
+	9022  RT2573
+	9032  C-Net CWD-854 rev F
 1385  Netgear, Inc
+	4250  WG111T
+	4251  WG111T (no firmware)
 	5f00  WPN111 RangeMax(TM) Wireless USB 2.0 Adapter
+	5f01  WPN111 (no firmware)
 1398  Q-tec
 	2103  USB 2.0 Storage Device
-13b0  Alesis
-	000a  Photon X25 MIDI Controller
+13ad  Baltech
+	9999  Card reader
+13b0  PerkinElmer Optoelectronics
+	000a  Alesis Photon X25 MIDI Controller
 13b1  Linksys
 	000b  WUSB11 v4.0 802.11b Adapter
+	000d  WUSB54G Wireless Adapter
 	0011  WUSB54GP v4.0 802.11g Adapter
 	0018  USB200M 10/100 Ethernet Adapter
+	001a  HU200TS Wireless Adapter
 	0020  WUSB54GC 802.11g Adapter [ralink rt73]
+	0023  WUSB54GR
 	0024  WUSBF54G v1.1 802.11g Adapter w/ Wi-Fi Finder
 13d2  Shark Multimedia
 	0400  Pocket Ethernet [klsi]
@@ -4559,21 +5055,42 @@
 	1a00  512MB/1GB Flash Drive
 	1a23  512MB Flash Drive
 	1d00  DataTraveler 2.0 1GB/4GB Flash Drive
-1403  ????
+1403  Sitronix
 	0001  Digital Photo Frame
+1410  Novatel Wireless
+	1110  Novatel Wireless Merlin CDMA
+	1400  Merlin U740
 1415  Nam Tai E&E Products Ltd. or OmniVision Technologies, Inc.
 	0000  Sony SingStar USBMIC
 	2000  Sony Playstation Eye
+1435  Wistron NeWeb
+	0711  UR055G
+	0826  AR5523
+	0827  AR5523 (no firmware)
+	0828  AR5523
+	0829  AR5523 (no firmware)
 1453  Radio Shack
 	4026  26-183 Serial Cable
 1462  Micro Star International
 	5512  MegaStick-1 Flash Stick
+1472  Huawei-3Com
+	0009  Aolynk WUB320g
 147a  Formosa Industrial Computing, Inc.
 1484  Elsa AG [hex]
 	1746  Ecomo 19H99 Monitor
 	7616  Elsa Hub
+1485  Silicom
+	0001  U2E
+	0002  Psion Gold Port Ethernet
 148f  Ralink Technology, Corp.
+	1706  RT2500USB Wireless Adapter
 	2570  802.11g WiFi
+	2573  RT2501USB Wireless Adapter
+	2671  RT2601USB Wireless Adapter
+	9020  RT2500USB Wireless Adapter
+	9021  RT2501USB Wireless Adapter
+149a  Imagination Technologies
+	2107  DBX1 DSP core
 14aa  AVerMedia (again) or C&E
 	0001  Avermedia AverTV DVBT USB1.1 (cold)
 	0002  Avermedia AverTV DVBT USB1.1 (warm)
@@ -4582,31 +5099,70 @@
 	0301  AVermedia/Yakumo/Hama/Typhoon DVB-T USB2.0 (warm)
 14b2  Atheros Communications Inc
 	3a93  USB WLAN Device
+	3c02  C54RU WLAN
+	3c22  C54RU
 14c2  Gemlight Computer, Ltd
+14cd  Super Top
+	6600  USB 2.0 IDE DEVICE
+14ea  Planex Communications
+	ab10  GW-US54GZ
+	ab11  GU-1000T
+	ab13  GW-US54Mini
+1516  CompUSA
+	8628  128M Pen Drive
 1518  Cheshire Engineering Corp.
 	0001  HDReye High Dynamic Range Camera
 	0002  HDReye (before firmware loads)
 1520  Bitwire Corp.
 1524  ENE Technology Inc
 	6680  UTS 6680
+1527  Silicon Portals
+	0200  YAP Phone (no firmware)
+	0201  YAP Phone
+1529  UBIQUAM Co., Ltd.
+	3100  CDMA 1xRTT USB Modem (U-100/105/200/300/520)
 152d  JMicron Technology Corp. / JMicron USA Technology Corp.
 	2338  JM20337 Hi-Speed USB to SATA & PATA Combo Bridge
 152e  LG (HLDS)
 	e001  GSA-5120D DVD-RW
+1532  Razer USA, Ltd
+	0003  Krait Mouse
+	0007  DeathAdder Mouse
 1546  U-Blox AG
+154b  PNY
+	0010  USB 2.0 Flash Drive
 1554  Prolink Microsystems Corp.
+1557  OQO
+	0002  model 01 WiFi interface
+	0003  model 01 Bluetooth interface
+	7720  model 01+ Ethernet
+	8150  model 01 Ethernet interface
 1568  Sunf Pu Technology Co., Ltd
+157e  TRENDnet
+	3006  TEW-444UB EU
+	3007  TEW-444UB EU (no firmware)
+	300a  TEW-429UB 802.11g Adapter with HotSpot Detector
+	300b  TEW-429UB
+	300d  TEW-429UB C1
+	3204  ALL0298 v2
+	3205  AR5523
+	3206  AR5523 (no firmware)
+1582  Fiberline
+	6003  WL-430U
 15c2  SoundGraph Inc.
 	ffdc  iMON PAD Remote Controller
 15c6  Laboratoires MXM
-	1000 DigistimSP (cold)
-	1001 DigistimSP (warm)
-	1002 DigimapSP USB (cold)
-	1003 DigimapSP USB (warm)
+	1000  DigistimSP (cold)
+	1001  DigistimSP (warm)
+	1002  DigimapSP USB (cold)
+	1003  DigimapSP USB (warm)
+15ca  Textech International Ltd.
+	00c3 Mini Optical Mouse
 15e1  RSA
 	2007  RSA SecurID (R) Authenticator
 15e8  SohoWare
 	9100  NUB100 Ethernet [pegasus]
+	9110  10/100 USB Ethernet
 15e9  Pacific Digital Corp.
 15f4  HanfTek
 	0001  HanfTek UMT-010 USB2.0 DVB-T (cold)
@@ -4619,6 +5175,7 @@
 	8006  US-122 Audio/Midi Interface (without fw)
 	8007  US-122 Audio/Midi Interface
 1606  Umax [hex]
+	0002  Astra 1236U Scanner
 	0010  Astra 1220U
 	0030  Astra 2000U
 	0060  Astra 3400U
@@ -4629,6 +5186,9 @@
 1608  Inside Out Networks [hex]
 	0001  EdgePort/4 Serial Port
 	1403  MultiTech Systems MT4X56 Modem
+1631  Good Way Technology
+	6200  GWUSB2E
+	c019  RT2573
 1645  Entrega [hex]
 	0001  1S Serial Port
 	0002  2S Serial Port
@@ -4637,9 +5197,12 @@
 	0005  E45 Ethernet [klsi]
 	0006  Parallel Port
 	0007  U1-SC25 SCSI
+	0008  Ethernet
 	0093  1S9 Serial Port
 	8000  EZ-USB
 	8002  2x Serial Port
+	8004  2U4S serial/usb hub
+	8005  Ethernet
 	8093  PortGear Serial Port
 1657  Struck Innovative Systeme GmbH
 	3150  SIS3150 USB2.0 to VME interface
@@ -4647,21 +5210,48 @@
 	0333  Modem
 	0408  Prism2.5 802.11b Adapter
 	0421  Prism2.5 802.11b Adapter
+	0441  IBM Integrated Bluetooth II
 	0500  BTM200B BlueTooth Adapter
 	2441  BMDC-2 IBM Bluetooth III w.56k
+	6106  ROPEX FreeLan 802.11b
+	7605  UAT1 Wireless Ethernet Adapter
 1669  PiKRON Ltd. [hex]
 	1001  uLan2USB Converter - PS1 protocol
 1679  Total Phase
 	2001  Beagle USB 12 Protocol Analyzer
+168c  Atheros Communications
+	0001  AR5523
+	0002  AR5523 (no firmware)
 1690  Askey Computer Corp. [hex]
 	0101  Creative Modem Blaster DE5670
 	0103  Askey 1456 VQE-R3 Modem [conexant]
 	0109  Askey MagicXpress V.90 Pocket Modem [conexant]
+	0701  WLAN
+	0710  SMCWUSBT-G
+	0711  SMCWUSBT-G (no firmware)
+	0712  AR5523
+	0713  AR5523 (no firmware)
+	0722  RT2573
 1696  Hitachi Video and Information System, Inc.
 1697  VTec Test, Inc.
+16ab  Global Sun Technology
+	7801  AR5523
+	7802  AR5523 (no firmware)
+	7811  AR5523
+	7812  AR5523 (no firmware)
+16d5  AnyDATA Corporation
+	6501  CDMA 2000 1xRTT/EV-DO USB Modem
+16d8  CMOTECH Co., Ltd.
+	5141  CMOTECH CDMA Technologies USB modem
+	5543  CDMA 2000 1xRTT/1xEVDO USB modem
+	6280  CMOTECH CDMA Technologies USB modem
 1706  BlueView Technologies, Inc.
 1733  Cellink Technology Co., Ltd
 	0101  RF Wireless Optical Mouse OP-701
+1737  Linksys
+	0039  USB1000
+1740  Senao
+	2000  NUB-8301
 1781  Multiple Vendors
 	083e  MetaGeek Wi-Spy
 	0938  Iguanaworks USB IR Transceiver
@@ -4681,35 +5271,67 @@
 1894  Topseed
 	5632  Atek Tote Remote
 	5641  TSAM-004 Presentation Remote
+18c5  AMIT
+	0002  CG-WLUSB2GO
 18d9  Kaba
 	01xy  LEGIC advant desktop reader
+18e8  Qcom
+	6196  RT2573
+	6229  RT2573
 18ea  Matrox Graphics, Inc.
 	0002  DualHead2Go [Analog Edition]
 	0004  TripleHead2Go [Digital Edition]
+1915  Linksys
+	2233  WUSB11 v2.8 802.11b Adapter
+	2234  WUSB54G 802.11g Adapter
 1977  T-Logic
 	0111  TL203 MP3 Player and Voice Recorder
 1995  Trillium Technology Pty. Ltd.
 	3202  REC-ADPT-USB (recorder)
 	3203  REC-A-ADPT-USB (recorder)
+19ff  Rocketfish (?)
+	0201  Wireless 2.4G Laser Mouse
+1a0a  ...
+	badd  USB OTG Compliance test device
 1b47  Energizer Holdings, Inc.
 	0001  CHUSB Duo Charger (NiMH AA/AAA USB smart charger)
 1c87  2N TELEKOMUNIKACE a.s.
 1ebb  NuCORE Technology, Inc.
 2001  D-Link Corp. [hex]
+	1a00  10/100 Ethernet
+	200c  10/100 Ethernet
 	3200  DWL-120 802.11b (Atmel RFMD503A) [usbvnetr]
 	3700  DWL-122 802.11b
 	3701  DWL-G120 Spinnaker 802.11b
+	3702  DWL-120 rev F
 	3703  DWL-122 802.11b
 	3704  DWL-G122 802.11g rev. A2
+	3a00  DWL-AG132
+	3a01  DWL-AG132 (no firmware)
+	3a02  DWL-G132
+	3a03  DWL-G132 (no firmware)
+	3a04  DWL-AG122
+	3a05  DWL-AG122 (no firmware)
 	3c00  DWL-G122 802.11g rev. B1 [ralink]
+	3c05  DUB-E100 Fast Ethernet [asix]
 	4000  DSB-650C Ethernet [klsi]
 	4001  DSB-650TX Ethernet [pegasus]
 	4002  DSB-650TX Ethernet [pegasus]
 	4003  DSB-650TX-PNA Ethernet [pegasus]
+	400b  10/100 Ethernet
+	4102  10/100 Ethernet
 	abc1  DSB-650 Ethernet [pegasus]
 	f013  DLink 7 port USB2.0 Hub
 	f10d  Accent Communications Modem
 	f111  DBT-122 Bluetooth adapter
+2019  PLANEX
+	3220  GW-US11S WLAN
+	5303  GW-US54GXS
+	ab01  GW-US54HP
+	ab50  GW-US54Mini2
+	c002  GW-US54SG
+	c007  GW-US54GZL
+	ed02  GW-USMM
 2040  Hauppauge
 	7050  Hauppauge Nova-T Stick
 	9300  Hauppauge WinTV NOVA-T USB2 (cold)
@@ -4723,29 +5345,70 @@
 2233  RadioShack Corporation
 	6323  USB Electronic Scale
 22b8  Motorola PCS
+	0001  Wally 2.2 chipset
+	0002  Wally 2.4 chipset
 	0005  V.60c/V.60i GSM Phone
+	1001  Patriot 1.0 (GSM) chipset
+	1002  Patriot 2.0 chipset
 	1005  T280e GSM/GPRS Phone
+	1101  Patriot 1.0 (TDMA) chipset
+	1801  Rainbow chipset flash
 	2821  T720 GSM Phone
 	2822  V.120e GSM Phone
+	2a01  MSM6050 chipset
+	2a03  MSM6050 chipset flash
 	2a21  V710 GSM Phone (P2K)
 	2a22  V710 GSM Phone (AT)
+	2a23  MSM6100 chipset flash
+	2a41  MSM6300 chipset
+	2a43  MSM6300 chipset flash
 	2a61  E815 GSM Phone (P2K)
 	2a62  E815 GSM Phone (AT)
+	2a63  MSM6500 chipset flash
+	2a81  MSM6025 chipset
+	2a83  MSM6025 chipset flash
+	2ac1  MSM6100 chipset
+	2ac3  MSM6100 chipset flash
 	3001  A835/E1000 GSM Phone (P2K)
 	3002  A835/E1000 GSM Phone (AT)
 	3801  C350L/C450 (P2K)
 	3802  C330/C350L/C450/EZX GSM Phone (AT)
+	3803  Neptune LT chipset flash
+	4001  OMAP 1.0 chipset
 	4002  A920/A925 UMTS Phone
+	4003  OMAP 1.0 chipset flash
+	4008  OMAP 1.0 chipset RDL
+	4801  Neptune LTS chipset
+	4803  Neptune LTS chipset flash
 	4810  Triplet GSM Phone (storage)
 	4901  Triplet GSM Phone (P2K)
 	4902  Triplet GSM Phone (AT)
+	4903  Neptune LTE chipset flash
+	4a01  Neptune LTX chipset
+	4a03  Neptune LTX chipset flash
 	4a32  L6-imode Phone
+	5801  Neptune ULS chipset
+	5803  Neptune ULS chipset flash
+	5901  Neptune VLT chipset
+	5903  Neptune VLT chipset flash
+	6001  Dalhart EZX
+	6003  Dalhart flash
 	6004  EZX GSM Phone (CDC Net)
+	6008  Dalhart RDL
 	6009  EZX GSM Phone (P2K)
+	600a  Dalhart EZX config 17
+	600b  Dalhart EZX config 18
 	600c  EZX GSM Phone (USBLAN)
+	6021  JUIX chipset
+	6023  JUIX chipset flash
+	6026  Flash RAM Downloader/miniOS
+	6027  USBLAN
 	604c  EZX GSM Phone (Storage)
-	6631  CDC Modem
+	6101  Talon integrated chipset
+	6401  Argon chipset
+	6403  Argon chipset flash
 	6604  Washington CDMA Phone
+	6631  CDC Modem
 22b9  eTurboTouch Technology, Inc.
 22ba  Technology Innovation Holdings, Ltd
 2304  Pinnacle Systems, Inc. [hex]
@@ -4772,16 +5435,26 @@
 2632  TwinMOS
 	3209  7-in-1 Card Reader
 2650  Electronics For Imaging, Inc. [hex]
+2730  Citizen
+	200f  CT-S310 Label printer
+2735  DigitalWay
+	0003  MPIO 1.5GB Hard Disc Drive
 2770  NHJ, Ltd
 	905c  Che-Ez Snap SNAP-U/Digigr8/Soundstar TDC-35
 	9120  Che-ez! Snap / iClick Tiny VGA Digital Camera
 	913c  Argus DC-1730
 	9153  iClick 5X
 2899  Toptronic Industrial Co., Ltd
+2c02  Planex Communications
+	14ea  GW-US11H WLAN
 2fb2  Fujitsu, Ltd
 3125  Eagletron
 	0001  TrackerPod Camera Stand
 3176  Whanam Electronics Co., Ltd
+3275  VidzMedia Pte Ltd
+	4fb1  MonsterTV P2H
+3334  AEI
+	1701  Fast Ethernet
 3340  Yakumo
 	043a  Mio A701 DigiWalker PPCPhone
 	0e3a  Pocket PC 300 GPS SL / Typhoon MyGuide 3500
@@ -4800,6 +5473,8 @@
 	703c  USB-485 RS485 Cable
 	7254  NI MIO (data acquisition card) firmware updater
 	729e  USB-6251 (OEM) data acquisition card
+40bb  I-O Data
+	0a09  USB2.0-SCSI Bridge USB2-SC
 4102  iRiver, Ltd.
 	1001  iFP-100 series mp3 player
 	1003  iFP-300 series mp3 player
@@ -4818,32 +5493,42 @@
 	2102  H10 5GB (mtp)
 	2105  H10 5/6GB (mtp)
 413c  Dell Computer Corp.
+	0058  Port Replicator
 	1002  Keyboard Hub
 	2002  SK-8125 Keyboard
+	2003  Keyboard
 	2005  RT7D50 Keyboard
 	2100  SK-3106 Keyboard
 	2101  SmartCard Reader Keyboard
 	2500  DRAC4 Remote Access Card
 	3010  Optical Wheel Mouse
+	3200  Mouse
 	4001  Axim X5
 	4002  Axim X3
 	4003  Axim X30
+	8000  BC02 Bluetooth USB Adapter
 	8100  TrueMobile 1180 802.11b Adapter
 	8103  Wireless 350 Bluetooth
+	8140  Wireless 360 Bluetooth
 	a001  Hub
+	a005  Internal 2.0 Hub
 	a700  Hub (in 1905FP LCD Monitor)
-4242  USB Design by Example
-	4201  Buttons and Lights HID device
-	4220  Echo 1 Camera
 4146  USBest Technology
 	9281  Iomega Micro Mini 128MB Flash Drive
 	ba01  Intuix Flash Drive
+4242  USB Design by Example
+	4201  Buttons and Lights HID device
+	4220  Echo 1 Camera
+4348  Unknown
+	5523  USB->RS 232 adapter with Prolifec PL 2303 chipset
 4572  Shuttle, Inc.
 	4572  Shuttle PN31 Remote
 4586  Panram
 	1026  Crystal Bar Flash Drive
 4670  EMS Production
 	9394  Game Cube USB Memory Adaptor 64M
+4766  Aceeca
+	0001  MEZ1000 RDA
 4855  Memorex
 	7288  Ultra Traveldrive 160G 2.5" HDD
 5032  Grandtec
@@ -4853,24 +5538,41 @@
 	0fa1  Grandtec USB1.1 DVB-T (warm)
 5041  Linksys (?)
 	2234  WUSB54G 802.11g Adapter
+5173  Sweex
+	1809  ZD1211
 5345  Owon
 	1234  PDS6062T Oscilloscope
 544d  Transmeta Corp.
 5543  UC-Logic Technology Corp.
 	0002  SuperPen WP3325U Tablet
+	0003  Genius MousePen 4x3 Tablet
 	0004  Genius MousePen 5x4 Tablet
+	0005  Genius MousePen 8x6 Tablet
+	0041  Genius PenSketch 6x8 Tablet
+	0042  Genius PenSketch 12x9 Tablet
 55aa  OnSpec Electronic, Inc.
 	1234  ATAPI Bridge
 	a103  Sandisk SDDR-55 SmartMedia Card Reader
 	b012  Mitsumi FA402M 8-in-2 Card Reader
+5a57  Zinwell
+	0260  RT2570
+6189  Sitecom
+	182d  USB 2.0 Ethernet
+	2068  USB to serial cable (v2)
 6253  TwinHan Technology Co., Ltd
 	0100  Ir reciver f. remote control
 636c  CoreLogic, Inc.
+6547  Arkmicro Technologies Inc.
+	0232  ARK3116 Serial
 6666  Prototype product Vendor ID
 	0667  Smart Joy PSX, PS-PC Smart JoyPad
+6891  3Com
+	a727  3CRUSB10075
 6993  Freshtel
 	b001  FT-102 VoIP USB Phone
 6a75  Shanghai Jujo Electronics Co., Ltd
+7104  CME (Central Music Co.)
+	2202  UF5/UF6/UF7/UF8 MIDI Master Keyboard
 8086  Intel Corp.
 	0110  Easy PC Camera
 	0431  Intel Pro Video PC Camera
@@ -4880,12 +5582,21 @@
 	1111  PRO/Wireless 2011B 802.11b Adapter
 	9890  82930 Test Board
 	c013  Wireless HID Station
+	f001  XScale PXA27x Bulverde flash
 8341  EGO Systems, Inc.
 	2000  Flashdisk
+9016  Sitecom
+	182d  WL-022
 9710  MosChip Semiconductor
+	7703  MCS7703 Serial Port Adapter
 	7705  Printer cable
 	7715  Printer cable
 	7780  MS7780 4Mbps Fast IRDA Adapter
+	7830  MCS7830 Ethernet
+a727  3Com
+	6893  AR5523
+	6895  AR5523
+	6897  AR5523
 c251  Keil Software, Inc.
 	2710  ULink
 eb1a  eMPIA Technology, Inc.
@@ -4895,6 +5606,8 @@ eb1a  eMPIA Technology, Inc.
 	2750  ECS Elitegroup G220 integrated webcam
 	2800  Terratec Cinergy 200
 	2801  GrabBeeX+ Video Encoder
+f003  Hewlett Packard
+	6002  PhotoSmart C500
 
 # List of known device classes, subclasses and protocols
 
@@ -4943,7 +5656,7 @@ C 03  Human Interface Device
 C 05  Physical Interface Device
 C 06  Imaging
 	01  Still Image Capture
-		01 Picture Transfer Protocol (PIMA 15470)
+		01  Picture Transfer Protocol (PIMA 15470)
 C 07  Printer
 	01  Printer
 		00  Reserved/Undefined
@@ -6589,4 +7302,3 @@ VT 0400  External Vendor Specific
 VT 0401  Composite Video
 VT 0402  S-Video
 VT 0403  Component Video
-

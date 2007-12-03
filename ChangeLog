@@ -1,3 +1,11 @@
+2007-12-03 David Brownell <dbrownell@users.sourceforge.net>
+	* configure, configure.h.in: autoreconf
+	* usb.ids: update to current version
+	* lsusb.c: fix minor layout glitch
+
+2007-11-14 Joe Peterson <lavajoe@gentoo.org>
+	* configure.in, lsusb.c: use AC_C_BIGENDIAN
+
 2007-11-05 David Brownell <dbrownell@users.sourceforge.net>
 	* configure, config.h.in: autoreconf
 	* usb.ids: update to current version

@@ -22,8 +22,9 @@ AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_CHECK_HEADERS([fcntl.h stdlib.h string.h sys/ioctl.h sys/param.h unistd.h getopt.h errno.h asm/byteorder.h machine/endian.h])
 
-# Checks for typedefs, structures, and compiler characteristics.
+# Checks for typedefs, structures, byte order, and compiler characteristics.
 AC_C_CONST
+AC_C_BIGENDIAN
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
 
