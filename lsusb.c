@@ -155,6 +155,11 @@ static int get_string(struct usb_dev_handle *dev, char* buf, size_t size, u_int8
 {
 	int ret;
 
+	if (!dev) {
+		buf[0] = 0;
+		return 0;
+	}
+
 	if (id) {
 		ret = usb_get_string_simple(dev, id, buf, size);
 		if (ret <= 0) {
@@ -2085,6 +2090,12 @@ static void dump_hid_device(struct usb_dev_handle *dev, struct usb_interface_des
 	if (!do_report_desc)
 		return;
 
+	if (!dev) {
+		printf( "         Report Descriptors: \n"
+			"           ** UNAVAILABLE **\n");
+		return;
+	}
+
 	for (i = 0; i < buf[5]; i++) {
 		/* we are just interested in report descriptors*/
 		if (buf[6+3*i] != USB_DT_REPORT)
@@ -2664,28 +2675,31 @@ static void dumpdev(struct usb_device *dev)
 
 	otg = wireless = 0;
 	udev = usb_open(dev);
-	if (udev) {
-		dump_device(udev, &dev->descriptor);
-		if (dev->descriptor.bcdUSB >= 0x0250)
-			wireless = do_wireless(udev);
-		if (dev->config) {
-			otg = do_otg(&dev->config[0]) || otg;
-			for (i = 0; i < dev->descriptor.bNumConfigurations;
-					i++) {
-				dump_config(udev, &dev->config[i]);
-			}
+	if (!udev)
+		fprintf(stderr, "Couldn't open device, some information "
+			"will be missing\n");
+
+	dump_device(udev, &dev->descriptor);
+	if (dev->descriptor.bcdUSB >= 0x0250)
+		wireless = do_wireless(udev);
+	if (dev->config) {
+		otg = do_otg(&dev->config[0]) || otg;
+		for (i = 0; i < dev->descriptor.bNumConfigurations;
+				i++) {
+			dump_config(udev, &dev->config[i]);
 		}
-		if (dev->descriptor.bDeviceClass == USB_CLASS_HUB)
-			do_hub(udev, dev->descriptor.bDeviceProtocol);
-		if (dev->descriptor.bcdUSB >= 0x0200) {
-			do_dualspeed(udev);
-			do_debug(udev);
-		}
-		dump_device_status(udev, otg, wireless);
-		usb_close(udev);
 	}
-	else
-		fprintf(stderr, "Couldn't open device\n");
+	if (!udev)
+		return;
+
+	if (dev->descriptor.bDeviceClass == USB_CLASS_HUB)
+		do_hub(udev, dev->descriptor.bDeviceProtocol);
+	if (dev->descriptor.bcdUSB >= 0x0200) {
+		do_dualspeed(udev);
+		do_debug(udev);
+	}
+	dump_device_status(udev, otg, wireless);
+	usb_close(udev);
 }
 
 /* ---------------------------------------------------------------------- */
