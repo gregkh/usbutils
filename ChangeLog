@@ -178,6 +178,9 @@
 2003-??-??  Aurelien Jarno <aurelien@aurel32.net> 
 	Convert to latest libusb, supporting BSD and Darwin.
 
+2002-08-02 Pedro Lopez-Cabanillas <plcl@users.sourceforge.net>
+	* lsusb.c: (against 0.10) recognize USB MIDI class specific descriptors.
+
 2000-11-06  Thomas Sailer  <sailer@eldrich.ee.ethz.ch>
 
 	* names.c, lsusb.c: Fixup of Gunther Mayer's patch; do not export
