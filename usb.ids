@@ -2304,7 +2304,7 @@
 	0137  BeWAN ADSL USB ST (blue or green)
 	1307  Cytronix 6in1 Card Reader
 	163d  Cool Icam Digi-MP3
-	2015  TouchChip® Fingerprint Reader
+	2015  TouchChip? Fingerprint Reader
 	2016  Fingerprint Reader
 	2017  Biometric Smart Card Reader
 	2018  BioSimKey
@@ -7246,9 +7246,9 @@
 0846  NetGear, Inc.
 	1001  EA101 10 Mbps 10BASE-T Ethernet [Kawasaki LSI KL5KLUSB101B]
 	1002  Ethernet
-	1020  FA101 Fast Ethernet USB 1.1 
+	1020  FA101 Fast Ethernet USB 1.1
 	1040  FA120 Fast Ethernet USB 2.0 [Asix AX88172 / AX8817x]
-	4110  MA111(v1) 802.11b Wireless [Intersil Prism 3.0] 
+	4110  MA111(v1) 802.11b Wireless [Intersil Prism 3.0]
 	4200  WG121(v1) 54 Mbps Wireless [Intersil Prism GT]
 	4210  WG121(v2) 54 Mbps Wireless [Intersil Prism GT]
 	4220  WG111(v1) 54 Mbps Wireless [Intersil Prism54 Intersil 3886]
@@ -7256,12 +7256,12 @@
 	4240  WG111v2 54 Mbps Wireless [RealTek RTL8187L]
 	4260  WG111v3 54 Mbps Wireless [realtek RTL8187B]
 	4300  WG111U Double 108 Mbps Wireless [Atheros AR5004X / AR5005UX]
-	4301  WG111U (no firmware) Double 108 Mbps Wireless [Atheros AR5004X / AR5005UX] 
-	6a00  WG111v2 54 Mbps Wireless [RealTek RTL8187L] 
+	4301  WG111U (no firmware) Double 108 Mbps Wireless [Atheros AR5004X / AR5005UX]
+	6a00  WG111v2 54 Mbps Wireless [RealTek RTL8187L]
 	7100  WN121T RangeMax Next Wireless-N [Marvell TopDog]
 	9000  WN111(v1) RangeMax Next Wireless [Marvell TopDog]
 	9001  WN111(v2) RangeMax Next Wireless [Atheros AR9001U-(2)NG]
-	9010  WNDA3100 RangeMax Dual Band Wireless-N [Atheros AR9001U-2NX] 
+	9010  WNDA3100 RangeMax Dual Band Wireless-N [Atheros AR9001U-2NX]
 	a001  PA101 10 Mbps HPNA Home Phoneline RJ-1
 084d  Minton Optic Industry Co., Inc.
 	0001  Jenoptik JD800i
@@ -11660,7 +11660,7 @@
 	930b  CCD Webcam(PC370R)
 	930c  CCD Webcam(PC370R)
 2821  Unknown
-	3300  Wireless Adapter 
+	3300  Wireless Adapter
 2899  Toptronic Industrial Co., Ltd
 	012c Camera Device
 2c02  Planex Communications
@@ -12516,7 +12516,7 @@ HUT 07  Keyboard
 	031  \ and | (Backslash and Bar)
 	032  # and ~ (Hash and Tilde, Non-US Keyboard near right shift)
 	033  ; and : (Semicolon and Colon)
-	034  ´ and " (Accent Acute and Double Quotes)
+	034  ? and " (Accent Acute and Double Quotes)
 	035  ` and ~ (Accent Grace and Tilde)
 	036  , and < (Comma and Less)
 	037  . and > (Period and Greater)
