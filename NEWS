@@ -1,10 +1,10 @@
-usbutil 0.80
-============
+usbutils 0.80
+=============
 Update usb.ids.
 Update autotools.
 
 
-usbutils 0.73
+usbutils 0.73 (and older)
 =============
 Thanks to a patch from Aurelien Jarno, usbutils now uses the system's
 libusb to access USB devices, not a private (old) copy of that library.
