@@ -1,68 +1,49 @@
-#                                               -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
+AC_INIT([usbutils],
+	[0.73],
+	[linux-hotplug@vger.kernel.org])
+AC_PREREQ(2.60)
+AM_INIT_AUTOMAKE([check-news foreign 1.9 dist-bzip2])
+AC_USE_SYSTEM_EXTENSIONS
+AC_SYS_LARGEFILE
 
-AC_PREREQ(2.59)
-AC_INIT([usbutils],[0.73])
-
-AC_CONFIG_SRCDIR([lsusb.c])
-AC_CONFIG_HEADER([config.h])
-
-AM_INIT_AUTOMAKE(-Wall)
-
-# Checks for programs.
-AC_PROG_CC
-AC_PROG_INSTALL
-AC_PROG_LN_S
-
-# Checks for libraries.
-
-# Checks for header files.
-AC_FUNC_ALLOCA
-AC_HEADER_DIRENT
-AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h stdlib.h string.h sys/ioctl.h sys/param.h unistd.h getopt.h errno.h asm/byteorder.h machine/endian.h])
-
-# Checks for typedefs, structures, byte order, and compiler characteristics.
-AC_C_CONST
-AC_C_BIGENDIAN
-AC_TYPE_OFF_T
-AC_TYPE_SIZE_T
-
-# Checks for library functions.
-AC_FUNC_MALLOC
-AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([getcwd memset getopt_long strchr strerror strstr strtoul uname])
-AC_CHECK_LIB(usb, usb_get_string_simple, ,
-	[AC_MSG_ERROR(get libusb 0.1.8 or newer)])
-
-
-dnl zlib on enabled by default (if found)
 USE_ZLIB=yes
 AC_ARG_ENABLE(zlib,
-  AS_HELP_STRING(--disable-zlib,disable support for zlib),
-  [
-    if eval "test x$enable_zlib = xno"; then
-      USE_ZLIB=
-    fi
-  ])
+	AS_HELP_STRING(--disable-zlib,disable support for zlib),
+	[
+		if eval "test x$enable_zlib = xno"; then
+			USE_ZLIB=
+		fi
+	])
 if test "$USE_ZLIB" = "yes" ; then
-  AC_CHECK_LIB(z, inflateEnd)
-  if test "${ac_cv_lib_z_inflateEnd}" = "yes" ; then
-    HAVE_ZLIB="yes"
-  fi
+	AC_CHECK_LIB(z, inflateEnd)
+	if test "${ac_cv_lib_z_inflateEnd}" = "yes" ; then
+		HAVE_ZLIB="yes"
+	fi
 fi
 AM_CONDITIONAL(HAVE_ZLIB, test x$HAVE_ZLIB = xyes)
 
-#AC_ARG_ENABLE(usbmodules,
-#	[  --enable-usbmodules     build usbmodules (for Linux 2.4)],
-#	[ case "${enableval}" in
-#	yes) usbmod=true ;;
-#	no) usbmod=false ;;
-#	*) AC_MSG_ERROR(bad value ${enableval} for --enable-usbmodules) ;;
-#	esac ],
-#	[usbmod=false])
-#AM_CONDITIONAL(USBMODULES, test x$usbmod = xtrue)
+PKG_CHECK_MODULES(LIBUSB, libusb >= 0.1.12)
+AC_SUBST(LIBUSB_CFLAGS)
+AC_SUBST(LIBUSB_LIBS)
 
-AM_MAINTAINER_MODE
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_FILES([
+	Makefile
+])
+
 AC_OUTPUT
+echo "
+	usbutils $VERSION
+	=================
+
+	prefix:                 ${prefix}
+	mandir:                 ${mandir}
+	datadir:                ${datadir}
+
+	usb.ids:                ${datadir}/usb.ids
+	zlib:                   ${USE_ZLIB}
+
+	compiler:               ${CC}
+	cflags:                 ${CFLAGS}
+	ldflags:                ${LDFLAGS}
+"

@@ -2,8 +2,17 @@
 *.swp
 .deps/
 Makefile
+Makefile.in
 config.h
+config.h.in
 config.log
 config.status
+configure
 stamp-h1
+aclocal.m4
+autom4te.cache/
+depcomp
+install-sh
+missing
 lsusb
+

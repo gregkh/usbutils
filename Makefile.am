@@ -1,24 +1,36 @@
-# Process this file with 'automake' to create 'Makefile.in'
+AM_LDFLAGS = \
+	-Wl,--as-needed
 
-AM_CPPFLAGS = -DUSBIDS_DIR='"@datadir@"'
-
-AM_CFLAGS = -Wall -W -Wunused
-
-sbin_PROGRAMS = lsusb
-
-lsusb_SOURCES = lsusb.c \
-	names.c names.h \
-	devtree.c devtree.h list.h \
-	usbmisc.c usbmisc.h
-
-man_MANS = lsusb.8
-
-install-data-local:
-	$(mkinstalldirs) $(DESTDIR)$(datadir)
+data_DATA = \
+	usb.ids
 if HAVE_ZLIB
-	gzip -c -9 $(srcdir)/usb.ids > $(DESTDIR)$(datadir)/usb.ids.gz
-else
-	$(INSTALL_DATA) $(srcdir)/usb.ids $(DESTDIR)$(datadir)/usb.ids
+	usb.ids.gz
 endif
 
-EXTRA_DIST = $(man_MANS) usb.ids update-usbids.sh
+sbin_PROGRAMS = \
+	lsusb
+
+lsusb_SOURCES = \
+	lsusb.c \
+	list.h \
+	names.c names.h \
+	devtree.c devtree.h \
+	usbmisc.c usbmisc.h
+
+lsusb_CPPFLAGS = \
+	$(AM_CPPFLAGS) \
+	-DDATADIR=\"$(datadir)\"
+
+lsusb_LDADD = \
+	$(LIBUSB_LIBS)
+
+dist_man_MANS = \
+	lsusb.8
+
+usb.ids.gz: usb.ids
+	gzip -c -9 usb.ids > usb.ids.gz
+
+clean-local:
+	rm -f usb.ids.gz
+
+

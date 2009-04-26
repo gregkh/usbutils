@@ -24,10 +24,7 @@
 
 /*****************************************************************************/
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -35,38 +32,22 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdarg.h>
-
-#if defined(HAVE_ASM_BYTEORDER_H)
-#include <asm/byteorder.h>
-#define le16_to_cpu	__le16_to_cpu
-
-#elif defined(HAVE_MACHINE_ENDIAN_H)
-#include <machine/endian.h>
-#ifdef WORDS_BIGENDIAN
-#define le16_to_cpu	__bswap16
-#else
-#define le16_to_cpu(x) (x)
-#endif
-
-#else
-#error no le16_to_cpu implementation is available
-#endif
-
+#include <byteswap.h>
 #include <usb.h>
-
-/* NOTE:  that should be <libusb.h> and it should include
- * <linux/usb/ch9.h> ... without it, we keep accumulating
- * potentially broken variants of standard types ...
- * also <linux/usb/cdc.h>, <linux/usb/audio.h>, etc
- */
 
 #include "names.h"
 #include "devtree.h"
 #include "usbmisc.h"
 
-#define _GNU_SOURCE
 #include <getopt.h>
 
+#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+  #define le16_to_cpu(x) (x)
+#elif (__BYTE_ORDER == __BIG_ENDIAN)
+  #define le16_to_cpu(x) bswap_16(x)
+#else
+  #error missing BYTE_ORDER
+#endif
 
 /* from USB 2.0 spec and updates */
 #define USB_DT_DEVICE_QUALIFIER		0x06
@@ -2899,36 +2880,22 @@ int main(int argc, char *argv[])
 	}
 
 	/* by default, print names as well as numbers */
+	err = names_init(DATADIR "/usb.ids");
 #ifdef HAVE_LIBZ
-	err = names_init("./usb.ids");
 	if (err != 0)
-		err = names_init("./usb.ids.gz");
-	if (err != 0)
-		err = names_init(USBIDS_DIR "/usb.ids");
-	if (err != 0)
-		err = names_init(USBIDS_DIR "/usb.ids.gz");
+		err = names_init(DATADIR "/usb.ids.gz");
+#endif
 	if (err != 0)
 		fprintf(stderr, "%s: cannot open \"%s\", %s\n",
 				argv[0],
-				USBIDS_DIR"/usb.ids",
+				DATADIR "/usb.ids",
 				strerror(err));
-#else
-	if ((err = names_init("./usb.ids")) != 0) {
-		if ((err = names_init(USBIDS_DIR"/usb.ids")) != 0) {
-			fprintf(stderr, "%s: cannot open \"%s\", %s\n",
-					argv[0],
-					USBIDS_DIR"/usb.ids",
-					strerror(err));
-		}
-	}
-#endif
 	status = 0;
 
 	usb_init();
 
 	usb_find_busses();
 	usb_find_devices();
-
 
 	if (treemode) {
 		/* treemode requires at least verblevel 1 */
