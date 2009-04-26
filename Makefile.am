@@ -33,4 +33,5 @@ usb.ids.gz: usb.ids
 clean-local:
 	rm -f usb.ids.gz
 
-
+distclean-local:
+	rm -rf autom4te.cache

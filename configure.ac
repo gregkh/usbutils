@@ -34,11 +34,11 @@ AC_CONFIG_FILES([
 AC_OUTPUT
 echo "
 	usbutils $VERSION
-	=================
+	=============
 
 	prefix:                 ${prefix}
+	datarootdir:            ${datarootdir}
 	mandir:                 ${mandir}
-	datadir:                ${datadir}
 
 	usb.ids:                ${datadir}/usb.ids
 	zlib:                   ${USE_ZLIB}
