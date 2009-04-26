@@ -27,6 +27,9 @@ lsusb_LDADD = \
 dist_man_MANS = \
 	lsusb.8
 
+EXTRA_DIST = \
+	usb.ids
+
 usb.ids.gz: usb.ids
 	gzip -c -9 usb.ids > usb.ids.gz
 
