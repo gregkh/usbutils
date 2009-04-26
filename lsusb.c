@@ -2664,6 +2664,8 @@ dump_device_status(struct usb_dev_handle *fd, int otg, int wireless)
 static int do_wireless(struct usb_dev_handle *fd)
 {
 	/* FIXME fetch and dump BOS etc */
+	if (fd)
+		return 0;
 	return 0;
 }
 
