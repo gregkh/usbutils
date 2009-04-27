@@ -1,3 +1,9 @@
+usbutils 0.81
+=============
+fixed '-t' option if usbfs is not mounted
+added DFU parsing
+updated the man page
+
 usbutils 0.80
 =============
 Updated usb.ids.
