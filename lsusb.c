@@ -1747,7 +1747,7 @@ static void dump_videostreaming_interface(unsigned char *buf)
 
 static void dump_dfu_interface(unsigned char *buf)
 {
-	if (buf[1] !ÿSB_DT_HID)
+	if (buf[1] != USB_DT_HID)
 		printf("      Warning: Invalid descriptor\n");
 	else if (buf[0] < 7)
 		printf("      Warning: Descriptor too short\n");
