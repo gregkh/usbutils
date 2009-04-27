@@ -2862,12 +2862,12 @@ int main(int argc, char *argv[])
 			if (cp) {
 				*cp++ = 0;
 				if (*optarg)
-					bus = strtoul(optarg, NULL, 0);
+					bus = strtoul(optarg, NULL, 10);
 				if (*cp)
-					devnum = strtoul(cp, NULL, 0);
+					devnum = strtoul(cp, NULL, 10);
 			} else {
 				if (*optarg)
-					devnum = strtoul(optarg, NULL, 0);
+					devnum = strtoul(optarg, NULL, 10);
 			}
 			break;
 
