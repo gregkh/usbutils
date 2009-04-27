@@ -64,6 +64,10 @@
 #define USB_CLASS_VIDEO			0x0e
 #endif
 
+#ifndef USB_CLASS_APPLICATION
+#define USB_CLASS_APPLICATION	       	0xfe
+#endif
+
 #define VERBLEVEL_DEFAULT 0	/* 0 gives lspci behaviour; 1, lsusb-0.9 */
 
 #define CTRL_RETRIES	 2
@@ -82,6 +86,7 @@ static void dump_audiostreaming_interface(unsigned char *buf);
 static void dump_midistreaming_interface(struct usb_dev_handle *dev, unsigned char *buf);
 static void dump_videocontrol_interface(struct usb_dev_handle *dev, unsigned char *buf);
 static void dump_videostreaming_interface(unsigned char *buf);
+static void dump_dfu_interface(unsigned char *buf);
 static char *dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *indent);
 static void dump_hid_device(struct usb_dev_handle *dev, struct usb_interface_descriptor *interface, unsigned char *buf);
 static void dump_audiostreaming_endpoint(unsigned char *buf);
@@ -509,6 +514,15 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 					break;
 				case 0x0b:
 					dump_ccid_device(buf);
+					break;
+				case USB_CLASS_APPLICATION:
+					switch(interface->bInterfaceSubClass) {
+					case 1:
+						dump_dfu_interface(buf);
+						break;
+					default:
+						goto dump;
+					}
 					break;
 				default:
 					goto dump;
@@ -1729,6 +1743,28 @@ static void dump_videostreaming_interface(unsigned char *buf)
 		dump_bytes(buf+3, buf[0]-3);
 		break;
 	}
+}
+
+static void dump_dfu_interface(unsigned char *buf)
+{
+	if (buf[1] !ÿSB_DT_HID)
+		printf("      Warning: Invalid descriptor\n");
+	else if (buf[0] < 7)
+		printf("      Warning: Descriptor too short\n");
+	printf("      Device Firmware Upgrade Interface Descriptor:\n"
+	       "        bLength                         %5u\n"
+	       "        bDescriptorType                 %5u\n"
+	       "        bmAttributes                    %5u\n",
+	       buf[0], buf[1], buf[2]);
+	if (buf[2] & 0xf0)
+		printf("          (unknown attributes!)\n");
+	printf("          Will %sDetach\n", (buf[2] & 0x08) ? "" : "Not ");
+	printf("          Manifestation %s\n", (buf[2] & 0x04) ? "Tolerant" : "Intolerant");
+	printf("          Upload %s\n", (buf[2] & 0x02) ? "Supported" : "Unsupported");
+	printf("          Download %s\n", (buf[2] & 0x01) ? "Supported" : "Unsupported");
+	printf("        wDetachTimeout                  %5u milliseconds\n"
+	       "        wTransferSize                   %5u bytes\n",
+	       buf[3] | (buf[4] << 8), buf[5] | (buf[6] << 8));
 }
 
 static void dump_hub(char *prefix, unsigned char *p, int has_tt)
