@@ -12,6 +12,7 @@ sbin_PROGRAMS = \
 
 lsusb_SOURCES = \
 	lsusb.c \
+	lsusb-t.c \
 	list.h \
 	names.c names.h \
 	devtree.c devtree.h \

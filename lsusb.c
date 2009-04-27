@@ -75,6 +75,7 @@
 
 #define	HUB_STATUS_BYTELEN	3	/* max 3 bytes status = hub + 23 ports */
 
+extern int lsusb_t(void);
 static const char *procbususb = "/proc/bus/usb";
 static unsigned int verblevel = VERBLEVEL_DEFAULT;
 static int do_report_desc = 1;
@@ -2812,6 +2813,8 @@ static int treedump(void)
 	char buf[512];
 
 	snprintf(buf, sizeof(buf), "%s/devices", procbususb);
+	if (access(buf, R_OK) < 0)
+		return lsusb_t();
 	if ((fd = open(buf, O_RDONLY)) == -1) {
 		fprintf(stderr, "cannot open %s, %s (%d)\n", buf, strerror(errno), errno);
 		return(1);
