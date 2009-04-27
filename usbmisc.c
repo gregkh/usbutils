@@ -34,7 +34,7 @@
 
 /* ---------------------------------------------------------------------- */
 
-static const char *procbususb = "/proc/bus/usb";
+static const char *devbususb = "/dev/bus/usb";
 
 /* ---------------------------------------------------------------------- */
 
@@ -130,7 +130,7 @@ struct usb_device *get_usb_device(const char *path)
 	
 	for (bus = usb_busses; bus; bus = bus->next) {
         	for (dev = bus->devices; dev; dev = dev->next) {
-			snprintf(device_path, sizeof(device_path), "%s/%s/%s", procbususb, bus->dirname, dev->filename);
+			snprintf(device_path, sizeof(device_path), "%s/%s/%s", devbususb, bus->dirname, dev->filename);
 			if (!strcmp(device_path, absolute_path))
 				return dev;
 		}				
