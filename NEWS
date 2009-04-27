@@ -1,8 +1,8 @@
 usbutils 0.80
 =============
-Update usb.ids.
-Update autotools.
-
+Updated usb.ids.
+Updated autotools logic.
+Removed obsolete usbmodules.
 
 usbutils 0.73 (and older)
 =============
