@@ -1,10 +1,12 @@
 AM_LDFLAGS = \
 	-Wl,--as-needed
 
+DISTCLEANFILES = usb.ids.gz
+
 data_DATA = \
 	usb.ids
 if HAVE_ZLIB
-	usb.ids.gz
+data_DATA += usb.ids.gz
 endif
 
 sbin_PROGRAMS = \
@@ -31,11 +33,8 @@ dist_man_MANS = \
 EXTRA_DIST = \
 	usb.ids
 
-usb.ids.gz: usb.ids
-	gzip -c -9 usb.ids > usb.ids.gz
-
-clean-local:
-	rm -f usb.ids.gz
+usb.ids.gz: $(srcdir)/usb.ids
+	gzip -c -9 $< > $@
 
 distclean-local:
 	rm -rf autom4te.cache
