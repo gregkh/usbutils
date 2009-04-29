@@ -12,11 +12,6 @@ lsusb \- list USB devices
 is a utility for displaying information about USB buses in the system and
 the devices connected to them.
 
-To make use of all the features of this program,
-you need to have a Linux kernel
-which supports the /proc/bus/usb interface
-(e.g., Linux kernel 2.3.15 or newer).
-
 .SH OPTIONS
 .TP
 .B \-v, \-\-verbose
@@ -39,10 +34,10 @@ Show only devices with the specified vendor and product ID.
 Both ID's are given in hexadecimal.
 .TP
 .B \-D \fIdevice\fP
-Do not scan the /proc/bus/usb directory,
+Do not scan the /dev/bus/usb directory,
 instead display only information
 about the device whose device file is given.
-The device file should be something like /proc/bus/usb/001/001.
+The device file should be something like /dev/bus/usb/001/001.
 This option displays detailed information like the \fBv\fP option;
 you must be root to do this.
 .TP
@@ -55,14 +50,6 @@ to dump the physical USB device hierarchy as a tree.
 Print  version information on standard output,
 then exit successfully.
 
-.SH DIAGNOSTICS
-.TP
-cannot open /proc/bus/usb/\fInnn\fP/\fInnn\fP, Permission denied (13)
-To get detailed information,
-.I lsusb
-must open the files in /proc/bus/usb in read-write mode.
-You must be root in order to do this.
-
 .SH RETURN VALUE
 If the specified device is not found, a non-zero exit code is returned.
 
@@ -70,13 +57,6 @@ If the specified device is not found, a non-zero exit code is returned.
 .TP
 .B /usr/share/usb.ids
 A list of all known USB ID's (vendors, products, classes, subclasses and protocols).
-.TP
-.B /proc/bus/usb
-An interface to USB devices provided by the post-2.3.15 Linux
-kernels. Contains per-bus subdirectories with per-device files and a
-.I devices
-file displaying some of the descriptors for each USB device.
-This interface is also support by some 2.2 Linux kernels.
 
 .SH SEE ALSO
 .BR lspci (8)

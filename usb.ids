@@ -11395,6 +11395,7 @@
 	0001  1.1 root hub
 	0002  2.0 root hub
 	0003  3.0 root hub
+	0100  PTP Gadget
 1e1f  INVIA
 1e29  Festo AG & Co. KG
 	0101  CPX Adapter

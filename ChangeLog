@@ -1,3 +1,7 @@
+2009 Greg Kroah-Hartman <greg@kroah.com>
+	* switched over to git, look at the changelog there
+	  instead of here.
+
 2007-12-03 David Brownell <dbrownell@users.sourceforge.net>
 	* configure, configure.h.in: autoreconf
 	* usb.ids: update to current version

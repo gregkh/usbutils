@@ -64,6 +64,10 @@
 #define USB_CLASS_VIDEO			0x0e
 #endif
 
+#ifndef USB_CLASS_APPLICATION
+#define USB_CLASS_APPLICATION	       	0xfe
+#endif
+
 #define VERBLEVEL_DEFAULT 0	/* 0 gives lspci behaviour; 1, lsusb-0.9 */
 
 #define CTRL_RETRIES	 2
@@ -71,6 +75,7 @@
 
 #define	HUB_STATUS_BYTELEN	3	/* max 3 bytes status = hub + 23 ports */
 
+extern int lsusb_t(void);
 static const char *procbususb = "/proc/bus/usb";
 static unsigned int verblevel = VERBLEVEL_DEFAULT;
 static int do_report_desc = 1;
@@ -82,6 +87,7 @@ static void dump_audiostreaming_interface(unsigned char *buf);
 static void dump_midistreaming_interface(struct usb_dev_handle *dev, unsigned char *buf);
 static void dump_videocontrol_interface(struct usb_dev_handle *dev, unsigned char *buf);
 static void dump_videostreaming_interface(unsigned char *buf);
+static void dump_dfu_interface(unsigned char *buf);
 static char *dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *indent);
 static void dump_hid_device(struct usb_dev_handle *dev, struct usb_interface_descriptor *interface, unsigned char *buf);
 static void dump_audiostreaming_endpoint(unsigned char *buf);
@@ -509,6 +515,15 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 					break;
 				case 0x0b:
 					dump_ccid_device(buf);
+					break;
+				case USB_CLASS_APPLICATION:
+					switch(interface->bInterfaceSubClass) {
+					case 1:
+						dump_dfu_interface(buf);
+						break;
+					default:
+						goto dump;
+					}
 					break;
 				default:
 					goto dump;
@@ -1731,6 +1746,28 @@ static void dump_videostreaming_interface(unsigned char *buf)
 	}
 }
 
+static void dump_dfu_interface(unsigned char *buf)
+{
+	if (buf[1] != USB_DT_HID)
+		printf("      Warning: Invalid descriptor\n");
+	else if (buf[0] < 7)
+		printf("      Warning: Descriptor too short\n");
+	printf("      Device Firmware Upgrade Interface Descriptor:\n"
+	       "        bLength                         %5u\n"
+	       "        bDescriptorType                 %5u\n"
+	       "        bmAttributes                    %5u\n",
+	       buf[0], buf[1], buf[2]);
+	if (buf[2] & 0xf0)
+		printf("          (unknown attributes!)\n");
+	printf("          Will %sDetach\n", (buf[2] & 0x08) ? "" : "Not ");
+	printf("          Manifestation %s\n", (buf[2] & 0x04) ? "Tolerant" : "Intolerant");
+	printf("          Upload %s\n", (buf[2] & 0x02) ? "Supported" : "Unsupported");
+	printf("          Download %s\n", (buf[2] & 0x01) ? "Supported" : "Unsupported");
+	printf("        wDetachTimeout                  %5u milliseconds\n"
+	       "        wTransferSize                   %5u bytes\n",
+	       buf[3] | (buf[4] << 8), buf[5] | (buf[6] << 8));
+}
+
 static void dump_hub(char *prefix, unsigned char *p, int has_tt)
 {
 	unsigned int l, i, j;
@@ -2776,6 +2813,8 @@ static int treedump(void)
 	char buf[512];
 
 	snprintf(buf, sizeof(buf), "%s/devices", procbususb);
+	if (access(buf, R_OK) < 0)
+		return lsusb_t();
 	if ((fd = open(buf, O_RDONLY)) == -1) {
 		fprintf(stderr, "cannot open %s, %s (%d)\n", buf, strerror(errno), errno);
 		return(1);
@@ -2826,12 +2865,12 @@ int main(int argc, char *argv[])
 			if (cp) {
 				*cp++ = 0;
 				if (*optarg)
-					bus = strtoul(optarg, NULL, 0);
+					bus = strtoul(optarg, NULL, 10);
 				if (*cp)
-					devnum = strtoul(cp, NULL, 0);
+					devnum = strtoul(cp, NULL, 10);
 			} else {
 				if (*optarg)
-					devnum = strtoul(optarg, NULL, 0);
+					devnum = strtoul(optarg, NULL, 10);
 			}
 			break;
 
