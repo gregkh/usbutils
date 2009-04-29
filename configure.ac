@@ -32,7 +32,7 @@ AC_CONFIG_FILES([
 ])
 
 AC_OUTPUT
-echo "
+AC_MSG_RESULT([
 	usbutils $VERSION
 	=============
 
@@ -46,4 +46,4 @@ echo "
 	compiler:               ${CC}
 	cflags:                 ${CFLAGS}
 	ldflags:                ${LDFLAGS}
-"
+])
