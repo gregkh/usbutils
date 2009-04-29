@@ -31,7 +31,8 @@ dist_man_MANS = \
 	lsusb.8
 
 EXTRA_DIST = \
-	usb.ids
+	usb.ids \
+	update-usbids.sh
 
 usb.ids.gz: $(srcdir)/usb.ids
 	gzip -c -9 $< > $@
