@@ -55,7 +55,7 @@ If the specified device is not found, a non-zero exit code is returned.
 
 .SH FILES
 .TP
-.B /usr/share/usb.ids
+.B @usbids@
 A list of all known USB ID's (vendors, products, classes, subclasses and protocols).
 
 .SH SEE ALSO

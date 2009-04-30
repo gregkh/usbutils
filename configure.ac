@@ -39,6 +39,7 @@ echo "
 	=============
 
 	prefix:                 ${prefix}
+	datadir:                ${datadir}
 	datarootdir:            ${datarootdir}
 	mandir:                 ${mandir}
 

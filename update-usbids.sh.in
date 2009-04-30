@@ -6,7 +6,7 @@
 
 set -e
 SRC="http://www.linux-usb.org/usb.ids"
-DEST=usb.ids
+DEST=@usbids@
 
 # if usb.ids is read-only (because the filesystem is read-only),
 # then just skip this whole process.
