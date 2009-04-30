@@ -36,20 +36,20 @@ EXTRA_DIST = \
 	update-usbids.sh.in \
 	lsusb.8.in
 
-update-usbids.sh: update-usbids.sh.in
-	sed 's|@usbids@|$(datadir)/usb.ids|' $< >$@
+update-usbids.sh: $(srcdir)/update-usbids.sh.in
+	sed 's|@usbids@|$(datadir)/usb.ids|g' $< >$@
 	chmod 755 $@
 
-lsusb.8: lsusb.8.in
-	sed 's|@usbids@|$(datadir)/usb.ids|' $< >$@
+lsusb.8: $(srcdir)/lsusb.8.in
+	sed 's|@usbids@|$(datadir)/usb.ids|g' $< >$@
 
 usb.ids.gz: usb.ids
 	gzip -c -9 usb.ids > usb.ids.gz
 
-clean-local:
-	rm -f usb.ids.gz
-	rm -f lsusb.8
-	rm -f update-usbids.sh
+DISTCLEANFILES = \
+	usb.ids.gz \
+	lsusb.8 \
+	update-usbids.sh
 
 distclean-local:
 	rm -rf autom4te.cache

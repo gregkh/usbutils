@@ -39,8 +39,8 @@ echo "
 	=============
 
 	prefix:                 ${prefix}
-	datadir:                ${datadir}
 	datarootdir:            ${datarootdir}
+	datadir:                ${datadir}
 	mandir:                 ${mandir}
 
 	usb.ids:                ${datadir}/usb.ids
