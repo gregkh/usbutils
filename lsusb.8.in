@@ -59,7 +59,8 @@ If the specified device is not found, a non-zero exit code is returned.
 A list of all known USB ID's (vendors, products, classes, subclasses and protocols).
 
 .SH SEE ALSO
-.BR lspci (8)
+.BR lspci (8),
+.BR usbview (8).
 
 .SH AUTHOR
 Thomas Sailer, <sailer@ife.ee.ethz.ch>.
