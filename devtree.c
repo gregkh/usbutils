@@ -148,15 +148,15 @@ void devtree_parsedevfile(int fd)
 			} else
 				devnum = 0;
 			if ((cp = strstr(start, "Bus="))) {
-				busnum = strtoul(cp + 4, NULL, 0);
+				busnum = strtoul(cp + 4, NULL, 10);
 			} else
 				busnum = 0;
 			if ((cp = strstr(start, "Prnt="))) {
-				parentdevnum = strtoul(cp + 5, NULL, 0);
+				parentdevnum = strtoul(cp + 5, NULL, 10);
 			} else
 				parentdevnum = 0;
 			if ((cp = strstr(start, "Lev="))) {
-				level = strtoul(cp + 4, NULL, 0);
+				level = strtoul(cp + 4, NULL, 10);
 			} else
 				level = 0;
 			if (strstr(start, "Spd=1.5"))
