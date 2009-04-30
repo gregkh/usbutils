@@ -15,4 +15,5 @@ depcomp
 install-sh
 missing
 lsusb
-
+lsusb.8
+update-usbids.sh
