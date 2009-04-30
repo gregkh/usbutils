@@ -44,7 +44,8 @@ you must be root to do this.
 .B \-t
 Tells
 .I lsusb
-to dump the physical USB device hierarchy as a tree.
+to dump the physical USB device hierarchy as a tree. This overrides the
+\fBv\fP option.
 .TP
 .B \-V, \-\-version
 Print  version information on standard output,
