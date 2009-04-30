@@ -1,8 +1,6 @@
 AM_LDFLAGS = \
 	-Wl,--as-needed
 
-DISTCLEANFILES = usb.ids.gz
-
 data_DATA = \
 	usb.ids
 if HAVE_ZLIB
