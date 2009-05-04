@@ -55,10 +55,27 @@
 #define USB_DT_OTG			0x09
 #define USB_DT_DEBUG			0x0a
 #define USB_DT_INTERFACE_ASSOCIATION	0x0b
+#define USB_DT_SECURITY			0x0c
+#define USB_DT_KEY			0x0d
+#define USB_DT_ENCRYPTION_TYPE		0x0e
+#define USB_DT_BOS			0x0f
+#define USB_DT_DEVICE_CAPABILITY	0x10
+#define USB_DT_WIRELESS_ENDPOINT_COMP	0x11
+#define USB_DT_WIRE_ADAPTER		0x21
+#define USB_DT_RPIPE			0x22
 
-/* convention suggested by common class spec */
-#define USB_DT_CS_INTERFACE		0x24
-#define USB_DT_CS_ENDPOINT		0x25
+#define USB_DT_RC_INTERFACE		0x23
+
+/* Conventional codes for class-specific descriptors.  The convention is
+ * defined in the USB "Common Class" Spec (3.11).  Individual class specs
+ * are authoritative for their usage, not the "common class" writeup.
+ */
+#define USB_DT_CS_DEVICE		(USB_TYPE_CLASS | USB_DT_DEVICE)
+#define USB_DT_CS_CONFIG		(USB_TYPE_CLASS | USB_DT_CONFIG)
+#define USB_DT_CS_STRING		(USB_TYPE_CLASS | USB_DT_STRING)
+#define USB_DT_CS_INTERFACE		(USB_TYPE_CLASS | USB_DT_INTERFACE)
+#define USB_DT_CS_ENDPOINT		(USB_TYPE_CLASS | USB_DT_ENDPOINT)
+
 
 #ifndef USB_CLASS_VIDEO
 #define USB_CLASS_VIDEO			0x0e
@@ -79,6 +96,7 @@ extern int lsusb_t(void);
 static const char *procbususb = "/proc/bus/usb";
 static unsigned int verblevel = VERBLEVEL_DEFAULT;
 static int do_report_desc = 1;
+static const char *encryption_type[] = {"UNSECURE", "WIRED", "CCM_1", "RSA_1", "RESERVED"};
 
 static void dump_interface(struct usb_dev_handle *dev, struct usb_interface *interface);
 static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descriptor *interface, struct usb_endpoint_descriptor *endpoint);
@@ -344,6 +362,65 @@ static void dump_device(
 	       descriptor->bNumConfigurations);
 }
 
+static void dump_wire_adapter(unsigned char *buf)
+{
+
+	printf( "      Wire Adapter Class Descriptor:\n"
+		"        bLength             %5u\n"
+		"        bDescriptorType     %5u\n"
+		"        bcdWAVersion        %2x.%02x\n"
+		"	 bNumPorts	     %5u\n"
+		"	 bmAttributes	     %5u\n"
+		"	 wNumRPRipes	     %5u\n"
+		"	 wRPipeMaxBlock	     %5u\n"
+		"	 bRPipeBlockSize     %5u\n"
+		"	 bPwrOn2PwrGood	     %5u\n"
+		"	 bNumMMCIEs	     %5u\n"
+		"	 DeviceRemovable     %5u\n",
+		buf[0], buf[1], buf[3],
+		buf[2], buf[4], buf[5],
+		( buf[6] | buf[7] << 8 ),
+		( buf[8] | buf[9] << 8 ),
+		buf[10], buf[11], buf[12], buf[13]);
+}
+
+static void dump_rc_interface(unsigned char *buf)
+{
+	printf( "      Radio Control Interface Class Descriptor:\n"
+		"        bLength             %5u\n"
+		"        bDescriptorType     %5u\n"
+		"        bcdRCIVersion       %2x.%02x\n",
+		buf[0], buf[1], buf[3], buf[2]);
+
+}
+
+static void dump_security(unsigned char *buf)
+{
+	printf( "    Security Descriptor:\n"
+		"      bLength             %5u\n"
+		"      bDescriptorType     %5u\n"
+		"      wTotalLength        %5u\n"
+		"      bNumEncryptionTypes %5u\n",
+		buf[0], buf[1],
+		(buf[3]<< 8 | buf[2]),
+		buf[4]);
+}
+
+static void dump_encryption_type(unsigned char *buf)
+{
+	int b_encryption_type = buf[2] & 0x4;
+
+	printf( "    Encryption Type Descriptor:\n"
+		"      bLength             %5u\n"
+		"      bDescriptorType     %5u\n"
+		"      bEncryptionType     %5u %s\n"
+		"      bEncryptionValue    %5u\n"
+		"      bAuthKeyIndex       %5u\n",
+		buf[0], buf[1],
+		buf[2], encryption_type[b_encryption_type],
+		buf[3], buf[4]);
+}
+
 static void dump_association(struct usb_dev_handle *dev, unsigned char *buf)
 {
 	char cls[128], subcls[128], proto[128];
@@ -418,6 +495,12 @@ static void dump_config(struct usb_dev_handle *dev, struct usb_config_descriptor
 			case USB_DT_INTERFACE_ASSOCIATION:
 				dump_association(dev, buf);
 				break;
+			case USB_DT_SECURITY:
+				dump_security(buf);
+				break;
+			case USB_DT_ENCRYPTION_TYPE:
+				dump_encryption_type(buf);
+				break;
 			default:
 				/* often a misplaced class descriptor */
 				printf("    ** UNRECOGNIZED: ");
@@ -470,54 +553,49 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 				dump_junk(buf, "      ", size);
 				break;
 			}
+
 			switch (buf[1]) {
+
+			/* This is the polite way to provide class specific
+			 * descriptors: explicitly tagged, using common class
+			 * spec conventions.
+			 */
+			case USB_DT_CS_DEVICE:
 			case USB_DT_CS_INTERFACE:
-				switch(interface->bInterfaceClass) {
-					case USB_CLASS_AUDIO:
-						switch(interface->bInterfaceSubClass) {
-							case 1:
-								dump_audiocontrol_interface(dev, buf);
-								break;
-							case 2:
-								dump_audiostreaming_interface(buf);
-								break;
-							case 3:
-								dump_midistreaming_interface(dev, buf);
-								break;
-							default:
-								goto dump;
-						}
+				switch (interface->bInterfaceClass) {
+				case USB_CLASS_AUDIO:
+					switch (interface->bInterfaceSubClass) {
+					case 1:
+						dump_audiocontrol_interface(dev, buf);
 						break;
-					case USB_CLASS_COMM:
-						dump_comm_descriptor(dev, buf,
-							"      ");
+					case 2:
+						dump_audiostreaming_interface(buf);
 						break;
-					case USB_CLASS_VIDEO:
-						switch(interface->bInterfaceSubClass) {
-							case 1:
-								dump_videocontrol_interface(dev, buf);
-								break;
-							case 2:
-								dump_videostreaming_interface(buf);
-								break;
-							default:
-								goto dump;
-						}
+					case 3:
+						dump_midistreaming_interface(dev, buf);
 						break;
 					default:
 						goto dump;
-				}
-				break;
-			case USB_DT_HID:
-				switch (interface->bInterfaceClass) {
-				case USB_CLASS_HID:
-					dump_hid_device(dev, interface, buf);
+					}
 					break;
-				case 0x0b:
-					dump_ccid_device(buf);
+				case USB_CLASS_COMM:
+					dump_comm_descriptor(dev, buf,
+						"      ");
+					break;
+				case USB_CLASS_VIDEO:
+					switch (interface->bInterfaceSubClass) {
+					case 1:
+						dump_videocontrol_interface(dev, buf);
+						break;
+					case 2:
+						dump_videostreaming_interface(buf);
+						break;
+					default:
+						goto dump;
+					}
 					break;
 				case USB_CLASS_APPLICATION:
-					switch(interface->bInterfaceSubClass) {
+					switch (interface->bInterfaceSubClass) {
 					case 1:
 						dump_dfu_interface(buf);
 						break;
@@ -529,23 +607,59 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 					goto dump;
 				}
 				break;
-			case USB_DT_OTG:
-				/* handled separately */
-				break;
-			case USB_DT_INTERFACE_ASSOCIATION:
-				dump_association(dev, buf);
-				break;
+
+			/* This is the ugly way:  implicitly tagged,
+			 * each class could redefine the type IDs.
+			 */
 			default:
+				switch (interface->bInterfaceClass) {
+				case USB_CLASS_HID:
+					dump_hid_device(dev, interface, buf);
+					break;
+				case 0x0b:	/* chip/smartcard */
+					dump_ccid_device(buf);
+					break;
+				case 0xe0:	/* wireless */
+					switch (interface->bInterfaceSubClass) {
+					case 1:
+						switch (interface->bInterfaceProtocol) {
+						case 2:
+							dump_rc_interface(buf);
+							break;
+						default:
+							goto dump;
+						}
+						break;
+					case 2:
+						dump_wire_adapter(buf);
+						break;
+					default:
+						goto dump;
+					}
+					break;
+				default:
+					/* ... not everything is class-specific */
+					switch (buf[1]) {
+					case USB_DT_OTG:
+						/* handled separately */
+						break;
+					case USB_DT_INTERFACE_ASSOCIATION:
+						dump_association(dev, buf);
+						break;
+					default:
 dump:
-				/* often a misplaced class descriptor */
-				printf("      ** UNRECOGNIZED: ");
-				dump_bytes(buf, buf[0]);
-				break;
+						/* often a misplaced class descriptor */
+						printf("      ** UNRECOGNIZED: ");
+						dump_bytes(buf, buf[0]);
+						break;
+					}
+				}
 			}
 			size -= buf[0];
 			buf += buf[0];
 		}
 	}
+
 	for (i = 0 ; i < interface->bNumEndpoints ; i++)
 		dump_endpoint(dev, interface, &interface->endpoint[i]);
 }
@@ -1748,7 +1862,7 @@ static void dump_videostreaming_interface(unsigned char *buf)
 
 static void dump_dfu_interface(unsigned char *buf)
 {
-	if (buf[1] != USB_DT_HID)
+	if (buf[1] != USB_DT_CS_DEVICE)
 		printf("      Warning: Invalid descriptor\n");
 	else if (buf[0] < 7)
 		printf("      Warning: Descriptor too short\n");
@@ -1766,6 +1880,12 @@ static void dump_dfu_interface(unsigned char *buf)
 	printf("        wDetachTimeout                  %5u milliseconds\n"
 	       "        wTransferSize                   %5u bytes\n",
 	       buf[3] | (buf[4] << 8), buf[5] | (buf[6] << 8));
+
+	/* DFU 1.0 defines no version code, DFU 1.1 does */
+	if (buf[0] < 9)
+		return;
+	printf("        bcdDFUVersion                   %x.%02x\n",
+			buf[7], buf[8]);
 }
 
 static void dump_hub(char *prefix, unsigned char *p, int has_tt)
