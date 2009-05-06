@@ -1,3 +1,10 @@
+usbutils 0.82
+=============
+Wireless USB device support
+better autoconf support.
+automatic handling for usb.ids
+bugfixes
+
 usbutils 0.81
 =============
 fixed '-t' option if usbfs is not mounted
