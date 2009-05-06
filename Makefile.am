@@ -34,7 +34,8 @@ man_MANS = \
 EXTRA_DIST = \
 	usb.ids \
 	update-usbids.sh.in \
-	lsusb.8.in
+	lsusb.8.in \
+	usbutils.pc.in
 
 usb.ids.gz: $(srcdir)/usb.ids
 	gzip -c -9 $< > $@
@@ -46,10 +47,17 @@ update-usbids.sh: $(srcdir)/update-usbids.sh.in
 lsusb.8: $(srcdir)/lsusb.8.in
 	sed 's|@usbids@|$(datadir)/usb.ids|g' $< >$@
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = usbutils.pc
+
+usbutils.pc: $(srcdir)/usbutils.pc.in
+	sed 's|@usbids@|$(datadir)/usb.ids|g;s|@VERSION[@]|$(VERSION)|g' $< >$@
+
 DISTCLEANFILES = \
 	usb.ids.gz \
 	lsusb.8 \
-	update-usbids.sh
+	update-usbids.sh \
+	usbutils.pc
 
 distclean-local:
 	rm -rf autom4te.cache

@@ -1,0 +1,5 @@
+Name: usbutils
+Description: USB device database
+Version: @VERSION@
+
+usbids=@usbids@
