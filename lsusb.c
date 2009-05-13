@@ -603,6 +603,9 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 						goto dump;
 					}
 					break;
+				case USB_CLASS_HID:
+					dump_hid_device(dev, interface, buf);
+					break;
 				default:
 					goto dump;
 				}
