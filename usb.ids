@@ -13061,6 +13061,14 @@ HUT 0d  Digitizer
 	044  Barrel Switch
 	045  Eraser
 	046  Tablet Pick
+	047  Confidence
+	048  Width
+	049  Height
+	051  Contact ID
+	052  Input Mode
+	053  Device Index
+	054  Contact Count
+	055  Maximum Contact Number
 HUT 0f  PID Page
 	000  Undefined
 	001  Physical Interface Device
