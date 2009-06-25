@@ -1,3 +1,7 @@
+usbutils 0.84
+=============
+Sync up usb.ids file from upstream
+
 usbutils 0.83
 =============
 HID descriptor bugfixes
