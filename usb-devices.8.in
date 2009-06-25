@@ -1,4 +1,4 @@
-.TH usb-devices 8 "23 June 2009" "usbutils-0.XX" "Linux USB Utilities"
+.TH usb-devices 8 "23 June 2009" "usbutils-VERSION" "Linux USB Utilities"
 .IX usb-devices
 .SH NAME
 usb-devices \- print USB device details

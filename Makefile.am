@@ -11,7 +11,8 @@ sbin_PROGRAMS = \
 	lsusb
 
 sbin_SCRIPTS = \
-	update-usbids.sh
+	update-usbids.sh \
+	usb-devices
 
 lsusb_SOURCES = \
 	lsusb.c \
@@ -29,12 +30,15 @@ lsusb_LDADD = \
 	$(LIBUSB_LIBS)
 
 man_MANS = \
-	lsusb.8
+	lsusb.8	\
+	usb-devices.8
 
 EXTRA_DIST = \
 	usb.ids \
 	update-usbids.sh.in \
 	lsusb.8.in \
+	usb-devices.8.in \
+	usb-devices \
 	usbutils.pc.in
 
 usb.ids.gz: $(srcdir)/usb.ids
@@ -46,6 +50,9 @@ update-usbids.sh: $(srcdir)/update-usbids.sh.in
 
 lsusb.8: $(srcdir)/lsusb.8.in
 	sed 's|@usbids@|$(datadir)/usb.ids|g' $< >$@
+
+usb-devices.8: $(srcdir)/usb-devices.8.in
+	sed 's|VERSION|$(VERSION)|g' $< >$@
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = usbutils.pc
