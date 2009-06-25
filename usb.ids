@@ -6776,11 +6776,20 @@
 	0001  Braille Voyager
 079b  Sagem
 	0027  USB-Serial Controller
-	004a  XG-760A
+	002f  Mobile
+#		0  Mobile Pseudo CDC Modem
+#		1  Mobile Pseudo CDC Trace
+#		2  Mobile Pseudo CDC Chimera
+	0030  Mobile Communication Device
+	0042  Mobile
+#		2  Mobile Video Pseudo CDC Trace
+	004a  XG-760A 802.11bg (zd1211rw)
 	004b  Wi-Fi 11g adapter
 	0056  Agfa AP1100 Photo Printer
-	005d  my401C mobile phone
-	0062  XG-76NA
+	005d  Mobile Mass Storage
+#		1  Mobile Mass Storage Pseudo CDC Trace
+#		2  Mobile Mass Storage Pseudo CDC Chimera
+	0062  XG-76NA 802.11bg (zd1211rw)
 079d  Alfadata Computer Corp.
 	0201  GamePort Adapter
 07a1  Digicom S.p.A.
@@ -6899,7 +6908,8 @@
 	4102  USB 1.1 10/100M Fast Ethernet Adapter
 	4104  XX9
 	420a  UF200 Ethernet
-	6001  WL54
+	6001  802.11bg (zd1211rw)
+	5301  GW-US54ZGL 802.11bg (zd1211rw)
 	a001  Wireless Network Adapter
 	abc1  DU-E10 Ethernet [pegasus]
 	b000  BWU613
@@ -7091,6 +7101,7 @@
 	3b01  AirPlus G DWL-G122 Wireless Adapter
 	3b10  RangeBooster N Adapter
 	3b11  Wireless N Adapter DWA-130
+	3c10  DWA 160A 802.11n (ar9170)
 	3c03  DWL-G122 802.11g Adapter [ralink rt73]
 	3c04  WUA-1340
 	3c05  EH103 Wireless G Adapter
@@ -7134,6 +7145,7 @@
 07fa  Draytek
 	0778  miniVigor 128 ISDN TA
 	1012  BeWAN ADSL USB ST (grey)
+	1196  BWIFI-USB54AR 802.11bg (zd1211rw)
 	a904  BeWAN ADSL
 	a905  BeWAN ADSL ST
 07fd  Mark of the Unicorn
@@ -7263,7 +7275,7 @@
 	3502  WN3501D Wireless Adapter
 	3503  T-Sinus 111 Wireless Adapter
 	4501  T-Sinus 154data
-	4505  SMCWUSB-G
+	4505  SMCWUSB-G 802.11bg (zd1211rw)
 	5046  SpeedStream 10/100 Ethernet [pegasus]
 	5501  Wireless Adapter 11g
 	6500  Cable Modem
@@ -7277,8 +7289,10 @@
 	c501  Zoom Wireless-G
 	c561  802.11a/g Wireless Adapter
 	e501  ZD1211B
+	e506  WUS-201 802.11bg (zd1211rw)
 	f501  802.11g Wireless Adapter
 	f502  802.11g Wireless Adapter
+	f522  Arcadyan WN7512 802.11n (ar9170)
 083f  Global Village
 	b100  TelePort V.90 Fax/Modem
 0840  Argosy Research, Inc.
@@ -7303,8 +7317,8 @@
 	6a00  WG111v2 54 Mbps Wireless [RealTek RTL8187L]
 	7100  WN121T RangeMax Next Wireless-N [Marvell TopDog]
 	9000  WN111(v1) RangeMax Next Wireless [Marvell TopDog]
-	9001  WN111(v2) RangeMax Next Wireless [Atheros AR9001U-(2)NG]
-	9010  WNDA3100 RangeMax Dual Band Wireless-N [Atheros AR9001U-2NX]
+	9001  WN111 v2 802.11n (ar9170)
+	9010  WNDA3100 802.11n (ar9170)
 	a001  PA101 10 Mbps HPNA Home Phoneline RJ-1
 084d  Minton Optic Industry Co., Inc.
 	0001  Jenoptik JD800i
@@ -7865,13 +7879,14 @@
 	2470  SoC PC-Camera
 	2471  SoC PC-Camera
 	2500  USB Optical Mouse
+	2510  Hama Optical Mouse
 	2600  Typhoon Easycam USB 330K (newer)/Typhoon Easycam USB 2.0 VGA 1.3M/Sansun SN-508
 	2601  SPC 610NC Laptop Camera
 	2603  PAC7312 Camera
 	2608  PAC7311 Trust WB-3300p
 	260e  PAC7311 Gigaware VGA PC Camera:Trust WB-3350p:SIGMA cam 2350
 	260f  PAC7311 SnakeCam
-	2624  WebCam
+	2624  Webcam
 093b  Plextor Corp.
 	0010  Storage Adapter
 	0011  PlexWriter 40/12/40U
@@ -7908,11 +7923,12 @@
 0951  Kingston Technology
 	0008  Ethernet
 	000a  KNU101TX 100baseTX Ethernet
-	1600  Data Traveler II Pen Drive
-	1601  Data Traveler II+ Pen Drive
-	1602  Data Traveler Mini
-	1603  Data Traveler 1GB/2GB Pen Drive
-	1607  Data Traveler 2.0
+	1600  DataTraveler II Pen Drive
+	1601  DataTraveler II+ Pen Drive
+	1602  DataTraveler Mini
+	1603  DataTraveler 1GB/2GB Pen Drive
+	1607  DataTraveler 100
+	1613  DataTraveler 8GB Pen Drive
 0954  RPM Systems Corp.
 0955  NVidia Corp.
 0956  BSquare Corp.
@@ -8091,21 +8107,22 @@
 	8888  IBM USB Memory Key
 	9988  Trek2000 TD-G2
 0a17  Pentax Corp.
-	0004  Pentax Optio 330
-	0006  Pentax Optio S
-	0007  Pentax Optio 550
-	0009  Pentax Optio 33WR
-	000a  Pentax Optio 555
-	000c  Pentax Optio 43WR (mass storage mode)
-	000d  Pentax Optio 43WR
-	0015  Pentax Optio S40/S5i
-	003b  Pentax Optio 50 (mass storage mode)
-	003d  Pentax Optio S55
-	0043  Pentax *ist DL
-	0047  Pentax Optio S60
+	0004  Optio 330
+	0006  Optio S
+	0007  Optio 550
+	0009  Optio 33WR
+	000a  Optio 555
+	000c  Optio 43WR (mass storage mode)
+	000d  Optio 43WR
+	0015  Optio S40/S5i
+	003b  Optio 50 (mass storage mode)
+	003d  Optio S55
+	0043  *ist DL
+	0047  Optio S60
 	0052  Optio 60 Digital Camera
-	006e  Pentax K10D
-	0070  Pentax K100D
+	006e  K10D
+	0070  K100D
+	00a7  Optio E50
 	1001  EI2000 Camera powered by Digita!
 0a18  Heidelberger Druckmaschinen AG
 0a19  Hua Geng Technologies, Inc.
@@ -8218,6 +8235,8 @@
 	2123  Bluetooth dongle
 	2130  2045 Bluetooth 2.0 USB-UHE Device with trace filter
 	2131  2045 Bluetooth 2.0 Device with trace filter
+	4500  BCM2046B1 USB 2.0 Hub (part of BCM2046 Bluetooth)
+	5800  BCM5880 Secure Applications Processor
 	6300  Pirelli Remote NDIS Device
 0a5d  Diatrend Corp.
 0a5f  Zebra
@@ -8376,12 +8395,16 @@
 0acd  ID Tech
 	0401  ID TECH Spectrum III Hybrid Smartcard Reader
 0ace  ZyDAS
-	1201  802.11b WiFi
-	1211  802.11b/g USB2 WiFi
-	1215  WLA-54L WiFi
+	1201  802.11b (zd1201)
+	1211  802.11bg (zd1211rw)
+	1215  WLA-54L 802.11bg (zd1211rw)
+	1221  ZD1221 802.11n (ar9170)
 	1602  ZyXEL Omni FaxModem 56K
 	1608  ZyXEL Omni FaxModem 56K UNO
 	1611  ZyXEL Omni FaxModem 56K Plus
+	2011  Virtual media for 802.11bg (zd1211rw)
+	20ff  Virtual media for 802.11bg (zd1211rw)
+	b215  802.11bg (zd1211rw)
 0acf  Intoto, Inc.
 0ad0  Intellix Corp.
 0ad1  Remotec Technology, Ltd
@@ -8439,12 +8462,12 @@
 	1707  WL-167g Wireless Adapter
 	1708  Mass Storage Device
 	170b  Mass Storage Device
-	170c  WL-159g
+	170c  WL-159g 802.11bg (zd1211rw)
 	170d  802.11b/g Wireless Network Adapter
 	1712  BT-183 Bluetooth 2.0+EDR adapter
 	1715  2045 Bluetooth 2.0 Device with trace filter
 	1716  Bluetooth Device
-	171b  A9T wireless
+	171b  A9T wireless 802.11bg (zd1211rw)
 	171c  802.11b/g Wireless Network Adapter
 	1723  WL-167G v2 802.11g Adapter [ralink]
 	1724  RT2573
@@ -8453,6 +8476,7 @@
 	172b  802.11n Network Adapter
 	1731  ASUS 802.11n Network Adapter
 	1732  802.11n Network Adapter
+	1734  ASUS AF-200
 	173c  BT-183 Bluetooth 2.0
 	1742  802.11n Network Adapter
 	6101  Cable Modem
@@ -8493,8 +8517,8 @@
 	1612  AIR.Mate 2@net 802.11b Adapter
 	1613  802.11b Wireless LAN Adapter
 	1620  Allnet USB 2.0 Wireless Network Adapter
-	1630  QuickWLAN
-	5630  ZD1211
+	1630  QuickWLAN 802.11bg (zd1211rw)
+	5630  802.11bg (zd1211rw)
 	6630  ZD1211
 0b3c  Olivetti Techcenter
 	a010  Simple_Way Printer/Scanner/Copier
@@ -8602,7 +8626,7 @@
 	00fb  SureConnect ADSL Ethernet/USB Router
 	0118  U5 802.11g Adapter
 	011b  Wireless MAXg Adapter
-	0121  USR5423 WLAN
+	0121  USR5423 802.11bg (zd1211rw)
 	6112  FaxModem Model 5633
 0bb0  Concord Camera Corp.
 	0100  Sound Vision Stream
@@ -8829,24 +8853,25 @@
 	0116  Mass Storage Device
 	0117  Mass Storage Device
 	0118  Mass Storage Device
-	0151  Mass Stroage Device
-	0152  Mass Stroage Device
-	0153  Mass Stroage Device
-	0156  Mass Stroage Device
-	0157  Mass Stroage Device
-	0158  Mass Stroage Device
-	0161  Mass Stroage Device
-	0168  Mass Stroage Device
-	0169  Mass Stroage Device
-	0171  Mass Stroage Device
-	0176  Mass Stroage Device
-	0178  Mass Stroage Device
+	0151  Mass Storage Device
+	0152  Mass Storage Device
+	0153  Mass Storage Device
+	0156  Mass Storage Device
+	0157  Mass Storage Device
+	0158  Mass Storage Device
+	0161  Mass Storage Device
+	0168  Mass Storage Device
+	0169  Mass Storage Device
+	0171  Mass Storage Device
+	0176  Mass Storage Device
+	0178  Mass Storage Device
 	2831  2831U Device
 	8150  RTL8150 Fast Ethernet Adapter
 	8151  RTL8151 Adapteon Business Mobile Networks BV
 	8187  RTL8187 Wireless Adapter
 	8189  RTL8187B Wireless 802.11g 54Mbps Network Adapter
 	8197  RTL8187B Wireless Adapter
+	8198  RTL8187B Wireless Adapter
 0bdb  Ericsson Business Mobile Networks BV
 	1000  BV Bluetooth Device
 	1002  Bluetooth Device 1.2
@@ -8857,6 +8882,8 @@
 0be4  Elka International, Ltd
 0be5  DOME imaging systems, Inc.
 0be6  Dong Guan Humen Wonderful Wire Cable Factory
+0bed  Silicon Labs
+	1100  MEI (TM) Cashflow-SC Bill/Voucher Acceptor
 0bee  LTK Industries, Ltd
 0bef  Way2Call Communications
 0bf0  Pace Micro Technology PLC
@@ -9063,6 +9090,7 @@
 	62c0  Sonix USB 2.0 Camera
 	62e0  MSI Starcam Racer
 	63e0  Sonix Integrated Webcam
+	63f8  Sonix Integrated Webcam
 	8000  DC31VC
 	8006  Dual Mode Camera (8006 VGA)
 	800a  Vivitar Vivicam3350B
@@ -9104,6 +9132,7 @@
 	0005  Transcend Flash disk
 	0006  Transcend JetFlash
 	0007  Mass Storage Device
+	1605  SSS Headphone Set
 0c77  Sipix Group, Ltd
 	1001  SiPix Web2
 	1002  SiPix SC2100
@@ -9227,10 +9256,12 @@
 	0015  Zoom Wireless-G
 	0016  NB 802.11g Wireless LAN Adapter(3887A)
 	0018  NB 802.11a/b/g Wireless LAN Adapter(3887A)
-	001a  ZD1211B
+	001a  802.11bg (zd1211rw)
 	001c  802.11b/g Wireless Network Adapter
 	0020  Wi-Fi Wireless LAN Adapter
 	0022  802.11b/g/n Wireless Network Adapter
+	0023  UB81 802.11bgn (ar9170)
+	0026  UB82 802.11abgn (ar9170)
 0ce9  pico Technology
 	1001  PicoScope3204
 0cf1  e-Conn Electronic Co., Ltd
@@ -9242,6 +9273,8 @@
 	0004  AR5523 (no firmware)
 	0005  AR5523
 	0006  AR5523 (no firmware)
+	9170  AR9170 802.11n
+	1001  TG121N (ar9170)
 0cf4  Fomtex Corp.
 0cf5  Cellink Co., Ltd
 0cf6  Compucable Corp.
@@ -9506,7 +9539,7 @@
 	5515  MP3 Player
 	5516  MP3 Player
 	5581  Mega Sky 5580 DVB-T Tuner
-	6823  UB11B/MS-6823 802.11b Wi-Fi adapter
+	6823  802.11b (zd1201)
 	6826  IEEE 802.11g Wireless Network Adapter
 	6855  Bluetooth Device
 	6861  MSI-6861 802.11g WiFi adapter
@@ -9624,8 +9657,8 @@
 	2200  Sitecom bluetooth2.0 class 2 dongle CN-512
 	2208  Sitecom bluetooth2.0 class 2 dongle CN-520
 	2209  Sitecom bluetooth2.0 class 1 dongle CN-521
-	9071  zd1211 802.11g Adapter
-	9075  ZD1211B
+	9071  802.11bg (zd1211rw)
+	9075  802.11bg (zd1211rw)
 	90ac  WL-172
 	9712  WL-113 rev 2
 0df7  Mobile Action Technology, Inc.
@@ -10023,6 +10056,7 @@
 	0c55  Flash Reader, Desknote UCR-61S2B
 1020  Labtec
 	000a  Wireless Optical Mouse
+	0106  Wireless Optical Mouse
 1022  Shinko Shoji Co., Ltd
 1025  Hyper-Paltek
 	005e  USB DVB-T device
@@ -10060,7 +10094,7 @@
 	8002  GN-BR402W
 	8003  GN-WLBM101
 	8004  GN-WLBZ101 802.11b Adapter
-	8005  GN-WLBZ201 802.11b Adapter
+	8005  802.11b (zd1201)
 	8006  GN-WBZB-M 802.11b Adapter
 	8007  GN-WBKG
 	8008  GN-WB01GS
@@ -10068,9 +10102,17 @@
 	800b  GN-WB30N 802.11n WLAN Card
 1046  Winbond Electronics Corp. [hex]
 	8901  Bluetooth Device
-	9967  W9967CF/W9968CF WebCam IC
+	9967  W9967CF/W9968CF Webcam IC
 1048  Targus Group International
 104c  AMCO TEC International, Inc.
+104f  WB Electronics
+	0001  Infinity Phoenix
+	0002  Smartmouse
+	0003  FunProgrammer
+	0004  Infinity Unlimited
+	0006  Infinity Smart
+	0007  Infinity Smart module
+	0008  Infinity CryptoKey
 1050  Yubico.com
 	0010  Yubikey
 1053  Immanuel Electronics Co., Ltd
@@ -10227,6 +10269,7 @@
 	0002  F32x USBXpress Device
 	80a9  CP210x to UART Bridge Controller
 	80ca  ATM2400 Sensor Device
+	8461  Sangoma U100
 	ea60  CP210x Composite Device
 10c5  Sanei Electric, Inc.
 10c6  Intec, Inc.
@@ -10296,6 +10339,7 @@
 112e  Master Hill Electric Wire and Cable Co., Ltd
 112f  Cellon International, Inc.
 1130  Tenx Technology, Inc.
+	6806  Keychain photo frame
 	f211  audio headset
 1131  Integrated System Solution Corp.
 	1001  KY-BT100 Bluetooth Adapter
@@ -10441,6 +10485,8 @@
 	0010  Alta series CCD
 125f  A-DATA Technology Co., Ltd.
 1264  Covidien Energy-based Devices
+1266  Pirelli Broadband Solutions
+	6302  Fastweb DRG A226M ADSL Router
 1267  Logic3 / SpectraVideo plc
 	0103  G-720 Keyboard
 	0201  A4Tech SWOP-3 Mouse
@@ -10452,7 +10498,7 @@
 126f  TwinMOS
 	1325  Mobile Disk
 	2168  Mobile Disk III
-	a006  G240
+	a006  G240 802.11bg (zd1211rw)
 1275  Xaxero Marine Software Engineering, Ltd.
 	0002  WeatherFax 2000 Demodulator
 	0080  SkyEye Weather Satellite Receiver
@@ -10465,7 +10511,8 @@
 	2101  104-key keyboard
 1294  RISO KAGAKU CORP.
 129b  CyberTAN Technology
-	1666  TG54USB
+	1666  TG54USB 802.11bg (zd1211rw)
+	1667  802.11bg (zd1211rw)
 12a7  Trendchip Technologies Corp.
 12ab  Honey Bee Electronic International Ltd.
 12ba  Licensed by Sony Computer Entertainment America
@@ -10550,6 +10597,8 @@
 	0001  GO 520 T
 1395  Sennheiser Communications
 	3556  USB Headset
+1397  BEHRINGER International GmbH
+	00bc  BCF2000
 1398  Q-tec
 	2103  USB 2.0 Storage Device
 13ad  Baltech
@@ -10562,9 +10611,10 @@
 	0011  WUSB54GP v4.0 802.11g Adapter
 	0018  USB200M 10/100 Ethernet Adapter
 	001a  HU200TS Wireless Adapter
+	001e  WUSBF54G 802.11bg (zd1211rw)
 	0020  WUSB54GC 802.11g Adapter [ralink rt73]
 	0023  WUSB54GR
-	0024  WUSBF54G v1.1 802.11g Adapter w/ Wi-Fi Finder
+	0024  WUSBF54G v1.1 802.11bg (zd1211rw)
 13b3  Nippon Dics Co., Ltd.
 13ba  Unknown
 	0017  PS/2 Keyboard+Mouse Adapter
@@ -10618,7 +10668,7 @@
 	1a00  512MB/1GB Flash Drive
 	1a23  512MB Flash Drive
 	1d00  DataTraveler 2.0 1GB/4GB Flash Drive / Patriot Xporter 4GB Flash Drive
-	1f00  DataTraveler 2.0 4GB Flash Drive
+	1f00  DataTraveler 2.0 4GB Flash Drive / Patriot Xporter 32GB (PEF32GUSB) Flash Drive
 1400  Axxion Group Corp.
 1402  Bowe Bell & Howell
 1403  Sitronix
@@ -10643,7 +10693,7 @@
 1430  RedOctane
 1431  Pertech Resources, Inc.
 1435  Wistron NeWeb
-	0711  UR055G
+	0711  UR055G 802.11bg (zd1211rw)
 	0826  AR5523
 	0827  AR5523 (no firmware)
 	0828  AR5523
@@ -10651,6 +10701,7 @@
 1436  Denali Software, Inc.
 143c  Altek Corporation
 145f  Trust
+	0106  Trust K56 V92 USB Modem
 	013d  PC Camera (SN9C201 + OV7660)
 	013f  Megapixel Auto Focus Webcam
 	0142  WB-6250X Webcam
@@ -10706,23 +10757,25 @@
 14ae  Printronix Inc.
 14af  ATP Electronics Inc.
 14b0  StarTech.com Ltd.
-14b2  Atheros Communications Inc
+14b2  Ralink Technology, Corp.
 	3a93  USB WLAN Device
-	3c02  C54RU WLAN
-	3c22  C54RU
+	3c02  rt2500 802.11g WLAN
+	3c22  rt73 802.11g WLAN
+	3c27  rt2870 802.11n WLAN
 14c0  Rockwell Automation, Inc.
 14c2  Gemlight Computer, Ltd
 	0250  Storage Adapter V2
 	0350  Storage Adapter V2
 14cd  Super Top
 	6600  USB 2.0 IDE DEVICE
+	6700  Card Reader
 14d8  JAMER INDUSTRIES CO., LTD.
 14dd  Raritan Computer, Inc.
 14e5  SAIN Information & Communications Co., Ltd.
 14ea  Planex Communications
 	ab10  GW-US54GZ
 	ab11  GU-1000T
-	ab13  GW-US54Mini
+	ab13  GW-US54Mini 802.11bg (zd1211rw)
 14ed  Shure Inc.
 1500  Ellisys
 1501  Pine-Tum Enterprise Co., Ltd.
@@ -10743,6 +10796,7 @@
 	3100  CDMA 1xRTT USB Modem (U-100/105/200/300/520)
 152d  JMicron Technology Corp. / JMicron USA Technology Corp.
 	2335  ATA/ATAPI Bridge
+	2336  Hard Disk Drive
 	2338  JM20337 Hi-Speed USB to SATA & PATA Combo Bridge
 152e  LG (HLDS)
 	e001  GSA-5120D DVD-RW
@@ -10772,14 +10826,14 @@
 157e  TRENDnet
 	3006  TEW-444UB EU
 	3007  TEW-444UB EU (no firmware)
-	300a  TEW-429UB 802.11g Adapter with HotSpot Detector
-	300b  TEW-429UB
-	300d  TEW-429UB C1
-	3204  ALL0298 v2
+	300a  TEW-429UB 802.11bg (zd1211rw)
+	300b  TEW-429UB 802.11bg (zd1211rw)
+	300d  TEW-429UB C1 802.11bg (zd1211rw)
+	3204  ALL0298 v2 802.11bg (zd1211rw)
 	3205  AR5523
 	3206  AR5523 (no firmware)
 1582  Fiberline
-	6003  WL-430U
+	6003  WL-430U 802.11bg (zd1211rw)
 1587  SMA Technologie AG
 158d  Oakley Inc.
 1598  Kunshan Guoji Electronics Co., Ltd.
@@ -10918,6 +10972,7 @@
 	1a17  Agilent Technologies (E6473)
 1614  Amoi Electronics
 	0404  WMA9109 UMTS Phone
+	0600  Vodafone VDA GPS / Toschiba Protege G710
 	0804  WP-S1 Phone
 1619  L & K Precision Technology Co., Ltd.
 1621  Wionics Research
@@ -11019,6 +11074,11 @@
 1696  Hitachi Video and Information System, Inc.
 1697  VTec Test, Inc.
 16a5  Shenzhen Zhengerya Cable Co., Ltd.
+16a6  Unigraf
+	3000  VTG-3xxx Video Test Generator family
+	4000  VTG-4xxx Video Test Generator family
+	5000  VTG-5xxx Video Test Generator family
+	5001  VTG-5xxx Special (update) mode of VTG-5xxx family
 16ab  Global Sun Technology
 	7801  AR5523
 	7802  AR5523 (no firmware)
@@ -11061,13 +11121,14 @@
 170b  Swissonic
 	0011  MIDI-USB 1x1
 170d  Avnera
+172f  Waltop International Corp.
 1733  Cellink Technology Co., Ltd
 	0101  RF Wireless Optical Mouse OP-701
 1736  CANON IMAGING SYSTEM TECHNOLOGIES INC.
 1737  Linksys
 	0039  USB1000
 1740  Senao
-	2000  NUB-8301
+	2000  NUB-8301 802.11bg (zd1211rw)
 1743  General Atomics
 174c  ASMedia Technology Inc.
 174f  Syntek
@@ -11140,6 +11201,9 @@
 	5632  Atek Tote Remote
 	5641  TSAM-004 Presentation Remote
 1897  Evertop Wire Cable Co.
+18b4  e3C Technologies
+	1001  DUTV007
+	1689  DUTV009
 18b6  Mikkon Technology Limited
 18b7  Zotek Electronic Co., Ltd.
 18c5  AMIT
@@ -11210,6 +11274,8 @@
 19e1  WeiDuan Electronic Accessory (S.Z.) Co., Ltd.
 19e8  Industrial Technology Research Institute
 19ef  Pak Heng Technology (Shenzhen) Co., Ltd.
+19f7  RODE Microphones
+	0001  Podcaster
 19ff  Dynex
 	0102  1.3MP Webcam
 	0201  Rocketfish Wireless 2.4G Laser Mouse
@@ -11244,6 +11310,8 @@
 1acb  Salcomp Plc
 1ad1  Desay Wire Co., Ltd.
 1ae4  ic-design Reinhard Gottinger GmbH
+1ae7  X-TENSIONS
+	0381  VS-DVB-T 380U (af9015 based)
 1aed  High Top Precision Electronic Co., Ltd.
 1aef  Conntech Electronic (Suzhou) Corporation
 1b04  Meilhaus Electronic GmBH
@@ -11331,6 +11399,31 @@
 1b32  Ugobe Life Forms, Inc.
 	0064  Pleo robotic dinosaur
 1b36  ViXS Systems, Inc.
+1b3b  iPassion Technology Inc.
+	2933  PC Camera/WebCam controller
+	2935  PC Camera/WebCam controller
+	2936  PC Camera/WebCam controller
+	2937  PC Camera/WebCam controller
+	2938  PC Camera/WebCam controller
+	2939  PC Camera/WebCam controller
+	2950  PC Camera/WebCam controller
+	2951  PC Camera/WebCam controller
+	2952  PC Camera/WebCam controller
+	2953  PC Camera/WebCam controller
+	2955  PC Camera/WebCam controller
+	2956  PC Camera/WebCam controller
+	2957  PC Camera/WebCam controller
+	2958  PC Camera/WebCam controller
+	2959  PC Camera/WebCam controller
+	2960  PC Camera/WebCam controller
+	2961  PC Camera/WebCam controller
+	2962  PC Camera/WebCam controller
+	2963  PC Camera/WebCam controller
+	2965  PC Camera/WebCam controller
+	2966  PC Camera/WebCam controller
+	2967  PC Camera/WebCam controller
+	2968  PC Camera/WebCam controller
+	2969  PC Camera/WebCam controller
 1b3f  Generalplus Technology Inc.
 1b47  Energizer Holdings, Inc.
 	0001  CHUSB Duo Charger (NiMH AA/AAA USB smart charger)
@@ -11358,8 +11451,10 @@
 	0001  InSight USB Link
 1ba8  China Telecommunication Technology Labs
 1bad  Harmonix Music
-	0002  Harmonix Guitar for Xbox 360
-	0003  Harmonix Drum Kit for Xbox 360
+	0002  Guitar for Xbox 360
+	0003  Drum Kit for Xbox 360
+1bae  Vuzix Corporation
+	0002  VR920 Immersive Eyewear
 1bbb  T & A Mobile Phones
 1bc4  Ford Motor Co.
 1bc5  AVIXE Technology (China) Ltd.
@@ -11445,6 +11540,8 @@
 	0101  CPX Adapter
 	0401  iL3-TP
 1e41  Cleverscope
+1e68  TrekStor GmbH & Co. KG
+	001b  DataStation maxi g.u
 1ebb  NuCORE Technology, Inc.
 2001  D-Link Corp. [hex]
 	0001  DWL-120 WIRELESS ADAPTER
@@ -11498,7 +11595,8 @@
 	f118  Formosa 4
 2019  PLANEX
 	3220  GW-US11S WLAN
-	5303  GW-US54GXS
+	5303  GW-US54GXS 802.11bg (zd1211rw)
+	5304  GWUS300 802.11n (ar9170)
 	ab01  GW-US54HP
 	ab50  GW-US54Mini2
 	c002  GW-US54SG
@@ -11866,6 +11964,9 @@
 	8138  Wireless 5520 Voda I Mobile Broadband (3G HSDPA) Minicard EAP-SIM Port
 	8140  Wireless 360 Bluetooth
 	8142  Mobile 360 in DFU
+	8156  Wireless 370 Bluetooth Mini-card
+	8157  Integrated Keyboard
+	8158  Integrated Touchpad / Trackstick
 	8501  Bluetooth Adapter
 	a001  Hub
 	a005  Internal 2.0 Hub
@@ -11892,6 +11993,8 @@
 	0001  MEZ1000 RDA
 4855  Memorex
 	7288  Ultra Traveldrive 160G 2.5" HDD
+4971  SimpleTech
+	cb01  SP-U25/120G
 5032  Grandtec
 	0bb8  Grandtec USB1.1 DVB-T (cold)
 	0bb9  Grandtec USB1.1 DVB-T (warm)
@@ -11948,7 +12051,7 @@
 	2667  JCOP BlueZ Smartcard reader
 	8804  WiseGroup SuperJoy Box 5
 6891  3Com
-	a727  3CRUSB10075
+	a727  3CRUSB10075 802.11bg (zd1211rw)
 6993  Freshtel
 	b001  FT-102 VoIP USB Phone
 6a75  Shanghai Jujo Electronics Co., Ltd
@@ -12008,6 +12111,8 @@ c251  Keil Software, Inc.
 	2710  ULink
 d209  Ultimarc
 	0301  I-PAC Arcade Control Interface
+eb03  MakingThings
+	0920  Make Controller Kit
 eb1a  eMPIA Technology, Inc.
 	17de  KWorld V-Stream XPERT DTV - DVB-T USB cold
 	17df  KWorld V-Stream XPERT DTV - DVB-T USB warm
@@ -12561,7 +12666,7 @@ HUT 07  Keyboard
 	031  \ and | (Backslash and Bar)
 	032  # and ~ (Hash and Tilde, Non-US Keyboard near right shift)
 	033  ; and : (Semicolon and Colon)
-	034  ? and " (Accent Acute and Double Quotes)
+	034  ´ and " (Accent Acute and Double Quotes)
 	035  ` and ~ (Accent Grace and Tilde)
 	036  , and < (Comma and Less)
 	037  . and > (Period and Greater)
