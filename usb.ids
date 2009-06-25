@@ -7,7 +7,7 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# $Id: usb.ids,v 1.378 2009/03/08 12:48:06 gowdy Exp $
+# $Id: usb.ids,v 1.383 2009/06/20 06:40:28 gowdy Exp $
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -21,8 +21,12 @@
 0002  Ingram
 0003  Club Mac
 0004  Nebraska Furniture Mart
+0053  Planex
+	5301  GW-US54ZGL 802.11bg (zd1211rw)
 0079  DragonRise Inc.
 	0006  Generic USB Joystick
+0105  Unknown
+	145f  802.11bg (zd1211rw)
 0145  Unknown
 	0112  Card Reader
 0204  Chipsbank Microelectronics Co., Ltd
@@ -68,6 +72,7 @@
 	7611  at76c510 rfmd2948 802.11b Access Point
 	7613  WL-1130 USB
 	7614  AT76c505a Wireless Adapter
+	ff07  Tux Droid fish dongle
 03ec  Iwatsu America, Inc.
 03ed  Mitel Corp.
 03ee  Mitsumi
@@ -122,6 +127,7 @@
 	0411  OfficeJet G95
 	0412  Printing Support
 	0417  LaserJet 1200 series
+	0423  HS-COMBO
 	0504  DeskJet 885c
 	0505  ScanJet 2100c
 	0507  DVD+RW
@@ -155,14 +161,14 @@
 	0a01  ScanJet 2400c
 	0a17  color LaserJet 3700
 	0b01  ScanJet 82x0C
-	0b0c  Wireless Keyboard and Optical Mouse
+	0b0c  Wireless Keyboard and Optical Mouse receiver
 	0b17  LaserJet 2300d
 	0c17  LaserJet 1010
 	0c24  Bluetooth Dongle
 	0d12  OfficeJet 9100 series
 	0d17  LaserJet 1012
 	0e17  LaserJet 1015
-	0f0c  Wireless Keyboard and Optical Mouse
+	0f0c  Wireless Keyboard and Optical Mouse receiver
 	0f11  OfficeJet V40
 	0f12  Printing Support
 	0f17  LaserJet 1150
@@ -286,6 +292,7 @@
 	2a17  LaserJet 2430
 	2b11  PSC 2170 series
 	2b17  LaserJet 1020
+	2c12  Officejet J4680
 	2c17  Printing Support
 	2c24  Logitech M-UAL-96 Mouse
 	2d11  OfficeJet 6110
@@ -461,7 +468,7 @@
 	8417  LaserJet M9040 MFP
 	8504  DeskJet 6600 series
 	8604  DeskJet 5440
-	8704  DeskJet 5900 series
+	8704  DeskJet 5940
 	8804  DeskJet 6980 series
 	8904  DeskJet 6940 series
 	9002  PhotoSmart M437
@@ -849,7 +856,7 @@
 	00cb  WLI-U2-G300N 802.11n Adapter
 	00d8  WLI-U2-SG54HP
 	00d9  WLI-U2-G54HP
-	00da  WLI-U2-KG54L
+	00da  WLI-U2-KG54L 802.11bg (zd1211rw)
 0412  Award Software International
 0413  Leadtek Research, Inc.
 	1310  WinFast TV - NTSC + FM
@@ -946,46 +953,46 @@
 	3090  Sound Blaster Digital Music SX
 	3f02  E-Mu 0202
 	3f04  E-Mu 0404
-	4003  VideoBlaster WebCam Go Plus [W9967CF]
+	4003  VideoBlaster Webcam Go Plus [W9967CF]
 	4004  Nomad II MG
-	4005  WebCam Blaster Go ES
+	4005  Webcam Blaster Go ES
 	4007  Go Mini
 	400a  PC-Cam 300
 	400b  PC-Cam 600
-	400c  WebCam 5 [pwc]
-	400d  WebCam PD1001
+	400c  Webcam 5 [pwc]
+	400d  Webcam PD1001
 	400f  PC-CAM 550 (Composite)
-	4011  WebCam PRO eX
+	4011  Webcam PRO eX
 	4012  PC-CAM350
 	4013  PC-Cam 750
 	4015  CardCam Value
 	4016  CardCam
-	4017  WebCam Mobile [PD1090]
-	4018  WebCam Vista [PD1100]
+	4017  Webcam Mobile [PD1090]
+	4018  Webcam Vista [PD1100]
 	4019  Audio Device
-	401a  WebCam Vista [PD1100]
-	401c  WebCam NX [PD1110]
-	401d  WebCam NX Ultra
-	401e  WebCam NX Pro
-	401f  WebCam Notebook [PD1171]
-	4020  WebCam NX
-	4021  WebCam NX Ultra
-	4022  WebCam NX Pro
+	401a  Webcam Vista [PD1100]
+	401c  Webcam NX [PD1110]
+	401d  Webcam NX Ultra
+	401e  Webcam NX Pro
+	401f  Webcam Notebook [PD1171]
+	4020  Webcam NX
+	4021  Webcam NX Ultra
+	4022  Webcam NX Pro
 	4028  Vista Plus cam [VF0090]
-	4029  WebCam Live!
+	4029  Webcam Live!
 	402f  DC-CAM 3000Z
-	4034  WebCam Instant
-	4035  WebCam Instant
+	4034  Webcam Instant
+	4035  Webcam Instant
 	4036  Webcam Live!/Live! Pro
-	4037  WebCam Live!
+	4037  Webcam Live!
 	4038  ORITE CCD Webcam [PC370R]
-	4039  WebCam Live! Effects
-	403a  WebCam NX Pro 2
+	4039  Webcam Live! Effects
+	403a  Webcam NX Pro 2
 	403b  Creative Webcam Vista [VF0010]
-	403c  WebCam Live! Ultra
-	403d  WebCam Notebook Ultra
-	403e  WebCam Vista Plus
-	4041  WebCam Live! Motion
+	403c  Webcam Live! Ultra
+	403d  Webcam Notebook Ultra
+	403e  Webcam Vista Plus
+	4041  Webcam Live! Motion
 	4045  Live! Cam Voice
 	4049  Live! Cam Voice
 	4051  Live! Cam Notebook Pro [VF0250]
@@ -998,7 +1005,7 @@
 	4058  Live! Cam Optia AF
 	4061  Live! Cam Notebook Pro [VF0400]
 	4063  Live! Cam Video IM Pro
-	4068  WebCam Live! Notebook
+	4068  Webcam Live! Notebook
 	4100  Nomad Jukebox 2
 	4101  Nomad Jukebox 3
 	4102  NOMAD MuVo^2
@@ -1039,7 +1046,7 @@
 	4157  Zen (MTP)
 	500f  Broadband Blaster 8012U-V
 	5015  TECOM Bluetooth Device
-	ffff  WebCam Live! Ultra
+	ffff  Webcam Live! Ultra
 041f  LCS Telegraphics
 0420  Chips and Technologies
 	1307  Celly SIM Card Reader
@@ -1152,6 +1159,7 @@
 	2524  USB MultiSwitch Hub
 0425  Motorola Semiconductors HK, Ltd
 	0101  G-Tech Wireless Mouse & Keyboard
+	f102  G-Tech U+P Wireless Mouse
 0426  Integrated Device Technology, Inc.
 	0426  WDM Driver
 0427  Motorola Electronics Taiwan, Ltd
@@ -1743,6 +1751,7 @@
 	070a  Charon Bluetooth Dongle (DFU)
 	0721  LifeCam NX-3000 (UVC-compliant)
 	0723  LifeCam VX-7000 (UVC-compliant)
+	0734  Wireless Optical Desktop 700
 	930a  ISOUSB.SYS Intel 82930 Isochronous IO Test Board
 	fff8  Keyboard
 0460  Ace Cad Enterprise Co., Ltd
@@ -1810,7 +1819,8 @@
 	0005  XX33 SmartCard Reader Keyboard
 	0010  SmartBoard XX44
 	0011  G83 (RS 6000) Keyboard
-	0023  Cymotion Master Linux Keyboard
+	0023  CyMotion Master Linux Keyboard
+	0027  CyMotion Master Solar Keyboard
 	002a  Wireless Mouse & Keyboard
 	002d  SmartTerminal XX44
 	003e  SmartTerminal ST-2xxx
@@ -1843,9 +1853,10 @@
 	0896  OrbiCam
 	0897  QuickCam for Dell Notebooks
 	0899  QuickCam for Dell Notebooks
+	089d  QuickCam E2500 series
 	08a0  QuickCam IM
 	08a1  QuickCam IM with sound
-	08a2  Labtec WebCam Pro
+	08a2  Labtec Webcam Pro
 	08a3  QuickCam QuickCam Chat
 	08a6  QuickCam IM
 	08a7  QuickCam Image
@@ -1900,9 +1911,9 @@
 	0921  Labtec Webcam
 	0922  QuickCam Live
 	0928  QuickCam Express
-	0929  Labtec WebCam Pro
+	0929  Labtec Webcam Pro
 	092a  QuickCam for Notebooks
-	092b  Labtec WebCam Plus
+	092b  Labtec Webcam Plus
 	092c  QuickCam Chat
 	092d  QuickCam Express / Go
 	092e  QuickCam Chat
@@ -2029,6 +2040,7 @@
 	c312  DeLuxe 250 Keyboard
 	c315  Classic New Touch Keyboard
 	c316  HID-Compliant Keyboard
+	c318  Illuminated Keyboard
 	c401  TrackMan Marble Wheel
 	c402  Marble Mouse (2-button)
 	c403  Turbo TrackMan Marble FX
@@ -2101,23 +2113,23 @@
 	0161  MP3 Player
 	0201  Hub
 	0222  Creative Nomad Jukebox
-	0302  PCA645VC WebCam [pwc]
-	0303  PCA646VC WebCam [pwc]
-	0304  Askey VC010 WebCam [pwc]
-	0307  PCVC675K WebCam [pwc]
-	0308  PCVC680K WebCam [pwc]
+	0302  PCA645VC Webcam [pwc]
+	0303  PCA646VC Webcam [pwc]
+	0304  Askey VC010 Webcam [pwc]
+	0307  PCVC675K Webcam [pwc]
+	0308  PCVC680K Webcam [pwc]
 	030b  PC VGA Camera (Vesta Fun)
-	030c  PCVC690K WebCam [pwc]
-	0310  PCVC730K WebCam [pwc]
+	030c  PCVC690K Webcam [pwc]
+	0310  PCVC730K Webcam [pwc]
 	0311  PCVC740K ToUcam Pro [pwc]
-	0312  PCVC750K WebCam [pwc]
+	0312  PCVC750K Webcam [pwc]
 	0314  DMVC 1000K
 	0316  DMVC 2000K Video Capture
 	0321  FunCam
 	0322  DMVC1300K PC Camera
 	0325  SPC 200NC PC Camera
 	0326  SPC 300NC PC Camera
-	0327  WebCam SPC 6000 NC (WebCam w/ mic)
+	0327  Webcam SPC 6000 NC (Webcam w/ mic)
 	0328  SPC 700NC PC Camera
 	0329  SPC 900NC PC Camera / ORITE CCD Webcam(PC370R)
 	032d  SPC 210NC PC Camera
@@ -2153,12 +2165,13 @@
 	1230  Wireless Adapter 11g
 	1232  SNU6500 Wireless Adapter
 	1233  Wireless Adapter Bootloader Download
-	1236  SNU5600
-	1237  TalkTalk SNU5630NS/05 Wireless Adapter
+	1236  SNU5600 802.11bg (zd1211rw)
+	1237  TalkTalk SNU5630NS/05 802.11bg (zd1211rw)
 	1552  ISP 1581 Hi-Speed USB MPEG2 Encoder Reference Kit
 	1801  Diva MP3 player
 	200a  Wireless Network Adapter
 	200f  802.11n Wireless Adapter
+	2034  Webcam SPC530NC
 	203f  TSU9200 Remote Control
 	2046  TSU9800 Remote Control
 	205e  TSU9300 Remote Control
@@ -2166,6 +2179,8 @@
 	485d  Senselock SenseIV v2.x
 0472  Chicony Electronics Co., Ltd
 	0065  PFU-65 Keyboard
+	b086  Asus USB2.0 Webcam
+	b091  Webcam
 0473  Sanyo Information Business Co., Ltd
 0474  Sanyo Electric Co., Ltd
 	0110  Digital Voice Recorder R200
@@ -2302,9 +2317,10 @@
 	0204  iBurst Terminal
 0483  SGS Thomson Microelectronics
 	0137  BeWAN ADSL USB ST (blue or green)
+	0138  Unicorn II (ST70138B + MTC-20174TQ chipset)
 	1307  Cytronix 6in1 Card Reader
 	163d  Cool Icam Digi-MP3
-	2015  TouchChip? Fingerprint Reader
+	2015  TouchChip® Fingerprint Reader
 	2016  Fingerprint Reader
 	2017  Biometric Smart Card Reader
 	2018  BioSimKey
@@ -2389,6 +2405,7 @@
 	1031  DGX-205/203
 	1032  DGX-305
 	1033  DGX-505
+	103c  MOTIF-RACK ES
 	2000  DGP-7
 	2001  DGP-5
 	3001  YST-MS55D USB Speaker
@@ -2473,6 +2490,7 @@
 	20fe  SW2 5300U
 	2137  Benq 5150/5250
 	2202  Benq 7400UT
+	2311  Benq 5560
 	3003  Benq Webcam
 	3008  Benq 1500
 	300a  Benq 3410
@@ -2909,6 +2927,7 @@
 	315d  PowerShot A720
 	3176  PowerShot A590
 	317a  Powershot A470
+	3184  Digital IXUS 80 IS (PTP mode)
 	31ff  Digital IXUS 55
 04aa  DaeWoo Telecom, Ltd
 04ab  Chromatic Research
@@ -2940,6 +2959,8 @@
 	011d  Coolpix 3700 (ptp)
 	0121  Coolpix 3200 (ptp)
 	0122  Coolpix 2200 (ptp)
+	0124  Coolpix 8400 (mass storage mode)
+	0125  Coolpix 8400 (ptp)
 	0126  Coolpix 8800
 	0129  Coolpix 4800 (ptp)
 	012c  Coolpix 4100 (storage)
@@ -2972,6 +2993,9 @@
 	040a  D50 (ptp)
 	040c  D2Hs
 	040e  DSC D70s (ptp)
+	040f  D200 (mass storage mode)
+	0410  D200 (ptp)
+	0422  D700 (ptp)
 	0413  D40 (mass storage mode)
 	4000  Coolscan LS 40 ED
 	4001  LS 50 ED/Coolscan V ED
@@ -3192,6 +3216,7 @@
 	0930  ETG-US2
 	0937  WN-WAG/USL Wireless LAN Adapter
 	0938  WN-G54/USL Wireless LAN Adapter
+	093f  WNGDNUS2 802.11n (ar9170)
 	0a03  Serial USB-RSAQ1
 	0a07  USB2-iCN Adapter
 	0a08  USB2-iCN Adapter
@@ -3225,7 +3250,7 @@
 	0082  OfficeConnect Analog Modem
 	008f  Pro ISDN TA
 	0097  OfficeConnect Analog
-	009d  HomeConnect WebCam [vicam]
+	009d  HomeConnect Webcam [vicam]
 	00a9  ISDN Pro TA-U
 	00b9  HomeConnect IDSL Modem
 	3021  56k Voice FaxModem Pro
@@ -3315,6 +3340,7 @@
 	0149  FinePix A330 Zoom (UVC)
 	014a  FinePix A330 Zoom (PTP)
 	014b  FinePix A340 Zoom (DSC)
+	014c  FinePix A340 Zoom (UVC)
 	0159  FinePix F710 Zoom (DSC)
 	0165  FinePix S3500 Zoom (DSC)
 	0168  FinePix E500 Zoom (DSC)
@@ -3324,7 +3350,7 @@
 	016e  FinePix S5500 Zoom (DSC)
 	016f  FinePix S5500 Zoom (UVC)
 	0171  FinePix E550 Zoom (DSC)
-	0172  FinePix E550 Zoom (PTP)
+	0172  FinePix E550 Zoom (UVC)
 	0177  FinePix F10 (DSC)
 	0179  Finepix F10 (PTP)
 	0186  FinePix S5200/S5600 Zoom (DSC)
@@ -3383,7 +3409,9 @@
 	8000  In-Circuit Debugger
 	8001  ICD2 in-circuit debugger
 04d9  Holtek Semiconductor, Inc.
+	0022  Portable Keyboard
 	1203  MC Industries Keyboard
+	1503  Shortboard Lefty
 04da  Panasonic (Matsushita)
 	0901  LS-120 Camera
 	0b01  CD-R/RW Drive
@@ -3713,7 +3741,7 @@
 	b027  Gateway USB 2.0 Webcam
 	b028  VGA UVC Webcam
 	b029  1.3M UVC Webcam
-	b071  2.0M UVC WebCam / CNF7129
+	b071  2.0M UVC Webcam / CNF7129
 	b107  CNF7070 Webcam
 04f3  Elan Microelectronics Corp.
 	0210  AM-400 Hama Optical Mouse
@@ -3906,6 +3934,7 @@
 	01e2  DCP-157C
 	01e3  DCP-353C
 	01e4  DCP-357C
+	01eb  MFC-7320
 	1000  Printer
 	1002  Printer
 	2002  PTUSB Printing
@@ -3923,6 +3952,7 @@
 	0015  ViewMate Desktop Mouse CC2201
 	0232  Fingerprint
 	0561  Flexcam 100
+	0c25  SATALink SPIF225A
 	1533  Mass Storage
 	500c  CA500C Digital Camera
 	504a  Aiptek Mini PenCam 1.3
@@ -4001,6 +4031,7 @@
 	0121  F5D5050 100Mbps Ethernet
 	0122  Ethernet Adapter
 	0131  Bluetooth Device with trace filter
+	016a  Bluetooth Mini Dongle
 	0201  Peripheral Switch
 	0208  USBView II Video Adapter [nt1004]
 	0210  F5U228 Hi-Speed USB 2.0 DVD Creator
@@ -4009,6 +4040,7 @@
 	0234  F5U234 USB 2.0 4-Port Hub
 	0237  F5U237 USB 2.0 7-Port Hub
 	0240  F5U240 USB 2.0 CF Card Reader
+	0249  USB 2 Flash Media Device
 	0257  F5U257 Serial
 	0409  F5U409 Serial
 	0551  F6C550-AVR UPS
@@ -4025,12 +4057,12 @@
 	3201  F1DF102U/F1DG102U Flip KVM
 	4050  ZD1211B
 	5055  F5D5055
-	6051  11Mbps Wireless Network Adapter
+	6051  802.11b (zd1201)
 	7050  F5D7050 ver 1000 WiFi
 	7051  F5D7051 54g USB Network Adapter
 	705a  F5D7050A Wireless Adapter
 	705b  Wireless G Adapter
-	705c  F5D7050 v4000 Wireless Adapter
+	705c  802.11bg (zd1211rw)
 	905b  F5D9050 ver 3 Wireless Adapter
 	905c  Wireless G Plus MIMO Network Adapter
 050e  Neon Technology, Inc.
@@ -4121,7 +4153,7 @@
 	0801  Yakumo MegaImage 37
 	1512  Yakumo MegaImage IV
 	1513  Aosta CX100 Webcam
-	1514  Aosta CX100 WebCam Storage
+	1514  Aosta CX100 Webcam Storage
 	1905  Yakumo MegaImage 47
 	1911  Yakumo MegaImage 47 SL
 	2202  WDM Still Image Capture
@@ -4360,6 +4392,7 @@
 	02d1  DVD RW
 	02d2  PSP Slim
 	02ea  PlayStation 3 Memory Card Adaptor
+	1000  Wireless Buzz! Receiver
 054d  Try Corp.
 054e  Proside Corp.
 054f  WYSE Technology Taiwan
@@ -4521,6 +4554,7 @@
 	0043  Intuos 2
 	0044  Intuos2 12x12
 	0045  Intuos2 12x18
+	00b5  Intuos3 6x11 (PTZ-631W)
 	0400  PenPartner 4x5
 	4850  PenPartner 6x8
 056b  Decicon, Inc.
@@ -4553,8 +4587,8 @@
 	0001  Ezcam II Webcam
 	0002  Ezcam II Webcam
 	0040  Wondereye CP-115 Webcam
-	0041  WebCam Notebook
-	0042  WebCam Notebook
+	0041  Webcam Notebook
+	0042  Webcam Notebook
 	1232  V.90 modem
 	1234  Typhoon Redfun Modem V90 56k
 	1252  HCF V90 Data Fax Voice Modem
@@ -4671,6 +4705,7 @@
 	5601  AVM FRITZ!WLAN Stick
 	6201  WLAN USB v1.1
 	62ff  WLAN USB v1.1 [no firmware]
+	8401  FRITZ!WLAN Stick N
 057d  Shark Multimedia, Inc.
 057e  Nintendo Co., Ltd
 	0306  Wii Remote Controller RVL-003
@@ -4799,22 +4834,23 @@
 	000e  Digital Camera
 	000f  Digital Camera
 0586  ZyXEL Communications Corp.
+	0102  omni.net II ISDN TA
 	1000  Omni NET Modem / ISDN TA
 	1500  Omni 56K Plus
 	2011  Scorpion-980N keyboard
 	3304  LAN Modem
 	330a  ADSL Modem Interface
 	330e  USB Broadband ADSL Modem Rev 1.10
-	3400  ZyAIR B-220 IEEE 802.11b Adapter
-	3401  ZyAIR G-220
-	3402  (ZD1211)IEEE 802.11b+g Adapter
-	3407  G-200 v2
-	3409  AG-225H
-	340a  M-202
-	340f  G-220 v2
-	3410  Wi-Fi Wireless LAN Adapter
-	3412  Wi-Fi Wireless LAN Adapter
-	3413  AG-225H v2 802.11a/g Wi-Fi Finder & Adapter
+	3400  802.11b (zd1201)
+	3401  ZyAIR G-220 802.11bg (zd1211rw)
+	3402  ZyAIR G-220F 802.11bg (zd1211rw)
+	3407  G-200 v2 802.11bg (zd1211rw)
+	3409  AG-225H 802.11bg (zd1211rw)
+	340a  M-202 802.11bg (zd1211rw)
+	340f  G-220 v2 802.11bg (zd1211rw)
+	3410  ZyAIR G-202 802.11bg (zd1211rw)
+	3412  802.11bg (zd1211rw)
+	3413  ZyAIR AG-225H v2 802.11bg (zd1211rw)
 	3415  G-210H 802.11g Wireless Adapter
 	3416  NWD-210N 802.11b/g/n-draft wireless adapter
 0587  America Kotobuki Electronics Industries, Inc.
@@ -5377,8 +5413,8 @@
 	2000  MC3090 Rugged Mobile Computer
 	200d  MC70 Rugged Mobile Computer
 05e1  Syntek Semiconductor Co., Ltd
-	0500  DC-112X WebCam
-	0501  DC-1125 WebCam
+	0500  DC-112X Webcam
+	0501  DC-1125 Webcam
 	0890  STK011 Camera
 	0892  STK013 Camera
 	0895  STK016 Camera
@@ -5400,7 +5436,7 @@
 	0301  USB2LPT Cable Release2
 	0406  Hub
 	0501  GL620USB Host-Host interface
-	0502  GL620USB GeneLink USB-USB Bridge
+	0502  GL620USB-A GeneLink USB-USB Bridge
 	0504  HID Keyboard Filter
 	0604  USB 1.1 Hub
 	0605  USB 2.0 Hub [ednet]
@@ -5602,6 +5638,7 @@
 063e  RealMedia Technology, Inc.
 063f  New Technology Cable, Ltd
 0640  Hitex Development Tools
+	0026  LPC-Stick
 0641  Woods Industries, Inc.
 0642  VIA Medical Corp.
 0644  TEAC Corp.
@@ -5659,6 +5696,8 @@
 0662  Kansai Electric Co., Ltd
 0663  Topmax Electronic Co., Ltd
 	0103  CobraPad
+0665  Cypress Semiconductor
+	5161  USB to Serial
 0667  Aiwa Co., Ltd
 	0fa1  TD-U8000 Tape Drive
 0668  WordWand
@@ -5856,7 +5895,9 @@
 	0005  ID-Mouse with Fingerprint Reader
 	0012  I-Gate 802.11b Adapter
 	001b  WLL013
+	001d  Hipath 1000
 	0022  Gigaset SX353 ISDN
+	0026  DECT Data - Gigaset M34
 	002b  A-100-I ADSL Modem
 	002e  ADSL Router_S-141
 	0034  GSM module MC35/ES75 USB Modem
@@ -5921,7 +5962,7 @@
 	9999  VLxxxx Monitor+Hub
 0699  Tektronix, Inc.
 069a  Askey Computer Corp.
-	0001  VC010 WebCam [pwc]
+	0001  VC010 Webcam [pwc]
 	0303  Cable Modem
 	0311  ADSL Router Remote NDIS Device
 	0318  Remote NDIS Device
@@ -6041,6 +6082,7 @@
 06bc  Oki Data Corp.
 	000b  Okipage 14ex Printer
 	0a91  B2500MFP (printer+scanner)
+	3801  B6100 Laser Printer
 06bd  AGFA-Gevaert NV
 	0001  SnapScan 1212U
 	0002  SnapScan 1236U
@@ -6313,6 +6355,7 @@
 06f7  Wailly Technology Ltd
 	0003  USB->Din 4 Adaptor
 06f8  Guillemot Corp.
+	3004  Hercules Classic Silver
 	3005  Hercules Dualpix Exchange
 	3007  Hercules Dualpix Chat and Show
 	a300  Dual Analog Leader GamePad
@@ -6631,7 +6674,7 @@
 	0830  ImageMate CF/MMC/SD Reader
 	1234  Cruzer Mini Flash Drive
 	5150  SDCZ2 Cruzer Mini Flash Drive (thin)
-	5151  Cruzer Micro 256/512MB/4GB Flash Drive
+	5151  Cruzer Micro Flash Drive
 	5153  Cruzer Flash Drive
 	5406  Cruzer Micro 1/2/4GB Flash Drive
 	5408  Cruzer Titanium U3
