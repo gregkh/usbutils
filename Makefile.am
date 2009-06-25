@@ -63,6 +63,7 @@ usbutils.pc: $(srcdir)/usbutils.pc.in
 DISTCLEANFILES = \
 	usb.ids.gz \
 	lsusb.8 \
+	usb-devices.8 \
 	update-usbids.sh \
 	usbutils.pc
 
