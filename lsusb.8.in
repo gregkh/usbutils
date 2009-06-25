@@ -1,4 +1,4 @@
-.TH lsusb 8 "25 January 2005" "usbutils-0.73" "Linux USB Utilities"
+.TH lsusb 8 "6 May 2009" "usbutils-VERSION" "Linux USB Utilities"
 .IX lsusb
 .SH NAME
 lsusb \- list USB devices

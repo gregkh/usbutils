@@ -49,7 +49,7 @@ update-usbids.sh: $(srcdir)/update-usbids.sh.in
 	chmod 755 $@
 
 lsusb.8: $(srcdir)/lsusb.8.in
-	sed 's|@usbids@|$(datadir)/usb.ids|g' $< >$@
+	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
 
 usb-devices.8: $(srcdir)/usb-devices.8.in
 	sed 's|VERSION|$(VERSION)|g' $< >$@
