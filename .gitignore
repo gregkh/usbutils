@@ -19,3 +19,5 @@ lsusb.8
 update-usbids.sh
 usbutils.pc
 usb-devices.8
+*.gz
+*.bz2
