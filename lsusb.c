@@ -2247,15 +2247,23 @@ static void dump_hid_device(struct usb_dev_handle *dev, struct usb_interface_des
 			continue;
 		}
 		if (usb_claim_interface(dev, interface->bInterfaceNumber) == 0) {
-			if ((n = usb_control_msg(dev,
+			int retries = 4;
+			n = 0;
+			while (n < len && retries--)
+				n = usb_control_msg(dev,
 					 USB_ENDPOINT_IN | USB_TYPE_STANDARD
 					 	| USB_RECIP_INTERFACE,
 					 USB_REQ_GET_DESCRIPTOR,
 					 (USB_DT_REPORT << 8),
 					 interface->bInterfaceNumber,
 					 dbuf, len,
-					 CTRL_TIMEOUT)) > 0)
+					 CTRL_TIMEOUT);
+
+			if (n > 0) {
+				if (n < len)
+					printf("          Warning: incomplete report descriptor\n");
 				dump_report_desc(dbuf, n);
+			}
 			usb_release_interface(dev, interface->bInterfaceNumber);
 		} else {
 			/* recent Linuxes require claim() for RECIP_INTERFACE,
