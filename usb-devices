@@ -125,7 +125,7 @@ print_device() {
 	prodid=`cat idProduct`
 	revmajor=`cat bcdDevice | cut -c 1-2`
 	revminor=`cat bcdDevice | cut -c 3-4`
-	printf "P:  Vendor=%s ProdID=%s Rev=%2i.%02i\n" \
+	printf "P:  Vendor=%s ProdID=%s Rev=%s.%s\n" \
 		$vendid $prodid $revmajor $revminor
 
 	print_string manufacturer "Manufacturer"
