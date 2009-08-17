@@ -39,7 +39,7 @@ EXTRA_DIST = \
 	usb.ids \
 	update-usbids.sh.in \
 	lsusb.8.in \
-	usb-devices.8.in \
+	usb-devices.1.in \
 	usb-devices \
 	usbutils.pc.in
 
