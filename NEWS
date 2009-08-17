@@ -1,3 +1,7 @@
+usbutils 0.86
+=============
+HID device robust fix
+
 usbutils 0.85
 =============
 usb-devices bugfixes
