@@ -1,3 +1,8 @@
+usbutils 0.85
+=============
+usb-devices bugfixes
+build fixes
+
 usbutils 0.84
 =============
 Sync up usb.ids file from upstream
