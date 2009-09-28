@@ -75,7 +75,7 @@ void devtree_markdeleted(void)
 	struct usbbusnode *bus;
 	struct list_head *list;
 
-	for(list = usbbuslist.next; list != &usbbuslist; list = list->next) {
+	for (list = usbbuslist.next; list != &usbbuslist; list = list->next) {
 		bus = list_entry(list, struct usbbusnode, list);
 		markdel(&bus->childlist);
 	}
@@ -86,7 +86,7 @@ struct usbbusnode *devtree_findbus(unsigned int busn)
 	struct usbbusnode *bus;
 	struct list_head *list;
 
-	for(list = usbbuslist.next; list != &usbbuslist; list = list->next) {
+	for (list = usbbuslist.next; list != &usbbuslist; list = list->next) {
 		bus = list_entry(list, struct usbbusnode, list);
 		if (bus->busnum == busn)
 			return bus;
@@ -143,21 +143,21 @@ void devtree_parsedevfile(int fd)
 		*lineend = 0;
 		switch (start[0]) {
 		case 'T':  /* topology line */
-			if ((cp = strstr(start, "Dev#="))) {
+			if ((cp = strstr(start, "Dev#=")))
 				devnum = strtoul(cp + 5, NULL, 0);
-			} else
+			else
 				devnum = 0;
-			if ((cp = strstr(start, "Bus="))) {
+			if ((cp = strstr(start, "Bus=")))
 				busnum = strtoul(cp + 4, NULL, 10);
-			} else
+			else
 				busnum = 0;
-			if ((cp = strstr(start, "Prnt="))) {
+			if ((cp = strstr(start, "Prnt=")))
 				parentdevnum = strtoul(cp + 5, NULL, 10);
-			} else
+			else
 				parentdevnum = 0;
-			if ((cp = strstr(start, "Lev="))) {
+			if ((cp = strstr(start, "Lev=")))
 				level = strtoul(cp + 4, NULL, 10);
-			} else
+			else
 				level = 0;
 			if (strstr(start, "Spd=1.5"))
 				speed = 1;
@@ -168,20 +168,20 @@ void devtree_parsedevfile(int fd)
 			break;
 
 		case 'D':
-			if ((cp = strstr(start, "Cls="))) {
+			if ((cp = strstr(start, "Cls=")))
 				class = strtoul(cp + 4, NULL, 16);
-			} else
+			else
 				class = 0xff;
 			break;
 
 		case 'P':
-			if ((cp = strstr(start, "Vendor="))) {
+			if ((cp = strstr(start, "Vendor=")))
 				vendor = strtoul(cp + 7, NULL, 16);
-			} else
+			else
 				vendor = 0xffff;
-			if ((cp = strstr(start, "ProdID="))) {
+			if ((cp = strstr(start, "ProdID=")))
 				prodid = strtoul(cp + 7, NULL, 16);
-			} else
+			else
 				prodid = 0xffff;
 			/* print device */
 #if 0
@@ -241,7 +241,8 @@ static void deletetree(struct list_head *list, unsigned int force)
 	for (list2 = list->next; list2 != list;) {
 		dev = list_entry(list2, struct usbdevnode, list);
 		list2 = list2->next;
-		deletetree(&dev->childlist, force || dev->flags & USBFLG_DELETED);
+		deletetree(&dev->childlist,
+			   force || dev->flags & USBFLG_DELETED);
 		if (!force && !(dev->flags & USBFLG_DELETED))
 			continue;
 		list_del(&dev->list);
@@ -292,7 +293,8 @@ void devtree_processchanges(void)
 
 /* ---------------------------------------------------------------------- */
 
-static void dumpdevlist(struct list_head *list, unsigned int level, unsigned int mask)
+static void dumpdevlist(struct list_head *list, unsigned int level,
+			unsigned int mask)
 {
 	struct usbdevnode *dev;
 	struct list_head *list2;
@@ -315,7 +317,8 @@ static void dumpdevlist(struct list_head *list, unsigned int level, unsigned int
 			*cp++ = '`';
 		}
 		*cp++ = '-';
-		snprintf(cp, buf + sizeof(buf) - cp, "Dev# %3d Vendor 0x%04x Product 0x%04x",
+		snprintf(cp, buf + sizeof(buf) - cp,
+			 "Dev# %3d Vendor 0x%04x Product 0x%04x",
 			 dev->devnum, dev->vendorid, dev->productid);
 		lprintf(1, "%s\n", buf);
 		dumpdevlist(&dev->childlist, level+1, mask);
