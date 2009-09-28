@@ -140,12 +140,13 @@ static struct genericstrtable *countrycodes[HASHSZ] = { NULL, };
 
 /* ---------------------------------------------------------------------- */
 
-static const char *names_genericstrtable(struct genericstrtable *t[HASHSZ], unsigned int index)
+static const char *names_genericstrtable(struct genericstrtable *t[HASHSZ],
+					 unsigned int idx)
 {
         struct genericstrtable *h;
 
-        for (h = t[hashnum(index)]; h; h = h->next)
-                if (h->num == index)
+        for (h = t[hashnum(idx)]; h; h = h->next)
+                if (h->num == idx)
                         return h->name;
         return NULL;
 }
@@ -406,19 +407,20 @@ static int new_videoterminal(const char *name, u_int16_t termt)
 	return 0;
 }
 
-static int new_genericstrtable(struct genericstrtable *t[HASHSZ], const char *name, unsigned int index)
+static int new_genericstrtable(struct genericstrtable *t[HASHSZ],
+			       const char *name, unsigned int idx)
 {
         struct genericstrtable *g;
-	unsigned int h = hashnum(index);
+	unsigned int h = hashnum(idx);
 
         for (g = t[h]; g; g = g->next)
-                if (g->num == index)
+                if (g->num == idx)
                         return -1;
         g = malloc(sizeof(struct genericstrtable) + strlen(name));
         if (!g)
                 return -1;
         strcpy(g->name, name);
-        g->num = index;
+        g->num = idx;
         g->next = t[h];
         t[h] = g;
         return 0;
