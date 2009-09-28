@@ -48,25 +48,24 @@ static int readlink_recursive(const char *path, char *buf, size_t bufsize)
 
 	if (ret > 0) {
 		buf[ret] = 0;
-		if (*buf != '/')
-		{
+		if (*buf != '/') {
 			strncpy(temp, path, sizeof(temp));
 			ptemp = temp + strlen(temp);
-			while (*ptemp != '/' && ptemp != temp) ptemp--;
+			while (*ptemp != '/' && ptemp != temp)
+				ptemp--;
 			ptemp++;
 			strncpy(ptemp, buf, bufsize + temp - ptemp);
-		}
-		else
+		} else
 			strncpy(temp, buf, sizeof(temp));
 		return readlink_recursive(temp, buf, bufsize);
-	}
-	else {
+	} else {
 		strncpy(buf, path, bufsize);
 		return strlen(buf);
 	}
 }
 
-static char *get_absolute_path(const char *path, char *result, size_t result_size)
+static char *get_absolute_path(const char *path, char *result,
+			       size_t result_size)
 {
 	const char *ppath;	/* pointer on the input string */
 	char *presult;		/* pointer on the output string */
@@ -89,13 +88,14 @@ static char *get_absolute_path(const char *path, char *result, size_t result_siz
 
 	while (*ppath != 0 && result_size > 1) {
 		if (*ppath == '/') {
-			do ppath++; while (*ppath == '/');
+			do
+				ppath++;
+			while (*ppath == '/');
 			*presult++ = '/';
 			result_size--;
-		}
-		else if (*ppath == '.' && *(ppath + 1) == '.' && *(ppath + 2) == '/' && *(presult - 1) == '/') {
-			if ((presult - 1) != result)
-			{
+		} else if (*ppath == '.' && *(ppath + 1) == '.' &&
+			   *(ppath + 2) == '/' && *(presult - 1) == '/') {
+			if ((presult - 1) != result) {
 				/* go one directory upper */
 				do {
 					presult--;
@@ -103,20 +103,20 @@ static char *get_absolute_path(const char *path, char *result, size_t result_siz
 				} while (*(presult - 1) != '/');
 			}
 			ppath += 3;
-		}
-		else if (*ppath == '.'  && *(ppath + 1) == '/' && *(presult - 1) == '/') {
+		} else if (*ppath == '.'  &&
+			   *(ppath + 1) == '/' &&
+			   *(presult - 1) == '/') {
 			ppath += 2;
-		}
-	        else {
+		} else {
 			*presult++ = *ppath++;
 			result_size--;
 		}
 	}
 	/* Don't forget to mark the end of the string! */
 	*presult = 0;
-	
+
 	return result;
-}	
+}
 
 struct usb_device *get_usb_device(const char *path)
 {
@@ -127,14 +127,15 @@ struct usb_device *get_usb_device(const char *path)
 
 	readlink_recursive(path, device_path, sizeof(device_path));
 	get_absolute_path(device_path, absolute_path, sizeof(absolute_path));
-	
+
 	for (bus = usb_busses; bus; bus = bus->next) {
-        	for (dev = bus->devices; dev; dev = dev->next) {
-			snprintf(device_path, sizeof(device_path), "%s/%s/%s", devbususb, bus->dirname, dev->filename);
+		for (dev = bus->devices; dev; dev = dev->next) {
+			snprintf(device_path, sizeof(device_path), "%s/%s/%s",
+				 devbususb, bus->dirname, dev->filename);
 			if (!strcmp(device_path, absolute_path))
 				return dev;
-		}				
-        }			
+		}
+	}
 	return NULL;
-}	
+}
 
