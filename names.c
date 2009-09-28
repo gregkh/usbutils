@@ -410,7 +410,7 @@ static int new_genericstrtable(struct genericstrtable *t[HASHSZ], const char *na
 {
         struct genericstrtable *g;
 	unsigned int h = hashnum(index);
-        
+
         for (g = t[h]; g; g = g->next)
                 if (g->num == index)
                         return -1;
@@ -465,7 +465,7 @@ static int new_countrycode(const char *name, unsigned int countrycode)
 
 /* ---------------------------------------------------------------------- */
 
-#define DBG(x) 
+#define DBG(x)
 
 static void parse(usb_file f)
 {
@@ -789,7 +789,7 @@ static void parse(usb_file f)
                         DBG(printf("line %5u Report type %02x %s\n", linectr, u, cp));
                         continue;
 
-                }			
+                }
 		fprintf(stderr, "Unknown line at line %u\n", linectr);
 	}
 }
@@ -799,7 +799,7 @@ static void parse(usb_file f)
 int names_init(char *n)
 {
 	usb_file f;
-	
+
 	if (!(f = usb_fopen(n, "r"))) {
 		return errno;
 	}

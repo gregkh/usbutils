@@ -74,7 +74,7 @@ void devtree_markdeleted(void)
 {
 	struct usbbusnode *bus;
 	struct list_head *list;
-	
+
 	for(list = usbbuslist.next; list != &usbbuslist; list = list->next) {
 		bus = list_entry(list, struct usbbusnode, list);
 		markdel(&bus->childlist);
@@ -85,7 +85,7 @@ struct usbbusnode *devtree_findbus(unsigned int busn)
 {
 	struct usbbusnode *bus;
 	struct list_head *list;
-	
+
 	for(list = usbbuslist.next; list != &usbbuslist; list = list->next) {
 		bus = list_entry(list, struct usbbusnode, list);
 		if (bus->busnum == busn)
@@ -163,7 +163,7 @@ void devtree_parsedevfile(int fd)
 				speed = 1;
 			else if (strstr(start, "Spd=12"))
 				speed = 2;
-			else 
+			else
 				speed = 0;
 			break;
 
