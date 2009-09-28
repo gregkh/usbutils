@@ -72,7 +72,8 @@ extern struct list_head usbbuslist;
 
 extern void devtree_markdeleted(void);
 extern struct usbbusnode *devtree_findbus(unsigned int busn);
-extern struct usbdevnode *devtree_finddevice(struct usbbusnode *bus, unsigned int devn);
+extern struct usbdevnode *devtree_finddevice(struct usbbusnode *bus,
+					     unsigned int devn);
 extern void devtree_parsedevfile(int fd);
 extern void devtree_busconnect(struct usbbusnode *bus);
 extern void devtree_busdisconnect(struct usbbusnode *bus);
@@ -81,7 +82,8 @@ extern void devtree_devdisconnect(struct usbdevnode *dev);
 extern void devtree_processchanges(void);
 extern void devtree_dump(void);
 
-extern int lprintf(unsigned int vl, const char *format, ...) __attribute__ ((format (printf, 2, 3)));
+extern int lprintf(unsigned int vl, const char *format, ...)
+	__attribute__ ((format (printf, 2, 3)));
 
 /* ---------------------------------------------------------------------- */
 #endif /* _DEVTREE_H */
