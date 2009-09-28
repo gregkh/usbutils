@@ -128,11 +128,11 @@ static unsigned int convert_le_u32 (const unsigned char *buf)
 
 static inline int typesafe_control_msg(usb_dev_handle *dev,
 	unsigned char requesttype, unsigned char request,
-	int value, int index,
+	int value, int idx,
 	unsigned char *bytes, unsigned size, int timeout)
 {
-	return usb_control_msg(dev, requesttype, request, value, index,
-		(char *) bytes, (int) size, timeout);
+	return usb_control_msg(dev, requesttype, request, value, idx,
+		(char *)bytes, (int)size, timeout);
 }
 
 #define usb_control_msg		typesafe_control_msg
@@ -2527,14 +2527,14 @@ static void do_hub(struct usb_dev_handle *fd, unsigned has_tt)
 
 	printf(" Hub Port Status:\n");
 	for (i = 0; i < buf[2]; i++) {
-		unsigned char stat[4];
+		unsigned char status[4];
 
 		ret = usb_control_msg(fd,
 				USB_ENDPOINT_IN | USB_TYPE_CLASS
 					| USB_RECIP_OTHER,
 				USB_REQ_GET_STATUS,
 				0, i + 1,
-				stat, sizeof stat,
+				status, sizeof status,
 				CTRL_TIMEOUT);
 		if (ret < 0) {
 			fprintf(stderr,
@@ -2544,26 +2544,26 @@ static void do_hub(struct usb_dev_handle *fd, unsigned has_tt)
 		}
 
 		printf("   Port %d: %02x%02x.%02x%02x", i + 1,
-			stat[3], stat[2],
-			stat[1], stat[0]);
+			status[3], status[2],
+			status[1], status[0]);
 		/* CAPS are used to highlight "transient" states */
 		printf("%s%s%s%s%s",
-			(stat[2] & 0x10) ? " C_RESET" : "",
-			(stat[2] & 0x08) ? " C_OC" : "",
-			(stat[2] & 0x04) ? " C_SUSPEND" : "",
-			(stat[2] & 0x02) ? " C_ENABLE" : "",
-			(stat[2] & 0x01) ? " C_CONNECT" : "");
+			(status[2] & 0x10) ? " C_RESET" : "",
+			(status[2] & 0x08) ? " C_OC" : "",
+			(status[2] & 0x04) ? " C_SUSPEND" : "",
+			(status[2] & 0x02) ? " C_ENABLE" : "",
+			(status[2] & 0x01) ? " C_CONNECT" : "");
 		printf("%s%s%s%s%s%s%s%s%s%s\n",
-			(stat[1] & 0x10) ? " indicator" : "",
-			(stat[1] & 0x08) ? " test" : "",
-			(stat[1] & 0x04) ? " highspeed" : "",
-			(stat[1] & 0x02) ? " lowspeed" : "",
-			(stat[1] & 0x01) ? " power" : "",
-			(stat[0] & 0x10) ? " RESET" : "",
-			(stat[0] & 0x08) ? " oc" : "",
-			(stat[0] & 0x04) ? " suspend" : "",
-			(stat[0] & 0x02) ? " enable" : "",
-			(stat[0] & 0x01) ? " connect" : "");
+			(status[1] & 0x10) ? " indicator" : "",
+			(status[1] & 0x08) ? " test" : "",
+			(status[1] & 0x04) ? " highspeed" : "",
+			(status[1] & 0x02) ? " lowspeed" : "",
+			(status[1] & 0x01) ? " power" : "",
+			(status[0] & 0x10) ? " RESET" : "",
+			(status[0] & 0x08) ? " oc" : "",
+			(status[0] & 0x04) ? " suspend" : "",
+			(status[0] & 0x02) ? " enable" : "",
+			(status[0] & 0x01) ? " connect" : "");
 	}
 }
 
