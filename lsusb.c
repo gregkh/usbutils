@@ -76,6 +76,9 @@
 #define USB_DT_CS_INTERFACE		(USB_TYPE_CLASS | USB_DT_INTERFACE)
 #define USB_DT_CS_ENDPOINT		(USB_TYPE_CLASS | USB_DT_ENDPOINT)
 
+#ifndef USB_CLASS_CCID
+#define USB_CLASS_CCID			0x0b
+#endif
 
 #ifndef USB_CLASS_VIDEO
 #define USB_CLASS_VIDEO			0x0e
@@ -598,6 +601,9 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 				case USB_CLASS_HID:
 					dump_hid_device(dev, interface, buf);
 					break;
+				case USB_CLASS_CCID:
+					dump_ccid_device(buf);
+					break;
 				default:
 					goto dump;
 				}
@@ -611,7 +617,7 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 				case USB_CLASS_HID:
 					dump_hid_device(dev, interface, buf);
 					break;
-				case 0x0b:	/* chip/smartcard */
+				case USB_CLASS_CCID:
 					dump_ccid_device(buf);
 					break;
 				case 0xe0:	/* wireless */
