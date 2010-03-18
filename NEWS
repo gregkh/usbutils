@@ -1,3 +1,25 @@
+usbutils 0.87
+=============
+Aurelien Jarno (1):
+      lsusb.c: correctly dump ccid devices
+
+Greg Kroah-Hartman (11):
+      lots of trailing whitespace removed.
+      add autogen.sh script
+      coding style cleanups for .h files.
+      names.c: fix up some compiler warnings
+      coding style cleanups for usbmisc.c
+      names.c: fix lots of coding style issues
+      devtree.c: coding style cleanups
+      lsusb.c: coding style fixes
+      lsusb.c: fix some build warnings.
+      usb.ids: Reserve EEM Gadget id for the Linux Foundation
+      add lsusb.py from Kurt Garloff <garloff@suse.de>
+
+Philip A. Prindeville (1):
+      Fix build issue with libusb location
+
+
 usbutils 0.86
 =============
 HID device robust fix
