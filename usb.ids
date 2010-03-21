@@ -1603,6 +1603,7 @@
 	00da  eHome Infrared Receiver
 	00db  Natural Ergonomic Keyboard 4000 V1.0
 	00e1  Wireless Laser Mouse 6000 Reciever
+	00f1  Wireless Desktop Receiver 3.1A
 	00f4  LifeCam VX-6000 (SN9C20x + OV9650)
 	00f5  LifeCam VX-3000
 	00f7  LifeCam VX-1000
@@ -11614,6 +11615,7 @@
 	7070  Nova-T Stick 3
 	9300  WinTV NOVA-T USB2 (cold)
 	9301  WinTV NOVA-T USB2 (warm)
+	9950  Nova-T 500 Dual DVB-T
 2101  ActionStar
 	0201  SIIG 4-to-2 Printer Switch
 2162  Creative (?)
