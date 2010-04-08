@@ -11536,7 +11536,7 @@
 	0100  PTP Gadget
 	0101  Audio Gadget
 	0102  EEM Gadget
-	0103  Ethernet Gadget
+	0103  NCM (Ethernet) Gadget
 1e1f  INVIA
 1e29  Festo AG & Co. KG
 	0101  CPX Adapter
