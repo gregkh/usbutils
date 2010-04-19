@@ -63,8 +63,8 @@
 #define USB_DT_WIRELESS_ENDPOINT_COMP	0x11
 #define USB_DT_WIRE_ADAPTER		0x21
 #define USB_DT_RPIPE			0x22
-
 #define USB_DT_RC_INTERFACE		0x23
+#define USB_DT_SS_ENDPOINT_COMP		0x30
 
 /* Conventional codes for class-specific descriptors.  The convention is
  * defined in the USB "Common Class" Spec (3.11).  Individual class specs
@@ -78,10 +78,6 @@
 
 #ifndef USB_CLASS_CCID
 #define USB_CLASS_CCID			0x0b
-#endif
-
-#ifndef USB_DT_SS_ENDPOINT_COMP
-#define USB_DT_SS_ENDPOINT_COMP		0x30
 #endif
 
 #ifndef USB_CLASS_VIDEO
