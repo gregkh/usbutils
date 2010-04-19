@@ -2227,7 +2227,7 @@ static void dump_hid_device(struct usb_dev_handle *dev,
 			    unsigned char *buf)
 {
 	unsigned int i, len;
-	int n;
+	unsigned int n;
 	unsigned char dbuf[8192];
 
 	if (buf[1] != USB_DT_HID)
@@ -2262,7 +2262,7 @@ static void dump_hid_device(struct usb_dev_handle *dev,
 		if (buf[6+3*i] != USB_DT_REPORT)
 			continue;
 		len = buf[7+3*i] | (buf[8+3*i] << 8);
-		if (len > sizeof(dbuf)) {
+		if (len > (unsigned int)sizeof(dbuf)) {
 			printf("report descriptor too long\n");
 			continue;
 		}
