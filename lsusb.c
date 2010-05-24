@@ -1903,7 +1903,7 @@ static void dump_dfu_interface(unsigned char *buf)
 	if (buf[0] < 9)
 		return;
 	printf("        bcdDFUVersion                   %x.%02x\n",
-			buf[7], buf[8]);
+			buf[8], buf[7]);
 }
 
 static void dump_hub(char *prefix, unsigned char *p, int has_tt)
