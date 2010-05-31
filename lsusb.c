@@ -1256,13 +1256,13 @@ static void dump_audiostreaming_interface(unsigned char *buf)
 			printf("        bmBSID         0x%08x\n"
 			       "        bmAC3Features        0x%02x\n",
 			       buf[5] | (buf[6] << 8) | (buf[7] << 16) | (buf[8] << 24), buf[9]);
-			if (buf[9] & 0x0)
+			if (buf[9] & 0x01)
 				printf("          RF mode\n");
-			if (buf[9] & 0x0)
+			if (buf[9] & 0x02)
 				printf("          Line mode\n");
-			if (buf[9] & 0x0)
+			if (buf[9] & 0x04)
 				printf("          Custom0 mode\n");
-			if (buf[9] & 0x0)
+			if (buf[9] & 0x08)
 				printf("          Custom1 mode\n");
 			printf("          Internal Dynamic Range Control: ");
 			switch ((buf[9] >> 4) & 3) {
