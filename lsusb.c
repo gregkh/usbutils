@@ -88,6 +88,14 @@
 #define USB_CLASS_APPLICATION	       	0xfe
 #endif
 
+#ifndef USB_AUDIO_CLASS_1
+#define USB_AUDIO_CLASS_1		0x00
+#endif
+
+#ifndef USB_AUDIO_CLASS_2
+#define USB_AUDIO_CLASS_2		0x20
+#endif
+
 #define VERBLEVEL_DEFAULT 0	/* 0 gives lspci behaviour; 1, lsusb-0.9 */
 
 #define CTRL_RETRIES	 2
@@ -103,7 +111,7 @@ static const char *encryption_type[] = {"UNSECURE", "WIRED", "CCM_1", "RSA_1", "
 
 static void dump_interface(struct usb_dev_handle *dev, struct usb_interface *interface);
 static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descriptor *interface, struct usb_endpoint_descriptor *endpoint);
-static void dump_audiocontrol_interface(struct usb_dev_handle *dev, unsigned char *buf);
+static void dump_audiocontrol_interface(struct usb_dev_handle *dev, unsigned char *buf, int protocol);
 static void dump_audiostreaming_interface(unsigned char *buf);
 static void dump_midistreaming_interface(struct usb_dev_handle *dev, unsigned char *buf);
 static void dump_videocontrol_interface(struct usb_dev_handle *dev, unsigned char *buf);
@@ -561,7 +569,7 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 				case USB_CLASS_AUDIO:
 					switch (interface->bInterfaceSubClass) {
 					case 1:
-						dump_audiocontrol_interface(dev, buf);
+						dump_audiocontrol_interface(dev, buf, interface->bInterfaceProtocol);
 						break;
 					case 2:
 						dump_audiostreaming_interface(buf);
@@ -838,17 +846,133 @@ static void dump_unit(unsigned int data, unsigned int len)
  * Audio Class descriptor dump
  */
 
-static void dump_audiocontrol_interface(struct usb_dev_handle *dev, unsigned char *buf)
+struct bmcontrol {
+	const char *name;
+	unsigned int bit;
+};
+
+static const struct bmcontrol uac2_interface_header_bmcontrols[] = {
+	{ "Latency control",	0 },
+	{ NULL }
+};
+
+static const struct bmcontrol uac_fu_bmcontrols[] = {
+	{ "Mute",		0 },
+	{ "Volume",		1 },
+	{ "Bass",		2 },
+	{ "Mid",		3 },
+	{ "Treble",		4 },
+	{ "Graphic Equalizer",	5 },
+	{ "Automatic Gain",	6 },
+	{ "Delay",		7 },
+	{ "Bass Boost",		8 },
+	{ "Loudness",		9 },
+	{ "Input gain",		10 },
+	{ "Input gain pad",	11 },
+	{ "Phase inverter",	12 },
+	{ NULL }
+};
+
+static const struct bmcontrol uac2_input_term_bmcontrols[] = {
+	{ "Copy Protect",	0 },
+	{ "Connector",		1 },
+	{ "Overload",		2 },
+	{ "Cluster",		3 },
+	{ "Underflow",		4 },
+	{ "Overflow",		5 },
+	{ NULL }
+};
+
+static const struct bmcontrol uac2_output_term_bmcontrols[] = {
+	{ "Copy Protect",	0 },
+	{ "Connector",		1 },
+	{ "Overload",		2 },
+	{ "Underflow",		3 },
+	{ "Overflow",		4 },
+	{ NULL }
+};
+
+static const struct bmcontrol uac2_mixer_unit_bmcontrols[] = {
+	{ "Cluster",		0 },
+	{ "Underflow",		1 },
+	{ "Overflow",		2 },
+	{ NULL }
+};
+
+static const struct bmcontrol uac2_extension_unit_bmcontrols[] = {
+	{ "Enable",		0 },
+	{ "Cluster",		1 },
+	{ "Underflow",		2 },
+	{ "Overflow",		3 },
+	{ NULL }
+};
+
+static const struct bmcontrol uac2_clock_source_bmcontrols[] = {
+	{ "Clock Frequency",	0 },
+	{ "Clock Validity",	1 },
+	{ NULL }
+};
+
+static const struct bmcontrol uac2_clock_selector_bmcontrols[] = {
+	{ "Clock Selector",	0 },
+	{ NULL }
+};
+
+static const struct bmcontrol uac2_clock_multiplier_bmcontrols[] = {
+	{ "Clock Numerator",	0 },
+	{ "Clock Denominator",	1 },
+	{ NULL }
+};
+
+static const struct bmcontrol uac2_selector_bmcontrols[] = {
+	{ "Selector",	0 },
+	{ NULL }
+};
+
+static void dump_audio_bmcontrols(const char *prefix, int bmcontrols, const struct bmcontrol *list, int protocol)
+{
+	while (list->name) {
+		switch (protocol) {
+		case USB_AUDIO_CLASS_1:
+			if (bmcontrols & (1 << list->bit))
+				printf("%s%s Control\n", prefix, list->name);
+
+			break;
+
+		case USB_AUDIO_CLASS_2:
+			if (bmcontrols & (1 << (list->bit * 2)))
+				printf("%s%s Control (%s)\n", prefix, list->name,
+					bmcontrols & (2 << (list->bit * 2)) ? "read/write" : "read-only");
+
+			break;
+		} /* switch */
+
+		list++;
+	}
+}
+
+static const char *chconfig_uac2[] = {
+	"Front Left (FL)", "Front Right (FR)", "Front Center (FC)", "Low Frequency Effects (LFE)",
+	"Back Left (BL)", "Back Right (BR)", "Front Left of Center (FLC)", "Front Right of Center (FRC)", "Back Center (BC)",
+	"Side Left (SL)", "Side Right (SR)",
+	"Top Center (TC)", "Top Front Left (TFL)", "Top Front Center (TFC)", "Top Front Right (TFR)", "Top Back Left (TBL)",
+	"Top Back Center (TBC)", "Top Back Right (TBR)", "Top Front Left of Center (TFLC)", "Top Front Right of Center (TFRC)",
+	"Left Low Frequency Effects (LLFE)", "Right Low Frequency Effects (RLFE)",
+	"Top Side Left (TSL)", "Top Side Right (TSR)", "Bottom Center (BC)",
+	"Back Left of Center (BLC)", "Back Right of Center (BRC)"
+};
+
+static void dump_audiocontrol_interface(struct usb_dev_handle *dev, unsigned char *buf, int protocol)
 {
 	static const char *chconfig[] = {
 		"Left Front (L)", "Right Front (R)", "Center Front (C)", "Low Freqency Enhancement (LFE)",
 		"Left Surround (LS)", "Right Surround (RS)", "Left of Center (LC)", "Right of Center (RC)",
 		"Surround (S)", "Side Left (SL)", "Side Right (SR)", "Top (T)"
 	};
-	static const char *chftrcontrols[] = {
-		"Mute", "Volume", "Bass", "Mid", "Treble", "Graphic Equalizer", "Automatic Gain", "Delay", "Bass Boost", "Loudness"
+	static const char *clock_source_attrs[] = {
+		"External", "Internal fixed", "Internal variable", "Internal programmable"
 	};
-	unsigned int i, chcfg, j, k, N, termt;
+	unsigned int i, chcfg, j, k, N, termt, subtype;
 	char chnames[128], term[128], termts[128];
 
 	if (buf[1] != USB_DT_CS_INTERFACE)
@@ -860,197 +984,538 @@ static void dump_audiocontrol_interface(struct usb_dev_handle *dev, unsigned cha
 	       "        bDescriptorType     %5u\n"
 	       "        bDescriptorSubtype  %5u ",
 	       buf[0], buf[1], buf[2]);
-	switch (buf[2]) {
+
+	/*
+	 * This is an utter mess - UAC2 defines some bDescriptorSubtype differently, so we have to do some ugly remapping here:
+	 *
+	 * bDescriptorSubtype		UAC1			UAC2
+	 * ------------------------------------------------------------------------
+	 * 0x07				PROCESSING_UNIT		EFFECT_UNIT
+	 * 0x08				EXTENSION_UNIT		PROCESSING_UNIT
+	 * 0x09				-			EXTENSION_UNIT
+	 *
+	 */
+
+	if (protocol == USB_AUDIO_CLASS_2)
+		switch(buf[2]) {
+		case 0x07: subtype = 0xf0; break; /* effect unit */
+		case 0x08: subtype = 0x07; break; /* processing unit */
+		case 0x09: subtype = 0x08; break; /* extension unit */
+		default: subtype = buf[2]; break; /* everything else is identical */
+		}
+	else
+		subtype = buf[2];
+
+	switch (subtype) {
 	case 0x01:  /* HEADER */
 		printf("(HEADER)\n");
-		if (buf[0] < 8+buf[7])
-			printf("      Warning: Descriptor too short\n");
-		printf("        bcdADC              %2x.%02x\n"
-		       "        wTotalLength        %5u\n"
-		       "        bInCollection       %5u\n",
-		       buf[4], buf[3], buf[5] | (buf[6] << 8), buf[7]);
-		for (i = 0; i < buf[7]; i++)
-			printf("        baInterfaceNr(%2u)   %5u\n", i, buf[8+i]);
-		dump_junk(buf, "        ", 8+buf[7]);
+		switch (protocol) {
+		case USB_AUDIO_CLASS_1:
+			if (buf[0] < 8+buf[7])
+				printf("      Warning: Descriptor too short\n");
+			printf("        bcdADC              %2x.%02x\n"
+			       "        wTotalLength        %5u\n"
+			       "        bInCollection       %5u\n",
+			       buf[4], buf[3], buf[5] | (buf[6] << 8), buf[7]);
+			for (i = 0; i < buf[7]; i++)
+				printf("        baInterfaceNr(%2u)   %5u\n", i, buf[8+i]);
+			dump_junk(buf, "        ", 8+buf[7]);
+			break;
+		case USB_AUDIO_CLASS_2:
+			if (buf[0] < 9)
+				printf("      Warning: Descriptor too short\n");
+			printf("        bcdADC              %2x.%02x\n"
+			       "        bCategory           %5u\n"
+			       "        wTotalLength        %5u\n"
+			       "        bmControl            0x%02x\n",
+			       buf[4], buf[3], buf[5], buf[6] | (buf[7] << 8), buf[8]);
+			dump_audio_bmcontrols("          ", buf[8], uac2_interface_header_bmcontrols, protocol);
+			break;
+		}
 		break;
 
 	case 0x02:  /* INPUT_TERMINAL */
 		printf("(INPUT_TERMINAL)\n");
-		get_string(dev, chnames, sizeof(chnames), buf[10]);
-		get_string(dev, term, sizeof(term), buf[11]);
 		termt = buf[4] | (buf[5] << 8);
 		get_audioterminal_string(termts, sizeof(termts), termt);
-		if (buf[0] < 12)
-			printf("      Warning: Descriptor too short\n");
-		chcfg = buf[8] | (buf[9] << 8);
-		printf("        bTerminalID         %5u\n"
-		       "        wTerminalType      0x%04x %s\n"
-		       "        bAssocTerminal      %5u\n"
-		       "        bNrChannels         %5u\n"
-		       "        wChannelConfig     0x%04x\n",
-		       buf[3], termt, termts, buf[6], buf[7], chcfg);
-		for (i = 0; i < 12; i++)
-			if ((chcfg >> i) & 1)
-				printf("          %s\n", chconfig[i]);
-		printf("        iChannelNames       %5u %s\n"
-		       "        iTerminal           %5u %s\n",
-		       buf[10], chnames, buf[11], term);
-		dump_junk(buf, "        ", 12);
+
+		switch (protocol) {
+		case USB_AUDIO_CLASS_1:
+			get_string(dev, chnames, sizeof(chnames), buf[10]);
+			get_string(dev, term, sizeof(term), buf[11]);
+			if (buf[0] < 12)
+				printf("      Warning: Descriptor too short\n");
+			chcfg = buf[8] | (buf[9] << 8);
+			printf("        bTerminalID         %5u\n"
+			       "        wTerminalType      0x%04x %s\n"
+			       "        bAssocTerminal      %5u\n"
+			       "        bNrChannels         %5u\n"
+			       "        wChannelConfig     0x%04x\n",
+			       buf[3], termt, termts, buf[6], buf[7], chcfg);
+			for (i = 0; i < 12; i++)
+				if ((chcfg >> i) & 1)
+					printf("          %s\n", chconfig[i]);
+			printf("        iChannelNames       %5u %s\n"
+			       "        iTerminal           %5u %s\n",
+			       buf[10], chnames, buf[11], term);
+			dump_junk(buf, "        ", 12);
+			break;
+		case USB_AUDIO_CLASS_2:
+			get_string(dev, chnames, sizeof(chnames), buf[13]);
+			get_string(dev, term, sizeof(term), buf[16]);
+			if (buf[0] < 17)
+				printf("      Warning: Descriptor too short\n");
+			chcfg = buf[9] | (buf[10] << 8) | (buf[11] << 16) | (buf[12] << 24);
+			printf("        bTerminalID         %5u\n"
+			       "        wTerminalType      0x%04x %s\n"
+			       "        bAssocTerminal      %5u\n"
+			       "        bCSourceID          %5d\n"
+			       "        bNrChannels         %5u\n"
+			       "        bmChannelConfig   0x%08x\n",
+			       buf[3], termt, termts, buf[6], buf[7], buf[8], chcfg);
+			for (i = 0; i < 26; i++)
+				if ((chcfg >> i) & 1)
+					printf("          %s\n", chconfig_uac2[i]);
+			printf("        bmControls    0x%04x\n", buf[14] | (buf[15] << 8));
+			dump_audio_bmcontrols("          ", buf[14] | (buf[15] << 8), uac2_input_term_bmcontrols, protocol);
+			printf("        iChannelNames       %5u %s\n"
+			       "        iTerminal           %5u %s\n",
+			       buf[13], chnames, buf[16], term);
+			dump_junk(buf, "        ", 17);
+			break;
+		} /* switch (protocol) */
+
 		break;
 
 	case 0x03:  /* OUTPUT_TERMINAL */
 		printf("(OUTPUT_TERMINAL)\n");
-		get_string(dev, term, sizeof(term), buf[8]);
-		termt = buf[4] | (buf[5] << 8);
-		get_audioterminal_string(termts, sizeof(termts), termt);
-		if (buf[0] < 9)
-			printf("      Warning: Descriptor too short\n");
-		printf("        bTerminalID         %5u\n"
-		       "        wTerminalType      0x%04x %s\n"
-		       "        bAssocTerminal      %5u\n"
-		       "        bSourceID           %5u\n"
-		       "        iTerminal           %5u %s\n",
-		       buf[3], termt, termts, buf[6], buf[7], buf[8], term);
-		dump_junk(buf, "        ", 9);
+		switch (protocol) {
+		case USB_AUDIO_CLASS_1:
+			get_string(dev, term, sizeof(term), buf[8]);
+			termt = buf[4] | (buf[5] << 8);
+			get_audioterminal_string(termts, sizeof(termts), termt);
+			if (buf[0] < 9)
+				printf("      Warning: Descriptor too short\n");
+			printf("        bTerminalID         %5u\n"
+			       "        wTerminalType      0x%04x %s\n"
+			       "        bAssocTerminal      %5u\n"
+			       "        bSourceID           %5u\n"
+			       "        iTerminal           %5u %s\n",
+			       buf[3], termt, termts, buf[6], buf[7], buf[8], term);
+			dump_junk(buf, "        ", 9);
+			break;
+		case USB_AUDIO_CLASS_2:
+			get_string(dev, term, sizeof(term), buf[11]);
+			termt = buf[4] | (buf[5] << 8);
+			get_audioterminal_string(termts, sizeof(termts), termt);
+			if (buf[0] < 12)
+				printf("      Warning: Descriptor too short\n");
+			printf("        bTerminalID         %5u\n"
+			       "        wTerminalType      0x%04x %s\n"
+			       "        bAssocTerminal      %5u\n"
+			       "        bSourceID           %5u\n"
+			       "        bCSourceID          %5u\n"
+			       "        bmControls         0x%04x\n",
+			       buf[3], termt, termts, buf[6], buf[7], buf[8], buf[9] | (buf[10] << 8));
+			dump_audio_bmcontrols("          ", buf[9] | (buf[10] << 8), uac2_output_term_bmcontrols, protocol);
+			printf("        iTerminal           %5u %s\n", buf[11], term);
+			dump_junk(buf, "        ", 12);
+			break;
+		} /* switch (protocol) */
+
 		break;
 
 	case 0x04:  /* MIXER_UNIT */
 		printf("(MIXER_UNIT)\n");
-		j = buf[4];
-		k = buf[j+5];
-		if (j == 0 || k == 0) {
-			printf("      Warning: mixer with %5u input and %5u output channels.\n", j, k);
+
+		switch (protocol) {
+		case USB_AUDIO_CLASS_1:
+			j = buf[4];
+			k = buf[j+5];
+			if (j == 0 || k == 0) {
+				printf("      Warning: mixer with %5u input and %5u output channels.\n", j, k);
+				N = 0;
+			} else {
+				N = 1+(j*k-1)/8;
+			}
+			get_string(dev, chnames, sizeof(chnames), buf[8+j]);
+			get_string(dev, term, sizeof(term), buf[9+j+N]);
+			if (buf[0] < 10+j+N)
+				printf("      Warning: Descriptor too short\n");
+			chcfg = buf[6+j] | (buf[7+j] << 8);
+			printf("        bUnitID             %5u\n"
+			       "        bNrInPins           %5u\n",
+			       buf[3], buf[4]);
+			for (i = 0; i < j; i++)
+				printf("        baSourceID(%2u)      %5u\n", i, buf[5+i]);
+			printf("        bNrChannels         %5u\n"
+			       "        wChannelConfig     0x%04x\n",
+			       buf[5+j], chcfg);
+			for (i = 0; i < 12; i++)
+				if ((chcfg >> i) & 1)
+					printf("          %s\n", chconfig[i]);
+			printf("        iChannelNames       %5u %s\n",
+			       buf[8+j], chnames);
+			for (i = 0; i < N; i++)
+				printf("        bmControls         0x%02x\n", buf[9+j+i]);
+			printf("        iMixer              %5u %s\n", buf[9+j+N], term);
+			dump_junk(buf, "        ", 10+j+N);
+			break;
+
+		case USB_AUDIO_CLASS_2:
+			j = buf[4];
+			k = buf[0] - 13 - j;
+			get_string(dev, chnames, sizeof(chnames), buf[10+j]);
+			get_string(dev, term, sizeof(term), buf[12+j+k]);
+			chcfg =  buf[6+j] | (buf[7+j] << 8) | (buf[8+j] << 16) | (buf[9+j] << 24);
+
+			printf("        bUnitID             %5u\n"
+			       "        bNrPins             %5u\n",
+			       buf[3], buf[4]);
+			for (i = 0; i < j; i++)
+				printf("        baSourceID(%2u)      %5u\n", i, buf[5+i]);
+			printf("        bNrChannels         %5u\n"
+			       "        bmChannelConfig    0x%08x\n", buf[5+j], chcfg);
+			for (i = 0; i < 26; i++)
+				if ((chcfg >> i) & 1)
+					printf("          %s\n", chconfig_uac2[i]);
+			printf("        iChannelNames       %5u %s\n", buf[10+j], chnames);
+
 			N = 0;
-		} else {
-			N = 1+(j*k-1)/8;
-		}
-		get_string(dev, chnames, sizeof(chnames), buf[8+j]);
-		get_string(dev, term, sizeof(term), buf[9+j+N]);
-		if (buf[0] < 10+j+N)
-			printf("      Warning: Descriptor too short\n");
-		chcfg = buf[6+j] | (buf[7+j] << 8);
-		printf("        bUnitID             %5u\n"
-		       "        bNrInPins           %5u\n",
-		       buf[3], buf[4]);
-		for (i = 0; i < j; i++)
-			printf("        baSourceID(%2u)      %5u\n", i, buf[5+i]);
-		printf("        bNrChannels         %5u\n"
-		       "        wChannelConfig     0x%04x\n",
-		       buf[5+j], chcfg);
-		for (i = 0; i < 12; i++)
-			if ((chcfg >> i) & 1)
-				printf("          %s\n", chconfig[i]);
-		printf("        iChannelNames       %5u %s\n",
-		       buf[8+j], chnames);
-		for (i = 0; i < N; i++)
-			printf("        bmControls         0x%02x\n", buf[9+j+i]);
-		printf("        iMixer              %5u %s\n", buf[9+j+N], term);
-		dump_junk(buf, "        ", 10+j+N);
+			for (i = 0; i < k; i++)
+				N |= buf[11+j+i] << (i * 8);
+
+			dump_bytes(buf+11+j, k);
+
+			printf("        bmControls         %02x\n", buf[11+j+k]);
+			dump_audio_bmcontrols("          ", buf[11+j+k], uac2_mixer_unit_bmcontrols, protocol);
+
+			printf("        iMixer             %5u %s\n", buf[12+j+k], term);
+			dump_junk(buf, "        ", 13+j+k);
+			break;
+		} /* switch (protocol) */
 		break;
 
 	case 0x05:  /* SELECTOR_UNIT */
 		printf("(SELECTOR_UNIT)\n");
-		if (buf[0] < 6+buf[4])
+		switch (protocol) {
+		case USB_AUDIO_CLASS_1:
+			if (buf[0] < 6+buf[4])
+				printf("      Warning: Descriptor too short\n");
+			get_string(dev, term, sizeof(term), buf[5+buf[4]]);
+
+			printf("        bUnitID             %5u\n"
+			       "        bNrInPins           %5u\n",
+			       buf[3], buf[4]);
+			for (i = 0; i < buf[4]; i++)
+				printf("        baSource(%2u)        %5u\n", i, buf[5+i]);
+			printf("        iSelector           %5u %s\n",
+			       buf[5+buf[4]], term);
+			dump_junk(buf, "        ", 6+buf[4]);
+			break;
+		case USB_AUDIO_CLASS_2:
+			if (buf[0] < 7+buf[4])
+				printf("      Warning: Descriptor too short\n");
+			get_string(dev, term, sizeof(term), buf[6+buf[4]]);
+
+			printf("        bUnitID             %5u\n"
+			       "        bNrInPins           %5u\n",
+			       buf[3], buf[4]);
+			for (i = 0; i < buf[4]; i++)
+				printf("        baSource(%2u)        %5u\n", i, buf[5+i]);
+			printf("        bmControls           0x%02x\n", buf[5+buf[4]]);
+			dump_audio_bmcontrols("          ", buf[5+buf[4]], uac2_selector_bmcontrols, protocol);
+			printf("        iSelector           %5u %s\n",
+			       buf[6+buf[4]], term);
+			dump_junk(buf, "        ", 7+buf[4]);
+			break;
+		} /* switch (protocol) */
+
+		break;
+
+	case 0x06:  /* FEATURE_UNIT */
+		printf("(FEATURE_UNIT)\n");
+
+		switch (protocol) {
+		case USB_AUDIO_CLASS_1:
+			j = buf[5];
+			if (!j)
+				j = 1;
+			k = (buf[0] - 7) / j;
+			if (buf[0] < 7+buf[5]*k)
+				printf("      Warning: Descriptor too short\n");
+			get_string(dev, term, sizeof(term), buf[6+buf[5]*k]);
+			printf("        bUnitID             %5u\n"
+			       "        bSourceID           %5u\n"
+			       "        bControlSize        %5u\n",
+			       buf[3], buf[4], buf[5]);
+			for (i = 0; i < k; i++) {
+				chcfg = buf[6+buf[5]*i];
+				if (buf[5] > 1)
+					chcfg |= (buf[7+buf[5]*i] << 8);
+				for (j = 0; j < buf[5]; j++)
+					printf("        bmaControls(%2u)      0x%02x\n", i, buf[6+buf[5]*i+j]);
+
+				dump_audio_bmcontrols("          ", chcfg, uac_fu_bmcontrols, protocol);
+			}
+			printf("        iFeature            %5u %s\n", buf[6+buf[5]*k], term);
+			dump_junk(buf, "        ", 7+buf[5]*k);
+			break;
+		case USB_AUDIO_CLASS_2:
+			if (buf[0] < 10)
+				printf("      Warning: Descriptor too short\n");
+			k = (buf[0] - 6) / 4;
+			get_string(dev, term, sizeof(term), buf[6+(k*4)]);
+			printf("        bUnitID             %5u\n"
+			       "        bSourceID           %5u\n",
+			       buf[3], buf[4]);
+			for (i = 0; i < k; i++) {
+				chcfg = buf[5+(4*i)] |
+					buf[6+(4*i)] << 8 |
+					buf[7+(4*i)] << 16 |
+					buf[8+(4*i)] << 24;
+				printf("        bmaControls(%2u)      0x%08x\n", i, chcfg);
+				dump_audio_bmcontrols("          ", chcfg, uac_fu_bmcontrols, protocol);
+			}
+			printf("        iFeature            %5u %s\n", buf[6+(k*4)], term);
+			dump_junk(buf, "        ", 7+(k*4));
+			break;
+		} /* switch (protocol) */
+
+		break;
+
+	case 0x07:  /* PROCESSING_UNIT */
+		printf("(PROCESSING_UNIT)\n");
+
+		switch (protocol) {
+		case USB_AUDIO_CLASS_1:
+			j = buf[6];
+			k = buf[11+j];
+			get_string(dev, chnames, sizeof(chnames), buf[10+j]);
+			get_string(dev, term, sizeof(term), buf[12+j+k]);
+			chcfg = buf[8+j] | (buf[9+j] << 8);
+			if (buf[0] < 13+j+k)
+				printf("      Warning: Descriptor too short\n");
+			printf("        bUnitID             %5u\n"
+			       "        wProcessType        %5u\n"
+			       "        bNrPins             %5u\n",
+			       buf[3], buf[4] | (buf[5] << 8), buf[6]);
+			for (i = 0; i < j; i++)
+				printf("        baSourceID(%2u)      %5u\n", i, buf[7+i]);
+			printf("        bNrChannels         %5u\n"
+			       "        wChannelConfig     0x%04x\n", buf[7+j], chcfg);
+			for (i = 0; i < 12; i++)
+				if ((chcfg >> i) & 1)
+					printf("          %s\n", chconfig[i]);
+			printf("        iChannelNames       %5u %s\n"
+			       "        bControlSize        %5u\n", buf[10+j], chnames, buf[11+j]);
+			for (i = 0; i < k; i++)
+				printf("        bmControls(%2u)       0x%02x\n", i, buf[12+j+i]);
+			if (buf[12+j] & 1)
+				printf("          Enable Processing\n");
+			printf("        iProcessing         %5u %s\n"
+			       "        Process-Specific    ", buf[12+j+k], term);
+			dump_bytes(buf+(13+j+k), buf[0]-(13+j+k));
+			break;
+		case USB_AUDIO_CLASS_2:
+			j = buf[6];
+			k = buf[0] - 17 - j;
+			get_string(dev, chnames, sizeof(chnames), buf[12+j]);
+			get_string(dev, term, sizeof(term), buf[15+j+k]);
+			chcfg =  buf[8+j] |
+				(buf[9+j] << 8) |
+				(buf[10+j] << 16) |
+				(buf[11+j] << 24);
+
+			printf("        bUnitID             %5u\n"
+			       "        wProcessType        %5u\n"
+			       "        bNrPins             %5u\n",
+			       buf[3], buf[4] | (buf[5] << 8), buf[6]);
+			for (i = 0; i < j; i++)
+				printf("        baSourceID(%2u)      %5u\n", i, buf[5+i]);
+			printf("        bNrChannels         %5u\n"
+			       "        bmChannelConfig    0x%08x\n", buf[7+j], chcfg);
+			for (i = 0; i < 26; i++)
+				if ((chcfg >> i) & 1)
+					printf("          %s\n", chconfig_uac2[i]);
+			printf("        iChannelNames       %5u %s\n"
+			       "        bmControls        0x%04x\n", buf[12+j], chnames, buf[13+j] | (buf[14+j] << 8));
+			if (buf[12+j] & 1)
+				printf("          Enable Processing\n");
+			printf("        iProcessing         %5u %s\n"
+			       "        Process-Specific    ", buf[15+j], term);
+			dump_bytes(buf+(16+j), k);
+			break;
+		} /* switch (protocol) */
+
+		break;
+
+	case 0x08:  /* EXTENSION_UNIT */
+		printf("(EXTENSION_UNIT)\n");
+
+		switch (protocol) {
+		case USB_AUDIO_CLASS_1:
+			j = buf[6];
+			k = buf[11+j];
+			get_string(dev, chnames, sizeof(chnames), buf[10+j]);
+			get_string(dev, term, sizeof(term), buf[12+j+k]);
+			chcfg = buf[8+j] | (buf[9+j] << 8);
+			if (buf[0] < 13+j+k)
+				printf("      Warning: Descriptor too short\n");
+			printf("        bUnitID             %5u\n"
+			       "        wExtensionCode      %5u\n"
+			       "        bNrPins             %5u\n",
+			       buf[3], buf[4] | (buf[5] << 8), buf[6]);
+			for (i = 0; i < j; i++)
+				printf("        baSourceID(%2u)      %5u\n", i, buf[7+i]);
+			printf("        bNrChannels         %5u\n"
+			       "        wChannelConfig      %5u\n", buf[7+j], chcfg);
+			for (i = 0; i < 12; i++)
+				if ((chcfg >> i) & 1)
+					printf("          %s\n", chconfig[i]);
+			printf("        iChannelNames       %5u %s\n"
+			       "        bControlSize        %5u\n", buf[10+j], chnames, buf[11+j]);
+			for (i = 0; i < k; i++)
+				printf("        bmControls(%2u)       0x%02x\n", i, buf[12+j+i]);
+			if (buf[12+j] & 1)
+				printf("          Enable Processing\n");
+			printf("        iExtension          %5u %s\n",
+			       buf[12+j+k], term);
+			dump_junk(buf, "        ", 13+j+k);
+			break;
+		case USB_AUDIO_CLASS_2:
+			j = buf[6];
+			get_string(dev, chnames, sizeof(chnames), buf[13+j]);
+			get_string(dev, term, sizeof(term), buf[15+j]);
+			chcfg = buf[9+j] | (buf[10+j] << 8) | (buf[11+j] << 16) | (buf[12+j] << 24);
+			if (buf[0] < 16+j)
+				printf("      Warning: Descriptor too short\n");
+			printf("        bUnitID             %5u\n"
+			       "        wExtensionCode      %5u\n"
+			       "        bNrPins             %5u\n",
+			       buf[3], buf[4] | (buf[5] << 8), buf[6]);
+			for (i = 0; i < j; i++)
+				printf("        baSourceID(%2u)      %5u\n", i, buf[7+i]);
+			printf("        bNrChannels         %5u\n"
+			       "        wChannelConfig      %5u\n", buf[7+j], chcfg);
+			for (i = 0; i < 26; i++)
+				if ((chcfg >> i) & 1)
+					printf("          %s\n", chconfig[i]);
+			printf("        iChannelNames       %5u %s\n"
+			       "        bmControls        0x%02x\n", buf[13+j], chnames, buf[14+j]);
+			dump_audio_bmcontrols("          ", buf[14+j], uac2_extension_unit_bmcontrols, protocol);
+
+			printf("        iExtension          %5u %s\n",
+			       buf[15+j+k], term);
+			dump_junk(buf, "        ", 16+j);
+			break;
+		} /* switch (protocol) */
+
+		break;
+
+	case 0x0a:  /* CLOCK_SOURCE */
+		printf ("(CLOCK_SOURCE)\n");
+		if (protocol != USB_AUDIO_CLASS_2)
+			printf("      Warning: CLOCK_SOURCE descriptors are illegal for UAC1\n");
+
+		if (buf[0] < 8)
 			printf("      Warning: Descriptor too short\n");
-		get_string(dev, term, sizeof(term), buf[5+buf[4]]);
+
+		printf("        bClockID            %5u\n"
+		       "        bmAttributes         0x%02x %s Clock %s\n",
+		       buf[3], buf[4], clock_source_attrs[buf[4] & 3],
+		       (buf[4] & 4) ? "(synced to SOF)" : "");
+
+		printf("        bmControls           0x%02x\n", buf[5]);
+		dump_audio_bmcontrols("          ", buf[5], uac2_clock_source_bmcontrols, protocol);
+
+		get_string(dev, term, sizeof(term), buf[7]);
+		printf("        bAssocTerminal      %5u\n", buf[6]);
+		printf("        iClockSource        %5u %s\n", buf[7], term);
+		dump_junk(buf, "        ", 8);
+		break;
+
+	case 0x0b:  /* CLOCK_SELECTOR */
+		printf("(CLOCK_SELECTOR)\n");
+		if (protocol != USB_AUDIO_CLASS_2)
+			printf("      Warning: CLOCK_SELECTOR descriptors are illegal for UAC1\n");
+
+		if (buf[0] < 7+buf[4])
+			printf("      Warning: Descriptor too short\n");
+		get_string(dev, term, sizeof(term), buf[6+buf[4]]);
 
 		printf("        bUnitID             %5u\n"
 		       "        bNrInPins           %5u\n",
 		       buf[3], buf[4]);
 		for (i = 0; i < buf[4]; i++)
-			printf("        baSource(%2u)        %5u\n", i, buf[5+i]);
-		printf("        iSelector           %5u %s\n",
-		       buf[5+buf[4]], term);
-		dump_junk(buf, "        ", 6+buf[4]);
+			printf("        baCSourceID(%2u)     %5u\n", i, buf[5+i]);
+		printf("        bmControls           0x%02x\n", buf[5+buf[4]]);
+		dump_audio_bmcontrols("          ", buf[5+buf[4]], uac2_clock_selector_bmcontrols, protocol);
+
+		printf("        iClockSelector      %5u %s\n",
+		       buf[6+buf[4]], term);
+		dump_junk(buf, "        ", 7+buf[4]);
 		break;
 
-	case 0x06:  /* FEATURE_UNIT */
-		printf("(FEATURE_UNIT)\n");
-		j = buf[5];
-		if (!j)
-			j = 1;
-		k = (buf[0] - 7) / j;
-		if (buf[0] < 7+buf[5]*k)
+	case 0x0c:  /* CLOCK_MULTIPLIER */
+		printf("(CLOCK_MULTIPLIER)\n");
+		if (protocol != USB_AUDIO_CLASS_2)
+			printf("      Warning: CLOCK_MULTIPLIER descriptors are illegal for UAC1\n");
+
+		if (buf[0] < 7)
 			printf("      Warning: Descriptor too short\n");
-		get_string(dev, term, sizeof(term), buf[6+buf[5]*k]);
+
+		printf("        bClockID            %5u\n"
+		       "        bCSourceID          %5u\n",
+		       buf[3], buf[4]);
+
+		printf("        bmControls           0x%02x\n", buf[5]);
+		dump_audio_bmcontrols("          ", buf[5], uac2_clock_multiplier_bmcontrols, protocol);
+
+		get_string(dev, term, sizeof(term), buf[6]);
+		printf("        iClockMultiplier    %5u %s\n", buf[6], term);
+		dump_junk(buf, "        ", 7);
+		break;
+
+	case 0x0d:  /* SAMPLE_RATE_CONVERTER_UNIT */
+		printf("(SAMPLE_RATE_CONVERTER_UNIT)\n");
+		if (protocol != USB_AUDIO_CLASS_2)
+			printf("      Warning: SAMPLE_RATE_CONVERTER_UNIT descriptors are illegal for UAC1\n");
+
+		if (buf[0] < 8)
+			printf("      Warning: Descriptor too short\n");
+
+		get_string(dev, term, sizeof(term), buf[7]);
 		printf("        bUnitID             %5u\n"
 		       "        bSourceID           %5u\n"
-		       "        bControlSize        %5u\n",
-		       buf[3], buf[4], buf[5]);
+		       "        bCSourceInID        %5u\n"
+		       "        bCSourceOutID       %5u\n"
+		       "        iSRC                %5u %s\n",
+		       buf[3], buf[4], buf[5], buf[6], buf[7], term);
+		dump_junk(buf, "        ", 8);
+		break;
+
+	case 0xf0:  /* EFFECT_UNIT - the real value is 0x07, see above for the reason for remapping */
+		printf("(EFFECT_UNIT)\n");
+
+		if (buf[0] < 16)
+			printf("      Warning: Descriptor too short\n");
+		k = (buf[0] - 16) / 4;
+		get_string(dev, term, sizeof(term), buf[15+(k*4)]);
+		printf("        bUnitID             %5u\n"
+		       "        wEffectType         %5u\n"
+		       "        bSourceID           %5u\n",
+		       buf[3], buf[4] | (buf[5] << 8), buf[6]);
 		for (i = 0; i < k; i++) {
-			chcfg = buf[6+buf[5]*i];
-			if (buf[5] > 1)
-				chcfg |= (buf[7+buf[5]*i] << 8);
-			for (j = 0; j < buf[5]; j++)
-				printf("        bmaControls(%2u)      0x%02x\n", i, buf[6+buf[5]*i+j]);
-			for (j = 0; j < 10; j++)
-				if ((chcfg >> j) & 1)
-					printf("          %s\n", chftrcontrols[j]);
+			chcfg = buf[7+(4*i)] |
+				buf[8+(4*i)] << 8 |
+				buf[9+(4*i)] << 16 |
+				buf[10+(4*i)] << 24;
+			printf("        bmaControls(%2u)      0x%08x\n", i, chcfg);
+			/* TODO: parse effect-specific controls */
 		}
-		printf("        iFeature            %5u %s\n", buf[6+buf[5]*k], term);
-		dump_junk(buf, "        ", 7+buf[5]*k);
-		break;
-
-	case 0x07:  /* PROCESSING_UNIT */
-		printf("(PROCESSING_UNIT)\n");
-		j = buf[6];
-		k = buf[11+j];
-		get_string(dev, chnames, sizeof(chnames), buf[10+j]);
-		get_string(dev, term, sizeof(term), buf[12+j+k]);
-		chcfg = buf[8+j] | (buf[9+j] << 8);
-		if (buf[0] < 13+j+k)
-			printf("      Warning: Descriptor too short\n");
-		printf("        bUnitID             %5u\n"
-		       "        wProcessType        %5u\n"
-		       "        bNrPins             %5u\n",
-		       buf[3], buf[4] | (buf[5] << 8), buf[6]);
-		for (i = 0; i < j; i++)
-			printf("        baSourceID(%2u)      %5u\n", i, buf[7+i]);
-		printf("        bNrChannels         %5u\n"
-		       "        wChannelConfig     0x%04x\n", buf[7+j], chcfg);
-		for (i = 0; i < 12; i++)
-			if ((chcfg >> i) & 1)
-				printf("          %s\n", chconfig[i]);
-		printf("        iChannelNames       %5u %s\n"
-		       "        bControlSize        %5u\n", buf[10+j], chnames, buf[11+j]);
-		for (i = 0; i < k; i++)
-			printf("        bmControls(%2u)       0x%02x\n", i, buf[12+j+i]);
-		if (buf[12+j] & 1)
-			printf("          Enable Processing\n");
-		printf("        iProcessing         %5u %s\n"
-		       "        Process-Specific    ", buf[12+j+k], term);
-		dump_bytes(buf+(13+j+k), buf[0]-(13+j+k));
-		break;
-
-	case 0x08:  /* EXTENSION_UNIT */
-		printf("(EXTENSION_UNIT)\n");
-		j = buf[6];
-		k = buf[11+j];
-		get_string(dev, chnames, sizeof(chnames), buf[10+j]);
-		get_string(dev, term, sizeof(term), buf[12+j+k]);
-		chcfg = buf[8+j] | (buf[9+j] << 8);
-		if (buf[0] < 13+j+k)
-			printf("      Warning: Descriptor too short\n");
-		printf("        bUnitID             %5u\n"
-		       "        wExtensionCode      %5u\n"
-		       "        bNrPins             %5u\n",
-		       buf[3], buf[4] | (buf[5] << 8), buf[6]);
-		for (i = 0; i < j; i++)
-			printf("        baSourceID(%2u)      %5u\n", i, buf[7+i]);
-		printf("        bNrChannels         %5u\n"
-		       "        wChannelConfig      %5u\n", buf[7+j], chcfg);
-		for (i = 0; i < 12; i++)
-			if ((chcfg >> i) & 1)
-				printf("          %s\n", chconfig[i]);
-		printf("        iChannelNames       %5u %s\n"
-		       "        bControlSize        %5u\n", buf[10+j], chnames, buf[11+j]);
-		for (i = 0; i < k; i++)
-			printf("        bmControls(%2u)       0x%02x\n", i, buf[12+j+i]);
-		if (buf[12+j] & 1)
-			printf("          Enable Processing\n");
-		printf("        iExtension          %5u %s\n",
-		       buf[12+j+k], term);
-		dump_junk(buf, "        ", 13+j+k);
+		printf("        iEffect             %5u %s\n", buf[15+(k*4)], term);
+		dump_junk(buf, "        ", 16+(k*4));
 		break;
 
 	default:
