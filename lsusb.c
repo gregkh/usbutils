@@ -119,7 +119,7 @@ static void dump_videostreaming_interface(unsigned char *buf);
 static void dump_dfu_interface(unsigned char *buf);
 static char *dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *indent);
 static void dump_hid_device(struct usb_dev_handle *dev, struct usb_interface_descriptor *interface, unsigned char *buf);
-static void dump_audiostreaming_endpoint(unsigned char *buf);
+static void dump_audiostreaming_endpoint(unsigned char *buf, int protocol);
 static void dump_midistreaming_endpoint(unsigned char *buf);
 static void dump_hub(char *prefix, unsigned char *p, int has_tt);
 static void dump_ccid_device(unsigned char *buf);
@@ -745,7 +745,7 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 			switch (buf[1]) {
 			case USB_DT_CS_ENDPOINT:
 				if (interface->bInterfaceClass == 1 && interface->bInterfaceSubClass == 2)
-					dump_audiostreaming_endpoint(buf);
+					dump_audiostreaming_endpoint(buf, interface->bInterfaceProtocol);
 				else if (interface->bInterfaceClass == 1 && interface->bInterfaceSubClass == 3)
 					dump_midistreaming_endpoint(buf);
 				break;
@@ -1862,14 +1862,21 @@ static void dump_audiostreaming_interface(struct usb_dev_handle *dev, unsigned c
 	}
 }
 
-static void dump_audiostreaming_endpoint(unsigned char *buf)
+static const struct bmcontrol uac2_audio_endpoint_bmcontrols[] = {
+	{ "Pitch",		0 },
+	{ "Data Overrun",	1 },
+	{ "Data Underrun",	2 },
+	{ NULL }
+};
+
+static void dump_audiostreaming_endpoint(unsigned char *buf, int protocol)
 {
 	static const char *lockdelunits[] = { "Undefined", "Milliseconds", "Decoded PCM samples", "Reserved" };
 	unsigned int lckdelidx;
 
 	if (buf[1] != USB_DT_CS_ENDPOINT)
 		printf("      Warning: Invalid descriptor\n");
-	else if (buf[0] < 7)
+	else if (buf[0] < ((protocol == USB_AUDIO_CLASS_1) ? 7 : 8))
 		printf("      Warning: Descriptor too short\n");
 	printf("        AudioControl Endpoint Descriptor:\n"
 	       "          bLength             %5u\n"
@@ -1877,19 +1884,40 @@ static void dump_audiostreaming_endpoint(unsigned char *buf)
 	       "          bDescriptorSubtype  %5u (%s)\n"
 	       "          bmAttributes         0x%02x\n",
 	       buf[0], buf[1], buf[2], buf[2] == 1 ? "EP_GENERAL" : "invalid", buf[3]);
-	if (buf[3] & 1)
-		printf("            Sampling Frequency\n");
-	if (buf[3] & 2)
-		printf("            Pitch\n");
-	if (buf[3] & 128)
-		printf("            MaxPacketsOnly\n");
-	lckdelidx = buf[4];
-	if (lckdelidx > 3)
-		lckdelidx = 3;
-	printf("          bLockDelayUnits     %5u %s\n"
-	       "          wLockDelay          %5u %s\n",
-	       buf[4], lockdelunits[lckdelidx], buf[5] | (buf[6] << 8), lockdelunits[lckdelidx]);
-	dump_junk(buf, "        ", 7);
+
+	switch (protocol) {
+	case USB_AUDIO_CLASS_1:
+		if (buf[3] & 1)
+			printf("            Sampling Frequency\n");
+		if (buf[3] & 2)
+			printf("            Pitch\n");
+		if (buf[3] & 128)
+			printf("            MaxPacketsOnly\n");
+		lckdelidx = buf[4];
+		if (lckdelidx > 3)
+			lckdelidx = 3;
+		printf("          bLockDelayUnits     %5u %s\n"
+		       "          wLockDelay          %5u %s\n",
+		       buf[4], lockdelunits[lckdelidx], buf[5] | (buf[6] << 8), lockdelunits[lckdelidx]);
+		dump_junk(buf, "        ", 7);
+		break;
+
+	case USB_AUDIO_CLASS_2:
+		if (buf[3] & 128)
+			printf("            MaxPacketsOnly\n");
+
+		printf("          bmControls           0x%02x\n", buf[4]);
+		dump_audio_bmcontrols("          ", buf[4], uac2_audio_endpoint_bmcontrols, protocol);
+
+		lckdelidx = buf[5];
+		if (lckdelidx > 3)
+			lckdelidx = 3;
+		printf("          bLockDelayUnits     %5u %s\n"
+		       "          wLockDelay          %5u\n",
+		       buf[5], lockdelunits[lckdelidx], buf[6] | (buf[7] << 8));
+		dump_junk(buf, "        ", 8);
+		break;
+	} /* switch protocol */
 }
 
 static void dump_midistreaming_interface(struct usb_dev_handle *dev, unsigned char *buf)
