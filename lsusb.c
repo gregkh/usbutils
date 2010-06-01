@@ -112,7 +112,7 @@ static const char *encryption_type[] = {"UNSECURE", "WIRED", "CCM_1", "RSA_1", "
 static void dump_interface(struct usb_dev_handle *dev, struct usb_interface *interface);
 static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descriptor *interface, struct usb_endpoint_descriptor *endpoint);
 static void dump_audiocontrol_interface(struct usb_dev_handle *dev, unsigned char *buf, int protocol);
-static void dump_audiostreaming_interface(unsigned char *buf);
+static void dump_audiostreaming_interface(struct usb_dev_handle *dev, unsigned char *buf, int protocol);
 static void dump_midistreaming_interface(struct usb_dev_handle *dev, unsigned char *buf);
 static void dump_videocontrol_interface(struct usb_dev_handle *dev, unsigned char *buf);
 static void dump_videostreaming_interface(unsigned char *buf);
@@ -572,7 +572,7 @@ static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_des
 						dump_audiocontrol_interface(dev, buf, interface->bInterfaceProtocol);
 						break;
 					case 2:
-						dump_audiostreaming_interface(buf);
+						dump_audiostreaming_interface(dev, buf, interface->bInterfaceProtocol);
 						break;
 					case 3:
 						dump_midistreaming_interface(dev, buf);
@@ -1526,7 +1526,13 @@ static void dump_audiocontrol_interface(struct usb_dev_handle *dev, unsigned cha
 	}
 }
 
-static void dump_audiostreaming_interface(unsigned char *buf)
+static const struct bmcontrol uac2_as_interface_bmcontrols[] = {
+	{ "Active Alternate Setting",	0 },
+	{ "Valid Alternate Setting",	1 },
+	{ NULL }
+};
+
+static void dump_audiostreaming_interface(struct usb_dev_handle *dev, unsigned char *buf, int protocol)
 {
 	static const char *fmtItag[] = {
 		"TYPE_I_UNDEFINED", "PCM", "PCM8", "IEEE_FLOAT", "ALAW", "MULAW" };
@@ -1537,6 +1543,7 @@ static void dump_audiostreaming_interface(unsigned char *buf)
 		"IEC1937_MPEG-2_Layer1_LS", "IEC1937_MPEG-2_Layer2/3_LS" };
 	unsigned int i, j, fmttag;
 	const char *fmtptr = "undefined";
+	char name[128];
 
 	if (buf[1] != USB_DT_CS_INTERFACE)
 		printf("      Warning: Invalid descriptor\n");
@@ -1550,95 +1557,186 @@ static void dump_audiostreaming_interface(unsigned char *buf)
 	switch (buf[2]) {
 	case 0x01: /* AS_GENERAL */
 		printf("(AS_GENERAL)\n");
-		if (buf[0] < 7)
-			printf("      Warning: Descriptor too short\n");
-		fmttag = buf[5] | (buf[6] << 8);
-		if (fmttag <= 5)
-			fmtptr = fmtItag[fmttag];
-		else if (fmttag >= 0x1000 && fmttag <= 0x1002)
-			fmtptr = fmtIItag[fmttag & 0xfff];
-		else if (fmttag >= 0x2000 && fmttag <= 0x2006)
-			fmtptr = fmtIIItag[fmttag & 0xfff];
-		printf("        bTerminalLink       %5u\n"
-		       "        bDelay              %5u frames\n"
-		       "        wFormatTag          %5u %s\n",
-		       buf[3], buf[4], fmttag, fmtptr);
-		dump_junk(buf, "        ", 7);
+
+		switch (protocol) {
+		case USB_AUDIO_CLASS_1:
+			if (buf[0] < 7)
+				printf("      Warning: Descriptor too short\n");
+			fmttag = buf[5] | (buf[6] << 8);
+			if (fmttag <= 5)
+				fmtptr = fmtItag[fmttag];
+			else if (fmttag >= 0x1000 && fmttag <= 0x1002)
+				fmtptr = fmtIItag[fmttag & 0xfff];
+			else if (fmttag >= 0x2000 && fmttag <= 0x2006)
+				fmtptr = fmtIIItag[fmttag & 0xfff];
+			printf("        bTerminalLink       %5u\n"
+			       "        bDelay              %5u frames\n"
+			       "        wFormatTag          %5u %s\n",
+			       buf[3], buf[4], fmttag, fmtptr);
+			dump_junk(buf, "        ", 7);
+			break;
+		case USB_AUDIO_CLASS_2:
+			if (buf[0] < 16)
+				printf("      Warning: Descriptor too short\n");
+			printf("        bTerminalLink       %5u\n"
+			       "        bmControls           0x%02x\n",
+			       buf[3], buf[4]);
+			dump_audio_bmcontrols("          ", buf[4], uac2_as_interface_bmcontrols, protocol);
+
+			printf("        bFormatType         %5u\n", buf[5]);
+			fmttag = buf[6] | (buf[7] << 8) | (buf[8] << 16) | (buf[9] << 24);
+			printf("        bmFormats           %5u\n", fmttag);
+			for (i=0; i<5; i++)
+				if ((fmttag >> i) & 1)
+					printf("          %s\n", fmtItag[i+1]);
+
+			j = buf[11] | (buf[12] << 8) | (buf[13] << 16) | (buf[14] << 24);
+			printf("        bNrChannels         %5u\n"
+			       "        bmChannelConfig   0x%08x\n",
+			       buf[10], j);
+			for (i = 0; i < 26; i++)
+				if ((j >> i) & 1)
+					printf("          %s\n", chconfig_uac2[i]);
+
+			get_string(dev, name, sizeof(name), buf[15]);
+			printf("        iChannelNames       %5u %s\n", buf[15], name);
+			dump_junk(buf, "        ", 16);
+			break;
+		} /* switch (protocol) */
+
 		break;
 
 	case 0x02: /* FORMAT_TYPE */
 		printf("(FORMAT_TYPE)\n");
-		if (buf[0] < 8)
-			printf("      Warning: Descriptor too short\n");
-		printf("        bFormatType         %5u ", buf[3]);
-		switch (buf[3]) {
-		case 0x01: /* FORMAT_TYPE_I */
-			printf("(FORMAT_TYPE_I)\n");
-			j = buf[7] ? (buf[7]*3+8) : 14;
-			if (buf[0] < j)
+		switch (protocol) {
+		case USB_AUDIO_CLASS_1:
+			if (buf[0] < 8)
 				printf("      Warning: Descriptor too short\n");
-			printf("        bNrChannels         %5u\n"
-			       "        bSubframeSize       %5u\n"
-			       "        bBitResolution      %5u\n"
-			       "        bSamFreqType        %5u %s\n",
-			       buf[4], buf[5], buf[6], buf[7], buf[7] ? "Discrete" : "Continuous");
-			if (!buf[7])
-				printf("        tLowerSamFreq     %7u\n"
-				       "        tUpperSamFreq     %7u\n",
-				       buf[8] | (buf[9] << 8) | (buf[10] << 16), buf[11] | (buf[12] << 8) | (buf[13] << 16));
-			else
-				for (i = 0; i < buf[7]; i++)
-					printf("        tSamFreq[%2u]      %7u\n", i,
-					       buf[8+3*i] | (buf[9+3*i] << 8) | (buf[10+3*i] << 16));
-			dump_junk(buf, "        ", j);
+			printf("        bFormatType         %5u ", buf[3]);
+			switch (buf[3]) {
+			case 0x01: /* FORMAT_TYPE_I */
+				printf("(FORMAT_TYPE_I)\n");
+				j = buf[7] ? (buf[7]*3+8) : 14;
+				if (buf[0] < j)
+					printf("      Warning: Descriptor too short\n");
+				printf("        bNrChannels         %5u\n"
+				       "        bSubframeSize       %5u\n"
+				       "        bBitResolution      %5u\n"
+				       "        bSamFreqType        %5u %s\n",
+				       buf[4], buf[5], buf[6], buf[7], buf[7] ? "Discrete" : "Continuous");
+				if (!buf[7])
+					printf("        tLowerSamFreq     %7u\n"
+					       "        tUpperSamFreq     %7u\n",
+					       buf[8] | (buf[9] << 8) | (buf[10] << 16), buf[11] | (buf[12] << 8) | (buf[13] << 16));
+				else
+					for (i = 0; i < buf[7]; i++)
+						printf("        tSamFreq[%2u]      %7u\n", i,
+						       buf[8+3*i] | (buf[9+3*i] << 8) | (buf[10+3*i] << 16));
+				dump_junk(buf, "        ", j);
+				break;
+
+			case 0x02: /* FORMAT_TYPE_II */
+				printf("(FORMAT_TYPE_II)\n");
+				j = buf[8] ? (buf[7]*3+9) : 15;
+				if (buf[0] < j)
+					printf("      Warning: Descriptor too short\n");
+				printf("        wMaxBitRate         %5u\n"
+				       "        wSamplesPerFrame    %5u\n"
+				       "        bSamFreqType        %5u %s\n",
+				       buf[4] | (buf[5] << 8), buf[6] | (buf[7] << 8), buf[8], buf[8] ? "Discrete" : "Continuous");
+				if (!buf[8])
+					printf("        tLowerSamFreq     %7u\n"
+					       "        tUpperSamFreq     %7u\n",
+					       buf[9] | (buf[10] << 8) | (buf[11] << 16), buf[12] | (buf[13] << 8) | (buf[14] << 16));
+				else
+					for (i = 0; i < buf[8]; i++)
+						printf("        tSamFreq[%2u]      %7u\n", i,
+						       buf[9+3*i] | (buf[10+3*i] << 8) | (buf[11+3*i] << 16));
+				dump_junk(buf, "        ", j);
+				break;
+
+			case 0x03: /* FORMAT_TYPE_III */
+				printf("(FORMAT_TYPE_III)\n");
+				j = buf[7] ? (buf[7]*3+8) : 14;
+				if (buf[0] < j)
+					printf("      Warning: Descriptor too short\n");
+				printf("        bNrChannels         %5u\n"
+				       "        bSubframeSize       %5u\n"
+				       "        bBitResolution      %5u\n"
+				       "        bSamFreqType        %5u %s\n",
+				       buf[4], buf[5], buf[6], buf[7], buf[7] ? "Discrete" : "Continuous");
+				if (!buf[7])
+					printf("        tLowerSamFreq     %7u\n"
+					       "        tUpperSamFreq     %7u\n",
+					       buf[8] | (buf[9] << 8) | (buf[10] << 16), buf[11] | (buf[12] << 8) | (buf[13] << 16));
+				else
+					for (i = 0; i < buf[7]; i++)
+						printf("        tSamFreq[%2u]      %7u\n", i,
+						       buf[8+3*i] | (buf[9+3*i] << 8) | (buf[10+3*i] << 16));
+				dump_junk(buf, "        ", j);
+				break;
+
+			default:
+				printf("(unknown)\n"
+				       "        Invalid desc format type:");
+				dump_bytes(buf+4, buf[0]-4);
+			}
+
 			break;
 
-		case 0x02: /* FORMAT_TYPE_II */
-			printf("(FORMAT_TYPE_II)\n");
-			j = buf[8] ? (buf[7]*3+9) : 15;
-			if (buf[0] < j)
+		case USB_AUDIO_CLASS_2:
+			if (buf[0] < 8)
 				printf("      Warning: Descriptor too short\n");
-			printf("        wMaxBitRate         %5u\n"
-			       "        wSamplesPerFrame    %5u\n"
-			       "        bSamFreqType        %5u %s\n",
-			       buf[4] | (buf[5] << 8), buf[6] | (buf[7] << 8), buf[8], buf[8] ? "Discrete" : "Continuous");
-			if (!buf[8])
-				printf("        tLowerSamFreq     %7u\n"
-				       "        tUpperSamFreq     %7u\n",
-				       buf[9] | (buf[10] << 8) | (buf[11] << 16), buf[12] | (buf[13] << 8) | (buf[14] << 16));
-			else
-				for (i = 0; i < buf[8]; i++)
-					printf("        tSamFreq[%2u]      %7u\n", i,
-					       buf[9+3*i] | (buf[10+3*i] << 8) | (buf[11+3*i] << 16));
-			dump_junk(buf, "        ", j);
-			break;
+			printf("        bFormatType         %5u ", buf[3]);
+			switch (buf[3]) {
+			case 0x01: /* FORMAT_TYPE_I */
+				printf("(FORMAT_TYPE_I)\n");
+				if (buf[0] < 6)
+					printf("      Warning: Descriptor too short\n");
+				printf("        bSubslotSize        %5u\n"
+				       "        bBitResolution      %5u\n",
+				       buf[4], buf[5]);
+				dump_junk(buf, "        ", 6);
+				break;
 
-		case 0x03: /* FORMAT_TYPE_III */
-			printf("(FORMAT_TYPE_III)\n");
-			j = buf[7] ? (buf[7]*3+8) : 14;
-			if (buf[0] < j)
-				printf("      Warning: Descriptor too short\n");
-			printf("        bNrChannels         %5u\n"
-			       "        bSubframeSize       %5u\n"
-			       "        bBitResolution      %5u\n"
-			       "        bSamFreqType        %5u %s\n",
-			       buf[4], buf[5], buf[6], buf[7], buf[7] ? "Discrete" : "Continuous");
-			if (!buf[7])
-				printf("        tLowerSamFreq     %7u\n"
-				       "        tUpperSamFreq     %7u\n",
-				       buf[8] | (buf[9] << 8) | (buf[10] << 16), buf[11] | (buf[12] << 8) | (buf[13] << 16));
-			else
-				for (i = 0; i < buf[7]; i++)
-					printf("        tSamFreq[%2u]      %7u\n", i,
-					       buf[8+3*i] | (buf[9+3*i] << 8) | (buf[10+3*i] << 16));
-			dump_junk(buf, "        ", j);
-			break;
+			case 0x02: /* FORMAT_TYPE_II */
+				printf("(FORMAT_TYPE_II)\n");
+				if (buf[0] < 8)
+					printf("      Warning: Descriptor too short\n");
+				printf("        wMaxBitRate         %5u\n"
+				       "        wSlotsPerFrame      %5u\n",
+				       buf[4] | (buf[5] << 8),
+				       buf[6] | (buf[7] << 8));
+				dump_junk(buf, "        ", 8);
+				break;
 
-		default:
-			printf("(unknown)\n"
-			       "        Invalid desc format type:");
-			dump_bytes(buf+4, buf[0]-4);
-		}
+			case 0x03: /* FORMAT_TYPE_III */
+				printf("(FORMAT_TYPE_III)\n");
+				if (buf[0] < 6)
+					printf("      Warning: Descriptor too short\n");
+				printf("        bSubslotSize        %5u\n"
+				       "        bBitResolution      %5u\n",
+				       buf[4], buf[5]);
+				dump_junk(buf, "        ", 6);
+				break;
+
+			case 0x04: /* FORMAT_TYPE_IV */
+				printf("(FORMAT_TYPE_IV)\n");
+				if (buf[0] < 4)
+					printf("      Warning: Descriptor too short\n");
+				printf("        bFormatType         %5u\n", buf[3]);
+				dump_junk(buf, "        ", 4);
+				break;
+
+			default:
+				printf("(unknown)\n"
+				       "        Invalid desc format type:");
+				dump_bytes(buf+4, buf[0]-4);
+			}
+
+			break;
+		} /* switch (protocol) */
+
 		break;
 
 	case 0x03: /* FORMAT_SPECIFIC */
