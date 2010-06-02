@@ -939,12 +939,16 @@ static void dump_audio_bmcontrols(const char *prefix, int bmcontrols, const stru
 
 			break;
 
-		case USB_AUDIO_CLASS_2:
-			if (bmcontrols & (1 << (list->bit * 2)))
-				printf("%s%s Control (%s)\n", prefix, list->name,
-					bmcontrols & (2 << (list->bit * 2)) ? "read/write" : "read-only");
+		case USB_AUDIO_CLASS_2: {
+			const char *ctrl_type[] = { "read-only", "ILLEGAL (0b10)", "read/write" };
+			int ctrl = (bmcontrols >> (list->bit * 2)) & 0x3;
+
+			if (ctrl)
+				printf("%s%s Control (%s)\n", prefix, list->name, ctrl_type[ctrl-1]);
 
 			break;
+		}
+
 		} /* switch */
 
 		list++;
