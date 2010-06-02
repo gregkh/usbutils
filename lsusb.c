@@ -1689,8 +1689,6 @@ static void dump_audiostreaming_interface(struct usb_dev_handle *dev, unsigned c
 			break;
 
 		case USB_AUDIO_CLASS_2:
-			if (buf[0] < 8)
-				printf("      Warning: Descriptor too short\n");
 			printf("        bFormatType         %5u ", buf[3]);
 			switch (buf[3]) {
 			case 0x01: /* FORMAT_TYPE_I */
