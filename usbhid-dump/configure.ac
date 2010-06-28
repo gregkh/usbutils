@@ -48,7 +48,7 @@ AC_PROG_LIBTOOL
 # Checks for libraries.
 #
 AC_CHECK_LIB(
-    [usb], [libusb_init], [],
+    [usb-1.0], [libusb_init], [],
     [AC_MSG_FAILURE([libusb is required, but was not found, abort.
                      Try installing libusb-1.0-0-dev package.])])
 
@@ -91,8 +91,5 @@ fi
 # Output
 #
 AC_CONFIG_FILES([Makefile
-                 include/Makefile
-                 include/hid-dump/Makefile
-                 lib/Makefile
                  src/Makefile])
 AC_OUTPUT
