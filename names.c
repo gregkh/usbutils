@@ -23,6 +23,10 @@
 
 /*****************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -33,10 +37,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <ctype.h>
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #ifdef HAVE_LIBZ
 #include <zlib.h>
