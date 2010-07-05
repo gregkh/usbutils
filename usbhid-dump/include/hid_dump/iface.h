@@ -37,19 +37,17 @@ extern "C" {
 typedef struct hid_dump_iface hid_dump_iface;
 
 struct hid_dump_iface {
-    hid_dump_iface *next;
-    uint8_t         number;     /**< Interface number */
-    bool            detached;   /**< True if the interface was detached from
-                                     the kernel driver, false otherwise */
+    hid_dump_iface         *next;
+    libusb_device_handle   *handle;     /**< Device handle */
+    uint8_t                 number;     /**< Interface number */
+    bool                    detached;   /**< True if the interface was
+                                             detached from the kernel
+                                             driver, false otherwise */
 };
 
-static inline bool
-hid_dump_iface_valid(const hid_dump_iface *iface)
-{
-    return iface != NULL && iface->number < UINT8_MAX;
-}
+extern bool hid_dump_iface_valid(const hid_dump_iface *iface);
 
-extern hid_dump_iface *hid_dump_iface_new(uint8_t number);
+extern hid_dump_iface *hid_dump_iface_new(libusb_device_handle *handle, uint8_t number);
 
 static inline bool
 hid_dump_iface_list_empty(const hid_dump_iface *list)
@@ -66,16 +64,16 @@ extern void hid_dump_iface_list_free(hid_dump_iface *list);
 /**
  * Fetch a list of specified class interfaces from a device.
  *
- * @param dev           The device to fetch interface list from.
+ * @param handle        The device handle to fetch interface list from.
  * @param iface_class   The interface class to match against.
  * @param plist         Location for the resulting list head; could be NULL.
  *
  * @return Libusb error code.
  */
 enum libusb_error
-hid_dump_iface_list_new_by_class(libusb_device     *dev,
-                                 uint8_t            iface_class,
-                                 hid_dump_iface   **plist);
+hid_dump_iface_list_new_by_class(libusb_device_handle  *handle,
+                                 uint8_t                iface_class,
+                                 hid_dump_iface       **plist);
 
 /**
  * Filter an interface list by an optional interface number, resulting
@@ -91,6 +89,25 @@ extern hid_dump_iface *hid_dump_iface_list_fltr_by_num(
                                                 hid_dump_iface *list,
                                                 int             number);
 
+
+/**
+ * Detach all interfaces in a list from their kernel drivers (if any).
+ *
+ * @param list  The list of interfaces to detach.
+ *
+ * @return Libusb error code.
+ */
+extern enum libusb_error hid_dump_iface_list_detach(hid_dump_iface *list);
+
+/**
+ * Attach all interfaces in a list to their kernel drivers (if were detached
+ * before).
+ *
+ * @param list  The list of interfaces to attach.
+ *
+ * @return Libusb error code.
+ */
+extern enum libusb_error hid_dump_iface_list_attach(hid_dump_iface *list);
 
 #ifdef __cplusplus
 } /* extern "C" */

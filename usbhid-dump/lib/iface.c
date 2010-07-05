@@ -29,8 +29,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+bool
+hid_dump_iface_valid(const hid_dump_iface *iface)
+{
+    return iface != NULL &&
+           iface->handle != NULL &&
+           iface->number < UINT8_MAX;
+}
+
 hid_dump_iface *
-hid_dump_iface_new(uint8_t number)
+hid_dump_iface_new(libusb_device_handle *handle, uint8_t number)
 {
     hid_dump_iface *iface;
 
@@ -39,6 +47,7 @@ hid_dump_iface_new(uint8_t number)
         return NULL;
 
     iface->next = NULL;
+    iface->handle = handle;
     iface->number = number;
     iface->detached = false;
 
@@ -71,9 +80,9 @@ hid_dump_iface_list_free(hid_dump_iface *list)
 
 
 enum libusb_error
-hid_dump_iface_list_new_by_class(libusb_device     *dev,
-                                 uint8_t            iface_class,
-                                 hid_dump_iface   **plist)
+hid_dump_iface_list_new_by_class(libusb_device_handle  *handle,
+                                 uint8_t                iface_class,
+                                 hid_dump_iface       **plist)
 {
     enum libusb_error                   err             = LIBUSB_ERROR_OTHER;
     struct libusb_config_descriptor    *config          = NULL;
@@ -82,10 +91,11 @@ hid_dump_iface_list_new_by_class(libusb_device     *dev,
     hid_dump_iface                     *last            = NULL;
     hid_dump_iface                     *iface;
 
-    assert(dev != NULL);
+    assert(handle != NULL);
 
     /* Retrieve active configuration descriptor */
-    err = libusb_get_active_config_descriptor(dev, &config);
+    err = libusb_get_active_config_descriptor(libusb_get_device(handle),
+                                              &config);
     if (err != LIBUSB_SUCCESS)
         goto cleanup;
 
@@ -96,10 +106,8 @@ hid_dump_iface_list_new_by_class(libusb_device     *dev,
         if (libusb_iface->num_altsetting == 1 &&
             libusb_iface->altsetting->bInterfaceClass == iface_class)
         {
-            fprintf(stderr, "%d\n",
-                    libusb_iface->altsetting->bInterfaceNumber);
-
-            iface = hid_dump_iface_new(libusb_iface->altsetting->bInterfaceNumber);
+            iface = hid_dump_iface_new(
+                        handle, libusb_iface->altsetting->bInterfaceNumber);
             if (iface == NULL)
             {
                 err = LIBUSB_ERROR_NO_MEM;
@@ -162,3 +170,44 @@ hid_dump_iface_list_fltr_by_num(hid_dump_iface *list,
 
     return list;
 }
+
+
+enum libusb_error
+hid_dump_iface_list_detach(hid_dump_iface *list)
+{
+    enum libusb_error   err;
+
+    assert(hid_dump_iface_list_valid(list));
+
+    for (; list != NULL; list = list->next)
+    {
+        err = libusb_detach_kernel_driver(list->handle, list->number);
+        if (err == LIBUSB_SUCCESS)
+            list->detached = true;
+        else if (err != LIBUSB_ERROR_NOT_FOUND)
+            return err;
+    }
+
+    return LIBUSB_SUCCESS;
+}
+
+
+enum libusb_error
+hid_dump_iface_list_attach(hid_dump_iface *list)
+{
+    enum libusb_error   err;
+
+    assert(hid_dump_iface_list_valid(list));
+
+    for (; list != NULL; list = list->next)
+        if (list->detached)
+        {
+            err = libusb_attach_kernel_driver(list->handle, list->number);
+            if (err != LIBUSB_SUCCESS && err != LIBUSB_ERROR_NOT_FOUND)
+                return err;
+        }
+
+    return LIBUSB_SUCCESS;
+}
+
+

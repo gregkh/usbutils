@@ -36,7 +36,7 @@ libusb_strerror(enum libusb_error err)
             return "Success";
 #define MAP(_name, _desc) \
     case LIBUSB_ERROR_##_name:          \
-        return _desc " (" #_name ")"
+        return _desc " (ERROR_" #_name ")"
 	    MAP(IO,
             "Input/output error");
 	    MAP(INVALID_PARAM,

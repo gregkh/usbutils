@@ -66,21 +66,29 @@ usage(FILE *stream, const char *progname)
 }
 
 
+#define ERROR(_fmt, _args...) \
+    fprintf(stderr, _fmt "\n", ##_args)
+
+#define FAILURE(_fmt, _args...) \
+    fprintf(stderr, "Failed to " _fmt "\n", ##_args)
+
+#define LIBUSB_FAILURE(_fmt, _args...) \
+    ERROR_CLEANUP("Failed to " _fmt ": %s", ##_args, libusb_strerror(err))
+
 #define ERROR_CLEANUP(_fmt, _args...) \
-    do {                                        \
-        fprintf(stderr, _fmt "\n", ##_args);    \
-        goto cleanup;                           \
+    do {                                \
+        ERROR(_fmt, ##_args);           \
+        goto cleanup;                   \
     } while (0)
 
 #define LIBUSB_ERROR_CLEANUP(_fmt, _args...) \
     ERROR_CLEANUP(_fmt ": %s", ##_args, libusb_strerror(err))
 
-
 #define FAILURE_CLEANUP(_fmt, _args...) \
-    ERROR_CLEANUP("Failed to" _fmt, ##_args)
+    ERROR_CLEANUP("Failed to " _fmt, ##_args)
 
 #define LIBUSB_FAILURE_CLEANUP(_fmt, _args...) \
-    LIBUSB_ERROR_CLEANUP("Failed to" _fmt, ##_args)
+    LIBUSB_ERROR_CLEANUP("Failed to " _fmt, ##_args)
 
 
 #if 0
@@ -122,8 +130,7 @@ run(bool    dump_descriptor,
         LIBUSB_FAILURE_CLEANUP("find and open the device");
 
     /* Retrieve the list of HID interfaces */
-    err = hid_dump_iface_list_new_by_class(libusb_get_device(handle), 3,
-                                           &iface_list);
+    err = hid_dump_iface_list_new_by_class(handle, 3, &iface_list);
     if (err != LIBUSB_SUCCESS)
         LIBUSB_FAILURE_CLEANUP("find a HID interface");
 
@@ -132,6 +139,11 @@ run(bool    dump_descriptor,
     if (hid_dump_iface_list_empty(iface_list))
         ERROR_CLEANUP("No matching HID interfaces");
 
+    /* Detach interfaces */
+    err = hid_dump_iface_list_detach(iface_list);
+    if (err != LIBUSB_SUCCESS)
+        LIBUSB_FAILURE_CLEANUP("detach interface(s) from "
+                               "the kernel drivers");
 #if 0
     /* Run with the handle */
     result = run_handle(dump_descriptor, dump_stream, handle, if_num);
@@ -143,6 +155,11 @@ run(bool    dump_descriptor,
 #endif
 
 cleanup:
+
+    /* Attach interfaces back */
+    err = hid_dump_iface_list_attach(iface_list);
+    if (err != LIBUSB_SUCCESS)
+        LIBUSB_FAILURE("attach interface(s) to the kernel drivers");
 
     /* Free the device */
     if (handle != NULL)
