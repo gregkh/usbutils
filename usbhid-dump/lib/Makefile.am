@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Nikolai Kondrashov
+# Copyright (C) 2009-2010 Nikolai Kondrashov
 #
 # This file is part of hid-dump.
 #
@@ -16,7 +16,9 @@
 # along with hid-dump; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-bin_PROGRAMS = hid-dump
+noinst_LTLIBRARIES = libhid_dump.la
 
-hid_dump_SOURCES = hid-dump.c
-hid_dump_LDADD = ../lib/libhid_dump.la
+libhid_dump_la_SOURCES = \
+    iface.c                 \
+    libusb.c                \
+    str.c

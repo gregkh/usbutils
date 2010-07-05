@@ -24,6 +24,10 @@
  * @(#) $Id$
  */
 
+#include "hid_dump/iface.h"
+#include "hid_dump/str.h"
+#include "hid_dump/libusb.h"
+
 #include <assert.h>
 #include <stdbool.h>
 #include <ctype.h>
@@ -50,7 +54,7 @@ usage(FILE *stream, const char *progname)
             "  bus      bus number\n"
             "  dev      device number\n"
             "  if       interface number; if ommitted,\n"
-            "           all the device HID interfaces are dumped\n"
+            "           all device HID interfaces are dumped\n"
             "\n"
             "Options:\n"
             "  -h, --help   this help message\n"
@@ -59,177 +63,22 @@ usage(FILE *stream, const char *progname)
 }
 
 
-static const char *
-libusb_strerror(enum libusb_error err)
-{
-    switch (err)
-    {
-        case LIBUSB_SUCCESS:
-            return "Success";
-#define MAP(_name, _desc) \
-    case LIBUSB_ERROR_##_name:          \
-        return _desc " (" #_name ")"
-	    MAP(IO,
-            "Input/output error");
-	    MAP(INVALID_PARAM,
-            "Invalid parameter");
-	    MAP(ACCESS,
-            "Access denied (insufficient permissions)");
-	    MAP(NO_DEVICE,
-            "No such device (it may have been disconnected)");
-	    MAP(NOT_FOUND,
-            "Entity not found");
-	    MAP(BUSY,
-            "Resource busy");
-	    MAP(TIMEOUT,
-            "Operation timed out");
-	    MAP(OVERFLOW,
-            "Overflow");
-	    MAP(PIPE,
-            "Pipe error");
-	    MAP(INTERRUPTED,
-            "System call interrupted (perhaps due to signal)");
-	    MAP(NO_MEM,
-            "Insufficient memory");
-	    MAP(NOT_SUPPORTED,
-            "Operation not supported or unimplemented on this platform");
-	    MAP(OTHER, "Other error");
-#undef MAP
-        default:
-            return "Unknown error code";
-    }
-}
-
-
-static bool
-strisblank(const char *str)
-{
-    for (; *str != '\0'; str++)
-        if (!isblank(*str))
-            return false;
-    return true;
-}
-
 #define ERROR_CLEANUP(_fmt, _args...) \
-    do {                                                    \
-        fprintf(stderr, "Failed to " _fmt "\n", ##_args);   \
-        goto cleanup;                                       \
-    } while (0)
-
-#define LIBUSB_ERROR_CLEANUP(_fmt, _args...) \
     do {                                        \
-        fprintf(stderr,                         \
-                "Failed to " _fmt ": %s\n",     \
-                ##_args, libusb_strerror(err)); \
+        fprintf(stderr, _fmt "\n", ##_args);    \
         goto cleanup;                           \
     } while (0)
 
-
-enum libusb_error
-libusb_open_device_with_bus_dev(libusb_context         *ctx,
-                                uint8_t                 bus_num,
-                                uint8_t                 dev_addr,
-                                libusb_device_handle  **phandle)
-{
-    enum libusb_error       err     = LIBUSB_ERROR_OTHER;
-    libusb_device         **list    = NULL;
-    ssize_t                 num;
-    ssize_t                 idx;
-    libusb_device          *dev;
-    libusb_device_handle   *handle  = NULL;
-
-    /* Retrieve device list */
-    num = libusb_get_device_list(ctx, &list);
-    if (num == LIBUSB_ERROR_NO_MEM)
-    {
-        err = num;
-        goto cleanup;
-    }
-
-    /* Find the device */
-    for (idx = 0; idx < num; idx++)
-    {
-        dev = list[idx];
-
-        if (libusb_get_bus_number(dev) == bus_num &&
-            libusb_get_device_address(dev) == dev_addr)
-        {
-            err = libusb_open(dev, &handle);
-            if (err != LIBUSB_SUCCESS)
-                goto cleanup;
-            break;
-        }
-    }
-
-    /* Free the device list freeing unused devices */
-    libusb_free_device_list(list, true);
-    list = NULL;
-
-    /* Check if the device is found */
-    if (handle == NULL)
-    {
-        err = LIBUSB_ERROR_NO_DEVICE;
-        goto cleanup;
-    }
-
-    /* Output the handle */
-    if (phandle != NULL)
-    {
-        *phandle = handle;
-        handle = NULL;
-    }
-
-    err = LIBUSB_SUCCESS;
-
-cleanup:
-
-    /* Free the device */
-    if (handle != NULL)
-        libusb_close(handle);
-
-    /* Free device list along with devices */
-    if (list != NULL)
-        libusb_free_device_list(list, true);
-
-    return err;
-}
+#define LIBUSB_ERROR_CLEANUP(_fmt, _args...) \
+    ERROR_CLEANUP(_fmt ": %s", ##_args, libusb_strerror(err))
 
 
-ssize_t
-libusb_find_interfaces_by_class(libusb_device          *dev,
-                                uint8_t                 if_class,
-                                int                   **pif_list,
-                                size_t                 *pif_num)
-{
-    enum libusb_error                   err     = LIBUSB_ERROR_OTHER;
-    struct libusb_config_descriptor    *config  = NULL;
-    const struct libusb_interface      *iface;
-    uint8_t                             i;
+#define FAILURE_CLEANUP(_fmt, _args...) \
+    ERROR_CLEANUP("Failed to" _fmt, ##_args)
 
-    (void)if_class;
-    (void)pif_list;
-    (void)pif_num;
+#define LIBUSB_FAILURE_CLEANUP(_fmt, _args...) \
+    LIBUSB_ERROR_CLEANUP("Failed to" _fmt, ##_args)
 
-    err = libusb_get_active_config_descriptor(dev, &config);
-    if (err != LIBUSB_SUCCESS)
-        goto cleanup;
-
-    for (iface = config->interface, i = 0;
-         i < config->bNumInterfaces;
-         i++, iface++)
-    {
-        fprintf(stderr, "if index: %hhu, alt settings: %d\n",
-                i, iface->num_altsetting);
-    }
-    
-
-cleanup:
-
-    if (config != NULL)
-        libusb_free_config_descriptor(config);
-
-    return err;
-}
 
 #if 0
 static int
@@ -247,18 +96,19 @@ run(bool    dump_descriptor,
     bool    dump_stream, 
     uint8_t bus_num,
     uint8_t dev_addr,
-    int     if_num)
+    int     iface_num)
 {
-    int                     result  = 1;
+    int                     result      = 1;
     enum libusb_error       err;
-    libusb_context         *ctx     = NULL;
-    libusb_device         **list    = NULL;
-    libusb_device_handle   *handle  = NULL;
+    libusb_context         *ctx         = NULL;
+    libusb_device         **list        = NULL;
+    libusb_device_handle   *handle      = NULL;
+    hid_dump_iface         *iface_list  = NULL;
 
     /* Initialize libusb context */
     err = libusb_init(&ctx);
     if (err != LIBUSB_SUCCESS)
-        LIBUSB_ERROR_CLEANUP("create libusb context");
+        LIBUSB_FAILURE_CLEANUP("create libusb context");
 
     /* Set libusb debug level */
     libusb_set_debug(ctx, 3);
@@ -266,7 +116,19 @@ run(bool    dump_descriptor,
     /* Find and open the device */
     err = libusb_open_device_with_bus_dev(ctx, bus_num, dev_addr, &handle);
     if (err != LIBUSB_SUCCESS)
-        LIBUSB_ERROR_CLEANUP("find and open the device");
+        LIBUSB_FAILURE_CLEANUP("find and open the device");
+
+    /* Retrieve the list of HID interfaces */
+    err = hid_dump_iface_list_new_by_class(libusb_get_device(handle), 3,
+                                           &iface_list);
+    if (err != LIBUSB_SUCCESS)
+        LIBUSB_FAILURE_CLEANUP("find a HID interface");
+
+    /* Filter the interface list by specified interface number */
+    iface_list = hid_dump_iface_list_fltr_by_num(iface_list, iface_num);
+
+    if (hid_dump_iface_list_empty(iface_list))
+        ERROR_CLEANUP("No matching HID interfaces");
 
 #if 0
     /* Run with the handle */
@@ -274,7 +136,8 @@ run(bool    dump_descriptor,
 #else
     (void)dump_descriptor;
     (void)dump_stream;
-    (void)if_num;
+    (void)iface_num;
+    result = 0;
 #endif
 
 cleanup:
@@ -387,19 +250,22 @@ main(int argc, char **argv)
 
     errno = 0;
     bus_num = strtol(bus_str, &end, 0);
-    if (errno != 0 || !strisblank(end) || bus_num <= 0 || bus_num > 255)
+    if (errno != 0 || !hid_dump_strisblank(end) ||
+        bus_num <= 0 || bus_num > 255)
         USAGE_ERROR("Invalid bus number \"%s\"", bus_str);
 
     errno = 0;
     dev_num = strtol(dev_str, &end, 0);
-    if (errno != 0 || !strisblank(end) || dev_num <= 0 || dev_num > 255)
+    if (errno != 0 || !hid_dump_strisblank(end) ||
+        dev_num <= 0 || dev_num > 255)
         USAGE_ERROR("Invalid device number \"%s\"", dev_str);
 
-    if (!strisblank(if_str))
+    if (!hid_dump_strisblank(if_str))
     {
         errno = 0;
         if_num = strtol(if_str, &end, 0);
-        if (errno != 0 || !strisblank(end) || if_num < 0 || if_num >= 255)
+        if (errno != 0 || !hid_dump_strisblank(end) ||
+            if_num < 0 || if_num >= 255)
             USAGE_ERROR("Invalid interface number \"%s\"", if_str);
     }
 

@@ -16,7 +16,4 @@
 # along with hid-dump; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-bin_PROGRAMS = hid-dump
-
-hid_dump_SOURCES = hid-dump.c
-hid_dump_LDADD = ../lib/libhid_dump.la
+SUBDIRS = hid_dump

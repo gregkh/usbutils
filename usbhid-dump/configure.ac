@@ -91,5 +91,8 @@ fi
 # Output
 #
 AC_CONFIG_FILES([Makefile
+                 include/Makefile
+                 include/hid_dump/Makefile
+                 lib/Makefile
                  src/Makefile])
 AC_OUTPUT
