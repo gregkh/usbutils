@@ -40,6 +40,7 @@ struct hid_dump_iface {
     hid_dump_iface         *next;
     libusb_device_handle   *handle;     /**< Device handle */
     uint8_t                 number;     /**< Interface number */
+    uint8_t                 int_in_ep;  /**< Interrupt IN EP address */
     bool                    detached;   /**< True if the interface was
                                              detached from the kernel
                                              driver, false otherwise */
@@ -49,7 +50,11 @@ struct hid_dump_iface {
 
 extern bool hid_dump_iface_valid(const hid_dump_iface *iface);
 
-extern hid_dump_iface *hid_dump_iface_new(libusb_device_handle *handle, uint8_t number);
+extern hid_dump_iface *hid_dump_iface_new(libusb_device_handle *handle,
+                                          uint8_t               number,
+                                          uint8_t               int_in_ep);
+
+extern bool hid_dump_iface_list_valid(const hid_dump_iface *list);
 
 static inline bool
 hid_dump_iface_list_empty(const hid_dump_iface *list)
@@ -57,24 +62,21 @@ hid_dump_iface_list_empty(const hid_dump_iface *list)
     return list == NULL;
 }
 
-
-extern bool hid_dump_iface_list_valid(const hid_dump_iface *list);
+extern size_t hid_dump_iface_list_len(const hid_dump_iface *list);
 
 extern void hid_dump_iface_list_free(hid_dump_iface *list);
 
 
 /**
- * Fetch a list of specified class interfaces from a device.
+ * Fetch a list of HID interfaces from a device.
  *
  * @param handle        The device handle to fetch interface list from.
- * @param iface_class   The interface class to match against.
  * @param plist         Location for the resulting list head; could be NULL.
  *
  * @return Libusb error code.
  */
 enum libusb_error
-hid_dump_iface_list_new_by_class(libusb_device_handle  *handle,
-                                 uint8_t                iface_class,
+hid_dump_iface_list_new_from_dev(libusb_device_handle  *handle,
                                  hid_dump_iface       **plist);
 
 /**
@@ -119,6 +121,15 @@ extern enum libusb_error hid_dump_iface_list_attach(hid_dump_iface *list);
  */
 extern enum libusb_error hid_dump_iface_list_claim(hid_dump_iface *list);
 
+/**
+ * Clear halt condition on input interrupt endpoints of all interfaces.
+ *
+ * @param list  The list of interfaces to clear halt condition on.
+ *
+ * @return Libusb error code.
+ */
+extern enum libusb_error hid_dump_iface_list_clear_halt(
+                                                    hid_dump_iface *list);
 /**
  * Release all interfaces in a list (if were claimed before).
  *

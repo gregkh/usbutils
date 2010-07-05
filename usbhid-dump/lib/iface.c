@@ -38,7 +38,9 @@ hid_dump_iface_valid(const hid_dump_iface *iface)
 }
 
 hid_dump_iface *
-hid_dump_iface_new(libusb_device_handle *handle, uint8_t number)
+hid_dump_iface_new(libusb_device_handle    *handle,
+                   uint8_t                  number,
+                   uint8_t                  int_in_ep)
 {
     hid_dump_iface *iface;
 
@@ -49,7 +51,9 @@ hid_dump_iface_new(libusb_device_handle *handle, uint8_t number)
     iface->next = NULL;
     iface->handle = handle;
     iface->number = number;
+    iface->int_in_ep = int_in_ep;
     iface->detached = false;
+    iface->claimed = false;
 
     return iface;
 }
@@ -63,6 +67,18 @@ hid_dump_iface_list_valid(const hid_dump_iface *list)
             return false;
 
     return true;
+}
+
+
+size_t
+hid_dump_iface_list_len(const hid_dump_iface *list)
+{
+    size_t  len = 0;
+
+    for (; list != NULL; list = list->next)
+        len++;
+
+    return len;
 }
 
 
@@ -80,16 +96,19 @@ hid_dump_iface_list_free(hid_dump_iface *list)
 
 
 enum libusb_error
-hid_dump_iface_list_new_by_class(libusb_device_handle  *handle,
-                                 uint8_t                iface_class,
+hid_dump_iface_list_new_from_dev(libusb_device_handle  *handle,
                                  hid_dump_iface       **plist)
 {
-    enum libusb_error                   err             = LIBUSB_ERROR_OTHER;
-    struct libusb_config_descriptor    *config          = NULL;
-    const struct libusb_interface      *libusb_iface;
-    hid_dump_iface                     *list            = NULL;
-    hid_dump_iface                     *last            = NULL;
-    hid_dump_iface                     *iface;
+    enum libusb_error                           err = LIBUSB_ERROR_OTHER;
+
+    struct libusb_config_descriptor            *config          = NULL;
+    const struct libusb_interface              *libusb_iface;
+    const struct libusb_endpoint_descriptor    *ep_list;
+    uint8_t                                     ep_num;
+    const struct libusb_endpoint_descriptor    *ep;
+    hid_dump_iface                             *list            = NULL;
+    hid_dump_iface                             *last            = NULL;
+    hid_dump_iface                             *iface;
 
     assert(handle != NULL);
 
@@ -103,11 +122,26 @@ hid_dump_iface_list_new_by_class(libusb_device_handle  *handle,
     for (libusb_iface = config->interface;
          libusb_iface - config->interface < config->bNumInterfaces;
          libusb_iface++)
-        if (libusb_iface->num_altsetting == 1 &&
-            libusb_iface->altsetting->bInterfaceClass == iface_class)
+    {
+        if (libusb_iface->num_altsetting != 1 ||
+            libusb_iface->altsetting->bInterfaceClass != LIBUSB_CLASS_HID)
+            continue;
+
+        ep_list = libusb_iface->altsetting->endpoint;
+        ep_num = libusb_iface->altsetting->bNumEndpoints;
+
+        for (ep = ep_list; (ep - ep_list) < ep_num; ep++)
         {
+            if ((ep->bmAttributes & LIBUSB_TRANSFER_TYPE_MASK) !=
+                LIBUSB_TRANSFER_TYPE_INTERRUPT ||
+                (ep->bEndpointAddress & LIBUSB_ENDPOINT_DIR_MASK) !=
+                LIBUSB_ENDPOINT_IN)
+                continue;
+
             iface = hid_dump_iface_new(
-                        handle, libusb_iface->altsetting->bInterfaceNumber);
+                        handle,
+                        libusb_iface->altsetting->bInterfaceNumber,
+                        ep->bEndpointAddress);
             if (iface == NULL)
             {
                 err = LIBUSB_ERROR_NO_MEM;
@@ -119,7 +153,10 @@ hid_dump_iface_list_new_by_class(libusb_device_handle  *handle,
             else
                 last->next = iface;
             last = iface;
+
+            break;
         }
+    }
 
     /* Output the resulting list, if requested */
     if (plist != NULL)
@@ -226,6 +263,24 @@ hid_dump_iface_list_claim(hid_dump_iface *list)
             return err;
 
         list->claimed = true;
+    }
+
+    return LIBUSB_SUCCESS;
+}
+
+
+enum libusb_error
+hid_dump_iface_list_clear_halt(hid_dump_iface *list)
+{
+    enum libusb_error   err;
+
+    assert(hid_dump_iface_list_valid(list));
+
+    for (; list != NULL; list = list->next)
+    {
+        err = libusb_clear_halt(list->handle, list->int_in_ep);
+        if (err != LIBUSB_SUCCESS)
+            return err;
     }
 
     return LIBUSB_SUCCESS;

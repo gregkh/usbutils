@@ -85,7 +85,7 @@ usage(FILE *stream, const char *progname)
     fprintf(stderr, "Failed to " _fmt "\n", ##_args)
 
 #define LIBUSB_FAILURE(_fmt, _args...) \
-    ERROR_CLEANUP("Failed to " _fmt ": %s", ##_args, libusb_strerror(err))
+    FAILURE(_fmt ": %s", ##_args, libusb_strerror(err))
 
 #define ERROR_CLEANUP(_fmt, _args...) \
     do {                                \
@@ -131,39 +131,153 @@ dump(uint8_t        iface_num,
 }
 
 
-static int
-run_iface_list(bool                     dump_descriptor,
-               bool                     dump_stream,
-               const hid_dump_iface    *list)
+static bool
+dump_iface_list_descriptor(const hid_dump_iface *list)
 {
-    int                     result              = 1;
     const hid_dump_iface   *iface;
-    uint8_t                 buf[UINT16_MAX];            /* wLength maximum */
+    uint8_t                 buf[MAX_DESCRIPTOR_SIZE];   /* wLength maximum */
     int                     rc;
     enum libusb_error       err;
 
-    (void)dump_stream;
-
-    /* Retrieve and dump the report descriptors */
-    if (dump_descriptor)
+    for (iface = list; iface != NULL; iface = iface->next)
     {
-        for (iface = list; iface != NULL; iface = iface->next)
+        rc = libusb_control_transfer(iface->handle, LIBUSB_ENDPOINT_IN,
+                                     LIBUSB_REQUEST_GET_DESCRIPTOR,
+                                     (LIBUSB_DT_REPORT << 8), iface->number,
+                                     buf, sizeof(buf), TIMEOUT);
+        if (rc < 0)
         {
-            rc = libusb_control_transfer(iface->handle, LIBUSB_ENDPOINT_IN,
-                                         LIBUSB_REQUEST_GET_DESCRIPTOR,
-                                         (LIBUSB_DT_REPORT << 8), iface->number,
-                                         buf, MAX_DESCRIPTOR_SIZE, TIMEOUT);
-            if (rc < 0)
-            {
-                err = rc;
-                LIBUSB_FAILURE_CLEANUP("retrieve interface #%hhu "
-                                       "report descriptor", iface->number);
-            }
-            dump(iface->number, "DESCRIPTOR", buf, rc);
+            err = rc;
+            LIBUSB_FAILURE("retrieve interface #%hhu "
+                           "report descriptor", iface->number);
+            return false;
         }
+        dump(iface->number, "DESCRIPTOR", buf, rc);
+    }
+
+    return true;
+}
+
+
+static void
+dump_iface_list_stream_cb(struct libusb_transfer *transfer)
+{
+    enum libusb_error       err;
+    const hid_dump_iface   *iface;
+
+    assert(transfer != NULL);
+
+    iface = (hid_dump_iface *)transfer->user_data;
+    assert(hid_dump_iface_valid(iface));
+
+    switch (transfer->status)
+    {
+        case LIBUSB_TRANSFER_COMPLETED:
+            /* Dump the result */
+            dump(iface->number, "STREAM",
+                 transfer->buffer, transfer->actual_length);
+            /* Resubmit the transfer */
+            err = libusb_submit_transfer(transfer);
+            if (err != LIBUSB_SUCCESS)
+                LIBUSB_FAILURE("resubmit a transfer");
+            break;
+        default:
+            break;
+    }
+}
+
+
+static bool
+dump_iface_list_stream(libusb_context *ctx, const hid_dump_iface *list)
+{
+    bool                        result              = false;
+    enum libusb_error           err;
+    size_t                      transfer_num        = 0;
+    struct libusb_transfer    **transfer_list       = NULL;
+    struct libusb_transfer    **ptransfer;
+    const hid_dump_iface       *iface;
+
+    /* Calculate number of interfaces and thus transfers */
+    transfer_num = hid_dump_iface_list_len(list);
+
+    /* Allocate transfer list */
+    transfer_list = malloc(sizeof(*transfer_list) * transfer_num);
+    if (transfer_list == NULL)
+        FAILURE_CLEANUP("allocate transfer list");
+
+    /* Zero transfer list */
+    for (ptransfer = transfer_list;
+         (size_t)(ptransfer - transfer_list) < transfer_num;
+         ptransfer++)
+        *ptransfer = NULL;
+
+    /* Allocate transfers */
+    for (ptransfer = transfer_list;
+         (size_t)(ptransfer - transfer_list) < transfer_num;
+         ptransfer++)
+    {
+        *ptransfer = libusb_alloc_transfer(0);
+        if (*ptransfer == NULL)
+            FAILURE_CLEANUP("allocate a transfer");
+    }
+
+    /* Initialize the transfers as interrupt transfers */
+    for (ptransfer = transfer_list, iface = list;
+         (size_t)(ptransfer - transfer_list) < transfer_num;
+         ptransfer++, iface = iface->next)
+    {
+        void                   *buf;
+        static const size_t     len = UINT16_MAX;   /* wLength maximum */
+
+        /* Allocate the transfer buffer */
+        buf = malloc(UINT16_MAX);   
+        if (len > 0 && buf == NULL)
+            FAILURE_CLEANUP("allocate a transfer buffer");
+
+        /* Initialize the transfer */
+        libusb_fill_interrupt_transfer(*ptransfer,
+                                       iface->handle, iface->int_in_ep,
+                                       buf, len,
+                                       dump_iface_list_stream_cb,
+                                       (void *)iface,
+                                       TIMEOUT);
+
+        /* Ask to free the buffer when transfer is freed */
+        (*ptransfer)->flags |= LIBUSB_TRANSFER_FREE_BUFFER;
+    }
+
+    /* Submit first transfer requests */
+    for (ptransfer = transfer_list;
+         (size_t)(ptransfer - transfer_list) < transfer_num;
+         ptransfer++)
+    {
+        err = libusb_submit_transfer(*ptransfer);
+        if (err != LIBUSB_SUCCESS)
+            LIBUSB_ERROR_CLEANUP("submit a transfer");
+    }
+
+    /* Run the event machine */
+    while (true)
+    {
+        err = libusb_handle_events(ctx);
+        if (err != LIBUSB_SUCCESS)
+            LIBUSB_FAILURE_CLEANUP("handle transfer events");
     }
 
 cleanup:
+
+    /* TODO Cancel the transfers */
+
+    /* Free transfer list along with transfers and their buffers */
+    if (transfer_list != NULL)
+    {
+        for (ptransfer = transfer_list;
+             (size_t)(ptransfer - transfer_list) < transfer_num;
+             ptransfer++)
+            libusb_free_transfer(*ptransfer);
+
+        free(transfer_list);
+    }
 
     return result;
 }
@@ -179,7 +293,6 @@ run(bool    dump_descriptor,
     int                     result      = 1;
     enum libusb_error       err;
     libusb_context         *ctx         = NULL;
-    libusb_device         **list        = NULL;
     libusb_device_handle   *handle      = NULL;
     hid_dump_iface         *iface_list  = NULL;
 
@@ -196,9 +309,8 @@ run(bool    dump_descriptor,
     if (err != LIBUSB_SUCCESS)
         LIBUSB_FAILURE_CLEANUP("find and open the device");
 
-    /* Retrieve the list of HID interfaces */
-    err = hid_dump_iface_list_new_by_class(handle, LIBUSB_CLASS_HID,
-                                           &iface_list);
+    /* Retrieve the list of HID interfaces from a device */
+    err = hid_dump_iface_list_new_from_dev(handle, &iface_list);
     if (err != LIBUSB_SUCCESS)
         LIBUSB_FAILURE_CLEANUP("find a HID interface");
 
@@ -219,7 +331,10 @@ run(bool    dump_descriptor,
         LIBUSB_FAILURE_CLEANUP("claim the interface(s)");
 
     /* Run with the prepared interface list */
-    result = run_iface_list(dump_descriptor, dump_stream, iface_list);
+    result = (!dump_descriptor || dump_iface_list_descriptor(iface_list)) &&
+             (!dump_stream || dump_iface_list_stream(ctx, iface_list))
+               ? 0
+               : 1;
 
 cleanup:
 
@@ -239,10 +354,6 @@ cleanup:
     /* Free the device */
     if (handle != NULL)
         libusb_close(handle);
-
-    /* Free device list along with devices */
-    if (list != NULL)
-        libusb_free_device_list(list, true);
 
     /* Cleanup libusb context, if necessary */
     if (ctx != NULL)
