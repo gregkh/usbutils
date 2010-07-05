@@ -45,19 +45,22 @@ usage(FILE *stream, const char *progname)
     return
         fprintf(
             stream,
-            "Usage: %s [OPTIONS]... <entity> <bus> <dev> [if]\n"
-            "Dump a USB device HID report descriptor or stream."
+            "Usage: %s [OPTION]... <bus> <dev> [if]\n"
+            "Dump a USB device HID report descriptor and/or stream."
             "\n"
             "Arguments:\n"
-            "  entity   \"descriptor\", \"stream\" or \"both\";\n"
-            "           can be abbreviated\n"
             "  bus      bus number\n"
             "  dev      device number\n"
             "  if       interface number; if ommitted,\n"
             "           all device HID interfaces are dumped\n"
             "\n"
             "Options:\n"
-            "  -h, --help   this help message\n"
+            "  -h, --help           this help message\n"
+            "  -e, --entity=STRING  what to dump: either \"descriptor\",\n"
+            "                       \"stream\" or \"both\"; value can be\n"
+            "                       abbreviated\n"
+            "\n"
+            "Default options: --entity=descriptor\n"
             "\n",
             progname) >= 0;
 }
@@ -126,7 +129,6 @@ run(bool    dump_descriptor,
 
     /* Filter the interface list by specified interface number */
     iface_list = hid_dump_iface_list_fltr_by_num(iface_list, iface_num);
-
     if (hid_dump_iface_list_empty(iface_list))
         ERROR_CLEANUP("No matching HID interfaces");
 
@@ -159,7 +161,8 @@ cleanup:
 
 
 typedef enum opt_val {
-    OPT_VAL_HELP           = 'h',
+    OPT_VAL_HELP    = 'h',
+    OPT_VAL_ENTITY  = 'e',
 } opt_val;
 
 
@@ -171,32 +174,41 @@ main(int argc, char **argv)
          .name      = "help",
          .has_arg   = no_argument,
          .flag      = NULL},
+        {.val       = OPT_VAL_ENTITY,
+         .name      = "entity",
+         .has_arg   = required_argument,
+         .flag      = NULL},
         {.val       = 0,
          .name      = NULL,
          .has_arg   = 0,
          .flag      = NULL}
     };
 
-    static const char  *short_opt_list = "h";
+    static const char  *short_opt_list = "he:";
 
-    char        c;
+    char            c;
+    const char     *bus_str;
+    const char     *dev_str;
+    const char     *if_str      = "";
 
-    const char *entity;
-    const char *bus_str;
-    const char *dev_str;
-    const char *if_str      = "";
-
-    const char    **arg_list[] = {&entity, &bus_str, &dev_str, &if_str};
-    const size_t    req_arg_num = 3;
-    const size_t    max_arg_num = 4;
+    const char    **arg_list[] = {&bus_str, &dev_str, &if_str};
+    const size_t    req_arg_num = 2;
+    const size_t    max_arg_num = 3;
     size_t          i;
     char           *end;
 
-    bool            dump_descriptor = false;
+    bool            dump_descriptor = true;
     bool            dump_stream     = false;
     long            bus_num;
     long            dev_num;
     long            if_num          = -1;
+
+#define USAGE_ERROR(_fmt, _args...) \
+    do {                                                \
+        fprintf(stderr, _fmt "\n", ##_args);            \
+        usage(stderr, program_invocation_short_name);   \
+        return 1;                                       \
+    } while (0)
 
     /*
      * Parse command line arguments
@@ -210,19 +222,32 @@ main(int argc, char **argv)
                 usage(stdout, program_invocation_short_name);
                 return 0;
                 break;
+            case OPT_VAL_ENTITY:
+                if (strncmp(optarg, "descriptor", strlen(optarg)) == 0)
+                {
+                    dump_descriptor = true;
+                    dump_stream = false;
+                }
+                else if (strncmp(optarg, "stream", strlen(optarg)) == 0)
+                {
+                    dump_descriptor = false;
+                    dump_stream = true;
+                }
+                else if (strncmp(optarg, "both", strlen(optarg)) == 0)
+                {
+                    dump_descriptor = true;
+                    dump_stream = true;
+                }
+                else
+                    USAGE_ERROR("Unknown entity \"%s\"", optarg);
+
+                break;
             case '?':
                 usage(stderr, program_invocation_short_name);
                 return 1;
                 break;
         }
     }
-
-#define USAGE_ERROR(_fmt, _args...) \
-    do {                                                \
-        fprintf(stderr, _fmt "\n", ##_args);            \
-        usage(stderr, program_invocation_short_name);   \
-        return 1;                                       \
-    } while (0)
 
     /*
      * Assign positional parameters
@@ -236,18 +261,6 @@ main(int argc, char **argv)
     /*
      * Parse and verify positional parameters
      */
-    if (strncmp(entity, "descriptor", strlen(entity)) == 0)
-        dump_descriptor = true;
-    else if (strncmp(entity, "stream", strlen(entity)) == 0)
-        dump_stream = true;
-    else if (strncmp(entity, "both", strlen(entity)) == 0)
-    {
-        dump_descriptor = true;
-        dump_stream = true;
-    }
-    else
-        USAGE_ERROR("Unknown entity \"%s\"", entity);
-
     errno = 0;
     bus_num = strtol(bus_str, &end, 0);
     if (errno != 0 || !hid_dump_strisblank(end) ||
