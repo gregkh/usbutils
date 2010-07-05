@@ -43,6 +43,8 @@ struct hid_dump_iface {
     bool                    detached;   /**< True if the interface was
                                              detached from the kernel
                                              driver, false otherwise */
+    bool                    claimed;    /**< True if the interface was
+                                             claimed */
 };
 
 extern bool hid_dump_iface_valid(const hid_dump_iface *iface);
@@ -89,7 +91,6 @@ extern hid_dump_iface *hid_dump_iface_list_fltr_by_num(
                                                 hid_dump_iface *list,
                                                 int             number);
 
-
 /**
  * Detach all interfaces in a list from their kernel drivers (if any).
  *
@@ -108,6 +109,24 @@ extern enum libusb_error hid_dump_iface_list_detach(hid_dump_iface *list);
  * @return Libusb error code.
  */
 extern enum libusb_error hid_dump_iface_list_attach(hid_dump_iface *list);
+
+/**
+ * Claim all interfaces in a list.
+ *
+ * @param list  The list of interfaces to claim.
+ *
+ * @return Libusb error code.
+ */
+extern enum libusb_error hid_dump_iface_list_claim(hid_dump_iface *list);
+
+/**
+ * Release all interfaces in a list (if were claimed before).
+ *
+ * @param list  The list of interfaces to release.
+ *
+ * @return Libusb error code.
+ */
+extern enum libusb_error hid_dump_iface_list_release(hid_dump_iface *list);
 
 #ifdef __cplusplus
 } /* extern "C" */

@@ -203,8 +203,49 @@ hid_dump_iface_list_attach(hid_dump_iface *list)
         if (list->detached)
         {
             err = libusb_attach_kernel_driver(list->handle, list->number);
-            if (err != LIBUSB_SUCCESS && err != LIBUSB_ERROR_NOT_FOUND)
+            if (err != LIBUSB_SUCCESS)
                 return err;
+            list->detached = false;
+        }
+
+    return LIBUSB_SUCCESS;
+}
+
+
+enum libusb_error
+hid_dump_iface_list_claim(hid_dump_iface *list)
+{
+    enum libusb_error   err;
+
+    assert(hid_dump_iface_list_valid(list));
+
+    for (; list != NULL; list = list->next)
+    {
+        err = libusb_claim_interface(list->handle, list->number);
+        if (err != LIBUSB_SUCCESS)
+            return err;
+
+        list->claimed = true;
+    }
+
+    return LIBUSB_SUCCESS;
+}
+
+
+enum libusb_error
+hid_dump_iface_list_release(hid_dump_iface *list)
+{
+    enum libusb_error   err;
+
+    assert(hid_dump_iface_list_valid(list));
+
+    for (; list != NULL; list = list->next)
+        if (list->claimed)
+        {
+            err = libusb_release_interface(list->handle, list->number);
+            if (err != LIBUSB_SUCCESS)
+                return err;
+            list->claimed = false;
         }
 
     return LIBUSB_SUCCESS;

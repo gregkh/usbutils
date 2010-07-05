@@ -142,8 +142,13 @@ run(bool    dump_descriptor,
     /* Detach interfaces */
     err = hid_dump_iface_list_detach(iface_list);
     if (err != LIBUSB_SUCCESS)
-        LIBUSB_FAILURE_CLEANUP("detach interface(s) from "
+        LIBUSB_FAILURE_CLEANUP("detach the interface(s) from "
                                "the kernel drivers");
+
+    /* Claim interfaces */
+    err = hid_dump_iface_list_claim(iface_list);
+    if (err != LIBUSB_SUCCESS)
+        LIBUSB_FAILURE_CLEANUP("claim the interface(s)");
 #if 0
     /* Run with the handle */
     result = run_handle(dump_descriptor, dump_stream, handle, if_num);
@@ -156,10 +161,15 @@ run(bool    dump_descriptor,
 
 cleanup:
 
+    /* Release the interfaces back */
+    err = hid_dump_iface_list_release(iface_list);
+    if (err != LIBUSB_SUCCESS)
+        LIBUSB_FAILURE("release the interface(s)");
+
     /* Attach interfaces back */
     err = hid_dump_iface_list_attach(iface_list);
     if (err != LIBUSB_SUCCESS)
-        LIBUSB_FAILURE("attach interface(s) to the kernel drivers");
+        LIBUSB_FAILURE("attach the interface(s) to the kernel drivers");
 
     /* Free the device */
     if (handle != NULL)
