@@ -39,6 +39,18 @@
 #include <stdio.h>
 #include <libusb-1.0/libusb.h>
 
+/**
+ * Maximum descriptor size.
+ *
+ * 4096 here is maximum control buffer length.
+ */
+#define MAX_DESCRIPTOR_SIZE (4096 - LIBUSB_CONTROL_SETUP_SIZE)
+
+/**
+ * USB I/O timeout
+ */
+#define TIMEOUT 1000
+
 static bool
 usage(FILE *stream, const char *progname)
 {
@@ -91,20 +103,75 @@ usage(FILE *stream, const char *progname)
     LIBUSB_ERROR_CLEANUP("Failed to " _fmt, ##_args)
 
 
-#if 0
-static int
-run_handle(bool                     dump_descriptor,
-           bool                     dump_stream,
-           libusb_device_handle    *handle,
-           int                      if_num)
+static void
+dump(uint8_t        iface_num,
+     const char    *entity,
+     const uint8_t *ptr,
+     size_t         len)
 {
+    static const char   xd[]    = "0123456789ABCDEF";
+    static char         buf[]   = " XX\n";
+    size_t              pos;
+    uint8_t             b;
+
+    fprintf(stdout, "%.3hhu:%s\n", iface_num, entity);
+
+    for (pos = 1; len > 0; len--, ptr++, pos++)
+    {
+        b = *ptr;
+        buf[1] = xd[b >> 4];
+        buf[2] = xd[b & 0xF];
+
+        fwrite(buf, ((pos % 16 == 0) ? 4 : 3), 1, stdout);
+    }
+
+    if (pos % 16 != 1)
+        fputc('\n', stdout);
+    fputc('\n', stdout);
 }
-#endif
+
+
+static int
+run_iface_list(bool                     dump_descriptor,
+               bool                     dump_stream,
+               const hid_dump_iface    *list)
+{
+    int                     result              = 1;
+    const hid_dump_iface   *iface;
+    uint8_t                 buf[UINT16_MAX];            /* wLength maximum */
+    int                     rc;
+    enum libusb_error       err;
+
+    (void)dump_stream;
+
+    /* Retrieve and dump the report descriptors */
+    if (dump_descriptor)
+    {
+        for (iface = list; iface != NULL; iface = iface->next)
+        {
+            rc = libusb_control_transfer(iface->handle, LIBUSB_ENDPOINT_IN,
+                                         LIBUSB_REQUEST_GET_DESCRIPTOR,
+                                         (LIBUSB_DT_REPORT << 8), iface->number,
+                                         buf, MAX_DESCRIPTOR_SIZE, TIMEOUT);
+            if (rc < 0)
+            {
+                err = rc;
+                LIBUSB_FAILURE_CLEANUP("retrieve interface #%hhu "
+                                       "report descriptor", iface->number);
+            }
+            dump(iface->number, "DESCRIPTOR", buf, rc);
+        }
+    }
+
+cleanup:
+
+    return result;
+}
 
 
 static int
 run(bool    dump_descriptor,
-    bool    dump_stream, 
+    bool    dump_stream,
     uint8_t bus_num,
     uint8_t dev_addr,
     int     iface_num)
@@ -130,7 +197,8 @@ run(bool    dump_descriptor,
         LIBUSB_FAILURE_CLEANUP("find and open the device");
 
     /* Retrieve the list of HID interfaces */
-    err = hid_dump_iface_list_new_by_class(handle, 3, &iface_list);
+    err = hid_dump_iface_list_new_by_class(handle, LIBUSB_CLASS_HID,
+                                           &iface_list);
     if (err != LIBUSB_SUCCESS)
         LIBUSB_FAILURE_CLEANUP("find a HID interface");
 
@@ -149,15 +217,9 @@ run(bool    dump_descriptor,
     err = hid_dump_iface_list_claim(iface_list);
     if (err != LIBUSB_SUCCESS)
         LIBUSB_FAILURE_CLEANUP("claim the interface(s)");
-#if 0
-    /* Run with the handle */
-    result = run_handle(dump_descriptor, dump_stream, handle, if_num);
-#else
-    (void)dump_descriptor;
-    (void)dump_stream;
-    (void)iface_num;
-    result = 0;
-#endif
+
+    /* Run with the prepared interface list */
+    result = run_iface_list(dump_descriptor, dump_stream, iface_list);
 
 cleanup:
 
@@ -170,6 +232,9 @@ cleanup:
     err = hid_dump_iface_list_attach(iface_list);
     if (err != LIBUSB_SUCCESS)
         LIBUSB_FAILURE("attach the interface(s) to the kernel drivers");
+
+    /* Free the interface list */
+    hid_dump_iface_list_free(iface_list);
 
     /* Free the device */
     if (handle != NULL)
