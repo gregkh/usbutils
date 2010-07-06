@@ -44,7 +44,7 @@
  *
  * 4096 here is maximum control buffer length.
  */
-#define MAX_DESCRIPTOR_SIZE (4096 - LIBUSB_CONTROL_SETUP_SIZE)
+#define MAX_DESCRIPTOR_SIZE 4096
 
 /**
  * USB I/O timeout
@@ -135,13 +135,19 @@ static bool
 dump_iface_list_descriptor(const hid_dump_iface *list)
 {
     const hid_dump_iface   *iface;
-    uint8_t                 buf[MAX_DESCRIPTOR_SIZE];   /* wLength maximum */
+    uint8_t                 buf[MAX_DESCRIPTOR_SIZE];
     int                     rc;
     enum libusb_error       err;
 
     for (iface = list; iface != NULL; iface = iface->next)
     {
-        rc = libusb_control_transfer(iface->handle, LIBUSB_ENDPOINT_IN,
+        rc = libusb_control_transfer(iface->handle,
+                                     /*
+                                      * FIXME Don't really know why it
+                                      * should be the EP 1, and why EP 0
+                                      * doesn't work sometimes.
+                                      */
+                                     LIBUSB_ENDPOINT_IN + 1,
                                      LIBUSB_REQUEST_GET_DESCRIPTOR,
                                      (LIBUSB_DT_REPORT << 8), iface->number,
                                      buf, sizeof(buf), TIMEOUT);
@@ -181,6 +187,19 @@ dump_iface_list_stream_cb(struct libusb_transfer *transfer)
             if (err != LIBUSB_SUCCESS)
                 LIBUSB_FAILURE("resubmit a transfer");
             break;
+#define MAP(_name) \
+    case LIBUSB_TRANSFER_##_name:                               \
+        fprintf(stderr, "%.3hhu:%s\n", iface->number, #_name);  \
+        break
+
+        MAP(ERROR);
+        MAP(TIMED_OUT);
+        MAP(CANCELLED);
+        MAP(STALL);
+        MAP(NO_DEVICE);
+        MAP(OVERFLOW);
+
+#undef MAP
         default:
             break;
     }
