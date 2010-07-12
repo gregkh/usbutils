@@ -1269,7 +1269,6 @@ static void dump_audiocontrol_interface(struct usb_dev_handle *dev, unsigned cha
 			if (buf[0] < 10)
 				printf("      Warning: Descriptor too short\n");
 			k = (buf[0] - 6) / 4;
-			get_string(dev, term, sizeof(term), buf[6+(k*4)]);
 			printf("        bUnitID             %5u\n"
 			       "        bSourceID           %5u\n",
 			       buf[3], buf[4]);
@@ -1281,8 +1280,9 @@ static void dump_audiocontrol_interface(struct usb_dev_handle *dev, unsigned cha
 				printf("        bmaControls(%2u)      0x%08x\n", i, chcfg);
 				dump_audio_bmcontrols("          ", chcfg, uac_fu_bmcontrols, protocol);
 			}
-			printf("        iFeature            %5u %s\n", buf[6+(k*4)], term);
-			dump_junk(buf, "        ", 7+(k*4));
+			get_string(dev, term, sizeof(term), buf[5+(k*4)]);
+			printf("        iFeature            %5u %s\n", buf[5+(k*4)], term);
+			dump_junk(buf, "        ", 6+(k*4));
 			break;
 		} /* switch (protocol) */
 
