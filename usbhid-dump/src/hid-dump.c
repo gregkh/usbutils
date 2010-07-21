@@ -86,6 +86,24 @@ exit_sighandler(int signum)
         exit_signum = signum;
 }
 
+/**< "Paused" flag - non-zero if paused */
+static volatile sig_atomic_t stream_paused = 0;
+
+static void
+stream_pause_sighandler(int signum)
+{
+    (void)signum;
+    stream_paused = 1;
+}
+
+static void
+stream_resume_sighandler(int signum)
+{
+    (void)signum;
+    stream_paused = 0;
+}
+
+
 static bool
 usage(FILE *stream, const char *progname)
 {
@@ -96,10 +114,10 @@ usage(FILE *stream, const char *progname)
             "Dump a USB device HID report descriptor and/or stream."
             "\n"
             "Arguments:\n"
-            "  bus      bus number\n"
-            "  dev      device number\n"
-            "  if       interface number; if ommitted,\n"
-            "           all device HID interfaces are dumped\n"
+            "  bus                  bus number\n"
+            "  dev                  device number\n"
+            "  if                   interface number; if ommitted,\n"
+            "                       all device HID interfaces are dumped\n"
             "\n"
             "Options:\n"
             "  -h, --help           this help message\n"
@@ -108,6 +126,9 @@ usage(FILE *stream, const char *progname)
             "                       abbreviated\n"
             "\n"
             "Default options: --entity=descriptor\n"
+            "\n"
+            "Signals:\n"
+            "  USR1/USR2            pause/resume the stream output\n"
             "\n",
             progname) >= 0;
 }
@@ -190,8 +211,9 @@ dump_iface_list_stream_cb(struct libusb_transfer *transfer)
     {
         case LIBUSB_TRANSFER_COMPLETED:
             /* Dump the result */
-            dump(iface->number, "STREAM",
-                 transfer->buffer, transfer->actual_length);
+            if (!stream_paused)
+                dump(iface->number, "STREAM",
+                     transfer->buffer, transfer->actual_length);
             /* Resubmit the transfer */
             err = libusb_submit_transfer(transfer);
             if (err != LIBUSB_SUCCESS)
@@ -530,7 +552,7 @@ main(int argc, char **argv)
         sa.sa_handler = exit_sighandler;
         sigemptyset(&sa.sa_mask);
         sigaddset(&sa.sa_mask, SIGTERM);
-        sa.sa_flags = 0;
+        sa.sa_flags = 0;    /* NOTE: no SA_RESTART on purpose */
         sigaction(SIGINT, &sa, NULL);
     }
 
@@ -541,9 +563,17 @@ main(int argc, char **argv)
         sa.sa_handler = exit_sighandler;
         sigemptyset(&sa.sa_mask);
         sigaddset(&sa.sa_mask, SIGINT);
-        sa.sa_flags = 0;
+        sa.sa_flags = 0;    /* NOTE: no SA_RESTART on purpose */
         sigaction(SIGTERM, &sa, NULL);
     }
+
+    /* Setup SIGUSR1/SIGUSR2 to pause/resume the stream output */
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART;
+    sa.sa_handler = stream_pause_sighandler;
+    sigaction(SIGUSR1, &sa, NULL);
+    sa.sa_handler = stream_resume_sighandler;
+    sigaction(SIGUSR2, &sa, NULL);
 
     result = run(dump_descriptor, dump_stream, bus_num, dev_num, if_num);
 
