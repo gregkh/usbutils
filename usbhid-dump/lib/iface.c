@@ -40,7 +40,8 @@ hid_dump_iface_valid(const hid_dump_iface *iface)
 hid_dump_iface *
 hid_dump_iface_new(libusb_device_handle    *handle,
                    uint8_t                  number,
-                   uint8_t                  int_in_ep)
+                   uint8_t                  int_in_ep_addr,
+                   uint16_t                 int_in_ep_maxp)
 {
     hid_dump_iface *iface;
 
@@ -48,14 +49,27 @@ hid_dump_iface_new(libusb_device_handle    *handle,
     if (iface == NULL)
         return NULL;
 
-    iface->next = NULL;
-    iface->handle = handle;
-    iface->number = number;
-    iface->int_in_ep = int_in_ep;
-    iface->detached = false;
-    iface->claimed = false;
+    iface->next             = NULL;
+    iface->handle           = handle;
+    iface->number           = number;
+    iface->int_in_ep_addr   = int_in_ep_addr;
+    iface->int_in_ep_maxp   = int_in_ep_maxp;
+    iface->detached         = false;
+    iface->claimed          = false;
 
     return iface;
+}
+
+
+void
+hid_dump_iface_free(hid_dump_iface *iface)
+{
+    if (iface == NULL)
+        return;
+
+    assert(hid_dump_iface_valid(iface));
+
+    free(iface);
 }
 
 
@@ -90,7 +104,7 @@ hid_dump_iface_list_free(hid_dump_iface *list)
     for (; list != NULL; list = next)
     {
         next = list->next;
-        free(list);
+        hid_dump_iface_free(list);
     }
 }
 
@@ -141,7 +155,7 @@ hid_dump_iface_list_new_from_dev(libusb_device_handle  *handle,
             iface = hid_dump_iface_new(
                         handle,
                         libusb_iface->altsetting->bInterfaceNumber,
-                        ep->bEndpointAddress);
+                        ep->bEndpointAddress, ep->wMaxPacketSize);
             if (iface == NULL)
             {
                 err = LIBUSB_ERROR_NO_MEM;
@@ -278,7 +292,7 @@ hid_dump_iface_list_clear_halt(hid_dump_iface *list)
 
     for (; list != NULL; list = list->next)
     {
-        err = libusb_clear_halt(list->handle, list->int_in_ep);
+        err = libusb_clear_halt(list->handle, list->int_in_ep_addr);
         if (err != LIBUSB_SUCCESS)
             return err;
     }

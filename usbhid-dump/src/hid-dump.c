@@ -245,23 +245,23 @@ dump_iface_list_stream(libusb_context *ctx, const hid_dump_iface *list)
          (size_t)(ptransfer - transfer_list) < transfer_num;
          ptransfer++, iface = iface->next)
     {
-        void                   *buf;
-        static const size_t     len = UINT16_MAX;   /* wLength maximum */
+        void           *buf;
+        const size_t    len = iface->int_in_ep_maxp;
 
         /* Allocate the transfer buffer */
-        buf = malloc(UINT16_MAX);   
+        buf = malloc(len);   
         if (len > 0 && buf == NULL)
             FAILURE_CLEANUP("allocate a transfer buffer");
 
         /* Initialize the transfer */
         libusb_fill_interrupt_transfer(*ptransfer,
-                                       iface->handle, iface->int_in_ep,
+                                       iface->handle, iface->int_in_ep_addr,
                                        buf, len,
                                        dump_iface_list_stream_cb,
                                        (void *)iface,
-                                       TIMEOUT);
+                                       0);
 
-        /* Ask to free the buffer when transfer is freed */
+        /* Ask to free the buffer when the transfer is freed */
         (*ptransfer)->flags |= LIBUSB_TRANSFER_FREE_BUFFER;
     }
 

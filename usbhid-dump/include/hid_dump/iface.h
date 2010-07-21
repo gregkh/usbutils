@@ -38,21 +38,27 @@ typedef struct hid_dump_iface hid_dump_iface;
 
 struct hid_dump_iface {
     hid_dump_iface         *next;
-    libusb_device_handle   *handle;     /**< Device handle */
-    uint8_t                 number;     /**< Interface number */
-    uint8_t                 int_in_ep;  /**< Interrupt IN EP address */
-    bool                    detached;   /**< True if the interface was
-                                             detached from the kernel
-                                             driver, false otherwise */
-    bool                    claimed;    /**< True if the interface was
-                                             claimed */
+    libusb_device_handle   *handle;         /**< Device handle */
+    uint8_t                 number;         /**< Interface number */
+    uint8_t                 int_in_ep_addr; /**< Interrupt IN EP address */
+    uint16_t                int_in_ep_maxp; /**< Interrupt IN EP maximum
+                                                 packet size */
+    bool                    detached;       /**< True if the interface was
+                                                 detached from the kernel
+                                                 driver, false otherwise */
+    bool                    claimed;        /**< True if the interface was
+                                                 claimed */
 };
 
 extern bool hid_dump_iface_valid(const hid_dump_iface *iface);
 
-extern hid_dump_iface *hid_dump_iface_new(libusb_device_handle *handle,
-                                          uint8_t               number,
-                                          uint8_t               int_in_ep);
+extern hid_dump_iface *hid_dump_iface_new(
+                                    libusb_device_handle *handle,
+                                    uint8_t               number,
+                                    uint8_t               int_in_ep_addr,
+                                    uint16_t              int_in_ep_maxp);
+
+extern void hid_dump_iface_free(hid_dump_iface *iface);
 
 extern bool hid_dump_iface_list_valid(const hid_dump_iface *list);
 
