@@ -33,6 +33,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <errno.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <getopt.h>
@@ -50,6 +51,40 @@
  * USB I/O timeout
  */
 #define TIMEOUT 1000
+
+#define ERROR(_fmt, _args...) \
+    fprintf(stderr, _fmt "\n", ##_args)
+
+#define FAILURE(_fmt, _args...) \
+    fprintf(stderr, "Failed to " _fmt "\n", ##_args)
+
+#define LIBUSB_FAILURE(_fmt, _args...) \
+    FAILURE(_fmt ": %s", ##_args, libusb_strerror(err))
+
+#define ERROR_CLEANUP(_fmt, _args...) \
+    do {                                \
+        ERROR(_fmt, ##_args);           \
+        goto cleanup;                   \
+    } while (0)
+
+#define LIBUSB_ERROR_CLEANUP(_fmt, _args...) \
+    ERROR_CLEANUP(_fmt ": %s", ##_args, libusb_strerror(err))
+
+#define FAILURE_CLEANUP(_fmt, _args...) \
+    ERROR_CLEANUP("Failed to " _fmt, ##_args)
+
+#define LIBUSB_FAILURE_CLEANUP(_fmt, _args...) \
+    LIBUSB_ERROR_CLEANUP("Failed to " _fmt, ##_args)
+
+/**< Number of the signal causing the exit */
+static volatile sig_atomic_t exit_signum  = 0;
+
+static void
+exit_sighandler(int signum)
+{
+    if (exit_signum == 0)
+        exit_signum = signum;
+}
 
 static bool
 usage(FILE *stream, const char *progname)
@@ -76,31 +111,6 @@ usage(FILE *stream, const char *progname)
             "\n",
             progname) >= 0;
 }
-
-
-#define ERROR(_fmt, _args...) \
-    fprintf(stderr, _fmt "\n", ##_args)
-
-#define FAILURE(_fmt, _args...) \
-    fprintf(stderr, "Failed to " _fmt "\n", ##_args)
-
-#define LIBUSB_FAILURE(_fmt, _args...) \
-    FAILURE(_fmt ": %s", ##_args, libusb_strerror(err))
-
-#define ERROR_CLEANUP(_fmt, _args...) \
-    do {                                \
-        ERROR(_fmt, ##_args);           \
-        goto cleanup;                   \
-    } while (0)
-
-#define LIBUSB_ERROR_CLEANUP(_fmt, _args...) \
-    ERROR_CLEANUP(_fmt ": %s", ##_args, libusb_strerror(err))
-
-#define FAILURE_CLEANUP(_fmt, _args...) \
-    ERROR_CLEANUP("Failed to " _fmt, ##_args)
-
-#define LIBUSB_FAILURE_CLEANUP(_fmt, _args...) \
-    LIBUSB_ERROR_CLEANUP("Failed to " _fmt, ##_args)
 
 
 static void
@@ -276,12 +286,14 @@ dump_iface_list_stream(libusb_context *ctx, const hid_dump_iface *list)
     }
 
     /* Run the event machine */
-    while (true)
+    while (exit_signum == 0)
     {
         err = libusb_handle_events(ctx);
-        if (err != LIBUSB_SUCCESS)
+        if (err != LIBUSB_SUCCESS && err != LIBUSB_ERROR_INTERRUPTED)
             LIBUSB_FAILURE_CLEANUP("handle transfer events");
     }
+
+    result = true;
 
 cleanup:
 
@@ -408,6 +420,8 @@ main(int argc, char **argv)
 
     static const char  *short_opt_list = "he:";
 
+    int             result;
+
     char            c;
     const char     *bus_str;
     const char     *dev_str;
@@ -424,6 +438,8 @@ main(int argc, char **argv)
     long            bus_num;
     long            dev_num;
     long            if_num          = -1;
+
+    struct sigaction    sa;
 
 #define USAGE_ERROR(_fmt, _args...) \
     do {                                                \
@@ -504,7 +520,52 @@ main(int argc, char **argv)
             USAGE_ERROR("Invalid interface number \"%s\"", if_str);
     }
 
-    return run(dump_descriptor, dump_stream, bus_num, dev_num, if_num);
+    /*
+     * Setup signal handlers
+     */
+    /* Setup SIGINT to terminate gracefully */
+    sigaction(SIGINT, NULL, &sa);
+    if (sa.sa_handler != SIG_IGN)
+    {
+        sa.sa_handler = exit_sighandler;
+        sigemptyset(&sa.sa_mask);
+        sigaddset(&sa.sa_mask, SIGTERM);
+        sa.sa_flags = 0;
+        sigaction(SIGINT, &sa, NULL);
+    }
+
+    /* Setup SIGTERM to terminate gracefully */
+    sigaction(SIGTERM, NULL, &sa);
+    if (sa.sa_handler != SIG_IGN)
+    {
+        sa.sa_handler = exit_sighandler;
+        sigemptyset(&sa.sa_mask);
+        sigaddset(&sa.sa_mask, SIGINT);
+        sa.sa_flags = 0;
+        sigaction(SIGTERM, &sa, NULL);
+    }
+
+    result = run(dump_descriptor, dump_stream, bus_num, dev_num, if_num);
+
+    /*
+     * Restore signal handlers
+     */
+    sigaction(SIGINT, NULL, &sa);
+    if (sa.sa_handler != SIG_IGN)
+        signal(SIGINT, SIG_DFL);
+
+    sigaction(SIGTERM, NULL, &sa);
+    if (sa.sa_handler != SIG_IGN)
+        signal(SIGTERM, SIG_DFL);
+
+    /*
+     * Reproduce the signal used to stop the program to get proper exit
+     * status.
+     */
+    if (exit_signum != 0)
+        raise(exit_signum);
+
+    return result;
 }
 
 
