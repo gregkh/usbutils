@@ -128,6 +128,36 @@ extern enum libusb_error hid_dump_iface_list_attach(hid_dump_iface *list);
 extern enum libusb_error hid_dump_iface_list_claim(hid_dump_iface *list);
 
 /**
+ * Set idle duration on all interfaces in a list; ignore errors indicating
+ * missing support.
+ *
+ * @param list      The list of interfaces to set idle duration on.
+ * @param duration  The duration in 4 ms steps starting from 4 ms.
+ * @param timeout   The request timeout, ms.
+ *
+ * @return Libusb error code.
+ */
+extern enum libusb_error hid_dump_iface_list_set_idle(
+                                        const hid_dump_iface   *list,
+                                        uint8_t                 duration,
+                                        unsigned int            timeout);
+
+/**
+ * Set HID protocol on all interfaces in a list; ignore errors indicating
+ * missing support.
+ *
+ * @param list      The list of interfaces to set idle duration on.
+ * @param report    True for "report" protocol, false for "boot" protocol.
+ * @param timeout   The request timeout, ms.
+ *
+ * @return Libusb error code.
+ */
+extern enum libusb_error hid_dump_iface_list_set_protocol(
+                                        const hid_dump_iface   *list,
+                                        bool                    report,
+                                        unsigned int            timeout);
+
+/**
  * Clear halt condition on input interrupt endpoints of all interfaces.
  *
  * @param list  The list of interfaces to clear halt condition on.

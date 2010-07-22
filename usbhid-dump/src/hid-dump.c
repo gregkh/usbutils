@@ -248,6 +248,16 @@ dump_iface_list_stream(libusb_context *ctx, const hid_dump_iface *list)
     struct libusb_transfer    **ptransfer;
     const hid_dump_iface       *iface;
 
+    /* Set report protocol on all interfaces */
+    err = hid_dump_iface_list_set_protocol(list, true, TIMEOUT);
+    if (err != LIBUSB_SUCCESS)
+        LIBUSB_ERROR_CLEANUP("set report protocol");
+
+    /* Set infinite idle duration on all interfaces */
+    err = hid_dump_iface_list_set_idle(list, 0, TIMEOUT);
+    if (err != LIBUSB_SUCCESS)
+        LIBUSB_ERROR_CLEANUP("set infinite idle duration");
+
     /* Calculate number of interfaces and thus transfers */
     transfer_num = hid_dump_iface_list_len(list);
 

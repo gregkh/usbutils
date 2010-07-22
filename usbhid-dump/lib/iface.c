@@ -302,6 +302,66 @@ hid_dump_iface_list_clear_halt(hid_dump_iface *list)
 
 
 enum libusb_error
+hid_dump_iface_list_set_idle(const hid_dump_iface  *list,
+                             uint8_t                duration,
+                             unsigned int           timeout)
+{
+    int rc;
+
+    assert(hid_dump_iface_list_valid(list));
+
+    for (; list != NULL; list = list->next)
+    {
+        rc = libusb_control_transfer(list->handle,
+                                     /* host->device, class, interface */
+                                     0x21,
+                                     /* Set_Idle */
+                                     0x0A,
+                                     /* duration for all report IDs */
+                                     duration << 8,
+                                     /* interface */
+                                     list->number,
+                                     NULL, 0,
+                                     timeout);
+        if (rc < 0)
+            return rc;
+    }
+
+    return LIBUSB_SUCCESS;
+}
+
+
+enum libusb_error
+hid_dump_iface_list_set_protocol(const hid_dump_iface  *list,
+                                 bool                   report,
+                                 unsigned int           timeout)
+{
+    int rc;
+
+    assert(hid_dump_iface_list_valid(list));
+
+    for (; list != NULL; list = list->next)
+    {
+        rc = libusb_control_transfer(list->handle,
+                                     /* host->device, class, interface */
+                                     0x21,
+                                     /* Set_Protocol */
+                                     0x0B,
+                                     /* 0 - boot, 1 - report */
+                                     report ? 1 : 0,
+                                     /* interface */
+                                     list->number,
+                                     NULL, 0,
+                                     timeout);
+        if (rc < 0)
+            return rc;
+    }
+
+    return LIBUSB_SUCCESS;
+}
+
+
+enum libusb_error
 hid_dump_iface_list_release(hid_dump_iface *list)
 {
     enum libusb_error   err;
