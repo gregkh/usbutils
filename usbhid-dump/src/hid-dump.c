@@ -110,28 +110,26 @@ usage(FILE *stream, const char *progname)
     return
         fprintf(
             stream,
-            "Usage: %s [OPTION]... <bus> <dev> [if]\n"
-            "Dump a USB device HID report descriptor and/or stream."
-            "\n"
-            "Arguments:\n"
-            "  bus                  bus number\n"
-            "  dev                  device number\n"
-            "  if                   interface number; if ommitted,\n"
-            "                       all device HID interfaces are dumped\n"
-            "\n"
-            "Options:\n"
-            "  -h, --help           this help message\n"
-            "  -e, --entity=STRING  what to dump: either \"descriptor\",\n"
-            "                       \"stream\" or \"both\"; value can be\n"
-            "                       abbreviated\n"
-            "  -p, --stream-paused  start with the stream dump output\n"
-            "                       paused\n"
-            "\n"
-            "Default options: --entity=descriptor\n"
-            "\n"
-            "Signals:\n"
-            "  USR1/USR2            pause/resume the stream dump output\n"
-            "\n",
+"Usage: %s [OPTION]... <bus> <dev> [if]\n"
+"Dump a USB device HID report descriptor and/or stream."
+"\n"
+"Arguments:\n"
+"  bus                  bus number (1-255)\n"
+"  dev                  device address (1-255)\n"
+"  if                   interface number (0-254);\n"
+"                       if ommitted, all device HID interfaces are dumped\n"
+"\n"
+"Options:\n"
+"  -h, --help           this help message\n"
+"  -e, --entity=STRING  what to dump: either \"descriptor\", \"stream\"\n"
+"                       or \"both\"; value can be abbreviated\n"
+"  -p, --stream-paused  start with the stream dump output paused\n"
+"\n"
+"Default options: --entity=descriptor\n"
+"\n"
+"Signals:\n"
+"  USR1/USR2            pause/resume the stream dump output\n"
+"\n",
             progname) >= 0;
 }
 
@@ -175,12 +173,8 @@ dump_iface_list_descriptor(const hid_dump_iface *list)
     for (iface = list; iface != NULL; iface = iface->next)
     {
         rc = libusb_control_transfer(iface->handle,
-                                     /*
-                                      * FIXME Don't really know why it
-                                      * should be the EP 1, and why EP 0
-                                      * doesn't work sometimes.
-                                      */
-                                     LIBUSB_ENDPOINT_IN + 1,
+                                     /* See HID spec, 7.1.1 */
+                                     0x81,
                                      LIBUSB_REQUEST_GET_DESCRIPTOR,
                                      (LIBUSB_DT_REPORT << 8), iface->number,
                                      buf, sizeof(buf), TIMEOUT);
@@ -551,7 +545,7 @@ main(int argc, char **argv)
     dev_num = strtol(dev_str, &end, 0);
     if (errno != 0 || !hid_dump_strisblank(end) ||
         dev_num <= 0 || dev_num > 255)
-        USAGE_ERROR("Invalid device number \"%s\"", dev_str);
+        USAGE_ERROR("Invalid device address \"%s\"", dev_str);
 
     if (!hid_dump_strisblank(if_str))
     {
