@@ -195,13 +195,16 @@ dump_iface_list_descriptor(const hid_dump_iface *list)
 static void
 dump_iface_list_stream_cb(struct libusb_transfer *transfer)
 {
-    enum libusb_error       err;
-    const hid_dump_iface   *iface;
+    enum libusb_error   err;
+    hid_dump_iface     *iface;
 
     assert(transfer != NULL);
 
     iface = (hid_dump_iface *)transfer->user_data;
     assert(hid_dump_iface_valid(iface));
+
+    /* Clear interface "has transfer submitted" flag */
+    iface->submitted = false;
 
     switch (transfer->status)
     {
@@ -214,6 +217,8 @@ dump_iface_list_stream_cb(struct libusb_transfer *transfer)
             err = libusb_submit_transfer(transfer);
             if (err != LIBUSB_SUCCESS)
                 LIBUSB_FAILURE("resubmit a transfer");
+            /* Set interface "has transfer submitted" flag */
+            iface->submitted = true;
             break;
 #define MAP(_name) \
     case LIBUSB_TRANSFER_##_name:                               \
@@ -222,7 +227,6 @@ dump_iface_list_stream_cb(struct libusb_transfer *transfer)
 
         MAP(ERROR);
         MAP(TIMED_OUT);
-        MAP(CANCELLED);
         MAP(STALL);
         MAP(NO_DEVICE);
         MAP(OVERFLOW);
@@ -235,14 +239,15 @@ dump_iface_list_stream_cb(struct libusb_transfer *transfer)
 
 
 static bool
-dump_iface_list_stream(libusb_context *ctx, const hid_dump_iface *list)
+dump_iface_list_stream(libusb_context *ctx, hid_dump_iface *list)
 {
     bool                        result              = false;
     enum libusb_error           err;
     size_t                      transfer_num        = 0;
     struct libusb_transfer    **transfer_list       = NULL;
     struct libusb_transfer    **ptransfer;
-    const hid_dump_iface       *iface;
+    hid_dump_iface             *iface;
+    bool                        submitted;
 
     /* Set report protocol on all interfaces */
     err = hid_dump_iface_list_set_protocol(list, true, TIMEOUT);
@@ -276,6 +281,11 @@ dump_iface_list_stream(libusb_context *ctx, const hid_dump_iface *list)
         *ptransfer = libusb_alloc_transfer(0);
         if (*ptransfer == NULL)
             FAILURE_CLEANUP("allocate a transfer");
+        /*
+         * Set user_data to NULL explicitly, since libusb_alloc_transfer
+         * does memset to zero only and zero is not NULL, strictly speaking.
+         */
+        (*ptransfer)->user_data = NULL;
     }
 
     /* Initialize the transfers as interrupt transfers */
@@ -297,6 +307,7 @@ dump_iface_list_stream(libusb_context *ctx, const hid_dump_iface *list)
                                        buf, len,
                                        dump_iface_list_stream_cb,
                                        (void *)iface,
+                                       /* Infinite timeout */
                                        0);
 
         /* Ask to free the buffer when the transfer is freed */
@@ -311,6 +322,8 @@ dump_iface_list_stream(libusb_context *ctx, const hid_dump_iface *list)
         err = libusb_submit_transfer(*ptransfer);
         if (err != LIBUSB_SUCCESS)
             LIBUSB_ERROR_CLEANUP("submit a transfer");
+        /* Set interface "has transfer submitted" flag */
+        ((hid_dump_iface *)(*ptransfer)->user_data)->submitted = true;
     }
 
     /* Run the event machine */
@@ -325,15 +338,70 @@ dump_iface_list_stream(libusb_context *ctx, const hid_dump_iface *list)
 
 cleanup:
 
-    /* TODO Cancel the transfers */
+    /* Cancel the transfers */
+    submitted = false;
+    for (ptransfer = transfer_list;
+         (size_t)(ptransfer - transfer_list) < transfer_num;
+         ptransfer++)
+    {
+        iface = (hid_dump_iface *)(*ptransfer)->user_data;
 
-    /* Free transfer list along with transfers and their buffers */
+        if (iface != NULL && iface->submitted)
+        {
+            err = libusb_cancel_transfer(*ptransfer);
+            if (err == LIBUSB_SUCCESS)
+                submitted = true;
+            else
+            {
+                LIBUSB_FAILURE("cancel a transfer, ignoring");
+                /* XXX are we really sure the transfer won't be finished? */
+                iface->submitted = false;
+            }
+        }
+    }
+
+    /* Wait for transfer cancellation */
+    while (submitted)
+    {
+        err = libusb_handle_events(ctx);
+        if (err != LIBUSB_SUCCESS && err != LIBUSB_ERROR_INTERRUPTED)
+        {
+            LIBUSB_FAILURE("handle transfer cancellation events, "
+                           "aborting transfer cancellation");
+            break;
+        }
+
+        submitted = false;
+        for (ptransfer = transfer_list;
+             (size_t)(ptransfer - transfer_list) < transfer_num;
+             ptransfer++)
+        {
+            iface = (hid_dump_iface *)(*ptransfer)->user_data;
+
+            if (iface != NULL && iface->submitted)
+                submitted = true;
+        }
+    }
+
+    /*
+     * Free transfer list along with non-submitted transfers and their
+     * buffers.
+     */
     if (transfer_list != NULL)
     {
         for (ptransfer = transfer_list;
              (size_t)(ptransfer - transfer_list) < transfer_num;
              ptransfer++)
-            libusb_free_transfer(*ptransfer);
+        {
+            iface = (hid_dump_iface *)(*ptransfer)->user_data;
+
+            /*
+             * Only free a transfer if it is not submitted. Better leak some
+             * memory than have some important memory overwritten.
+             */
+            if (iface == NULL || !iface->submitted)
+                libusb_free_transfer(*ptransfer);
+        }
 
         free(transfer_list);
     }

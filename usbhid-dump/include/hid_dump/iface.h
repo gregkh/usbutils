@@ -48,6 +48,15 @@ struct hid_dump_iface {
                                                  driver, false otherwise */
     bool                    claimed;        /**< True if the interface was
                                                  claimed */
+    /*
+     * This is somewhat hackish and doesn't belong here, since theoretically
+     * there could be more than one transfer submitted for an interface.
+     * However, we don't do it yet. This flag is used to track transfer
+     * cancellation during stream dumping.
+     */
+    bool                    submitted;      /**< True if an asynchronous
+                                                 transfer has been submitted
+                                                 for the interface */
 };
 
 extern bool hid_dump_iface_valid(const hid_dump_iface *iface);

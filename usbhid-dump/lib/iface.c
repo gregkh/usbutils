@@ -56,6 +56,7 @@ hid_dump_iface_new(libusb_device_handle    *handle,
     iface->int_in_ep_maxp   = int_in_ep_maxp;
     iface->detached         = false;
     iface->claimed          = false;
+    iface->submitted        = false;
 
     return iface;
 }
