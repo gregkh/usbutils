@@ -113,7 +113,7 @@ usage(FILE *stream, const char *progname)
         fprintf(
             stream,
 "Usage: %s [OPTION]... <bus> <dev> [if]\n"
-"Dump a USB device HID report descriptor and/or stream."
+"Dump a USB device HID report descriptor(s) and/or stream(s)."
 "\n"
 "Arguments:\n"
 "  bus                      bus number (1-255)\n"
