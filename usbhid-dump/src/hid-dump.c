@@ -349,8 +349,11 @@ dump_iface_list_stream(libusb_context *ctx, hid_dump_iface *list)
         }
     }
 
-    /* Success only if there were no terminated transfers */
-    result = transfer_num == 0 || submitted;
+    /* If all the transfers were terminated unexpectedly */
+    if (transfer_num > 0 && !submitted)
+        ERROR_CLEANUP("No more interfaces to dump");
+
+    result = true;
 
 cleanup:
 
