@@ -86,7 +86,7 @@ exit_sighandler(int signum)
         exit_signum = signum;
 }
 
-/**< "Paused" flag - non-zero if paused */
+/**< "Stream paused" flag - non-zero if paused */
 static volatile sig_atomic_t stream_paused = 0;
 
 static void
@@ -103,6 +103,8 @@ stream_resume_sighandler(int signum)
     stream_paused = 0;
 }
 
+/**< "Stream feedback" flag - non-zero if feedback is enabled */
+static volatile sig_atomic_t stream_feedback = 0;
 
 static bool
 usage(FILE *stream, const char *progname)
@@ -114,16 +116,20 @@ usage(FILE *stream, const char *progname)
 "Dump a USB device HID report descriptor and/or stream."
 "\n"
 "Arguments:\n"
-"  bus                  bus number (1-255)\n"
-"  dev                  device address (1-255)\n"
-"  if                   interface number (0-254);\n"
-"                       if ommitted, all device HID interfaces are dumped\n"
+"  bus                      bus number (1-255)\n"
+"  dev                      device address (1-255)\n"
+"  if                       interface number (0-254);\n"
+"                           if omitted, all device HID interfaces\n"
+"                           are dumped\n"
 "\n"
 "Options:\n"
-"  -h, --help           this help message\n"
-"  -e, --entity=STRING  what to dump: either \"descriptor\", \"stream\"\n"
-"                       or \"both\"; value can be abbreviated\n"
-"  -p, --stream-paused  start with the stream dump output paused\n"
+"  -h, --help               this help message\n"
+"  -e, --entity=STRING      what to dump: either \"descriptor\",\n"
+"                           \"stream\" or \"both\"; value can be\n"
+"                           abbreviated\n"
+"  -p, --stream-paused      start with the stream dump output paused\n"
+"  -f, --stream-feedback    enable stream dumping feedback: for every\n"
+"                           transfer dumped a dot is printed to stderr\n"
 "\n"
 "Default options: --entity=descriptor\n"
 "\n"
@@ -211,8 +217,12 @@ dump_iface_list_stream_cb(struct libusb_transfer *transfer)
         case LIBUSB_TRANSFER_COMPLETED:
             /* Dump the result */
             if (!stream_paused)
+            {
                 dump(iface->number, "STREAM",
                      transfer->buffer, transfer->actual_length);
+                if (stream_feedback)
+                    fputc('.', stderr);
+            }
             /* Resubmit the transfer */
             err = libusb_submit_transfer(transfer);
             if (err != LIBUSB_SUCCESS)
@@ -518,6 +528,7 @@ typedef enum opt_val {
     OPT_VAL_HELP            = 'h',
     OPT_VAL_ENTITY          = 'e',
     OPT_VAL_STREAM_PAUSED   = 'p',
+    OPT_VAL_STREAM_FEEDBACK = 'f',
 } opt_val;
 
 
@@ -537,13 +548,17 @@ main(int argc, char **argv)
          .name      = "stream-paused",
          .has_arg   = no_argument,
          .flag      = NULL},
+        {.val       = OPT_VAL_STREAM_FEEDBACK,
+         .name      = "stream-feedback",
+         .has_arg   = no_argument,
+         .flag      = NULL},
         {.val       = 0,
          .name      = NULL,
          .has_arg   = 0,
          .flag      = NULL}
     };
 
-    static const char  *short_opt_list = "he:p";
+    static const char  *short_opt_list = "he:pf";
 
     int             result;
 
@@ -607,6 +622,9 @@ main(int argc, char **argv)
                 break;
             case OPT_VAL_STREAM_PAUSED:
                 stream_paused = 1;
+                break;
+            case OPT_VAL_STREAM_FEEDBACK:
+                stream_feedback = 1;
                 break;
             case '?':
                 usage(stderr, program_invocation_short_name);
