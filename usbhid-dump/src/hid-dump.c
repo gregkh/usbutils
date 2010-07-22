@@ -124,11 +124,13 @@ usage(FILE *stream, const char *progname)
             "  -e, --entity=STRING  what to dump: either \"descriptor\",\n"
             "                       \"stream\" or \"both\"; value can be\n"
             "                       abbreviated\n"
+            "  -p, --stream-paused  start with the stream dump output\n"
+            "                       paused\n"
             "\n"
             "Default options: --entity=descriptor\n"
             "\n"
             "Signals:\n"
-            "  USR1/USR2            pause/resume the stream output\n"
+            "  USR1/USR2            pause/resume the stream dump output\n"
             "\n",
             progname) >= 0;
 }
@@ -427,8 +429,9 @@ cleanup:
 
 
 typedef enum opt_val {
-    OPT_VAL_HELP    = 'h',
-    OPT_VAL_ENTITY  = 'e',
+    OPT_VAL_HELP            = 'h',
+    OPT_VAL_ENTITY          = 'e',
+    OPT_VAL_STREAM_PAUSED   = 'p',
 } opt_val;
 
 
@@ -444,13 +447,17 @@ main(int argc, char **argv)
          .name      = "entity",
          .has_arg   = required_argument,
          .flag      = NULL},
+        {.val       = OPT_VAL_STREAM_PAUSED,
+         .name      = "stream-paused",
+         .has_arg   = no_argument,
+         .flag      = NULL},
         {.val       = 0,
          .name      = NULL,
          .has_arg   = 0,
          .flag      = NULL}
     };
 
-    static const char  *short_opt_list = "he:";
+    static const char  *short_opt_list = "he:p";
 
     int             result;
 
@@ -511,6 +518,9 @@ main(int argc, char **argv)
                 else
                     USAGE_ERROR("Unknown entity \"%s\"", optarg);
 
+                break;
+            case OPT_VAL_STREAM_PAUSED:
+                stream_paused = 1;
                 break;
             case '?':
                 usage(stderr, program_invocation_short_name);
