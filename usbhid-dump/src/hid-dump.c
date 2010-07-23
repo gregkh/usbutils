@@ -134,7 +134,7 @@ usage(FILE *stream, const char *progname)
 "Default options: --entity=descriptor\n"
 "\n"
 "Signals:\n"
-"  USR1/USR2            pause/resume the stream dump output\n"
+"  USR1/USR2                pause/resume the stream dump output\n"
 "\n",
             progname) >= 0;
 }
