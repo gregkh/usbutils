@@ -150,8 +150,14 @@ dump(uint8_t        iface_num,
     static char         buf[]   = " XX\n";
     size_t              pos;
     uint8_t             b;
+    struct timeval      tv;
 
-    fprintf(stdout, "%.3hhu:%s\n", iface_num, entity);
+    gettimeofday(&tv, NULL);
+
+    fprintf(stdout, "%.3hhu:%-16s %20llu.%.6u\n",
+            iface_num, entity,
+            (unsigned long long int)tv.tv_sec,
+            (unsigned int)tv.tv_usec);
 
     for (pos = 1; len > 0; len--, ptr++, pos++)
     {
