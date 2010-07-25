@@ -171,6 +171,8 @@ dump(uint8_t        iface_num,
     if (pos % 16 != 1)
         fputc('\n', stdout);
     fputc('\n', stdout);
+
+    fflush(stdout);
 }
 
 
@@ -704,6 +706,9 @@ main(int argc, char **argv)
     sigaction(SIGUSR1, &sa, NULL);
     sa.sa_handler = stream_resume_sighandler;
     sigaction(SIGUSR2, &sa, NULL);
+
+    /* Make stdout buffered - we will flush it explicitly */
+    setbuf(stdout, NULL);
 
     result = run(dump_descriptor, dump_stream, bus_num, dev_num, if_num);
 
