@@ -324,7 +324,12 @@ hid_dump_iface_list_set_idle(const hid_dump_iface  *list,
                                      list->number,
                                      NULL, 0,
                                      timeout);
-        if (rc < 0)
+        /*
+         * Ignoring EPIPE, which means a STALL handshake, which is OK on
+         * control pipes and indicates request is not supported.
+         * See USB 2.0 spec, 8.4.5 Handshake Packets
+         */
+        if (rc < 0 && rc != LIBUSB_ERROR_PIPE)
             return rc;
     }
 
@@ -354,7 +359,12 @@ hid_dump_iface_list_set_protocol(const hid_dump_iface  *list,
                                      list->number,
                                      NULL, 0,
                                      timeout);
-        if (rc < 0)
+        /*
+         * Ignoring EPIPE, which means a STALL handshake, which is OK on
+         * control pipes and indicates request is not supported.
+         * See USB 2.0 spec, 8.4.5 Handshake Packets
+         */
+        if (rc < 0 && rc != LIBUSB_ERROR_PIPE)
             return rc;
     }
 
