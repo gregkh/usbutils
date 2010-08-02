@@ -11538,6 +11538,8 @@
 	0101  Audio Gadget
 	0102  EEM Gadget
 	0103  NCM (Ethernet) Gadget
+	0104  Multifunction Composite Gadget
+	0105  FunctionFS Gadget
 1e1f  INVIA
 1e29  Festo AG & Co. KG
 	0101  CPX Adapter
