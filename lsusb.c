@@ -3694,5 +3694,7 @@ int main(int argc, char *argv[])
 		status = dump_one_device(devdump);
 	else
 		status = list_devices(bus, devnum, vendor, product);
+
+	names_exit();
 	return status;
 }

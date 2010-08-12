@@ -48,6 +48,7 @@ extern const char *names_physdes(u_int8_t ph);
 extern const char *names_bias(u_int8_t b);
 extern const char *names_countrycode(unsigned int countrycode);
 extern int names_init(char *n);
+extern void names_exit(void);
 
 /* ---------------------------------------------------------------------- */
 #endif /* _NAMES_H */
