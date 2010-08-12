@@ -1,3 +1,40 @@
+usbutils 0.90
+=============
+Aurelien Jarno (1):
+      fix bcdDFUVersion endianness
+
+Chris Clayton (1):
+      Patch to add additional devices to usb.ids
+
+Daniel Mack (7):
+      dump_audiostreaming_interface(): fix ac-3 decoder
+      parse USB audio class 2 control interface types
+      parse USB audio class 2 streaming interfaces
+      parse USB audio class 2 endpoints
+      dump_audio_bmcontrols(): tell users about faulty bmControl bits
+      dump_audiostreaming_interface(): drop audio class 2 FORMAT_TYPE length check
+      lsusb: fix iFeature position calculation for UAC2 feature units
+
+Greg Kroah-Hartman (8):
+      reserve a USB Ethernet Gadget driver device id.
+      fix up wording of NCM Ethernet gadget device id
+      fix up some signed/unsigned warnings in lsusb.c
+      move #defines around a bit to make it more orderly.
+      Merge git://github.com/zonque/usbutils into work
+      more gadget device ids reserved for the Linux Foundation vendor id
+      Merge branch 'master' of git://github.com/zonque/usbutils into test
+      Fix up a lot of memory leaks
+
+Ludovic Rousseau (1):
+      Update Gemplus id
+
+Matthew Wilcox (1):
+      Decode USB 3 Endpoint Companion Descriptors
+
+Nix (1):
+      Include config.h before everything else.
+
+
 usbutils 0.87
 =============
 Aurelien Jarno (1):
