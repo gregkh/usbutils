@@ -9,6 +9,8 @@ AC_PREFIX_DEFAULT([/usr])
 AC_USE_SYSTEM_EXTENSIONS
 AC_SYS_LARGEFILE
 
+AC_CHECK_HEADERS([byteswap.h])
+
 USE_ZLIB=yes
 AC_ARG_ENABLE(zlib,
 	AS_HELP_STRING(--disable-zlib,disable support for zlib),

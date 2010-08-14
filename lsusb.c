@@ -32,8 +32,13 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdarg.h>
+
+#ifdef HAVE_BYTESWAP_H
 #include <byteswap.h>
+#endif
+
 #include <usb.h>
+#include <unistd.h>
 
 #include "names.h"
 #include "devtree.h"
