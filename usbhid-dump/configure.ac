@@ -28,7 +28,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 # To have empty CFLAGS instead of undefined and '-g -O2' by default
 CFLAGS=$CFLAGS
-CFLAGS="-Os -Wall -Wextra -Werror $CFLAGS"
+CFLAGS="-Os -Wall $CFLAGS"
 ABS_SRCDIR=`cd ${srcdir} ; pwd`
 ABS_BUILDDIR=`pwd`
 CPPFLAGS="-I${ABS_BUILDDIR} -I${ABS_BUILDDIR}/include -D_GNU_SOURCE -DNDEBUG $CPPFLAGS"
@@ -68,7 +68,7 @@ AC_ARG_ENABLE(
 # Output features to preprocessor and compiler
 if test "$enable_debug" = "yes"; then
     CPPFLAGS="$CPPFLAGS -UNDEBUG"
-    CFLAGS="$CFLAGS -g -O0"
+    CFLAGS="$CFLAGS -Wextra -Werror -g -O0"
 fi
 
 #
