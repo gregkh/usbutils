@@ -1,22 +1,22 @@
 /** @file
- * @brief hid-dump - interface
+ * @brief usbhid-dump - interface
  *
  * Copyright (C) 2010 Nikolai Kondrashov
  *
- * This file is part of hid-dump.
+ * This file is part of usbhid-dump.
  *
- * Hid-dump is free software; you can redistribute it and/or modify
+ * Usbhid-dump is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
- * Hid-dump is distributed in the hope that it will be useful,
+ * Usbhid-dump is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with hid-dump; if not, write to the Free Software
+ * along with usbhid-dump; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @author Nikolai Kondrashov <spbnick@gmail.com>
@@ -24,26 +24,26 @@
  * @(#) $Id$
  */
 
-#include "hid_dump/iface.h"
+#include "usbhid_dump/iface.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 bool
-hid_dump_iface_valid(const hid_dump_iface *iface)
+usbhid_dump_iface_valid(const usbhid_dump_iface *iface)
 {
     return iface != NULL &&
            iface->handle != NULL &&
            iface->number < UINT8_MAX;
 }
 
-hid_dump_iface *
-hid_dump_iface_new(libusb_device_handle    *handle,
-                   uint8_t                  number,
-                   uint8_t                  int_in_ep_addr,
-                   uint16_t                 int_in_ep_maxp)
+usbhid_dump_iface *
+usbhid_dump_iface_new(libusb_device_handle *handle,
+                      uint8_t               number,
+                      uint8_t               int_in_ep_addr,
+                      uint16_t              int_in_ep_maxp)
 {
-    hid_dump_iface *iface;
+    usbhid_dump_iface  *iface;
 
     iface = malloc(sizeof(*iface));
     if (iface == NULL)
@@ -63,22 +63,22 @@ hid_dump_iface_new(libusb_device_handle    *handle,
 
 
 void
-hid_dump_iface_free(hid_dump_iface *iface)
+usbhid_dump_iface_free(usbhid_dump_iface *iface)
 {
     if (iface == NULL)
         return;
 
-    assert(hid_dump_iface_valid(iface));
+    assert(usbhid_dump_iface_valid(iface));
 
     free(iface);
 }
 
 
 bool
-hid_dump_iface_list_valid(const hid_dump_iface *list)
+usbhid_dump_iface_list_valid(const usbhid_dump_iface *list)
 {
     for (; list != NULL; list = list->next)
-        if (!hid_dump_iface_valid(list))
+        if (!usbhid_dump_iface_valid(list))
             return false;
 
     return true;
@@ -86,7 +86,7 @@ hid_dump_iface_list_valid(const hid_dump_iface *list)
 
 
 size_t
-hid_dump_iface_list_len(const hid_dump_iface *list)
+usbhid_dump_iface_list_len(const usbhid_dump_iface *list)
 {
     size_t  len = 0;
 
@@ -98,21 +98,21 @@ hid_dump_iface_list_len(const hid_dump_iface *list)
 
 
 void
-hid_dump_iface_list_free(hid_dump_iface *list)
+usbhid_dump_iface_list_free(usbhid_dump_iface *list)
 {
-    hid_dump_iface *next;
+    usbhid_dump_iface *next;
 
     for (; list != NULL; list = next)
     {
         next = list->next;
-        hid_dump_iface_free(list);
+        usbhid_dump_iface_free(list);
     }
 }
 
 
 enum libusb_error
-hid_dump_iface_list_new_from_dev(libusb_device_handle  *handle,
-                                 hid_dump_iface       **plist)
+usbhid_dump_iface_list_new_from_dev(libusb_device_handle   *handle,
+                                    usbhid_dump_iface     **plist)
 {
     enum libusb_error                           err = LIBUSB_ERROR_OTHER;
 
@@ -121,9 +121,9 @@ hid_dump_iface_list_new_from_dev(libusb_device_handle  *handle,
     const struct libusb_endpoint_descriptor    *ep_list;
     uint8_t                                     ep_num;
     const struct libusb_endpoint_descriptor    *ep;
-    hid_dump_iface                             *list            = NULL;
-    hid_dump_iface                             *last            = NULL;
-    hid_dump_iface                             *iface;
+    usbhid_dump_iface                          *list            = NULL;
+    usbhid_dump_iface                          *last            = NULL;
+    usbhid_dump_iface                          *iface;
 
     assert(handle != NULL);
 
@@ -153,7 +153,7 @@ hid_dump_iface_list_new_from_dev(libusb_device_handle  *handle,
                 LIBUSB_ENDPOINT_IN)
                 continue;
 
-            iface = hid_dump_iface_new(
+            iface = usbhid_dump_iface_new(
                         handle,
                         libusb_iface->altsetting->bInterfaceNumber,
                         ep->bEndpointAddress, ep->wMaxPacketSize);
@@ -182,7 +182,7 @@ hid_dump_iface_list_new_from_dev(libusb_device_handle  *handle,
 
 cleanup:
 
-    hid_dump_iface_list_free(list);
+    usbhid_dump_iface_list_free(list);
 
     if (config != NULL)
         libusb_free_config_descriptor(config);
@@ -191,15 +191,15 @@ cleanup:
 }
 
 
-hid_dump_iface *
-hid_dump_iface_list_fltr_by_num(hid_dump_iface *list,
-                                int             number)
+usbhid_dump_iface *
+usbhid_dump_iface_list_fltr_by_num(usbhid_dump_iface   *list,
+                                   int                  number)
 {
-    hid_dump_iface *prev;
-    hid_dump_iface *iface;
-    hid_dump_iface *next;
+    usbhid_dump_iface  *prev;
+    usbhid_dump_iface  *iface;
+    usbhid_dump_iface  *next;
 
-    assert(hid_dump_iface_list_valid(list));
+    assert(usbhid_dump_iface_list_valid(list));
     assert(number < UINT8_MAX);
 
     if (number < 0)
@@ -225,11 +225,11 @@ hid_dump_iface_list_fltr_by_num(hid_dump_iface *list,
 
 
 enum libusb_error
-hid_dump_iface_list_detach(hid_dump_iface *list)
+usbhid_dump_iface_list_detach(usbhid_dump_iface *list)
 {
     enum libusb_error   err;
 
-    assert(hid_dump_iface_list_valid(list));
+    assert(usbhid_dump_iface_list_valid(list));
 
     for (; list != NULL; list = list->next)
     {
@@ -245,11 +245,11 @@ hid_dump_iface_list_detach(hid_dump_iface *list)
 
 
 enum libusb_error
-hid_dump_iface_list_attach(hid_dump_iface *list)
+usbhid_dump_iface_list_attach(usbhid_dump_iface *list)
 {
     enum libusb_error   err;
 
-    assert(hid_dump_iface_list_valid(list));
+    assert(usbhid_dump_iface_list_valid(list));
 
     for (; list != NULL; list = list->next)
         if (list->detached)
@@ -265,11 +265,11 @@ hid_dump_iface_list_attach(hid_dump_iface *list)
 
 
 enum libusb_error
-hid_dump_iface_list_claim(hid_dump_iface *list)
+usbhid_dump_iface_list_claim(usbhid_dump_iface *list)
 {
     enum libusb_error   err;
 
-    assert(hid_dump_iface_list_valid(list));
+    assert(usbhid_dump_iface_list_valid(list));
 
     for (; list != NULL; list = list->next)
     {
@@ -285,11 +285,11 @@ hid_dump_iface_list_claim(hid_dump_iface *list)
 
 
 enum libusb_error
-hid_dump_iface_list_clear_halt(hid_dump_iface *list)
+usbhid_dump_iface_list_clear_halt(usbhid_dump_iface *list)
 {
     enum libusb_error   err;
 
-    assert(hid_dump_iface_list_valid(list));
+    assert(usbhid_dump_iface_list_valid(list));
 
     for (; list != NULL; list = list->next)
     {
@@ -303,13 +303,13 @@ hid_dump_iface_list_clear_halt(hid_dump_iface *list)
 
 
 enum libusb_error
-hid_dump_iface_list_set_idle(const hid_dump_iface  *list,
-                             uint8_t                duration,
-                             unsigned int           timeout)
+usbhid_dump_iface_list_set_idle(const usbhid_dump_iface    *list,
+                                uint8_t                     duration,
+                                unsigned int                timeout)
 {
     int rc;
 
-    assert(hid_dump_iface_list_valid(list));
+    assert(usbhid_dump_iface_list_valid(list));
 
     for (; list != NULL; list = list->next)
     {
@@ -338,13 +338,13 @@ hid_dump_iface_list_set_idle(const hid_dump_iface  *list,
 
 
 enum libusb_error
-hid_dump_iface_list_set_protocol(const hid_dump_iface  *list,
-                                 bool                   report,
-                                 unsigned int           timeout)
+usbhid_dump_iface_list_set_protocol(const usbhid_dump_iface    *list,
+                                    bool                        report,
+                                    unsigned int                timeout)
 {
     int rc;
 
-    assert(hid_dump_iface_list_valid(list));
+    assert(usbhid_dump_iface_list_valid(list));
 
     for (; list != NULL; list = list->next)
     {
@@ -373,11 +373,11 @@ hid_dump_iface_list_set_protocol(const hid_dump_iface  *list,
 
 
 enum libusb_error
-hid_dump_iface_list_release(hid_dump_iface *list)
+usbhid_dump_iface_list_release(usbhid_dump_iface *list)
 {
     enum libusb_error   err;
 
-    assert(hid_dump_iface_list_valid(list));
+    assert(usbhid_dump_iface_list_valid(list));
 
     for (; list != NULL; list = list->next)
         if (list->claimed)

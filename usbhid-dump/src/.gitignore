@@ -1,5 +1,5 @@
 /Makefile.in
-/hid-dump
+/usbhid-dump
 /.deps
 /.libs
 /Makefile
