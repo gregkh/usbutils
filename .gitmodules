@@ -1,0 +1,3 @@
+[submodule "usbhid-dump"]
+	path = usbhid-dump
+	url = git://digimend.git.sourceforge.net/gitroot/digimend/usbhid-dump.git
