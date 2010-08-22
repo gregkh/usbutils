@@ -50,7 +50,7 @@ AC_PROG_LIBTOOL
 AC_CHECK_LIB(
     [usb-1.0], [libusb_init], [],
     [AC_MSG_FAILURE([libusb is required, but was not found, abort.
-                     Try installing libusb-1.0-0-dev package.])])
+                     Try installing libusb-1.0-0-dev or libusb1-devel.])])
 
 #
 # Checks for features
