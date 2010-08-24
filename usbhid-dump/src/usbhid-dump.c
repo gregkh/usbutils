@@ -40,6 +40,8 @@
 #include <stdio.h>
 #include <libusb-1.0/libusb.h>
 
+#include "config.h"
+
 /**
  * Maximum descriptor size.
  *
@@ -123,7 +125,8 @@ usage(FILE *stream, const char *progname)
 "                           are dumped\n"
 "\n"
 "Options:\n"
-"  -h, --help               this help message\n"
+"  -h, --help               output this help message and exit\n"
+"  -v, --version            output version information and exit\n"
 "  -e, --entity=STRING      what to dump: either \"descriptor\",\n"
 "                           \"stream\" or \"both\"; value can be\n"
 "                           abbreviated\n"
@@ -137,6 +140,21 @@ usage(FILE *stream, const char *progname)
 "  USR1/USR2                pause/resume the stream dump output\n"
 "\n",
             progname) >= 0;
+}
+
+
+static bool
+version(FILE *stream)
+{
+    return
+        fprintf(
+            stream,
+PACKAGE_STRING "\n"
+"Copyright (C) 2010 Nikolai Kondrashov\n"
+"License GPLv2+: GNU GPL version 2 or later <http://gnu.org/licenses/gpl.html>.\n"
+"\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n") >= 0;
 }
 
 
@@ -537,6 +555,7 @@ cleanup:
 
 typedef enum opt_val {
     OPT_VAL_HELP            = 'h',
+    OPT_VAL_VERSION         = 'v',
     OPT_VAL_ENTITY          = 'e',
     OPT_VAL_STREAM_PAUSED   = 'p',
     OPT_VAL_STREAM_FEEDBACK = 'f',
@@ -548,6 +567,10 @@ main(int argc, char **argv)
 {
     static const struct option long_opt_list[] = {
         {.val       = OPT_VAL_HELP,
+         .name      = "help",
+         .has_arg   = no_argument,
+         .flag      = NULL},
+        {.val       = OPT_VAL_VERSION,
          .name      = "help",
          .has_arg   = no_argument,
          .flag      = NULL},
@@ -569,7 +592,7 @@ main(int argc, char **argv)
          .flag      = NULL}
     };
 
-    static const char  *short_opt_list = "he:pf";
+    static const char  *short_opt_list = "hve:pf";
 
     int             result;
 
@@ -609,6 +632,10 @@ main(int argc, char **argv)
         {
             case OPT_VAL_HELP:
                 usage(stdout, program_invocation_short_name);
+                return 0;
+                break;
+            case OPT_VAL_VERSION:
+                version(stdout);
                 return 0;
                 break;
             case OPT_VAL_ENTITY:
