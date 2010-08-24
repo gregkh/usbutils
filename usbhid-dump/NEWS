@@ -1,0 +1,4 @@
+2010-07-25: 1.0
+    * Report descriptor dumping support
+    * Report stream dumping support
+    * Report stream dumping feedback and output pausing support
