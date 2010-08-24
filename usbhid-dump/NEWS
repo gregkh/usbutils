@@ -1,3 +1,8 @@
+2010-08-24: 1.1
+    * Renamed to usbhid-dump
+    * Fix handling of responses to unsupported HID requests
+    * Renamed dump entity "both" to "all"
+
 2010-07-25: 1.0
     * Report descriptor dumping support
     * Report stream dumping support

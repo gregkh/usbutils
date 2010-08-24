@@ -20,7 +20,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT([usbhid-dump], [1.0])
+AC_INIT([usbhid-dump], [1.1])
 AC_CONFIG_AUX_DIR([auxdir])
 AM_INIT_AUTOMAKE([1.9 -Wall foreign])
 AC_CONFIG_HEADER([config.h])
