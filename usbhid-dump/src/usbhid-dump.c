@@ -571,7 +571,7 @@ main(int argc, char **argv)
          .has_arg   = no_argument,
          .flag      = NULL},
         {.val       = OPT_VAL_VERSION,
-         .name      = "help",
+         .name      = "version",
          .has_arg   = no_argument,
          .flag      = NULL},
         {.val       = OPT_VAL_ENTITY,
