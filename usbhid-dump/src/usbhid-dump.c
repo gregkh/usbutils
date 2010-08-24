@@ -128,7 +128,7 @@ usage(FILE *stream, const char *progname)
 "  -h, --help               output this help message and exit\n"
 "  -v, --version            output version information and exit\n"
 "  -e, --entity=STRING      what to dump: either \"descriptor\",\n"
-"                           \"stream\" or \"both\"; value can be\n"
+"                           \"stream\" or \"all\"; value can be\n"
 "                           abbreviated\n"
 "  -p, --stream-paused      start with the stream dump output paused\n"
 "  -f, --stream-feedback    enable stream dumping feedback: for every\n"
@@ -649,7 +649,7 @@ main(int argc, char **argv)
                     dump_descriptor = false;
                     dump_stream = true;
                 }
-                else if (strncmp(optarg, "both", strlen(optarg)) == 0)
+                else if (strncmp(optarg, "all", strlen(optarg)) == 0)
                 {
                     dump_descriptor = true;
                     dump_stream = true;
