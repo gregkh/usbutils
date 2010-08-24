@@ -21,3 +21,15 @@ SUBDIRS = include lib src
 dist_noinst_SCRIPTS = bootstrap
 
 ACLOCAL_AMFLAGS = -I m4
+
+dist-hook:
+	@if test -d "$(top_srcdir)/.git"; then \
+		echo Generating ChangeLog && \
+		( cd "$(top_srcdir)" && \
+		  auxdir/missing --run git log --stat ) > ChangeLog.tmp && \
+		mv -f ChangeLog.tmp $(top_distdir)/ChangeLog || \
+		( rm -f ChangeLog.tmp; echo Failed to generate ChangeLog >&2 ); \
+	else \
+		echo Skipping ChangeLog generation: no git repository >&2; \
+	fi
+
