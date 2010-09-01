@@ -126,7 +126,7 @@ static char *dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf
 static void dump_hid_device(struct usb_dev_handle *dev, struct usb_interface_descriptor *interface, unsigned char *buf);
 static void dump_audiostreaming_endpoint(unsigned char *buf, int protocol);
 static void dump_midistreaming_endpoint(unsigned char *buf);
-static void dump_hub(char *prefix, unsigned char *p, int has_tt);
+static void dump_hub(char *prefix, unsigned char *p, int tt_type);
 static void dump_ccid_device(unsigned char *buf);
 
 /* ---------------------------------------------------------------------- */
@@ -2504,9 +2504,10 @@ static void dump_dfu_interface(unsigned char *buf)
 			buf[8], buf[7]);
 }
 
-static void dump_hub(char *prefix, unsigned char *p, int has_tt)
+static void dump_hub(char *prefix, unsigned char *p, int tt_type)
 {
 	unsigned int l, i, j;
+	unsigned int offset;
 	unsigned int wHubChar = (p[4] << 8) | p[3];
 
 	printf("%sHub Descriptor:\n", prefix);
@@ -2538,23 +2539,46 @@ static void dump_hub(char *prefix, unsigned char *p, int has_tt)
 		printf("%s    No overcurrent protection\n", prefix);
 		break;
 	}
-	if (has_tt) {
+	/* USB 3.0 hubs don't have TTs. */
+	if (tt_type >= 1 && tt_type < 3) {
 		l = (wHubChar >> 5) & 0x03;
 		printf("%s    TT think time %d FS bits\n", prefix, (l + 1) * 8);
 	}
-	if (wHubChar & (1<<7))
+	/* USB 3.0 hubs don't have port indicators.  Sad face. */
+	if (tt_type != 3 && wHubChar & (1<<7))
 		printf("%s    Port indicators\n", prefix);
 	printf("%s  bPwrOn2PwrGood      %3u * 2 milli seconds\n", prefix, p[5]);
-	printf("%s  bHubContrCurrent    %3u milli Ampere\n", prefix, p[6]);
+
+	/* USB 3.0 hubs report current in units of aCurrentUnit, or 4 mA */
+	if (tt_type == 3)
+		printf("%s  bHubContrCurrent   %4u milli Ampere\n",
+				prefix, p[6]*4);
+	else
+		printf("%s  bHubContrCurrent    %3u milli Ampere\n",
+				prefix, p[6]);
+
+	if (tt_type == 3) {
+		printf("%s  bHubDecLat          0.%1u micro seconds\n",
+				prefix, p[7]);
+		printf("%s  wHubDelay          %4u nano seconds\n",
+				prefix, (p[8] << 4) +(p[7]));
+		offset = 10;
+	} else {
+		offset = 7;
+	}
+
 	l = (p[2] >> 3) + 1; /* this determines the variable number of bytes following */
 	if (l > HUB_STATUS_BYTELEN)
 		l = HUB_STATUS_BYTELEN;
 	printf("%s  DeviceRemovable   ", prefix);
 	for (i = 0; i < l; i++)
-		printf(" 0x%02x", p[7+i]);
-	printf("\n%s  PortPwrCtrlMask   ", prefix);
-	for (j = 0; j < l; j++)
-		printf(" 0x%02x", p[7+i+j]);
+		printf(" 0x%02x", p[offset+i]);
+
+	if (tt_type != 3) {
+		printf("\n%s  PortPwrCtrlMask   ", prefix);
+		for (j = 0; j < l; j++)
+			printf(" 0x%02x", p[offset+i+j]);
+	}
 	printf("\n");
 }
 
@@ -3109,16 +3133,37 @@ bad:
 
 /* ---------------------------------------------------------------------- */
 
-static void do_hub(struct usb_dev_handle *fd, unsigned has_tt)
+static void do_hub(struct usb_dev_handle *fd, unsigned tt_type, unsigned speed)
 {
 	unsigned char buf[7 /* base descriptor */
 			+ 2 /* bitmasks */ * HUB_STATUS_BYTELEN];
-	int i, ret;
+	int i, ret, value;
+	unsigned int link_state;
+	unsigned char *link_state_descriptions[] = {
+		" U0",
+		" U1",
+		" U2",
+		" suspend",
+		" SS.disabled",
+		" Rx.Detect",
+		" SS.Inactive",
+		" Polling",
+		" Recovery",
+		" Hot Reset",
+		" Compliance",
+		" Loopback",
+	};
+
+	/* USB 3.0 hubs have a slightly different descriptor */
+	if (speed == 0x0300)
+		value = 0x2A;
+	else
+		value = 0x29;
 
 	ret = usb_control_msg(fd,
 			USB_ENDPOINT_IN | USB_TYPE_CLASS | USB_RECIP_DEVICE,
 			USB_REQ_GET_DESCRIPTOR,
-			0x29 << 8, 0,
+			value << 8, 0,
 			buf, sizeof buf, CTRL_TIMEOUT);
 	if (ret < 9 /* at least one port's bitmasks */) {
 		if (ret >= 0)
@@ -3130,7 +3175,7 @@ static void do_hub(struct usb_dev_handle *fd, unsigned has_tt)
 			perror("can't get hub descriptor");
 		return;
 	}
-	dump_hub("", buf, has_tt);
+	dump_hub("", buf, tt_type);
 
 	printf(" Hub Port Status:\n");
 	for (i = 0; i < buf[2]; i++) {
@@ -3154,23 +3199,46 @@ static void do_hub(struct usb_dev_handle *fd, unsigned has_tt)
 			status[3], status[2],
 			status[1], status[0]);
 		/* CAPS are used to highlight "transient" states */
-		printf("%s%s%s%s%s",
-			(status[2] & 0x10) ? " C_RESET" : "",
-			(status[2] & 0x08) ? " C_OC" : "",
-			(status[2] & 0x04) ? " C_SUSPEND" : "",
-			(status[2] & 0x02) ? " C_ENABLE" : "",
-			(status[2] & 0x01) ? " C_CONNECT" : "");
-		printf("%s%s%s%s%s%s%s%s%s%s\n",
-			(status[1] & 0x10) ? " indicator" : "",
-			(status[1] & 0x08) ? " test" : "",
-			(status[1] & 0x04) ? " highspeed" : "",
-			(status[1] & 0x02) ? " lowspeed" : "",
-			(status[1] & 0x01) ? " power" : "",
-			(status[0] & 0x10) ? " RESET" : "",
-			(status[0] & 0x08) ? " oc" : "",
-			(status[0] & 0x04) ? " suspend" : "",
-			(status[0] & 0x02) ? " enable" : "",
-			(status[0] & 0x01) ? " connect" : "");
+		if (speed != 0x0300) {
+			printf("%s%s%s%s%s",
+					(status[2] & 0x10) ? " C_RESET" : "",
+					(status[2] & 0x08) ? " C_OC" : "",
+					(status[2] & 0x04) ? " C_SUSPEND" : "",
+					(status[2] & 0x02) ? " C_ENABLE" : "",
+					(status[2] & 0x01) ? " C_CONNECT" : "");
+			printf("%s%s%s%s%s%s%s%s%s%s\n",
+					(status[1] & 0x10) ? " indicator" : "",
+					(status[1] & 0x08) ? " test" : "",
+					(status[1] & 0x04) ? " highspeed" : "",
+					(status[1] & 0x02) ? " lowspeed" : "",
+					(status[1] & 0x01) ? " power" : "",
+					(status[0] & 0x10) ? " RESET" : "",
+					(status[0] & 0x08) ? " oc" : "",
+					(status[0] & 0x04) ? " suspend" : "",
+					(status[0] & 0x02) ? " enable" : "",
+					(status[0] & 0x01) ? " connect" : "");
+		} else {
+			link_state = ((status[0] & 0xe0) >> 5) +
+				((status[1] & 0x1) << 4);
+			printf("%s%s%s%s%s",
+					(status[2] & 0x80) ? " C_CONFIG_ERROR" : "",
+					(status[2] & 0x40) ? " C_LINK_STATE" : "",
+					(status[2] & 0x20) ? " C_BH_RESET" : "",
+					(status[2] & 0x10) ? " C_RESET" : "",
+					(status[2] & 0x08) ? " C_OC" : "",
+					(status[2] & 0x01) ? " C_CONNECT" : "");
+			printf("%s%s",
+					((status[1] & 0x1C) == 0) ? " 5Gbps" : " Unknown Speed",
+					(status[1] & 0x02) ? " power" : "");
+			/* Link state is bits 8:5 */
+			if (link_state < 0xC0)
+				printf("%s", link_state_descriptions[link_state]);
+			printf("%s%s%s%s\n",
+					(status[0] & 0x10) ? " RESET" : "",
+					(status[0] & 0x08) ? " oc" : "",
+					(status[0] & 0x02) ? " enable" : "",
+					(status[0] & 0x01) ? " connect" : "");
+		}
 	}
 }
 
@@ -3468,7 +3536,7 @@ static void dumpdev(struct usb_device *dev)
 		return;
 
 	if (dev->descriptor.bDeviceClass == USB_CLASS_HUB)
-		do_hub(udev, dev->descriptor.bDeviceProtocol);
+		do_hub(udev, dev->descriptor.bDeviceProtocol, dev->descriptor.bcdUSB);
 	if (dev->descriptor.bcdUSB >= 0x0200) {
 		do_dualspeed(udev);
 		do_debug(udev);
