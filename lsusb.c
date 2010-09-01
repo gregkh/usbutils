@@ -3455,7 +3455,7 @@ static void dumpdev(struct usb_device *dev)
 			"will be missing\n");
 
 	dump_device(udev, &dev->descriptor);
-	if (dev->descriptor.bcdUSB >= 0x0250)
+	if (dev->descriptor.bcdUSB == 0x0250)
 		wireless = do_wireless(udev);
 	if (dev->config) {
 		otg = do_otg(&dev->config[0]) || otg;
