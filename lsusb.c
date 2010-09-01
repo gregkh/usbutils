@@ -775,6 +775,15 @@ static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descr
 				break;
 			case USB_DT_SS_ENDPOINT_COMP:
 				printf("        bMaxBurst %15u\n", buf[2] + 1);
+				/* Print bulk streams info or isoc "Mult" */
+				if ((endpoint->bmAttributes & 3) == 2 &&
+						(buf[3] & 0x1f))
+					printf("        MaxStreams %14u\n",
+							(unsigned) 1 << buf[3]);
+				if ((endpoint->bmAttributes & 3) == 1 &&
+						(buf[3] & 0x3))
+					printf("        Mult %20u\n",
+							buf[3] & 0x3);
 				break;
 			default:
 				/* often a misplaced class descriptor */
