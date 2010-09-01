@@ -71,6 +71,12 @@
 #define USB_DT_RC_INTERFACE		0x23
 #define USB_DT_SS_ENDPOINT_COMP		0x30
 
+/* Device Capability Type Codes (Wireless USB spec and USB 3.0 bus spec) */
+#define USB_DC_WIRELESS_USB		0x01
+#define USB_DC_20_EXTENSION		0x02
+#define USB_DC_SUPERSPEED		0x03
+#define USB_DC_CONTAINER_ID		0x04
+
 /* Conventional codes for class-specific descriptors.  The convention is
  * defined in the USB "Common Class" Spec (3.11).  Individual class specs
  * are authoritative for their usage, not the "common class" writeup.
@@ -3519,6 +3525,175 @@ static int do_wireless(struct usb_dev_handle *fd)
 	return 0;
 }
 
+static void dump_usb2_device_capability_desc(unsigned char *buf)
+{
+	unsigned int wide;
+
+	wide = buf[3] + (buf[4] << 8) +
+		(buf[5] << 8) + (buf[6] << 8);
+	printf("  USB 2.0 Extension Device Capability:\n"
+			"    bLength             %5u\n"
+			"    bDescriptorType     %5u\n"
+			"    bDevCapabilityType  %5u\n"
+			"    bmAttributes   0x%08x\n",
+			buf[0], buf[1], buf[2], wide);
+	if (!(wide & 0x02))
+		printf("      (Missing must-be-set LPM bit!)\n");
+	else
+		printf("      Link Power Management (LPM)"
+				" Supported\n");
+}
+
+static void dump_ss_device_capability_desc(unsigned char *buf)
+{
+	if (buf[0] < 10) {
+		printf("  Bad SuperSpeed USB Device Capability descriptor.\n");
+		return;
+	}
+	printf("  SuperSpeed USB Device Capability:\n"
+			"    bLength             %5u\n"
+			"    bDescriptorType     %5u\n"
+			"    bDevCapabilityType  %5u\n"
+			"    bmAttributes         0x%02x\n",
+			buf[0], buf[1], buf[2], buf[3]);
+	if (!(buf[3] & 0x02))
+		printf("      Latency Tolerance Messages (LTM)"
+				" Supported\n");
+	printf("    wSpeedsSupported   0x%04x\n", buf[4]);
+	if (buf[4] & (1 << 0))
+		printf("      Device can operate at Low Speed (1Mbps)\n");
+	if (buf[4] & (1 << 1))
+		printf("      Device can operate at Full Speed (12Mbps)\n");
+	if (buf[4] & (1 << 2))
+		printf("      Device can operate at High Speed (480Mbps)\n");
+	if (buf[4] & (1 << 3))
+		printf("      Device can operate at SuperSpeed (5Gbps)\n");
+
+	printf("    bFunctionalitySupport %3u\n", buf[5]);
+	switch(buf[5]) {
+	case 0:
+		printf("      Lowest fully-functional device speed is "
+				"Low Speed (1Mbps)\n");
+		break;
+	case 1:
+		printf("      Lowest fully-functional device speed is "
+				"Full Speed (12Mbps)\n");
+		break;
+	case 2:
+		printf("      Lowest fully-functional device speed is "
+				"High Speed (480Mbps)\n");
+		break;
+	case 3:
+		printf("      Lowest fully-functional device speed is "
+				"SuperSpeed (5Gbps)\n");
+		break;
+	default:
+		printf("      Lowest fully-functional device speed is "
+				"at an unknown speed!\n");
+		break;
+	}
+	printf("    bU1DevExitLat        %4u micro seconds\n", buf[6]);
+	printf("    bU2DevExitLat    %8u micro seconds\n", buf[8] + (buf[7] << 8));
+}
+
+static void dump_container_id_device_capability_desc(unsigned char *buf)
+{
+	if (buf[0] < 20) {
+		printf("  Bad Container ID Device Capability descriptor.\n");
+		return;
+	}
+	printf("  Container ID Device Capability:\n"
+			"    bLength             %5u\n"
+			"    bDescriptorType     %5u\n"
+			"    bDevCapabilityType  %5u\n"
+			"    bReserved           %5u\n",
+			buf[0], buf[1], buf[2], buf[3]);
+	printf("    ContainerID             %s\n",
+			get_guid(&buf[4]));
+}
+
+static void dump_bos_descriptor(struct usb_dev_handle *fd)
+{
+	/* Total for all known BOS descriptors is 43 bytes:
+	 * 6 bytes for Wireless USB, 7 bytes for USB 2.0 extension,
+	 * 10 bytes for SuperSpeed, 20 bytes for Container ID.
+	 */
+	unsigned char bos_desc[43];
+	unsigned int bos_desc_size;
+	int size, ret;
+	unsigned char *buf;
+
+	/* Get the first 5 bytes to get the wTotalLength field */
+	ret = usb_control_msg(fd,
+			USB_ENDPOINT_IN | USB_RECIP_DEVICE,
+			USB_REQ_GET_DESCRIPTOR,
+			USB_DT_BOS << 8, 0,
+			bos_desc, 5, CTRL_TIMEOUT);
+	if (ret < 0)
+		return;
+
+	bos_desc_size = bos_desc[2] + (bos_desc[3] << 8);
+	printf("Binary Object Store Descriptor:\n"
+	       "  bLength             %5u\n"
+	       "  bDescriptorType     %5u\n"
+	       "  wTotalLength        %5u\n"
+	       "  bNumDeviceCaps      %5u\n",
+	       bos_desc[0], bos_desc[1],
+	       bos_desc_size, bos_desc[4]);
+
+	if (bos_desc_size <= 5) {
+		if (bos_desc[4] > 0)
+			fprintf(stderr, "Couldn't get "
+					"device capability descriptors\n");
+		return;
+	}
+	if (bos_desc_size > sizeof bos_desc) {
+		fprintf(stderr, "FIXME: alloc bigger buffer for "
+				"device capability descriptors\n");
+		return;
+	}
+
+	ret = usb_control_msg(fd,
+			USB_ENDPOINT_IN | USB_RECIP_DEVICE,
+			USB_REQ_GET_DESCRIPTOR,
+			USB_DT_BOS << 8, 0,
+			bos_desc, bos_desc_size, CTRL_TIMEOUT);
+	if (ret < 0) {
+		fprintf(stderr, "Couldn't get device capability descriptors\n");
+		return;
+	}
+
+	size = bos_desc_size - 5;
+	buf = &bos_desc[5];
+
+	while (size >= 3) {
+		if (buf[0] < 3) {
+			printf("buf[0] = %u\n", buf[0]);
+			return;
+		}
+		switch (buf[2]) {
+		case USB_DC_WIRELESS_USB:
+			/* FIXME */
+			break;
+		case USB_DC_20_EXTENSION:
+			dump_usb2_device_capability_desc(buf);
+			break;
+		case USB_DC_SUPERSPEED:
+			dump_ss_device_capability_desc(buf);
+			break;
+		case USB_DC_CONTAINER_ID:
+			dump_container_id_device_capability_desc(buf);
+			break;
+		default:
+			printf("  ** UNRECOGNIZED: ");
+			dump_bytes(buf, buf[0]);
+			break;
+		}
+		size -= buf[0];
+		buf += buf[0];
+	}
+}
+
 static void dumpdev(struct usb_device *dev)
 {
 	struct usb_dev_handle *udev;
@@ -3551,6 +3726,7 @@ static void dumpdev(struct usb_device *dev)
 		do_debug(udev);
 	}
 	dump_device_status(udev, otg, wireless);
+	dump_bos_descriptor(udev);
 	usb_close(udev);
 }
 
