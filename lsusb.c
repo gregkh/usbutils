@@ -3246,7 +3246,8 @@ static void do_hub(struct usb_dev_handle *fd, unsigned tt_type, unsigned speed)
 					((status[1] & 0x1C) == 0) ? " 5Gbps" : " Unknown Speed",
 					(status[1] & 0x02) ? " power" : "");
 			/* Link state is bits 8:5 */
-			if (link_state < 0xC0)
+			if (link_state < (sizeof(link_state_descriptions) /
+						sizeof(*link_state_descriptions)))
 				printf("%s", link_state_descriptions[link_state]);
 			printf("%s%s%s%s\n",
 					(status[0] & 0x10) ? " RESET" : "",
