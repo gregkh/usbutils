@@ -2362,7 +2362,7 @@ static void dump_videostreaming_interface(unsigned char *buf)
 		printf("          Interlaced stream or variable: %s\n",
 		       (flags & (1 << 0)) ? "Yes" : "No");
 		printf("          Fields per frame: %u fields\n",
-		       (flags & (1 << 1)) ? 2 : 1);
+		       (flags & (1 << 1)) ? 1 : 2);
 		printf("          Field 1 first: %s\n",
 		       (flags & (1 << 2)) ? "Yes" : "No");
 		printf("          Field pattern: ");
