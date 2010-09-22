@@ -3154,7 +3154,7 @@ static void do_hub(struct usb_dev_handle *fd, unsigned tt_type, unsigned speed)
 			+ 2 /* bitmasks */ * HUB_STATUS_BYTELEN];
 	int i, ret, value;
 	unsigned int link_state;
-	unsigned char *link_state_descriptions[] = {
+	char *link_state_descriptions[] = {
 		" U0",
 		" U1",
 		" U2",
@@ -3235,7 +3235,7 @@ static void do_hub(struct usb_dev_handle *fd, unsigned tt_type, unsigned speed)
 		} else {
 			link_state = ((status[0] & 0xe0) >> 5) +
 				((status[1] & 0x1) << 4);
-			printf("%s%s%s%s%s",
+			printf("%s%s%s%s%s%s",
 					(status[2] & 0x80) ? " C_CONFIG_ERROR" : "",
 					(status[2] & 0x40) ? " C_LINK_STATE" : "",
 					(status[2] & 0x20) ? " C_BH_RESET" : "",
