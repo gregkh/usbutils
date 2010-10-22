@@ -1,3 +1,29 @@
+usbutils 0.91
+=============
+
+Greg Kroah-Hartman (3):
+      add usbhid-dump to the autogen.sh script
+      usb.ids: add new device id for qemu audio device
+      Minor fixes
+
+Laurent Pinchart (1):
+      usbutils: Fix the UVC bmInterlaceFlags field decoding
+
+Mike Frysinger (2):
+      usbutils.pc: use datarootdir
+      fix building on non-Linux systems (e.g. BSD)
+
+Nikolai Kondrashov (1):
+      Integrate usbhid-dump
+
+Sarah Sharp (5):
+      usbutils: Fix Wireless USB descriptor fetching.
+      usbutils: Support USB 3.0 hub descriptor output.
+      usbutils: Print MaxStreams and Mult for USB 3.0 devices.
+      usbutils: Print Binary Object Store descriptor.
+      usbutils: Fix bug in link state description printing.
+
+
 usbutils 0.90
 =============
 Aurelien Jarno (1):
