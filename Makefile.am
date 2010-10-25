@@ -10,7 +10,7 @@ if HAVE_ZLIB
 data_DATA += usb.ids.gz
 endif
 
-sbin_PROGRAMS = \
+bin_PROGRAMS = \
 	lsusb
 
 sbin_SCRIPTS = \
