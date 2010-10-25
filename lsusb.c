@@ -31,6 +31,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 
 #ifdef HAVE_BYTESWAP_H
