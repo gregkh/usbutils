@@ -116,25 +116,31 @@
 #define	HUB_STATUS_BYTELEN	3	/* max 3 bytes status = hub + 23 ports */
 
 extern int lsusb_t(void);
-static const char *procbususb = "/proc/bus/usb";
+static const char procbususb[] = "/proc/bus/usb";
 static unsigned int verblevel = VERBLEVEL_DEFAULT;
 static int do_report_desc = 1;
-static const char *encryption_type[] = {"UNSECURE", "WIRED", "CCM_1", "RSA_1", "RESERVED"};
+static const char * const encryption_type[] = {
+	"UNSECURE",
+	"WIRED",
+	"CCM_1",
+	"RSA_1",
+	"RESERVED"
+};
 
-static void dump_interface(struct usb_dev_handle *dev, struct usb_interface *interface);
-static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descriptor *interface, struct usb_endpoint_descriptor *endpoint);
-static void dump_audiocontrol_interface(struct usb_dev_handle *dev, unsigned char *buf, int protocol);
-static void dump_audiostreaming_interface(struct usb_dev_handle *dev, unsigned char *buf, int protocol);
-static void dump_midistreaming_interface(struct usb_dev_handle *dev, unsigned char *buf);
-static void dump_videocontrol_interface(struct usb_dev_handle *dev, unsigned char *buf);
-static void dump_videostreaming_interface(unsigned char *buf);
-static void dump_dfu_interface(unsigned char *buf);
-static char *dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *indent);
-static void dump_hid_device(struct usb_dev_handle *dev, struct usb_interface_descriptor *interface, unsigned char *buf);
-static void dump_audiostreaming_endpoint(unsigned char *buf, int protocol);
-static void dump_midistreaming_endpoint(unsigned char *buf);
-static void dump_hub(char *prefix, unsigned char *p, int tt_type);
-static void dump_ccid_device(unsigned char *buf);
+static void dump_interface(struct usb_dev_handle *dev, const struct usb_interface *interface);
+static void dump_endpoint(struct usb_dev_handle *dev, const struct usb_interface_descriptor *interface, const struct usb_endpoint_descriptor *endpoint);
+static void dump_audiocontrol_interface(struct usb_dev_handle *dev, const unsigned char *buf, int protocol);
+static void dump_audiostreaming_interface(struct usb_dev_handle *dev, const unsigned char *buf, int protocol);
+static void dump_midistreaming_interface(struct usb_dev_handle *dev, const unsigned char *buf);
+static void dump_videocontrol_interface(struct usb_dev_handle *dev, const unsigned char *buf);
+static void dump_videostreaming_interface(const unsigned char *buf);
+static void dump_dfu_interface(const unsigned char *buf);
+static char *dump_comm_descriptor(struct usb_dev_handle *dev, const unsigned char *buf, char *indent);
+static void dump_hid_device(struct usb_dev_handle *dev, const struct usb_interface_descriptor *interface, const unsigned char *buf);
+static void dump_audiostreaming_endpoint(const unsigned char *buf, int protocol);
+static void dump_midistreaming_endpoint(const unsigned char *buf);
+static void dump_hub(const char *prefix, const unsigned char *p, int tt_type);
+static void dump_ccid_device(const unsigned char *buf);
 
 /* ---------------------------------------------------------------------- */
 
@@ -286,7 +292,7 @@ static int get_videoterminal_string(char *buf, size_t size, u_int16_t termt)
 	return snprintf(buf, size, "%s", cp);
 }
 
-static const char *get_guid(unsigned char *buf)
+static const char *get_guid(const unsigned char *buf)
 {
 	static char guid[39];
 
@@ -309,7 +315,7 @@ static const char *get_guid(unsigned char *buf)
 
 /* ---------------------------------------------------------------------- */
 
-static void dump_bytes(unsigned char *buf, unsigned int len)
+static void dump_bytes(const unsigned char *buf, unsigned int len)
 {
 	unsigned int i;
 
@@ -318,7 +324,7 @@ static void dump_bytes(unsigned char *buf, unsigned int len)
 	printf("\n");
 }
 
-static void dump_junk(unsigned char *buf, const char *indent, unsigned int len)
+static void dump_junk(const unsigned char *buf, const char *indent, unsigned int len)
 {
 	unsigned int i;
 
@@ -383,7 +389,7 @@ static void dump_device(
 	       descriptor->bNumConfigurations);
 }
 
-static void dump_wire_adapter(unsigned char *buf)
+static void dump_wire_adapter(const unsigned char *buf)
 {
 
 	printf("      Wire Adapter Class Descriptor:\n"
@@ -404,7 +410,7 @@ static void dump_wire_adapter(unsigned char *buf)
 	       buf[10], buf[11], buf[12], buf[13]);
 }
 
-static void dump_rc_interface(unsigned char *buf)
+static void dump_rc_interface(const unsigned char *buf)
 {
 	printf("      Radio Control Interface Class Descriptor:\n"
 	       "        bLength             %5u\n"
@@ -414,7 +420,7 @@ static void dump_rc_interface(unsigned char *buf)
 
 }
 
-static void dump_security(unsigned char *buf)
+static void dump_security(const unsigned char *buf)
 {
 	printf("    Security Descriptor:\n"
 	       "      bLength             %5u\n"
@@ -424,7 +430,7 @@ static void dump_security(unsigned char *buf)
 	       buf[0], buf[1], (buf[3] << 8 | buf[2]), buf[4]);
 }
 
-static void dump_encryption_type(unsigned char *buf)
+static void dump_encryption_type(const unsigned char *buf)
 {
 	int b_encryption_type = buf[2] & 0x4;
 
@@ -438,7 +444,7 @@ static void dump_encryption_type(unsigned char *buf)
 	       encryption_type[b_encryption_type], buf[3], buf[4]);
 }
 
-static void dump_association(struct usb_dev_handle *dev, unsigned char *buf)
+static void dump_association(struct usb_dev_handle *dev, const unsigned char *buf)
 {
 	char cls[128], subcls[128], proto[128];
 	char func[128];
@@ -498,7 +504,7 @@ static void dump_config(struct usb_dev_handle *dev, struct usb_config_descriptor
 	/* avoid re-ordering or hiding descriptors for display */
 	if (config->extralen) {
 		int		size = config->extralen;
-		unsigned char	*buf = config->extra;
+		const unsigned char	*buf = config->extra;
 
 		while (size >= 2) {
 			if (buf[0] < 2) {
@@ -532,12 +538,12 @@ static void dump_config(struct usb_dev_handle *dev, struct usb_config_descriptor
 		dump_interface(dev, &config->interface[i]);
 }
 
-static void dump_altsetting(struct usb_dev_handle *dev, struct usb_interface_descriptor *interface)
+static void dump_altsetting(struct usb_dev_handle *dev, const struct usb_interface_descriptor *interface)
 {
 	char cls[128], subcls[128], proto[128];
 	char ifstr[128];
 
-	unsigned char *buf;
+	const unsigned char *buf;
 	unsigned size, i;
 
 	get_class_string(cls, sizeof(cls), interface->bInterfaceClass);
@@ -685,7 +691,7 @@ dump:
 		dump_endpoint(dev, interface, &interface->endpoint[i]);
 }
 
-static void dump_interface(struct usb_dev_handle *dev, struct usb_interface *interface)
+static void dump_interface(struct usb_dev_handle *dev, const struct usb_interface *interface)
 {
 	int i;
 
@@ -693,28 +699,28 @@ static void dump_interface(struct usb_dev_handle *dev, struct usb_interface *int
 		dump_altsetting(dev, &interface->altsetting[i]);
 }
 
-static void dump_endpoint(struct usb_dev_handle *dev, struct usb_interface_descriptor *interface, struct usb_endpoint_descriptor *endpoint)
+static void dump_endpoint(struct usb_dev_handle *dev, const struct usb_interface_descriptor *interface, const struct usb_endpoint_descriptor *endpoint)
 {
-	static const char *typeattr[] = {
+	static const char * const typeattr[] = {
 		"Control",
 		"Isochronous",
 		"Bulk",
 		"Interrupt"
 	};
-	static const char *syncattr[] = {
+	static const char * const syncattr[] = {
 		"None",
 		"Asynchronous",
 		"Adaptive",
 		"Synchronous"
 	};
-	static const char *usage[] = {
+	static const char * const usage[] = {
 		"Data",
 		"Feedback",
 		"Implicit feedback Data",
 		"(reserved)"
 	};
-	static const char *hb[] = { "1x", "2x", "3x", "(?\?)" };
-	unsigned char *buf;
+	static const char * const hb[] = { "1x", "2x", "3x", "(?\?)" };
+	const unsigned char *buf;
 	unsigned size;
 	unsigned wmax = le16_to_cpu(endpoint->wMaxPacketSize);
 
@@ -976,7 +982,7 @@ static void dump_audio_bmcontrols(const char *prefix, int bmcontrols, const stru
 	}
 }
 
-static const char *chconfig_uac2[] = {
+static const char * const chconfig_uac2[] = {
 	"Front Left (FL)", "Front Right (FR)", "Front Center (FC)", "Low Frequency Effects (LFE)",
 	"Back Left (BL)", "Back Right (BR)", "Front Left of Center (FLC)", "Front Right of Center (FRC)", "Back Center (BC)",
 	"Side Left (SL)", "Side Right (SR)",
@@ -987,14 +993,14 @@ static const char *chconfig_uac2[] = {
 	"Back Left of Center (BLC)", "Back Right of Center (BRC)"
 };
 
-static void dump_audiocontrol_interface(struct usb_dev_handle *dev, unsigned char *buf, int protocol)
+static void dump_audiocontrol_interface(struct usb_dev_handle *dev, const unsigned char *buf, int protocol)
 {
-	static const char *chconfig[] = {
+	static const char * const chconfig[] = {
 		"Left Front (L)", "Right Front (R)", "Center Front (C)", "Low Freqency Enhancement (LFE)",
 		"Left Surround (LS)", "Right Surround (RS)", "Left of Center (LC)", "Right of Center (RC)",
 		"Surround (S)", "Side Left (SL)", "Side Right (SR)", "Top (T)"
 	};
-	static const char *clock_source_attrs[] = {
+	static const char * const clock_source_attrs[] = {
 		"External", "Internal fixed", "Internal variable", "Internal programmable"
 	};
 	unsigned int i, chcfg, j, k, N, termt, subtype;
@@ -1557,12 +1563,12 @@ static const struct bmcontrol uac2_as_interface_bmcontrols[] = {
 	{ NULL }
 };
 
-static void dump_audiostreaming_interface(struct usb_dev_handle *dev, unsigned char *buf, int protocol)
+static void dump_audiostreaming_interface(struct usb_dev_handle *dev, const unsigned char *buf, int protocol)
 {
-	static const char *fmtItag[] = {
+	static const char * const fmtItag[] = {
 		"TYPE_I_UNDEFINED", "PCM", "PCM8", "IEEE_FLOAT", "ALAW", "MULAW" };
-	static const char *fmtIItag[] = { "TYPE_II_UNDEFINED", "MPEG", "AC-3" };
-	static const char *fmtIIItag[] = {
+	static const char * const fmtIItag[] = { "TYPE_II_UNDEFINED", "MPEG", "AC-3" };
+	static const char * const fmtIIItag[] = {
 		"TYPE_III_UNDEFINED", "IEC1937_AC-3", "IEC1937_MPEG-1_Layer1",
 		"IEC1937_MPEG-Layer2/3/NOEXT", "IEC1937_MPEG-2_EXT",
 		"IEC1937_MPEG-2_Layer1_LS", "IEC1937_MPEG-2_Layer2/3_LS" };
@@ -1892,9 +1898,9 @@ static const struct bmcontrol uac2_audio_endpoint_bmcontrols[] = {
 	{ NULL }
 };
 
-static void dump_audiostreaming_endpoint(unsigned char *buf, int protocol)
+static void dump_audiostreaming_endpoint(const unsigned char *buf, int protocol)
 {
-	static const char *lockdelunits[] = { "Undefined", "Milliseconds", "Decoded PCM samples", "Reserved" };
+	static const char * const lockdelunits[] = { "Undefined", "Milliseconds", "Decoded PCM samples", "Reserved" };
 	unsigned int lckdelidx;
 
 	if (buf[1] != USB_DT_CS_ENDPOINT)
@@ -1943,9 +1949,9 @@ static void dump_audiostreaming_endpoint(unsigned char *buf, int protocol)
 	} /* switch protocol */
 }
 
-static void dump_midistreaming_interface(struct usb_dev_handle *dev, unsigned char *buf)
+static void dump_midistreaming_interface(struct usb_dev_handle *dev, const unsigned char *buf)
 {
-	static const char *jacktypes[] = {"Undefined", "Embedded", "External"};
+	static const char * const jacktypes[] = {"Undefined", "Embedded", "External"};
 	char jackstr[128];
 	unsigned int j, tlength, capssize;
 	unsigned long caps;
@@ -2065,7 +2071,7 @@ static void dump_midistreaming_interface(struct usb_dev_handle *dev, unsigned ch
 	}
 }
 
-static void dump_midistreaming_endpoint(unsigned char *buf)
+static void dump_midistreaming_endpoint(const unsigned char *buf)
 {
 	unsigned int j;
 
@@ -2088,16 +2094,16 @@ static void dump_midistreaming_endpoint(unsigned char *buf)
  * Video Class descriptor dump
  */
 
-static void dump_videocontrol_interface(struct usb_dev_handle *dev, unsigned char *buf)
+static void dump_videocontrol_interface(struct usb_dev_handle *dev, const unsigned char *buf)
 {
-	static const char *ctrlnames[] = {
+	static const char * const ctrlnames[] = {
 		"Brightness", "Contrast", "Hue", "Saturation", "Sharpness", "Gamma",
 		"White Balance Temperature", "White Balance Component", "Backlight Compensation",
 		"Gain", "Power Line Frequency", "Hue, Auto", "White Balance Temperature, Auto",
 		"White Balance Component, Auto", "Digital Multiplier", "Digital Multiplier Limit",
 		"Analog Video Standard", "Analog Video Lock Status"
 	};
-	static const char *camctrlnames[] = {
+	static const char * const camctrlnames[] = {
 		"Scanning Mode", "Auto-Exposure Mode", "Auto-Exposure Priority",
 		"Exposure Time (Absolute)", "Exposure Time (Relative)", "Focus (Absolute)",
 		"Focus (Relative)", "Iris (Absolute)", "Iris (Relative)", "Zoom (Absolute)",
@@ -2105,7 +2111,7 @@ static void dump_videocontrol_interface(struct usb_dev_handle *dev, unsigned cha
 		"Roll (Absolute)", "Roll (Relative)", "Reserved", "Reserved", "Focus, Auto",
 		"Privacy"
 	};
-	static const char *stdnames[] = {
+	static const char * const stdnames[] = {
 		"None", "NTSC - 525/60", "PAL - 625/50", "SECAM - 625/50",
 		"NTSC - 625/50", "PAL - 525/60" };
 	unsigned int i, ctrls, stds, n, p, termt, freq;
@@ -2260,14 +2266,14 @@ static void dump_videocontrol_interface(struct usb_dev_handle *dev, unsigned cha
 	}
 }
 
-static void dump_videostreaming_interface(unsigned char *buf)
+static void dump_videostreaming_interface(const unsigned char *buf)
 {
-	static const char *colorPrims[] = { "Unspecified", "BT.709,sRGB",
+	static const char * const colorPrims[] = { "Unspecified", "BT.709,sRGB",
 		"BT.470-2 (M)", "BT.470-2 (B,G)", "SMPTE 170M", "SMPTE 240M" };
-	static const char *transferChars[] = { "Unspecified", "BT.709",
+	static const char * const transferChars[] = { "Unspecified", "BT.709",
 		"BT.470-2 (M)", "BT.470-2 (B,G)", "SMPTE 170M", "SMPTE 240M",
 		"Linear", "sRGB"};
-	static const char *matrixCoeffs[] = { "Unspecified", "BT.709",
+	static const char * const matrixCoeffs[] = { "Unspecified", "BT.709",
 		"FCC", "BT.470-2 (B,G)", "SMPTE 170M (BT.601)", "SMPTE 240M" };
 	unsigned int i, m, n, p, flags, len;
 
@@ -2492,7 +2498,7 @@ static void dump_videostreaming_interface(unsigned char *buf)
 	}
 }
 
-static void dump_dfu_interface(unsigned char *buf)
+static void dump_dfu_interface(const unsigned char *buf)
 {
 	if (buf[1] != USB_DT_CS_DEVICE)
 		printf("      Warning: Invalid descriptor\n");
@@ -2520,7 +2526,7 @@ static void dump_dfu_interface(unsigned char *buf)
 			buf[8], buf[7]);
 }
 
-static void dump_hub(char *prefix, unsigned char *p, int tt_type)
+static void dump_hub(const char *prefix, const unsigned char *p, int tt_type)
 {
 	unsigned int l, i, j;
 	unsigned int offset;
@@ -2598,7 +2604,7 @@ static void dump_hub(char *prefix, unsigned char *p, int tt_type)
 	printf("\n");
 }
 
-static void dump_ccid_device(unsigned char *buf)
+static void dump_ccid_device(const unsigned char *buf)
 {
 	unsigned int us;
 
@@ -2857,8 +2863,8 @@ static void dump_report_desc(unsigned char *b, int l)
 }
 
 static void dump_hid_device(struct usb_dev_handle *dev,
-			    struct usb_interface_descriptor *interface,
-			    unsigned char *buf)
+			    const struct usb_interface_descriptor *interface,
+			    const unsigned char *buf)
 {
 	unsigned int i, len;
 	unsigned int n;
@@ -2930,7 +2936,7 @@ static void dump_hid_device(struct usb_dev_handle *dev,
 }
 
 static char *
-dump_comm_descriptor(struct usb_dev_handle *dev, unsigned char *buf, char *indent)
+dump_comm_descriptor(struct usb_dev_handle *dev, const unsigned char *buf, char *indent)
 {
 	int		tmp;
 	char		str[128];
@@ -3335,7 +3341,7 @@ static void do_debug(struct usb_dev_handle *fd)
 	       buf[2], buf[3]);
 }
 
-static unsigned char *find_otg(unsigned char *buf, int buflen)
+static const unsigned char *find_otg(const unsigned char *buf, int buflen)
 {
 	if (!buf)
 		return 0;
@@ -3354,21 +3360,21 @@ static int do_otg(struct usb_config_descriptor *config)
 {
 	unsigned	i, k;
 	int		j;
-	unsigned char	*desc;
+	const unsigned char	*desc;
 
 	/* each config of an otg device has an OTG descriptor */
 	desc = find_otg(config->extra, config->extralen);
 	for (i = 0; !desc && i < config->bNumInterfaces; i++) {
-		struct usb_interface *intf;
+		const struct usb_interface *intf;
 
 		intf = &config->interface[i];
 		for (j = 0; !desc && j < intf->num_altsetting; j++) {
-			struct usb_interface_descriptor *alt;
+			const struct usb_interface_descriptor *alt;
 
 			alt = &intf->altsetting[j];
 			desc = find_otg(alt->extra, alt->extralen);
 			for (k = 0; !desc && k < alt->bNumEndpoints; k++) {
-				struct usb_endpoint_descriptor *ep;
+				const struct usb_endpoint_descriptor *ep;
 
 				ep = &alt->endpoint[k];
 				desc = find_otg(ep->extra, ep->extralen);
