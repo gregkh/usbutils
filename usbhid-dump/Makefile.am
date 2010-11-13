@@ -23,13 +23,14 @@ dist_noinst_SCRIPTS = bootstrap
 ACLOCAL_AMFLAGS = -I m4
 
 dist-hook:
-	@if test -d "$(top_srcdir)/.git"; then \
-		echo Generating ChangeLog && \
-		( cd "$(top_srcdir)" && \
-		  auxdir/missing --run git log --stat ) > ChangeLog.tmp && \
-		mv -f ChangeLog.tmp $(top_distdir)/ChangeLog || \
-		( rm -f ChangeLog.tmp; echo Failed to generate ChangeLog >&2 ); \
+	@set -e; \
+	if test -d "$(srcdir)/.git"; then \
+		echo Generating ChangeLog; \
+		( cd "$(srcdir)" && auxdir/missing --run git log ) > \
+			ChangeLog.tmp; \
+		mv -f ChangeLog.tmp "$(distdir)/ChangeLog"; \
 	else \
-		echo Skipping ChangeLog generation: no git repository >&2; \
+		echo Cannot generate ChangeLog: no .git directory >&2; \
+		exit 1; \
 	fi
 
