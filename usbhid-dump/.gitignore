@@ -10,6 +10,7 @@
 /Makefile
 /stamp-h1
 /auxdir
+/ChangeLog
 *.o
 *.lo
 *.la

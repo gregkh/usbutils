@@ -21,6 +21,10 @@
 # Fail on any error
 set -e
 
+cat > ChangeLog <<CUT
+# Dummy ChangeLog, replaced with git log when distribution is created.
+CUT
+
 aclocal -I m4
 libtoolize
 autoheader
