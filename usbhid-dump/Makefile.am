@@ -30,7 +30,6 @@ dist-hook:
 			ChangeLog.tmp; \
 		mv -f ChangeLog.tmp "$(distdir)/ChangeLog"; \
 	else \
-		echo Cannot generate ChangeLog: no .git directory >&2; \
-		exit 1; \
+		echo Skipping ChangeLog generation: no .git directory >&2; \
 	fi
 
