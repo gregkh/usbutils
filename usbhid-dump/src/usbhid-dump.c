@@ -24,9 +24,9 @@
  * @(#) $Id$
  */
 
-#include "usbhid_dump/iface.h"
-#include "usbhid_dump/str.h"
-#include "usbhid_dump/libusb.h"
+#include "uhd/iface.h"
+#include "uhd/str.h"
+#include "uhd/libusb.h"
 
 #include <assert.h>
 #include <stdbool.h>

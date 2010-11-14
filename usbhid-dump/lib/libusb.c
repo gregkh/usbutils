@@ -24,7 +24,7 @@
  * @(#) $Id$
  */
 
-#include "usbhid_dump/libusb.h"
+#include "uhd/libusb.h"
 #include <stdbool.h>
 
 const char *

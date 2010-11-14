@@ -92,7 +92,7 @@ fi
 #
 AC_CONFIG_FILES([Makefile
                  include/Makefile
-                 include/usbhid_dump/Makefile
+                 include/uhd/Makefile
                  lib/Makefile
                  src/Makefile])
 AC_OUTPUT

@@ -24,7 +24,7 @@
  * @(#) $Id$
  */
 
-#include "usbhid_dump/iface.h"
+#include "uhd/iface.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>

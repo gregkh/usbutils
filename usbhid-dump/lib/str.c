@@ -24,7 +24,7 @@
  * @(#) $Id$
  */
 
-#include "usbhid_dump/str.h"
+#include "uhd/str.h"
 #include <ctype.h>
 
 bool

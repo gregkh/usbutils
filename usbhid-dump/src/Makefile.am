@@ -19,4 +19,4 @@
 bin_PROGRAMS = usbhid-dump
 
 usbhid_dump_SOURCES = usbhid-dump.c
-usbhid_dump_LDADD = ../lib/libusbhid_dump.la
+usbhid_dump_LDADD = ../lib/libuhd.la
