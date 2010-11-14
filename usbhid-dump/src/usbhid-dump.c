@@ -197,10 +197,10 @@ dump(uint8_t        iface_num,
 static bool
 dump_iface_list_descriptor(const uhd_iface *list)
 {
-    const uhd_iface            *iface;
-    uint8_t                     buf[MAX_DESCRIPTOR_SIZE];
-    int                         rc;
-    enum libusb_error           err;
+    const uhd_iface    *iface;
+    uint8_t             buf[MAX_DESCRIPTOR_SIZE];
+    int                 rc;
+    enum libusb_error   err;
 
     for (iface = list; iface != NULL; iface = iface->next)
     {

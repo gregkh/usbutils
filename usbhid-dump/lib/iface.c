@@ -39,9 +39,9 @@ uhd_iface_valid(const uhd_iface *iface)
 
 uhd_iface *
 uhd_iface_new(libusb_device_handle *handle,
-                      uint8_t               number,
-                      uint8_t               int_in_ep_addr,
-                      uint16_t              int_in_ep_maxp)
+              uint8_t               number,
+              uint8_t               int_in_ep_addr,
+              uint16_t              int_in_ep_maxp)
 {
     uhd_iface  *iface;
 
@@ -193,7 +193,7 @@ cleanup:
 
 uhd_iface *
 uhd_iface_list_fltr_by_num(uhd_iface   *list,
-                                   int                  number)
+                           int          number)
 {
     uhd_iface  *prev;
     uhd_iface  *iface;
@@ -304,8 +304,8 @@ uhd_iface_list_clear_halt(uhd_iface *list)
 
 enum libusb_error
 uhd_iface_list_set_idle(const uhd_iface    *list,
-                                uint8_t                     duration,
-                                unsigned int                timeout)
+                        uint8_t             duration,
+                        unsigned int        timeout)
 {
     int rc;
 
@@ -339,8 +339,8 @@ uhd_iface_list_set_idle(const uhd_iface    *list,
 
 enum libusb_error
 uhd_iface_list_set_protocol(const uhd_iface    *list,
-                                    bool                        report,
-                                    unsigned int                timeout)
+                            bool                report,
+                            unsigned int        timeout)
 {
     int rc;
 

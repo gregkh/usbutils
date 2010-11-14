@@ -61,11 +61,10 @@ struct uhd_iface {
 
 extern bool uhd_iface_valid(const uhd_iface *iface);
 
-extern uhd_iface *uhd_iface_new(
-                                    libusb_device_handle *handle,
-                                    uint8_t               number,
-                                    uint8_t               int_in_ep_addr,
-                                    uint16_t              int_in_ep_maxp);
+extern uhd_iface *uhd_iface_new(libusb_device_handle   *handle,
+                                uint8_t                 number,
+                                uint8_t                 int_in_ep_addr,
+                                uint16_t                int_in_ep_maxp);
 
 extern void uhd_iface_free(uhd_iface *iface);
 
@@ -92,7 +91,7 @@ extern void uhd_iface_list_free(uhd_iface *list);
  */
 enum libusb_error
 uhd_iface_list_new_from_dev(libusb_device_handle   *handle,
-                            uhd_iface     **plist);
+                            uhd_iface             **plist);
 
 /**
  * Filter an interface list by an optional interface number, resulting
@@ -104,9 +103,8 @@ uhd_iface_list_new_from_dev(libusb_device_handle   *handle,
  *
  * @return The resulting list head
  */
-extern uhd_iface *uhd_iface_list_fltr_by_num(
-                                            uhd_iface          *list,
-                                            int                 number);
+extern uhd_iface *uhd_iface_list_fltr_by_num(uhd_iface *list,
+                                             int        number);
 
 /**
  * Detach all interfaces in a list from their kernel drivers (if any).
@@ -147,9 +145,9 @@ extern enum libusb_error uhd_iface_list_claim(uhd_iface    *list);
  * @return Libusb error code.
  */
 extern enum libusb_error uhd_iface_list_set_idle(
-                                    const uhd_iface            *list,
-                                    uint8_t                     duration,
-                                    unsigned int                timeout);
+                                            const uhd_iface    *list,
+                                            uint8_t             duration,
+                                            unsigned int        timeout);
 
 /**
  * Set HID protocol on all interfaces in a list; ignore errors indicating
@@ -162,9 +160,9 @@ extern enum libusb_error uhd_iface_list_set_idle(
  * @return Libusb error code.
  */
 extern enum libusb_error uhd_iface_list_set_protocol(
-                                    const uhd_iface            *list,
-                                    bool                        report,
-                                    unsigned int                timeout);
+                                            const uhd_iface    *list,
+                                            bool                report,
+                                            unsigned int        timeout);
 
 /**
  * Clear halt condition on input interrupt endpoints of all interfaces.
