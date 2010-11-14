@@ -28,7 +28,7 @@
 #include <ctype.h>
 
 bool
-usbhid_dump_strisblank(const char *str)
+uhd_strisblank(const char *str)
 {
     for (; *str != '\0'; str++)
         if (!isblank(*str))

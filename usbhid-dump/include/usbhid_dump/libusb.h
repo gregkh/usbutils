@@ -24,8 +24,8 @@
  * @(#) $Id$
  */
 
-#ifndef __USBHID_DUMP_LIBUSB_H__
-#define __USBHID_DUMP_LIBUSB_H__
+#ifndef __UHD_LIBUSB_H__
+#define __UHD_LIBUSB_H__
 
 #include <libusb-1.0/libusb.h>
 
@@ -45,4 +45,4 @@ extern enum libusb_error libusb_open_device_with_bus_dev(
 } /* extern "C" */
 #endif
 
-#endif /* __USBHID_DUMP_LIBUSB_H__ */
+#endif /* __UHD_LIBUSB_H__ */

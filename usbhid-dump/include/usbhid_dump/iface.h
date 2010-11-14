@@ -24,8 +24,8 @@
  * @(#) $Id$
  */
 
-#ifndef __USBHID_DUMP_IFACE_H__
-#define __USBHID_DUMP_IFACE_H__
+#ifndef __UHD_IFACE_H__
+#define __UHD_IFACE_H__
 
 #include <stdbool.h>
 #include <libusb-1.0/libusb.h>
@@ -34,10 +34,10 @@
 extern "C" {
 #endif
 
-typedef struct usbhid_dump_iface usbhid_dump_iface;
+typedef struct uhd_iface uhd_iface;
 
-struct usbhid_dump_iface {
-    usbhid_dump_iface      *next;
+struct uhd_iface {
+    uhd_iface              *next;
     libusb_device_handle   *handle;         /**< Device handle */
     uint8_t                 number;         /**< Interface number */
     uint8_t                 int_in_ep_addr; /**< Interrupt IN EP address */
@@ -59,27 +59,27 @@ struct usbhid_dump_iface {
                                                  for the interface */
 };
 
-extern bool usbhid_dump_iface_valid(const usbhid_dump_iface *iface);
+extern bool uhd_iface_valid(const uhd_iface *iface);
 
-extern usbhid_dump_iface *usbhid_dump_iface_new(
+extern uhd_iface *uhd_iface_new(
                                     libusb_device_handle *handle,
                                     uint8_t               number,
                                     uint8_t               int_in_ep_addr,
                                     uint16_t              int_in_ep_maxp);
 
-extern void usbhid_dump_iface_free(usbhid_dump_iface *iface);
+extern void uhd_iface_free(uhd_iface *iface);
 
-extern bool usbhid_dump_iface_list_valid(const usbhid_dump_iface *list);
+extern bool uhd_iface_list_valid(const uhd_iface *list);
 
 static inline bool
-usbhid_dump_iface_list_empty(const usbhid_dump_iface *list)
+uhd_iface_list_empty(const uhd_iface *list)
 {
     return list == NULL;
 }
 
-extern size_t usbhid_dump_iface_list_len(const usbhid_dump_iface *list);
+extern size_t uhd_iface_list_len(const uhd_iface *list);
 
-extern void usbhid_dump_iface_list_free(usbhid_dump_iface *list);
+extern void uhd_iface_list_free(uhd_iface *list);
 
 
 /**
@@ -91,8 +91,8 @@ extern void usbhid_dump_iface_list_free(usbhid_dump_iface *list);
  * @return Libusb error code.
  */
 enum libusb_error
-usbhid_dump_iface_list_new_from_dev(libusb_device_handle   *handle,
-                                    usbhid_dump_iface     **plist);
+uhd_iface_list_new_from_dev(libusb_device_handle   *handle,
+                            uhd_iface     **plist);
 
 /**
  * Filter an interface list by an optional interface number, resulting
@@ -104,8 +104,8 @@ usbhid_dump_iface_list_new_from_dev(libusb_device_handle   *handle,
  *
  * @return The resulting list head
  */
-extern usbhid_dump_iface *usbhid_dump_iface_list_fltr_by_num(
-                                            usbhid_dump_iface  *list,
+extern uhd_iface *uhd_iface_list_fltr_by_num(
+                                            uhd_iface          *list,
                                             int                 number);
 
 /**
@@ -115,8 +115,7 @@ extern usbhid_dump_iface *usbhid_dump_iface_list_fltr_by_num(
  *
  * @return Libusb error code.
  */
-extern enum libusb_error usbhid_dump_iface_list_detach(
-                                                usbhid_dump_iface  *list);
+extern enum libusb_error uhd_iface_list_detach(uhd_iface   *list);
 
 /**
  * Attach all interfaces in a list to their kernel drivers (if were detached
@@ -126,8 +125,7 @@ extern enum libusb_error usbhid_dump_iface_list_detach(
  *
  * @return Libusb error code.
  */
-extern enum libusb_error usbhid_dump_iface_list_attach(
-                                                usbhid_dump_iface  *list);
+extern enum libusb_error uhd_iface_list_attach(uhd_iface   *list);
 
 /**
  * Claim all interfaces in a list.
@@ -136,8 +134,7 @@ extern enum libusb_error usbhid_dump_iface_list_attach(
  *
  * @return Libusb error code.
  */
-extern enum libusb_error usbhid_dump_iface_list_claim(
-                                                usbhid_dump_iface  *list);
+extern enum libusb_error uhd_iface_list_claim(uhd_iface    *list);
 
 /**
  * Set idle duration on all interfaces in a list; ignore errors indicating
@@ -149,8 +146,8 @@ extern enum libusb_error usbhid_dump_iface_list_claim(
  *
  * @return Libusb error code.
  */
-extern enum libusb_error usbhid_dump_iface_list_set_idle(
-                                    const usbhid_dump_iface    *list,
+extern enum libusb_error uhd_iface_list_set_idle(
+                                    const uhd_iface            *list,
                                     uint8_t                     duration,
                                     unsigned int                timeout);
 
@@ -164,8 +161,8 @@ extern enum libusb_error usbhid_dump_iface_list_set_idle(
  *
  * @return Libusb error code.
  */
-extern enum libusb_error usbhid_dump_iface_list_set_protocol(
-                                    const usbhid_dump_iface    *list,
+extern enum libusb_error uhd_iface_list_set_protocol(
+                                    const uhd_iface            *list,
                                     bool                        report,
                                     unsigned int                timeout);
 
@@ -176,8 +173,7 @@ extern enum libusb_error usbhid_dump_iface_list_set_protocol(
  *
  * @return Libusb error code.
  */
-extern enum libusb_error usbhid_dump_iface_list_clear_halt(
-                                                usbhid_dump_iface  *list);
+extern enum libusb_error uhd_iface_list_clear_halt(uhd_iface   *list);
 /**
  * Release all interfaces in a list (if were claimed before).
  *
@@ -185,11 +181,10 @@ extern enum libusb_error usbhid_dump_iface_list_clear_halt(
  *
  * @return Libusb error code.
  */
-extern enum libusb_error usbhid_dump_iface_list_release(
-                                            usbhid_dump_iface  *list);
+extern enum libusb_error uhd_iface_list_release(uhd_iface  *list);
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif /* __USBHID_DUMP_IFACE_H__ */
+#endif /* __UHD_IFACE_H__ */

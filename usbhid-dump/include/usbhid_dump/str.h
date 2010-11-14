@@ -24,8 +24,8 @@
  * @(#) $Id$
  */
 
-#ifndef __USBHID_DUMP_STR_H__
-#define __USBHID_DUMP_STR_H__
+#ifndef __UHD_STR_H__
+#define __UHD_STR_H__
 
 #include <stdbool.h>
 
@@ -33,10 +33,10 @@
 extern "C" {
 #endif
 
-extern bool usbhid_dump_strisblank(const char *str);
+extern bool uhd_strisblank(const char *str);
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif /* __USBHID_DUMP_STR_H__ */
+#endif /* __UHD_STR_H__ */

@@ -195,9 +195,9 @@ dump(uint8_t        iface_num,
 
 
 static bool
-dump_iface_list_descriptor(const usbhid_dump_iface *list)
+dump_iface_list_descriptor(const uhd_iface *list)
 {
-    const usbhid_dump_iface    *iface;
+    const uhd_iface            *iface;
     uint8_t                     buf[MAX_DESCRIPTOR_SIZE];
     int                         rc;
     enum libusb_error           err;
@@ -228,12 +228,12 @@ static void
 dump_iface_list_stream_cb(struct libusb_transfer *transfer)
 {
     enum libusb_error   err;
-    usbhid_dump_iface  *iface;
+    uhd_iface          *iface;
 
     assert(transfer != NULL);
 
-    iface = (usbhid_dump_iface *)transfer->user_data;
-    assert(usbhid_dump_iface_valid(iface));
+    iface = (uhd_iface *)transfer->user_data;
+    assert(uhd_iface_valid(iface));
 
     /* Clear interface "has transfer submitted" flag */
     iface->submitted = false;
@@ -275,28 +275,28 @@ dump_iface_list_stream_cb(struct libusb_transfer *transfer)
 
 
 static bool
-dump_iface_list_stream(libusb_context *ctx, usbhid_dump_iface *list)
+dump_iface_list_stream(libusb_context *ctx, uhd_iface *list)
 {
     bool                        result              = false;
     enum libusb_error           err;
     size_t                      transfer_num        = 0;
     struct libusb_transfer    **transfer_list       = NULL;
     struct libusb_transfer    **ptransfer;
-    usbhid_dump_iface          *iface;
+    uhd_iface                  *iface;
     bool                        submitted           = false;
 
     /* Set report protocol on all interfaces */
-    err = usbhid_dump_iface_list_set_protocol(list, true, TIMEOUT);
+    err = uhd_iface_list_set_protocol(list, true, TIMEOUT);
     if (err != LIBUSB_SUCCESS)
         LIBUSB_ERROR_CLEANUP("set report protocol");
 
     /* Set infinite idle duration on all interfaces */
-    err = usbhid_dump_iface_list_set_idle(list, 0, TIMEOUT);
+    err = uhd_iface_list_set_idle(list, 0, TIMEOUT);
     if (err != LIBUSB_SUCCESS)
         LIBUSB_ERROR_CLEANUP("set infinite idle duration");
 
     /* Calculate number of interfaces and thus transfers */
-    transfer_num = usbhid_dump_iface_list_len(list);
+    transfer_num = uhd_iface_list_len(list);
 
     /* Allocate transfer list */
     transfer_list = malloc(sizeof(*transfer_list) * transfer_num);
@@ -359,7 +359,7 @@ dump_iface_list_stream(libusb_context *ctx, usbhid_dump_iface *list)
         if (err != LIBUSB_SUCCESS)
             LIBUSB_ERROR_CLEANUP("submit a transfer");
         /* Set interface "has transfer submitted" flag */
-        ((usbhid_dump_iface *)(*ptransfer)->user_data)->submitted = true;
+        ((uhd_iface *)(*ptransfer)->user_data)->submitted = true;
         /* Set "have any submitted transfers" flag */
         submitted = true;
     }
@@ -378,7 +378,7 @@ dump_iface_list_stream(libusb_context *ctx, usbhid_dump_iface *list)
              (size_t)(ptransfer - transfer_list) < transfer_num;
              ptransfer++)
         {
-            iface = (usbhid_dump_iface *)(*ptransfer)->user_data;
+            iface = (uhd_iface *)(*ptransfer)->user_data;
 
             if (iface != NULL && iface->submitted)
                 submitted = true;
@@ -401,7 +401,7 @@ cleanup:
              (size_t)(ptransfer - transfer_list) < transfer_num;
              ptransfer++)
         {
-            iface = (usbhid_dump_iface *)(*ptransfer)->user_data;
+            iface = (uhd_iface *)(*ptransfer)->user_data;
 
             if (iface != NULL && iface->submitted)
             {
@@ -439,7 +439,7 @@ cleanup:
              (size_t)(ptransfer - transfer_list) < transfer_num;
              ptransfer++)
         {
-            iface = (usbhid_dump_iface *)(*ptransfer)->user_data;
+            iface = (uhd_iface *)(*ptransfer)->user_data;
 
             if (iface != NULL && iface->submitted)
                 submitted = true;
@@ -456,7 +456,7 @@ cleanup:
              (size_t)(ptransfer - transfer_list) < transfer_num;
              ptransfer++)
         {
-            iface = (usbhid_dump_iface *)(*ptransfer)->user_data;
+            iface = (uhd_iface *)(*ptransfer)->user_data;
 
             /*
              * Only free a transfer if it is not submitted. Better leak some
@@ -484,7 +484,7 @@ run(bool    dump_descriptor,
     enum libusb_error       err;
     libusb_context         *ctx         = NULL;
     libusb_device_handle   *handle      = NULL;
-    usbhid_dump_iface      *iface_list  = NULL;
+    uhd_iface              *iface_list  = NULL;
 
     /* Initialize libusb context */
     err = libusb_init(&ctx);
@@ -500,23 +500,23 @@ run(bool    dump_descriptor,
         LIBUSB_FAILURE_CLEANUP("find and open the device");
 
     /* Retrieve the list of HID interfaces from a device */
-    err = usbhid_dump_iface_list_new_from_dev(handle, &iface_list);
+    err = uhd_iface_list_new_from_dev(handle, &iface_list);
     if (err != LIBUSB_SUCCESS)
         LIBUSB_FAILURE_CLEANUP("find a HID interface");
 
     /* Filter the interface list by specified interface number */
-    iface_list = usbhid_dump_iface_list_fltr_by_num(iface_list, iface_num);
-    if (usbhid_dump_iface_list_empty(iface_list))
+    iface_list = uhd_iface_list_fltr_by_num(iface_list, iface_num);
+    if (uhd_iface_list_empty(iface_list))
         ERROR_CLEANUP("No matching HID interfaces");
 
     /* Detach interfaces */
-    err = usbhid_dump_iface_list_detach(iface_list);
+    err = uhd_iface_list_detach(iface_list);
     if (err != LIBUSB_SUCCESS)
         LIBUSB_FAILURE_CLEANUP("detach the interface(s) from "
                                "the kernel drivers");
 
     /* Claim interfaces */
-    err = usbhid_dump_iface_list_claim(iface_list);
+    err = uhd_iface_list_claim(iface_list);
     if (err != LIBUSB_SUCCESS)
         LIBUSB_FAILURE_CLEANUP("claim the interface(s)");
 
@@ -529,17 +529,17 @@ run(bool    dump_descriptor,
 cleanup:
 
     /* Release the interfaces back */
-    err = usbhid_dump_iface_list_release(iface_list);
+    err = uhd_iface_list_release(iface_list);
     if (err != LIBUSB_SUCCESS)
         LIBUSB_FAILURE("release the interface(s)");
 
     /* Attach interfaces back */
-    err = usbhid_dump_iface_list_attach(iface_list);
+    err = uhd_iface_list_attach(iface_list);
     if (err != LIBUSB_SUCCESS)
         LIBUSB_FAILURE("attach the interface(s) to the kernel drivers");
 
     /* Free the interface list */
-    usbhid_dump_iface_list_free(iface_list);
+    uhd_iface_list_free(iface_list);
 
     /* Free the device */
     if (handle != NULL)
@@ -685,21 +685,21 @@ main(int argc, char **argv)
      */
     errno = 0;
     bus_num = strtol(bus_str, &end, 0);
-    if (errno != 0 || !usbhid_dump_strisblank(end) ||
+    if (errno != 0 || !uhd_strisblank(end) ||
         bus_num <= 0 || bus_num > 255)
         USAGE_ERROR("Invalid bus number \"%s\"", bus_str);
 
     errno = 0;
     dev_num = strtol(dev_str, &end, 0);
-    if (errno != 0 || !usbhid_dump_strisblank(end) ||
+    if (errno != 0 || !uhd_strisblank(end) ||
         dev_num <= 0 || dev_num > 255)
         USAGE_ERROR("Invalid device address \"%s\"", dev_str);
 
-    if (!usbhid_dump_strisblank(if_str))
+    if (!uhd_strisblank(if_str))
     {
         errno = 0;
         if_num = strtol(if_str, &end, 0);
-        if (errno != 0 || !usbhid_dump_strisblank(end) ||
+        if (errno != 0 || !uhd_strisblank(end) ||
             if_num < 0 || if_num >= 255)
             USAGE_ERROR("Invalid interface number \"%s\"", if_str);
     }
