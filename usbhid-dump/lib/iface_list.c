@@ -32,7 +32,7 @@
 bool
 uhd_iface_list_valid(const uhd_iface *list)
 {
-    for (; list != NULL; list = list->next)
+    UHD_IFACE_LIST_FOR_EACH(list, list)
         if (!uhd_iface_valid(list))
             return false;
 
@@ -45,7 +45,7 @@ uhd_iface_list_len(const uhd_iface *list)
 {
     size_t  len = 0;
 
-    for (; list != NULL; list = list->next)
+    UHD_IFACE_LIST_FOR_EACH(list, list)
         len++;
 
     return len;
