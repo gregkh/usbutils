@@ -72,8 +72,8 @@ extern bool uhd_iface_valid(const uhd_iface *iface);
 /**
  * Create a new interface.
  *
- * @param handle    Device handle.
- * @param number    Interface number.
+ * @param handle            Device handle.
+ * @param number            Interface number.
  * @param int_in_ep_addr    Interrupt in endpoint address.
  * @param int_in_ep_maxp    Interrupt in endpoint maximum packet size.
  *
@@ -90,6 +90,81 @@ extern uhd_iface *uhd_iface_new(libusb_device_handle   *handle,
  * @param iface The interface to free, could be NULL.
  */
 extern void uhd_iface_free(uhd_iface *iface);
+
+/**
+ * Detach an interface from its kernel driver (if any).
+ *
+ * @param iface The interface to detach.
+ *
+ * @return Libusb error code.
+ */
+extern enum libusb_error uhd_iface_detach(uhd_iface *iface);
+
+/**
+ * Attach an interface to its kernel driver (if detached before).
+ *
+ * @param iface The interface to attach.
+ *
+ * @return Libusb error code.
+ */
+extern enum libusb_error uhd_iface_attach(uhd_iface *iface);
+
+/**
+ * Claim an interface.
+ *
+ * @param iface The interface to claim.
+ *
+ * @return Libusb error code.
+ */
+extern enum libusb_error uhd_iface_claim(uhd_iface *iface);
+
+/**
+ * Set idle duration on an interface; ignore errors indicating missing
+ * support.
+ *
+ * @param iface     The interface to set idle duration on.
+ * @param duration  The duration in 4 ms steps starting from 4 ms.
+ * @param timeout   The request timeout, ms.
+ *
+ * @return Libusb error code.
+ */
+extern enum libusb_error uhd_iface_set_idle(
+                                       const uhd_iface    *iface,
+                                       uint8_t             duration,
+                                       unsigned int        timeout);
+
+/**
+ * Set HID protocol on an interface; ignore errors indicating missing
+ * support.
+ *
+ * @param iface     The interface to set idle duration on.
+ * @param report    True for "report" protocol, false for "boot" protocol.
+ * @param timeout   The request timeout, ms.
+ *
+ * @return Libusb error code.
+ */
+extern enum libusb_error uhd_iface_set_protocol(
+                                       const uhd_iface    *iface,
+                                       bool                report,
+                                       unsigned int        timeout);
+
+/**
+ * Clear halt condition on the input interrupt endpoint of an interface.
+ *
+ * @param iface The interface to clear halt condition on.
+ *
+ * @return Libusb error code.
+ */
+extern enum libusb_error uhd_iface_clear_halt(uhd_iface *iface);
+
+/**
+ * Release an interface (if claimed before).
+ *
+ * @param iface The interface to release.
+ *
+ * @return Libusb error code.
+ */
+extern enum libusb_error uhd_iface_release(uhd_iface *iface);
 
 /**
  * Check if an interface list is valid.
@@ -129,6 +204,14 @@ extern size_t uhd_iface_list_len(const uhd_iface *list);
  */
 extern void uhd_iface_list_free(uhd_iface *list);
 
+/**
+ * Iterate over an interface list.
+ *
+ * @param _iface    Loop interface variable.
+ * @param _list     Interface list to iterate over.
+ */
+#define UHD_IFACE_LIST_FOR_EACH(_iface, _list) \
+    for (_iface = _list; _iface != NULL; _iface = _iface->next)
 
 /**
  * Fetch a list of HID interfaces from a device.
@@ -154,81 +237,6 @@ uhd_iface_list_new_from_dev(libusb_device_handle   *handle,
  */
 extern uhd_iface *uhd_iface_list_fltr_by_num(uhd_iface *list,
                                              int        number);
-
-/**
- * Detach all interfaces in a list from their kernel drivers (if any).
- *
- * @param list  The list of interfaces to detach.
- *
- * @return Libusb error code.
- */
-extern enum libusb_error uhd_iface_list_detach(uhd_iface   *list);
-
-/**
- * Attach all interfaces in a list to their kernel drivers (if were detached
- * before).
- *
- * @param list  The list of interfaces to attach.
- *
- * @return Libusb error code.
- */
-extern enum libusb_error uhd_iface_list_attach(uhd_iface   *list);
-
-/**
- * Claim all interfaces in a list.
- *
- * @param list  The list of interfaces to claim.
- *
- * @return Libusb error code.
- */
-extern enum libusb_error uhd_iface_list_claim(uhd_iface    *list);
-
-/**
- * Set idle duration on all interfaces in a list; ignore errors indicating
- * missing support.
- *
- * @param list      The list of interfaces to set idle duration on.
- * @param duration  The duration in 4 ms steps starting from 4 ms.
- * @param timeout   The request timeout, ms.
- *
- * @return Libusb error code.
- */
-extern enum libusb_error uhd_iface_list_set_idle(
-                                            const uhd_iface    *list,
-                                            uint8_t             duration,
-                                            unsigned int        timeout);
-
-/**
- * Set HID protocol on all interfaces in a list; ignore errors indicating
- * missing support.
- *
- * @param list      The list of interfaces to set idle duration on.
- * @param report    True for "report" protocol, false for "boot" protocol.
- * @param timeout   The request timeout, ms.
- *
- * @return Libusb error code.
- */
-extern enum libusb_error uhd_iface_list_set_protocol(
-                                            const uhd_iface    *list,
-                                            bool                report,
-                                            unsigned int        timeout);
-
-/**
- * Clear halt condition on input interrupt endpoints of all interfaces.
- *
- * @param list  The list of interfaces to clear halt condition on.
- *
- * @return Libusb error code.
- */
-extern enum libusb_error uhd_iface_list_clear_halt(uhd_iface   *list);
-/**
- * Release all interfaces in a list (if were claimed before).
- *
- * @param list  The list of interfaces to release.
- *
- * @return Libusb error code.
- */
-extern enum libusb_error uhd_iface_list_release(uhd_iface  *list);
 
 #ifdef __cplusplus
 } /* extern "C" */

@@ -69,14 +69,28 @@
         goto cleanup;                   \
     } while (0)
 
-#define LIBUSB_ERROR_CLEANUP(_fmt, _args...) \
-    ERROR_CLEANUP(_fmt ": %s", ##_args, libusb_strerror(err))
-
 #define FAILURE_CLEANUP(_fmt, _args...) \
     ERROR_CLEANUP("Failed to " _fmt, ##_args)
 
+#define LIBUSB_ERROR_CLEANUP(_fmt, _args...) \
+    ERROR_CLEANUP(_fmt ": %s", ##_args, libusb_strerror(err))
+
 #define LIBUSB_FAILURE_CLEANUP(_fmt, _args...) \
     LIBUSB_ERROR_CLEANUP("Failed to " _fmt, ##_args)
+
+#define LIBUSB_WATCH(_expr, _fmt, _args...) \
+    do {                                    \
+        err = _expr;                        \
+        if (err != LIBUSB_SUCCESS)          \
+            LIBUSB_FAILURE(_fmt, ##_args);  \
+    } while (0)
+
+#define LIBUSB_GUARD(_expr, _fmt, _args...) \
+    do {                                            \
+        err = _expr;                                \
+        if (err != LIBUSB_SUCCESS)                  \
+            LIBUSB_FAILURE_CLEANUP(_fmt, ##_args);  \
+    } while (0)
 
 /**< Number of the signal causing the exit */
 static volatile sig_atomic_t exit_signum  = 0;
@@ -285,15 +299,15 @@ dump_iface_list_stream(libusb_context *ctx, uhd_iface *list)
     uhd_iface                  *iface;
     bool                        submitted           = false;
 
-    /* Set report protocol on all interfaces */
-    err = uhd_iface_list_set_protocol(list, true, TIMEOUT);
-    if (err != LIBUSB_SUCCESS)
-        LIBUSB_ERROR_CLEANUP("set report protocol");
-
-    /* Set infinite idle duration on all interfaces */
-    err = uhd_iface_list_set_idle(list, 0, TIMEOUT);
-    if (err != LIBUSB_SUCCESS)
-        LIBUSB_ERROR_CLEANUP("set infinite idle duration");
+    UHD_IFACE_LIST_FOR_EACH(iface, list)
+    {
+        /* Set report protocol */
+        LIBUSB_GUARD(uhd_iface_set_protocol(list, true, TIMEOUT),
+                     "set report protocol on an interface");
+        /* Set infinite idle duration */
+        LIBUSB_GUARD(uhd_iface_set_idle(list, 0, TIMEOUT),
+                     "set infinite idle duration on an interface");
+    }
 
     /* Calculate number of interfaces and thus transfers */
     transfer_num = uhd_iface_list_len(list);
@@ -485,6 +499,7 @@ run(bool    dump_descriptor,
     libusb_context         *ctx         = NULL;
     libusb_device_handle   *handle      = NULL;
     uhd_iface              *iface_list  = NULL;
+    uhd_iface              *iface;
 
     /* Initialize libusb context */
     err = libusb_init(&ctx);
@@ -509,16 +524,14 @@ run(bool    dump_descriptor,
     if (uhd_iface_list_empty(iface_list))
         ERROR_CLEANUP("No matching HID interfaces");
 
-    /* Detach interfaces */
-    err = uhd_iface_list_detach(iface_list);
-    if (err != LIBUSB_SUCCESS)
-        LIBUSB_FAILURE_CLEANUP("detach the interface(s) from "
-                               "the kernel drivers");
-
-    /* Claim interfaces */
-    err = uhd_iface_list_claim(iface_list);
-    if (err != LIBUSB_SUCCESS)
-        LIBUSB_FAILURE_CLEANUP("claim the interface(s)");
+    /* Detach and claim the interfaces */
+    UHD_IFACE_LIST_FOR_EACH(iface, iface_list)
+    {
+        LIBUSB_GUARD(uhd_iface_detach(iface),
+                     "detach an interface from the kernel driver");
+        LIBUSB_GUARD(uhd_iface_claim(iface),
+                     "claim an interface");
+    }
 
     /* Run with the prepared interface list */
     result = (!dump_descriptor || dump_iface_list_descriptor(iface_list)) &&
@@ -528,15 +541,14 @@ run(bool    dump_descriptor,
 
 cleanup:
 
-    /* Release the interfaces back */
-    err = uhd_iface_list_release(iface_list);
-    if (err != LIBUSB_SUCCESS)
-        LIBUSB_FAILURE("release the interface(s)");
-
-    /* Attach interfaces back */
-    err = uhd_iface_list_attach(iface_list);
-    if (err != LIBUSB_SUCCESS)
-        LIBUSB_FAILURE("attach the interface(s) to the kernel drivers");
+    /* Release and attach the interfaces back */
+    UHD_IFACE_LIST_FOR_EACH(iface, iface_list)
+    {
+        LIBUSB_GUARD(uhd_iface_release(iface),
+                     "release an interface");
+        LIBUSB_GUARD(uhd_iface_attach(iface),
+                     "attach an interface to the kernel driver");
+    }
 
     /* Free the interface list */
     uhd_iface_list_free(iface_list);
