@@ -2352,8 +2352,15 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 		break;
 
 	case 0x04: /* FORMAT_UNCOMPRESSED */
-		printf("(FORMAT_UNCOMPRESSED)\n");
-		if (buf[0] < 27)
+	case 0x10: /* FORMAT_FRAME_BASED */
+		if (buf[2] == 0x04) {
+			printf("(FORMAT_UNCOMPRESSED)\n");
+			len = 27;
+		} else {
+			printf("(FORMAT_FRAME_BASED)\n");
+			len = 28;
+		}
+		if (buf[0] < len)
 			printf("      Warning: Descriptor too short\n");
 		flags = buf[25];
 		printf("        bFormatIndex                    %5u\n"
@@ -2388,16 +2395,25 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 			break;
 		}
 		printf("          bCopyProtect                  %5u\n", buf[26]);
-		dump_junk(buf, "        ", 27);
+		if (buf[2] == 0x10)
+			printf("          bVariableSize                 %5u\n", buf[27]);
+		dump_junk(buf, "        ", len);
 		break;
 
 	case 0x05: /* FRAME UNCOMPRESSED */
 	case 0x07: /* FRAME_MJPEG */
-		if (buf[2] == 0x05)
+	case 0x11: /* FRAME_FRAME_BASED */
+		if (buf[2] == 0x05) {
 			printf("(FRAME_UNCOMPRESSED)\n");
-		else
+			n = 25;
+		} else if (buf[2] == 0x07) {
 			printf("(FRAME_MJPEG)\n");
-		len = (buf[25] != 0) ? (26+buf[25]*4) : 38;
+			n = 25;
+		} else {
+			printf("(FRAME_FRAME_BASED)\n");
+			n = 21;
+		}
+		len = (buf[n] != 0) ? (26+buf[n]*4) : 38;
 		if (buf[0] < len)
 			printf("      Warning: Descriptor too short\n");
 		flags = buf[4];
@@ -2411,17 +2427,25 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 		printf("        wWidth                          %5u\n"
 		       "        wHeight                         %5u\n"
 		       "        dwMinBitRate                %9u\n"
-		       "        dwMaxBitRate                %9u\n"
-		       "        dwMaxVideoFrameBufferSize   %9u\n"
-		       "        dwDefaultFrameInterval      %9u\n"
-		       "        bFrameIntervalType              %5u\n",
+		       "        dwMaxBitRate                %9u\n",
 		       buf[5] | (buf[6] <<  8), buf[7] | (buf[8] << 8),
 		       buf[9] | (buf[10] << 8) | (buf[11] << 16) | (buf[12] << 24),
-		       buf[13] | (buf[14] << 8) | (buf[15] << 16) | (buf[16] << 24),
-		       buf[17] | (buf[18] << 8) | (buf[19] << 16) | (buf[20] << 24),
-		       buf[21] | (buf[22] << 8) | (buf[23] << 16) | (buf[24] << 24),
-		       buf[25]);
-		if (buf[25] == 0)
+		       buf[13] | (buf[14] << 8) | (buf[15] << 16) | (buf[16] << 24));
+		if (buf[2] == 0x11)
+			printf("        dwDefaultFrameInterval      %9u\n"
+			       "        bFrameIntervalType              %5u\n"
+			       "        dwBytesPerLine              %9u\n",
+			       buf[17] | (buf[18] << 8) | (buf[19] << 16) | (buf[20] << 24),
+			       buf[21],
+			       buf[22] | (buf[23] << 8) | (buf[24] << 16) | (buf[25] << 24));
+		else
+			printf("        dwMaxVideoFrameBufferSize   %9u\n"
+			       "        dwDefaultFrameInterval      %9u\n"
+			       "        bFrameIntervalType              %5u\n",
+			       buf[17] | (buf[18] << 8) | (buf[19] << 16) | (buf[20] << 24),
+			       buf[21] | (buf[22] << 8) | (buf[23] << 16) | (buf[24] << 24),
+			       buf[25]);
+		if (buf[n] == 0)
 			printf("        dwMinFrameInterval          %9u\n"
 			       "        dwMaxFrameInterval          %9u\n"
 			       "        dwFrameIntervalStep         %9u\n",
@@ -2429,7 +2453,7 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 			       buf[30] | (buf[31] << 8) | (buf[32] << 16) | (buf[33] << 24),
 			       buf[34] | (buf[35] << 8) | (buf[36] << 16) | (buf[37] << 24));
 		else
-			for (i = 0; i < buf[25]; i++)
+			for (i = 0; i < buf[n]; i++)
 				printf("        dwFrameInterval(%2u)         %9u\n",
 				       i, buf[26+4*i] | (buf[27+4*i] << 8) |
 				       (buf[28+4*i] << 16) | (buf[29+4*i] << 24));
