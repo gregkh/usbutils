@@ -34,6 +34,7 @@
 extern "C" {
 #endif
 
+/** usbhid-dump interface */
 typedef struct uhd_iface uhd_iface;
 
 struct uhd_iface {
@@ -59,25 +60,73 @@ struct uhd_iface {
                                                  for the interface */
 };
 
+/**
+ * Check if an interface is valid.
+ *
+ * @param iface Interface.
+ *
+ * @return True if the interface is valid, false otherwise.
+ */
 extern bool uhd_iface_valid(const uhd_iface *iface);
 
+/**
+ * Create a new interface.
+ *
+ * @param handle    Device handle.
+ * @param number    Interface number.
+ * @param int_in_ep_addr    Interrupt in endpoint address.
+ * @param int_in_ep_maxp    Interrupt in endpoint maximum packet size.
+ *
+ * @return New interface or NULL, if failed to allocate.
+ */
 extern uhd_iface *uhd_iface_new(libusb_device_handle   *handle,
                                 uint8_t                 number,
                                 uint8_t                 int_in_ep_addr,
                                 uint16_t                int_in_ep_maxp);
 
+/**
+ * Free an interface.
+ *
+ * @param iface The interface to free, could be NULL.
+ */
 extern void uhd_iface_free(uhd_iface *iface);
 
+/**
+ * Check if an interface list is valid.
+ *
+ * @param list  Interface list to check.
+ *
+ * @return True if the interface list is valid, false otherwise.
+ */
 extern bool uhd_iface_list_valid(const uhd_iface *list);
 
+/**
+ * Check if an interface list is empty.
+ *
+ * @param list  Interface list to check.
+ *
+ * @return True if the interface list is empty, false otherwise.
+ */
 static inline bool
 uhd_iface_list_empty(const uhd_iface *list)
 {
     return list == NULL;
 }
 
+/**
+ * Calculate length of an interface list.
+ *
+ * @param list  The list to calculate length of.
+ *
+ * @return The list length.
+ */
 extern size_t uhd_iface_list_len(const uhd_iface *list);
 
+/**
+ * Free an interface list.
+ *
+ * @param list  The interface list to free.
+ */
 extern void uhd_iface_list_free(uhd_iface *list);
 
 
