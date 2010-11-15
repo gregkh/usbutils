@@ -216,7 +216,7 @@ dump_iface_list_descriptor(const uhd_iface *list)
     int                 rc;
     enum libusb_error   err;
 
-    for (iface = list; iface != NULL; iface = iface->next)
+    UHD_IFACE_LIST_FOR_EACH(iface, list)
     {
         rc = libusb_control_transfer(iface->handle,
                                      /* See HID spec, 7.1.1 */
