@@ -24,7 +24,7 @@
  * @(#) $Id$
  */
 
-#include "uhd/iface.h"
+#include "uhd/iface_list.h"
 #include "uhd/str.h"
 #include "uhd/libusb.h"
 

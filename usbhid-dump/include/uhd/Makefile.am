@@ -18,5 +18,6 @@
 
 noinst_HEADERS = \
     iface.h         \
+    iface_list.h    \
     libusb.h        \
     str.h

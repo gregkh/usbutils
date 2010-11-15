@@ -20,5 +20,6 @@ noinst_LTLIBRARIES = libuhd.la
 
 libuhd_la_SOURCES = \
     iface.c         \
+    iface_list.c    \
     libusb.c        \
     str.c
