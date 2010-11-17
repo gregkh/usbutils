@@ -1,6 +1,5 @@
 /** @file
- * @brief usbhid-dump - entry point
- *
+ * @brief usbhid-dump - entry point *
  * Copyright (C) 2010 Nikolai Kondrashov
  *
  * This file is part of usbhid-dump.
@@ -48,6 +47,17 @@
  * 4096 here is maximum control buffer length.
  */
 #define MAX_DESCRIPTOR_SIZE 4096
+
+/** Wildcard bus number */
+#define BUS_NUM_ANY     0
+/** Wildcard device address */
+#define DEV_ADDR_ANY    0
+/** Wildcard vendor ID */
+#define VID_ANY         0
+/** Wildcard product ID */
+#define PID_ANY         0
+/** Wildcard interface number */
+#define IFACE_NUM_ANY   UINT8_MAX
 
 /**
  * USB I/O timeout
@@ -122,61 +132,11 @@ stream_resume_sighandler(int signum)
 /**< "Stream feedback" flag - non-zero if feedback is enabled */
 static volatile sig_atomic_t stream_feedback = 0;
 
-static bool
-usage(FILE *stream, const char *progname)
-{
-    return
-        fprintf(
-            stream,
-"Usage: %s [OPTION]... <bus> <dev> [if]\n"
-"Dump a USB device HID report descriptor(s) and/or stream(s)."
-"\n"
-"Arguments:\n"
-"  bus                      bus number (1-255)\n"
-"  dev                      device address (1-255)\n"
-"  if                       interface number (0-254);\n"
-"                           if omitted, all device HID interfaces\n"
-"                           are dumped\n"
-"\n"
-"Options:\n"
-"  -h, --help               output this help message and exit\n"
-"  -v, --version            output version information and exit\n"
-"  -e, --entity=STRING      what to dump: either \"descriptor\",\n"
-"                           \"stream\" or \"all\"; value can be\n"
-"                           abbreviated\n"
-"  -p, --stream-paused      start with the stream dump output paused\n"
-"  -f, --stream-feedback    enable stream dumping feedback: for every\n"
-"                           transfer dumped a dot is printed to stderr\n"
-"\n"
-"Default options: --entity=descriptor\n"
-"\n"
-"Signals:\n"
-"  USR1/USR2                pause/resume the stream dump output\n"
-"\n",
-            progname) >= 0;
-}
-
-
-static bool
-version(FILE *stream)
-{
-    return
-        fprintf(
-            stream,
-PACKAGE_STRING "\n"
-"Copyright (C) 2010 Nikolai Kondrashov\n"
-"License GPLv2+: GNU GPL version 2 or later <http://gnu.org/licenses/gpl.html>.\n"
-"\n"
-"This is free software: you are free to change and redistribute it.\n"
-"There is NO WARRANTY, to the extent permitted by law.\n") >= 0;
-}
-
-
 static void
-dump(uint8_t        iface_num,
-     const char    *entity,
-     const uint8_t *ptr,
-     size_t         len)
+dump(const uhd_iface   *iface,
+     const char        *entity,
+     const uint8_t     *ptr,
+     size_t             len)
 {
     static const char   xd[]    = "0123456789ABCDEF";
     static char         buf[]   = " XX\n";
@@ -186,8 +146,8 @@ dump(uint8_t        iface_num,
 
     gettimeofday(&tv, NULL);
 
-    fprintf(stdout, "%.3hhu:%-16s %20llu.%.6u\n",
-            iface_num, entity,
+    fprintf(stdout, "%s:%-16s %12llu.%.6u\n",
+            iface->addr_str, entity,
             (unsigned long long int)tv.tv_sec,
             (unsigned int)tv.tv_usec);
 
@@ -218,7 +178,7 @@ dump_iface_list_descriptor(const uhd_iface *list)
 
     UHD_IFACE_LIST_FOR_EACH(iface, list)
     {
-        rc = libusb_control_transfer(iface->handle,
+        rc = libusb_control_transfer(iface->dev->handle,
                                      /* See HID spec, 7.1.1 */
                                      0x81,
                                      LIBUSB_REQUEST_GET_DESCRIPTOR,
@@ -231,7 +191,7 @@ dump_iface_list_descriptor(const uhd_iface *list)
                            "report descriptor", iface->number);
             return false;
         }
-        dump(iface->number, "DESCRIPTOR", buf, rc);
+        dump(iface, "DESCRIPTOR", buf, rc);
     }
 
     return true;
@@ -258,7 +218,7 @@ dump_iface_list_stream_cb(struct libusb_transfer *transfer)
             /* Dump the result */
             if (!stream_paused)
             {
-                dump(iface->number, "STREAM",
+                dump(iface, "STREAM",
                      transfer->buffer, transfer->actual_length);
                 if (stream_feedback)
                     fputc('.', stderr);
@@ -347,13 +307,13 @@ dump_iface_list_stream(libusb_context *ctx, uhd_iface *list)
         const size_t    len = iface->int_in_ep_maxp;
 
         /* Allocate the transfer buffer */
-        buf = malloc(len);   
+        buf = malloc(len);
         if (len > 0 && buf == NULL)
             FAILURE_CLEANUP("allocate a transfer buffer");
 
         /* Initialize the transfer */
         libusb_fill_interrupt_transfer(*ptransfer,
-                                       iface->handle, iface->int_in_ep_addr,
+                                       iface->dev->handle, iface->int_in_ep_addr,
                                        buf, len,
                                        dump_iface_list_stream_cb,
                                        (void *)iface,
@@ -488,39 +448,41 @@ cleanup:
 
 
 static int
-run(bool    dump_descriptor,
-    bool    dump_stream,
-    uint8_t bus_num,
-    uint8_t dev_addr,
-    int     iface_num)
+run(bool        dump_descriptor,
+    bool        dump_stream,
+    uint8_t     bus_num,
+    uint8_t     dev_addr,
+    uint16_t    vid,
+    uint16_t    pid,
+    int         iface_num)
 {
-    int                     result      = 1;
-    enum libusb_error       err;
-    libusb_context         *ctx         = NULL;
-    libusb_device_handle   *handle      = NULL;
-    uhd_iface              *iface_list  = NULL;
-    uhd_iface              *iface;
+    int                 result      = 1;
+    enum libusb_error   err;
+    libusb_context     *ctx         = NULL;
+    uhd_dev            *dev_list    = NULL;
+    uhd_iface          *iface_list  = NULL;
+    uhd_iface          *iface;
 
-    /* Initialize libusb context */
-    err = libusb_init(&ctx);
-    if (err != LIBUSB_SUCCESS)
-        LIBUSB_FAILURE_CLEANUP("create libusb context");
+    /* Create libusb context */
+    LIBUSB_GUARD(libusb_init(&ctx), "create libusb context");
 
     /* Set libusb debug level */
     libusb_set_debug(ctx, 3);
 
-    /* Find and open the device */
-    err = libusb_open_device_with_bus_dev(ctx, bus_num, dev_addr, &handle);
-    if (err != LIBUSB_SUCCESS)
-        LIBUSB_FAILURE_CLEANUP("find and open the device");
+    /* Open device list */
+    LIBUSB_GUARD(uhd_dev_list_open(ctx, bus_num, dev_addr,
+                                   vid, pid, &dev_list),
+                 "find and open the devices");
 
-    /* Retrieve the list of HID interfaces from a device */
-    err = uhd_iface_list_new_from_dev(handle, &iface_list);
-    if (err != LIBUSB_SUCCESS)
-        LIBUSB_FAILURE_CLEANUP("find a HID interface");
+    /* Retrieve the list of HID interfaces from the device list */
+    LIBUSB_GUARD(uhd_iface_list_new(dev_list, &iface_list),
+                 "find HID interfaces");
 
     /* Filter the interface list by specified interface number */
-    iface_list = uhd_iface_list_fltr_by_num(iface_list, iface_num);
+    if (iface_num != IFACE_NUM_ANY)
+        iface_list = uhd_iface_list_fltr_by_num(iface_list, iface_num);
+
+    /* Check if there are any interfaces left */
     if (uhd_iface_list_empty(iface_list))
         ERROR_CLEANUP("No matching HID interfaces");
 
@@ -553,11 +515,10 @@ cleanup:
     /* Free the interface list */
     uhd_iface_list_free(iface_list);
 
-    /* Free the device */
-    if (handle != NULL)
-        libusb_close(handle);
+    /* Close the device list */
+    uhd_dev_list_close(dev_list);
 
-    /* Cleanup libusb context, if necessary */
+    /* Destroy the libusb context */
     if (ctx != NULL)
         libusb_exit(ctx);
 
@@ -565,73 +526,309 @@ cleanup:
 }
 
 
+static bool
+parse_number_pair(const char   *str,
+                  int           base,
+                  long         *pn1,
+                  long         *pn2)
+{
+    const char *p;
+    char       *end;
+    long        n1;
+    long        n2;
+
+    assert(str != NULL);
+
+    p = str;
+
+    /* Skip space (prevent strtol doing so) */
+    while (isspace(*p))
+        p++;
+
+    /* Extract the first number */
+    errno = 0;
+    n1 = strtol(p, &end, base);
+    if (errno != 0)
+        return false;
+
+    /* If nothing was read */
+    if (end == p)
+        return false;
+
+    /* Move on */
+    p = end;
+
+    /* Skip space */
+    while (isspace(*p))
+        p++;
+
+    /* If it is the end of string */
+    if (*p == '\0')
+        n2 = 0;
+    else
+    {
+        /* If it is not the number separator */
+        if (*p != ':')
+            return false;
+
+        /* Skip the number separator */
+        p++;
+
+        /* Skip space (prevent strtol doing so) */
+        while (isspace(*p))
+            p++;
+
+        /* Extract the second number */
+        errno = 0;
+        n2 = strtol(p, &end, base);
+        if (errno != 0)
+            return false;
+        /* If nothing was read */
+        if (end == p)
+            return false;
+
+        /* Move on */
+        p = end;
+
+        /* Skip space */
+        while (isspace(*p))
+            p++;
+
+        /* If it is not the end of string */
+        if (*p != '\0')
+            return false;
+    }
+
+    /* Output the numbers */
+    if (pn1 != NULL)
+        *pn1 = n1;
+    if (pn2 != NULL)
+        *pn2 = n2;
+
+    return true;
+}
+
+
+static bool
+parse_address(const char   *str,
+              uint8_t      *pbus_num,
+              uint8_t      *pdev_addr)
+{
+    long    bus_num;
+    long    dev_addr;
+
+    assert(str != NULL);
+
+    if (!parse_number_pair(str, 10, &bus_num, &dev_addr))
+        return false;
+
+    if (bus_num < 0 || bus_num > UINT8_MAX ||
+        dev_addr < 0 || dev_addr > UINT8_MAX)
+        return false;
+
+    if (pbus_num != NULL)
+        *pbus_num = bus_num;
+    if (pdev_addr != NULL)
+        *pdev_addr = dev_addr;
+
+    return true;
+}
+
+
+static bool
+parse_model(const char   *str,
+            uint16_t     *pvid,
+            uint16_t     *ppid)
+{
+    long    vid;
+    long    pid;
+
+    assert(str != NULL);
+
+    if (!parse_number_pair(str, 16, &vid, &pid))
+        return false;
+
+    if (vid < 0 || vid > UINT16_MAX ||
+        pid < 0 || pid > UINT16_MAX)
+        return false;
+
+    if (pvid != NULL)
+        *pvid = vid;
+    if (ppid != NULL)
+        *ppid = pid;
+
+    return true;
+}
+
+
+static bool
+parse_iface_num(const char *str,
+                uint8_t    *piface_num)
+{
+    long        iface_num;
+    const char *p;
+    char       *end;
+
+    assert(str != NULL);
+
+    p = str;
+
+    /* Skip space (prevent strtol doing so) */
+    while (isspace(*p))
+        p++;
+
+    /* Extract interface number */
+    errno = 0;
+    iface_num = strtol(p, &end, 10);
+    if (errno != 0 || end == p || iface_num < 0 || iface_num > UINT8_MAX)
+        return false;
+
+    /* Output interface number */
+    if (piface_num != NULL)
+        *piface_num = iface_num;
+
+    return true;
+}
+
+
+static bool
+version(FILE *stream)
+{
+    return
+        fprintf(
+            stream,
+PACKAGE_STRING "\n"
+"Copyright (C) 2010 Nikolai Kondrashov\n"
+"License GPLv2+: GNU GPL version 2 or later <http://gnu.org/licenses/gpl.html>.\n"
+"\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n") >= 0;
+}
+
+
+static bool
+usage(FILE *stream)
+{
+    return
+        fprintf(
+            stream,
+"Usage: %s [OPTION]...\n"
+"Dump USB device HID report descriptor(s) and/or stream(s).\n"
+"\n"
+"Options:\n"
+"  -h, --help                       output this help message and exit\n"
+"  -v, --version                    output version information and exit\n"
+"\n"
+"  -s, -a, --address=bus[:dev]      limit interfaces by bus number\n"
+"                                   (1-255) and device address (1-255),\n"
+"                                   decimal; zeroes match any\n"
+"  -d, -m, --model=vid[:pid]        limit interfaces by vendor and\n"
+"                                   product IDs (0001-ffff), hexadecimal;\n"
+"                                   zeroes match any\n"
+"  -i, --interface=NUMBER           limit interfaces by number (0-254),\n"
+"                                   decimal; 255 matches any\n"
+"\n"
+"  -e, --entity=STRING              what to dump: either \"descriptor\",\n"
+"                                   \"stream\" or \"all\"; value can be\n"
+"                                   abbreviated\n"
+"\n"
+"  -p, --stream-paused              start with the stream dump output\n"
+"                                   paused\n"
+"  -f, --stream-feedback            enable stream dumping feedback: for\n"
+"                                   every transfer dumped a dot is\n"
+"                                   printed to stderr\n"
+"\n"
+"Default options: --entity=descriptor\n"
+"\n"
+"Signals:\n"
+"  USR1/USR2                        pause/resume the stream dump output\n"
+"\n",
+            program_invocation_short_name) >= 0;
+}
+
+
 typedef enum opt_val {
     OPT_VAL_HELP            = 'h',
     OPT_VAL_VERSION         = 'v',
+    OPT_VAL_ADDRESS         = 'a',
+    OPT_VAL_ADDRESS_COMP    = 's',
+    OPT_VAL_MODEL           = 'm',
+    OPT_VAL_MODEL_COMP      = 'd',
+    OPT_VAL_INTERFACE       = 'i',
     OPT_VAL_ENTITY          = 'e',
     OPT_VAL_STREAM_PAUSED   = 'p',
     OPT_VAL_STREAM_FEEDBACK = 'f',
 } opt_val;
 
 
+static const struct option long_opt_list[] = {
+    {.val       = OPT_VAL_HELP,
+     .name      = "help",
+     .has_arg   = no_argument,
+     .flag      = NULL},
+    {.val       = OPT_VAL_VERSION,
+     .name      = "version",
+     .has_arg   = no_argument,
+     .flag      = NULL},
+    {.val       = OPT_VAL_ADDRESS,
+     .name      = "address",
+     .has_arg   = required_argument,
+     .flag      = NULL},
+    {.val       = OPT_VAL_MODEL,
+     .name      = "model",
+     .has_arg   = required_argument,
+     .flag      = NULL},
+    {.val       = OPT_VAL_INTERFACE,
+     .name      = "interface",
+     .has_arg   = required_argument,
+     .flag      = NULL},
+    {.val       = OPT_VAL_ENTITY,
+     .name      = "entity",
+     .has_arg   = required_argument,
+     .flag      = NULL},
+    {.val       = OPT_VAL_STREAM_PAUSED,
+     .name      = "stream-paused",
+     .has_arg   = no_argument,
+     .flag      = NULL},
+    {.val       = OPT_VAL_STREAM_FEEDBACK,
+     .name      = "stream-feedback",
+     .has_arg   = no_argument,
+     .flag      = NULL},
+    {.val       = 0,
+     .name      = NULL,
+     .has_arg   = 0,
+     .flag      = NULL}
+};
+
+
+static const char  *short_opt_list = "hvs::a::d::m::i:e:pf";
+
+
 int
 main(int argc, char **argv)
 {
-    static const struct option long_opt_list[] = {
-        {.val       = OPT_VAL_HELP,
-         .name      = "help",
-         .has_arg   = no_argument,
-         .flag      = NULL},
-        {.val       = OPT_VAL_VERSION,
-         .name      = "version",
-         .has_arg   = no_argument,
-         .flag      = NULL},
-        {.val       = OPT_VAL_ENTITY,
-         .name      = "entity",
-         .has_arg   = required_argument,
-         .flag      = NULL},
-        {.val       = OPT_VAL_STREAM_PAUSED,
-         .name      = "stream-paused",
-         .has_arg   = no_argument,
-         .flag      = NULL},
-        {.val       = OPT_VAL_STREAM_FEEDBACK,
-         .name      = "stream-feedback",
-         .has_arg   = no_argument,
-         .flag      = NULL},
-        {.val       = 0,
-         .name      = NULL,
-         .has_arg   = 0,
-         .flag      = NULL}
-    };
+    int                 result;
 
-    static const char  *short_opt_list = "hve:pf";
+    char                c;
 
-    int             result;
+    uint8_t             bus_num         = BUS_NUM_ANY;
+    uint8_t             dev_addr        = DEV_ADDR_ANY;
 
-    char            c;
-    const char     *bus_str;
-    const char     *dev_str;
-    const char     *if_str      = "";
+    uint16_t            vid             = VID_ANY;
+    uint16_t            pid             = PID_ANY;
 
-    const char    **arg_list[] = {&bus_str, &dev_str, &if_str};
-    const size_t    req_arg_num = 2;
-    const size_t    max_arg_num = 3;
-    size_t          i;
-    char           *end;
+    uint8_t             iface_num       = IFACE_NUM_ANY;
 
-    bool            dump_descriptor = true;
-    bool            dump_stream     = false;
-    long            bus_num;
-    long            dev_num;
-    long            if_num          = -1;
+    bool                dump_descriptor = true;
+    bool                dump_stream     = false;
 
     struct sigaction    sa;
 
 #define USAGE_ERROR(_fmt, _args...) \
-    do {                                                \
-        fprintf(stderr, _fmt "\n", ##_args);            \
-        usage(stderr, program_invocation_short_name);   \
-        return 1;                                       \
+    do {                                        \
+        fprintf(stderr, _fmt "\n", ##_args);    \
+        usage(stderr);                          \
+        return 1;                               \
     } while (0)
 
     /*
@@ -643,12 +840,26 @@ main(int argc, char **argv)
         switch (c)
         {
             case OPT_VAL_HELP:
-                usage(stdout, program_invocation_short_name);
+                usage(stdout);
                 return 0;
                 break;
             case OPT_VAL_VERSION:
                 version(stdout);
                 return 0;
+                break;
+            case OPT_VAL_ADDRESS:
+            case OPT_VAL_ADDRESS_COMP:
+                if (!parse_address(optarg, &bus_num, &dev_addr))
+                    USAGE_ERROR("Invalid device address \"%s\"", optarg);
+                break;
+            case OPT_VAL_MODEL:
+            case OPT_VAL_MODEL_COMP:
+                if (!parse_model(optarg, &vid, &pid))
+                    USAGE_ERROR("Invalid model \"%s\"", optarg);
+                break;
+            case OPT_VAL_INTERFACE:
+                if (!parse_iface_num(optarg, &iface_num))
+                    USAGE_ERROR("Invalid interface number \"%s\"", optarg);
                 break;
             case OPT_VAL_ENTITY:
                 if (strncmp(optarg, "descriptor", strlen(optarg)) == 0)
@@ -677,44 +888,17 @@ main(int argc, char **argv)
                 stream_feedback = 1;
                 break;
             case '?':
-                usage(stderr, program_invocation_short_name);
+                usage(stderr);
                 return 1;
                 break;
         }
     }
 
     /*
-     * Assign positional parameters
+     * Verify positional arguments
      */
-    for (i = 0; i < max_arg_num && optind < argc; i++, optind++)
-        *arg_list[i] = argv[optind];
-
-    if (i < req_arg_num)
-        USAGE_ERROR("Not enough arguments");
-
-    /*
-     * Parse and verify positional parameters
-     */
-    errno = 0;
-    bus_num = strtol(bus_str, &end, 0);
-    if (errno != 0 || !uhd_strisblank(end) ||
-        bus_num <= 0 || bus_num > 255)
-        USAGE_ERROR("Invalid bus number \"%s\"", bus_str);
-
-    errno = 0;
-    dev_num = strtol(dev_str, &end, 0);
-    if (errno != 0 || !uhd_strisblank(end) ||
-        dev_num <= 0 || dev_num > 255)
-        USAGE_ERROR("Invalid device address \"%s\"", dev_str);
-
-    if (!uhd_strisblank(if_str))
-    {
-        errno = 0;
-        if_num = strtol(if_str, &end, 0);
-        if (errno != 0 || !uhd_strisblank(end) ||
-            if_num < 0 || if_num >= 255)
-            USAGE_ERROR("Invalid interface number \"%s\"", if_str);
-    }
+    if (optind < argc)
+        USAGE_ERROR("Positional arguments are not accepted");
 
     /*
      * Setup signal handlers
@@ -752,7 +936,9 @@ main(int argc, char **argv)
     /* Make stdout buffered - we will flush it explicitly */
     setbuf(stdout, NULL);
 
-    result = run(dump_descriptor, dump_stream, bus_num, dev_num, if_num);
+    /* Run! */
+    result = run(dump_descriptor, dump_stream,
+                 bus_num, dev_addr, vid, pid, iface_num);
 
     /*
      * Restore signal handlers

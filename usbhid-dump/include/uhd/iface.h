@@ -27,8 +27,7 @@
 #ifndef __UHD_IFACE_H__
 #define __UHD_IFACE_H__
 
-#include <stdbool.h>
-#include <libusb-1.0/libusb.h>
+#include "uhd/dev.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,8 +38,9 @@ typedef struct uhd_iface uhd_iface;
 
 struct uhd_iface {
     uhd_iface              *next;
-    libusb_device_handle   *handle;         /**< Device handle */
+    const uhd_dev          *dev;            /**< Device */
     uint8_t                 number;         /**< Interface number */
+    char                    addr_str[12];   /**< Address string */
     uint8_t                 int_in_ep_addr; /**< Interrupt IN EP address */
     uint16_t                int_in_ep_maxp; /**< Interrupt IN EP maximum
                                                  packet size */
@@ -79,10 +79,10 @@ extern bool uhd_iface_valid(const uhd_iface *iface);
  *
  * @return New interface or NULL, if failed to allocate.
  */
-extern uhd_iface *uhd_iface_new(libusb_device_handle   *handle,
-                                uint8_t                 number,
-                                uint8_t                 int_in_ep_addr,
-                                uint16_t                int_in_ep_maxp);
+extern uhd_iface *uhd_iface_new(const uhd_dev  *dev,
+                                uint8_t         number,
+                                uint8_t         int_in_ep_addr,
+                                uint16_t        int_in_ep_maxp);
 
 /**
  * Free an interface.

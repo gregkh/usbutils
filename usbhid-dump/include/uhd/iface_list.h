@@ -27,6 +27,7 @@
 #ifndef __UHD_IFACE_LIST_H__
 #define __UHD_IFACE_LIST_H__
 
+#include "uhd/dev_list.h"
 #include "uhd/iface.h"
 
 #ifdef __cplusplus
@@ -81,29 +82,26 @@ extern void uhd_iface_list_free(uhd_iface *list);
     for (_iface = _list; _iface != NULL; _iface = _iface->next)
 
 /**
- * Fetch a list of HID interfaces from a device.
+ * Fetch a list of HID interfaces from a device list.
  *
- * @param handle        The device handle to fetch interface list from.
+ * @param dev_list      The device list to fetch interface list from.
  * @param plist         Location for the resulting list head; could be NULL.
  *
  * @return Libusb error code.
  */
-enum libusb_error
-uhd_iface_list_new_from_dev(libusb_device_handle   *handle,
-                            uhd_iface             **plist);
+extern enum libusb_error uhd_iface_list_new(uhd_dev    *dev_list,
+                                            uhd_iface **plist);
 
 /**
- * Filter an interface list by an optional interface number, resulting
- * either in an empty, a single-interface, or an unmodified list.
+ * Filter an interface list by an interface number.
  *
  * @param plist     The original list head.
- * @param number    The interface number to match against, or a negative
- *                  integer meaning there is no restriction.
+ * @param number    The interface number to match against.
  *
- * @return The resulting list head
+ * @return The resulting list head.
  */
 extern uhd_iface *uhd_iface_list_fltr_by_num(uhd_iface *list,
-                                             int        number);
+                                             uint8_t    number);
 
 #ifdef __cplusplus
 } /* extern "C" */

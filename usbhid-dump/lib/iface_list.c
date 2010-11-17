@@ -66,81 +66,97 @@ uhd_iface_list_free(uhd_iface *list)
 
 
 enum libusb_error
-uhd_iface_list_new_from_dev(libusb_device_handle   *handle,
-                            uhd_iface             **plist)
+uhd_iface_list_new(uhd_dev     *dev_list,
+                   uhd_iface  **plist)
 {
-    enum libusb_error                           err = LIBUSB_ERROR_OTHER;
+    enum libusb_error   err = LIBUSB_ERROR_OTHER;
 
+    uhd_dev                                    *dev;
     struct libusb_config_descriptor            *config          = NULL;
-    const struct libusb_interface              *libusb_iface;
+    const struct libusb_interface              *lusb_iface;
     const struct libusb_endpoint_descriptor    *ep_list;
     uint8_t                                     ep_num;
     const struct libusb_endpoint_descriptor    *ep;
     uhd_iface                                  *list            = NULL;
-    uhd_iface                                  *last            = NULL;
     uhd_iface                                  *iface;
 
-    assert(handle != NULL);
+    assert(uhd_dev_list_valid(dev_list));
 
-    /* Retrieve active configuration descriptor */
-    err = libusb_get_active_config_descriptor(libusb_get_device(handle),
-                                              &config);
-    if (err != LIBUSB_SUCCESS)
-        goto cleanup;
-
-    /* Build the matching interface list */
-    for (libusb_iface = config->interface;
-         libusb_iface - config->interface < config->bNumInterfaces;
-         libusb_iface++)
+    UHD_DEV_LIST_FOR_EACH(dev, dev_list)
     {
-        if (libusb_iface->num_altsetting != 1 ||
-            libusb_iface->altsetting->bInterfaceClass != LIBUSB_CLASS_HID)
-            continue;
+        /* Retrieve active configuration descriptor */
+        err = libusb_get_active_config_descriptor(libusb_get_device(dev->handle),
+                                                  &config);
+        if (err != LIBUSB_SUCCESS)
+            goto cleanup;
 
-        ep_list = libusb_iface->altsetting->endpoint;
-        ep_num = libusb_iface->altsetting->bNumEndpoints;
+        /*
+         * Build the matching interface list
+         */
 
-        for (ep = ep_list; (ep - ep_list) < ep_num; ep++)
+        /* For each interface */
+        for (lusb_iface = config->interface;
+             lusb_iface - config->interface < config->bNumInterfaces;
+             lusb_iface++)
         {
-            if ((ep->bmAttributes & LIBUSB_TRANSFER_TYPE_MASK) !=
-                LIBUSB_TRANSFER_TYPE_INTERRUPT ||
-                (ep->bEndpointAddress & LIBUSB_ENDPOINT_DIR_MASK) !=
-                LIBUSB_ENDPOINT_IN)
+            /* Skip interfaces with altsettings and non-HID interfaces */
+            if (lusb_iface->num_altsetting != 1 ||
+                lusb_iface->altsetting->bInterfaceClass != LIBUSB_CLASS_HID)
                 continue;
 
-            iface = uhd_iface_new(
-                        handle,
-                        libusb_iface->altsetting->bInterfaceNumber,
-                        ep->bEndpointAddress, ep->wMaxPacketSize);
-            if (iface == NULL)
+            /* Retrieve endpoint list */
+            ep_list = lusb_iface->altsetting->endpoint;
+            ep_num = lusb_iface->altsetting->bNumEndpoints;
+
+            /* For each endpoint */
+            for (ep = ep_list; (ep - ep_list) < ep_num; ep++)
             {
-                err = LIBUSB_ERROR_NO_MEM;
-                goto cleanup;
-            }
+                /* Skip non-interrupt and non-in endpoints */
+                if ((ep->bmAttributes & LIBUSB_TRANSFER_TYPE_MASK) !=
+                    LIBUSB_TRANSFER_TYPE_INTERRUPT ||
+                    (ep->bEndpointAddress & LIBUSB_ENDPOINT_DIR_MASK) !=
+                    LIBUSB_ENDPOINT_IN)
+                    continue;
 
-            if (last == NULL)
+                /* Create the interface */
+                iface = uhd_iface_new(
+                            dev,
+                            lusb_iface->altsetting->bInterfaceNumber,
+                            ep->bEndpointAddress, ep->wMaxPacketSize);
+                if (iface == NULL)
+                {
+                    err = LIBUSB_ERROR_NO_MEM;
+                    goto cleanup;
+                }
+
+                /* Add the interface */
+                iface->next = list;
                 list = iface;
-            else
-                last->next = iface;
-            last = iface;
 
-            break;
+                break;
+            }
         }
+
+        /* Free the config descriptor */
+        libusb_free_config_descriptor(config);
+        config = NULL;
     }
 
     /* Output the resulting list, if requested */
+    assert(uhd_iface_list_valid(list));
     if (plist != NULL)
     {
         *plist = list;
         list = NULL;
     }
 
+    /* Done! */
+    err = LIBUSB_SUCCESS;
+
 cleanup:
 
+    libusb_free_config_descriptor(config);
     uhd_iface_list_free(list);
-
-    if (config != NULL)
-        libusb_free_config_descriptor(config);
 
     return err;
 }
@@ -148,7 +164,7 @@ cleanup:
 
 uhd_iface *
 uhd_iface_list_fltr_by_num(uhd_iface   *list,
-                           int          number)
+                           uint8_t      number)
 {
     uhd_iface  *prev;
     uhd_iface  *iface;
@@ -157,13 +173,10 @@ uhd_iface_list_fltr_by_num(uhd_iface   *list,
     assert(uhd_iface_list_valid(list));
     assert(number < UINT8_MAX);
 
-    if (number < 0)
-        return list;
-
     for (prev = NULL, iface = list; iface != NULL; iface = next)
     {
         next = iface->next;
-        if (iface->number == (uint8_t)number)
+        if (iface->number == number)
             prev = iface;
         else
         {
@@ -171,7 +184,7 @@ uhd_iface_list_fltr_by_num(uhd_iface   *list,
                 list = next;
             else
                 prev->next = next;
-            free(iface);
+            uhd_iface_free(iface);
         }
     }
 

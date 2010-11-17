@@ -17,6 +17,8 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 noinst_HEADERS = \
+    dev.h           \
+    dev_list.h      \
     iface.h         \
     iface_list.h    \
     libusb.h        \

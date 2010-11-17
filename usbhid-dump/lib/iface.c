@@ -28,35 +28,50 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 bool
 uhd_iface_valid(const uhd_iface *iface)
 {
     return iface != NULL &&
-           iface->handle != NULL &&
-           iface->number < UINT8_MAX;
+           uhd_dev_valid(iface->dev) &&
+           iface->number < UINT8_MAX &&
+           strlen(iface->addr_str) == (sizeof(iface->addr_str) - 1);
 }
 
 uhd_iface *
-uhd_iface_new(libusb_device_handle *handle,
-              uint8_t               number,
-              uint8_t               int_in_ep_addr,
-              uint16_t              int_in_ep_maxp)
+uhd_iface_new(const uhd_dev    *dev,
+              uint8_t           number,
+              uint8_t           int_in_ep_addr,
+              uint16_t          int_in_ep_maxp)
 {
-    uhd_iface  *iface;
+    uhd_iface      *iface;
+    libusb_device  *lusb_dev;
+    int             rc;
 
     iface = malloc(sizeof(*iface));
     if (iface == NULL)
         return NULL;
 
     iface->next             = NULL;
-    iface->handle           = handle;
+    iface->dev              = dev;
     iface->number           = number;
     iface->int_in_ep_addr   = int_in_ep_addr;
     iface->int_in_ep_maxp   = int_in_ep_maxp;
     iface->detached         = false;
     iface->claimed          = false;
     iface->submitted        = false;
+
+    /* Format address string */
+    lusb_dev = libusb_get_device(dev->handle);
+    rc = snprintf(iface->addr_str, sizeof(iface->addr_str),
+                  "%.3hhu:%.3hhu:%.3hhu",
+                  libusb_get_bus_number(lusb_dev),
+                  libusb_get_device_address(lusb_dev),
+                  number);
+    assert(rc == (sizeof(iface->addr_str) - 1));
+
+    assert(uhd_iface_valid(iface));
 
     return iface;
 }
@@ -81,7 +96,7 @@ uhd_iface_detach(uhd_iface *iface)
 
     assert(uhd_iface_valid(iface));
 
-    err = libusb_detach_kernel_driver(iface->handle, iface->number);
+    err = libusb_detach_kernel_driver(iface->dev->handle, iface->number);
     if (err == LIBUSB_SUCCESS)
         iface->detached = true;
     else if (err != LIBUSB_ERROR_NOT_FOUND)
@@ -100,7 +115,8 @@ uhd_iface_attach(uhd_iface *iface)
 
     if (iface->detached)
     {
-        err = libusb_attach_kernel_driver(iface->handle, iface->number);
+        err = libusb_attach_kernel_driver(iface->dev->handle,
+                                          iface->number);
         if (err != LIBUSB_SUCCESS)
             return err;
         iface->detached = false;
@@ -117,7 +133,7 @@ uhd_iface_claim(uhd_iface *iface)
 
     assert(uhd_iface_valid(iface));
 
-    err = libusb_claim_interface(iface->handle, iface->number);
+    err = libusb_claim_interface(iface->dev->handle, iface->number);
     if (err != LIBUSB_SUCCESS)
         return err;
 
@@ -134,7 +150,7 @@ uhd_iface_release(uhd_iface *iface)
 
     assert(uhd_iface_valid(iface));
 
-    err = libusb_release_interface(iface->handle, iface->number);
+    err = libusb_release_interface(iface->dev->handle, iface->number);
     if (err != LIBUSB_SUCCESS)
         return err;
 
@@ -151,7 +167,7 @@ uhd_iface_clear_halt(uhd_iface *iface)
 
     assert(uhd_iface_valid(iface));
 
-    err = libusb_clear_halt(iface->handle, iface->int_in_ep_addr);
+    err = libusb_clear_halt(iface->dev->handle, iface->int_in_ep_addr);
     if (err != LIBUSB_SUCCESS)
         return err;
 
@@ -168,7 +184,7 @@ uhd_iface_set_idle(const uhd_iface    *iface,
 
     assert(uhd_iface_valid(iface));
 
-    rc = libusb_control_transfer(iface->handle,
+    rc = libusb_control_transfer(iface->dev->handle,
                                  /* host->device, class, interface */
                                  0x21,
                                  /* Set_Idle */
@@ -200,7 +216,7 @@ uhd_iface_set_protocol(const uhd_iface    *iface,
 
     assert(uhd_iface_valid(iface));
 
-    rc = libusb_control_transfer(iface->handle,
+    rc = libusb_control_transfer(iface->dev->handle,
                                  /* host->device, class, interface */
                                  0x21,
                                  /* Set_Protocol */
