@@ -26,6 +26,7 @@
 #include "uhd/iface_list.h"
 #include "uhd/str.h"
 #include "uhd/libusb.h"
+#include "uhd/misc.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -40,29 +41,6 @@
 #include <libusb-1.0/libusb.h>
 
 #include "config.h"
-
-/**
- * Maximum descriptor size.
- *
- * 4096 here is maximum control buffer length.
- */
-#define MAX_DESCRIPTOR_SIZE 4096
-
-/** Wildcard bus number */
-#define BUS_NUM_ANY     0
-/** Wildcard device address */
-#define DEV_ADDR_ANY    0
-/** Wildcard vendor ID */
-#define VID_ANY         0
-/** Wildcard product ID */
-#define PID_ANY         0
-/** Wildcard interface number */
-#define IFACE_NUM_ANY   UINT8_MAX
-
-/**
- * USB I/O timeout
- */
-#define TIMEOUT 1000
 
 #define ERROR(_fmt, _args...) \
     fprintf(stderr, _fmt "\n", ##_args)
@@ -172,7 +150,7 @@ static bool
 dump_iface_list_descriptor(const uhd_iface *list)
 {
     const uhd_iface    *iface;
-    uint8_t             buf[MAX_DESCRIPTOR_SIZE];
+    uint8_t             buf[UHD_MAX_DESCRIPTOR_SIZE];
     int                 rc;
     enum libusb_error   err;
 
@@ -183,7 +161,7 @@ dump_iface_list_descriptor(const uhd_iface *list)
                                      0x81,
                                      LIBUSB_REQUEST_GET_DESCRIPTOR,
                                      (LIBUSB_DT_REPORT << 8), iface->number,
-                                     buf, sizeof(buf), TIMEOUT);
+                                     buf, sizeof(buf), UHD_IO_TIMEOUT);
         if (rc < 0)
         {
             err = rc;
@@ -262,10 +240,10 @@ dump_iface_list_stream(libusb_context *ctx, uhd_iface *list)
     UHD_IFACE_LIST_FOR_EACH(iface, list)
     {
         /* Set report protocol */
-        LIBUSB_GUARD(uhd_iface_set_protocol(list, true, TIMEOUT),
+        LIBUSB_GUARD(uhd_iface_set_protocol(list, true, UHD_IO_TIMEOUT),
                      "set report protocol on an interface");
         /* Set infinite idle duration */
-        LIBUSB_GUARD(uhd_iface_set_idle(list, 0, TIMEOUT),
+        LIBUSB_GUARD(uhd_iface_set_idle(list, 0, UHD_IO_TIMEOUT),
                      "set infinite idle duration on an interface");
     }
 
@@ -479,7 +457,7 @@ run(bool        dump_descriptor,
                  "find HID interfaces");
 
     /* Filter the interface list by specified interface number */
-    if (iface_num != IFACE_NUM_ANY)
+    if (iface_num != UHD_IFACE_NUM_ANY)
         iface_list = uhd_iface_list_fltr_by_num(iface_list, iface_num);
 
     /* Check if there are any interfaces left */
@@ -811,13 +789,13 @@ main(int argc, char **argv)
 
     char                c;
 
-    uint8_t             bus_num         = BUS_NUM_ANY;
-    uint8_t             dev_addr        = DEV_ADDR_ANY;
+    uint8_t             bus_num         = UHD_BUS_NUM_ANY;
+    uint8_t             dev_addr        = UHD_DEV_ADDR_ANY;
 
-    uint16_t            vid             = VID_ANY;
-    uint16_t            pid             = PID_ANY;
+    uint16_t            vid             = UHD_VID_ANY;
+    uint16_t            pid             = UHD_PID_ANY;
 
-    uint8_t             iface_num       = IFACE_NUM_ANY;
+    uint8_t             iface_num       = UHD_IFACE_NUM_ANY;
 
     bool                dump_descriptor = true;
     bool                dump_stream     = false;

@@ -24,6 +24,7 @@
  * @(#) $Id$
  */
 
+#include "uhd/misc.h"
 #include "uhd/dev_list.h"
 #include <assert.h>
 #include <stdlib.h>
@@ -96,19 +97,21 @@ uhd_dev_list_open(libusb_context *ctx,
         lusb_dev = lusb_list[idx];
 
         /* Skip devices not matching bus_num/dev_addr mask */
-        if ((bus_num != 0 && libusb_get_bus_number(lusb_dev) != bus_num) ||
-            (dev_addr != 0 && libusb_get_device_address(lusb_dev) != dev_addr))
+        if ((bus_num != UHD_BUS_NUM_ANY &&
+             libusb_get_bus_number(lusb_dev) != bus_num) ||
+            (dev_addr != UHD_DEV_ADDR_ANY &&
+             libusb_get_device_address(lusb_dev) != dev_addr))
             continue;
 
         /* Skip devices not matching vendor/product mask */
-        if (vendor != 0 || product != 0)
+        if (vendor != UHD_VID_ANY || product != UHD_PID_ANY)
         {
             err = libusb_get_device_descriptor(lusb_dev, &desc);
             if (err != LIBUSB_SUCCESS)
                 goto cleanup;
 
-            if ((vendor != 0 && vendor != desc.idVendor) ||
-                (product != 0 && product != desc.idProduct))
+            if ((vendor != UHD_VID_ANY && vendor != desc.idVendor) ||
+                (product != UHD_PID_ANY && product != desc.idProduct))
                 continue;
         }
 
