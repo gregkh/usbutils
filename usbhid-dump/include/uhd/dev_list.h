@@ -87,8 +87,8 @@ extern void uhd_dev_list_close(uhd_dev *list);
  * @param ctx       Libusb context.
  * @param bus_num   Bus number, or 0 for any bus.
  * @param dev_addr  Device address, or 0 for any address.
- * @param vendor    Vendor ID, or 0 for any vendor.
- * @param product   Product ID, or 0 for any product.
+ * @param vid       Vendor ID, or 0 for any vendor.
+ * @param pid       Product ID, or 0 for any product.
  * @param plist     Location for the resulting device list head; could be
  *                  NULL.
  *
@@ -97,8 +97,8 @@ extern void uhd_dev_list_close(uhd_dev *list);
 extern enum libusb_error uhd_dev_list_open(libusb_context  *ctx,
                                            uint8_t          bus_num,
                                            uint8_t          dev_addr,
-                                           uint16_t         vendor,
-                                           uint16_t         product,
+                                           uint16_t         vid,
+                                           uint16_t         pid,
                                            uhd_dev        **plist);
 
 #ifdef __cplusplus

@@ -69,7 +69,7 @@ uhd_dev_list_close(uhd_dev *list)
 enum libusb_error
 uhd_dev_list_open(libusb_context *ctx,
                   uint8_t bus_num, uint8_t dev_addr,
-                  uint16_t vendor, uint16_t product,
+                  uint16_t vid, uint16_t pid,
                   uhd_dev **plist)
 {
     enum libusb_error                   err         = LIBUSB_ERROR_OTHER;
@@ -104,14 +104,14 @@ uhd_dev_list_open(libusb_context *ctx,
             continue;
 
         /* Skip devices not matching vendor/product mask */
-        if (vendor != UHD_VID_ANY || product != UHD_PID_ANY)
+        if (vid != UHD_VID_ANY || pid != UHD_PID_ANY)
         {
             err = libusb_get_device_descriptor(lusb_dev, &desc);
             if (err != LIBUSB_SUCCESS)
                 goto cleanup;
 
-            if ((vendor != UHD_VID_ANY && vendor != desc.idVendor) ||
-                (product != UHD_PID_ANY && product != desc.idProduct))
+            if ((vid != UHD_VID_ANY && vid != desc.idVendor) ||
+                (pid != UHD_PID_ANY && pid != desc.idProduct))
                 continue;
         }
 
