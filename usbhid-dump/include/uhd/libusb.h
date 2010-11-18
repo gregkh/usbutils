@@ -35,12 +35,6 @@ extern "C" {
 
 extern const char *libusb_strerror(enum libusb_error err);
 
-extern enum libusb_error libusb_open_device_with_bus_dev(
-                                        libusb_context         *ctx,
-                                        uint8_t                 bus_num,
-                                        uint8_t                 dev_addr,
-                                        libusb_device_handle  **phandle);
-
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
