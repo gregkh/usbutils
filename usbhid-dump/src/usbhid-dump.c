@@ -779,7 +779,7 @@ static const struct option long_opt_list[] = {
 };
 
 
-static const char  *short_opt_list = "hvs::a::d::m::i:e:pf";
+static const char  *short_opt_list = "hvs:a:d:m:i:e:pf";
 
 
 int
