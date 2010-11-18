@@ -38,7 +38,7 @@
 #include <byteswap.h>
 #endif
 
-#include <usb.h>
+#include <libusb.h>
 #include <unistd.h>
 
 #include "names.h"
@@ -47,13 +47,7 @@
 
 #include <getopt.h>
 
-#if (__BYTE_ORDER == __LITTLE_ENDIAN)
-  #define le16_to_cpu(x) (x)
-#elif (__BYTE_ORDER == __BIG_ENDIAN)
-  #define le16_to_cpu(x) bswap_16(x)
-#else
-  #error missing BYTE_ORDER
-#endif
+#define le16_to_cpu(x) libusb_cpu_to_le16(libusb_cpu_to_le16(x))
 
 /* from USB 2.0 spec and updates */
 #define USB_DT_DEVICE_QUALIFIER		0x06
@@ -82,11 +76,11 @@
  * defined in the USB "Common Class" Spec (3.11).  Individual class specs
  * are authoritative for their usage, not the "common class" writeup.
  */
-#define USB_DT_CS_DEVICE		(USB_TYPE_CLASS | USB_DT_DEVICE)
-#define USB_DT_CS_CONFIG		(USB_TYPE_CLASS | USB_DT_CONFIG)
-#define USB_DT_CS_STRING		(USB_TYPE_CLASS | USB_DT_STRING)
-#define USB_DT_CS_INTERFACE		(USB_TYPE_CLASS | USB_DT_INTERFACE)
-#define USB_DT_CS_ENDPOINT		(USB_TYPE_CLASS | USB_DT_ENDPOINT)
+#define USB_DT_CS_DEVICE		(LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_DT_DEVICE)
+#define USB_DT_CS_CONFIG		(LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_DT_CONFIG)
+#define USB_DT_CS_STRING		(LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_DT_STRING)
+#define USB_DT_CS_INTERFACE		(LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_DT_INTERFACE)
+#define USB_DT_CS_ENDPOINT		(LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_DT_ENDPOINT)
 
 #ifndef USB_CLASS_CCID
 #define USB_CLASS_CCID			0x0b
@@ -127,16 +121,16 @@ static const char * const encryption_type[] = {
 	"RESERVED"
 };
 
-static void dump_interface(struct usb_dev_handle *dev, const struct usb_interface *interface);
-static void dump_endpoint(struct usb_dev_handle *dev, const struct usb_interface_descriptor *interface, const struct usb_endpoint_descriptor *endpoint);
-static void dump_audiocontrol_interface(struct usb_dev_handle *dev, const unsigned char *buf, int protocol);
-static void dump_audiostreaming_interface(struct usb_dev_handle *dev, const unsigned char *buf, int protocol);
-static void dump_midistreaming_interface(struct usb_dev_handle *dev, const unsigned char *buf);
-static void dump_videocontrol_interface(struct usb_dev_handle *dev, const unsigned char *buf);
+static void dump_interface(libusb_device_handle *dev, const struct libusb_interface *interface);
+static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interface_descriptor *interface, const struct libusb_endpoint_descriptor *endpoint);
+static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigned char *buf, int protocol);
+static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsigned char *buf, int protocol);
+static void dump_midistreaming_interface(libusb_device_handle *dev, const unsigned char *buf);
+static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigned char *buf);
 static void dump_videostreaming_interface(const unsigned char *buf);
 static void dump_dfu_interface(const unsigned char *buf);
-static char *dump_comm_descriptor(struct usb_dev_handle *dev, const unsigned char *buf, char *indent);
-static void dump_hid_device(struct usb_dev_handle *dev, const struct usb_interface_descriptor *interface, const unsigned char *buf);
+static char *dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, char *indent);
+static void dump_hid_device(libusb_device_handle *dev, const struct libusb_interface_descriptor *interface, const unsigned char *buf);
 static void dump_audiostreaming_endpoint(const unsigned char *buf, int protocol);
 static void dump_midistreaming_endpoint(const unsigned char *buf);
 static void dump_hub(const char *prefix, const unsigned char *p, int tt_type);
@@ -155,13 +149,18 @@ static unsigned int convert_le_u32 (const unsigned char *buf)
  * using "char" is trouble.  Likewise, sizes should never be negative.
  */
 
-static inline int typesafe_control_msg(usb_dev_handle *dev,
+static inline int typesafe_control_msg(libusb_device_handle *dev,
 	unsigned char requesttype, unsigned char request,
 	int value, int idx,
 	unsigned char *bytes, unsigned size, int timeout)
 {
-	return usb_control_msg(dev, requesttype, request, value, idx,
-		(char *)bytes, (int)size, timeout);
+	int ret = libusb_control_transfer(dev, requesttype, request, value,
+					idx, bytes, size, timeout);
+
+	if (ret < 0)
+		return -ret;
+	else
+		return ret;
 }
 
 #define usb_control_msg		typesafe_control_msg
@@ -185,7 +184,7 @@ int lprintf(unsigned int vl, const char *format, ...)
 
 /* ---------------------------------------------------------------------- */
 
-static int get_string(struct usb_dev_handle *dev, char* buf, size_t size, u_int8_t id)
+static int get_string(libusb_device_handle *dev, char *buf, size_t size, u_int8_t id)
 {
 	int ret;
 
@@ -195,7 +194,7 @@ static int get_string(struct usb_dev_handle *dev, char* buf, size_t size, u_int8
 	}
 
 	if (id) {
-		ret = usb_get_string_simple(dev, id, buf, size);
+		ret = libusb_get_string_descriptor_ascii(dev, id, (void *)buf, size);
 		if (ret <= 0) {
 			buf[0] = 0;
 			return 0;
@@ -341,8 +340,8 @@ static void dump_junk(const unsigned char *buf, const char *indent, unsigned int
  */
 
 static void dump_device(
-	struct usb_dev_handle *dev,
-	struct usb_device_descriptor *descriptor
+	libusb_device_handle *dev,
+	struct libusb_device_descriptor *descriptor
 )
 {
 	char vendor[128], product[128];
@@ -444,7 +443,7 @@ static void dump_encryption_type(const unsigned char *buf)
 	       encryption_type[b_encryption_type], buf[3], buf[4]);
 }
 
-static void dump_association(struct usb_dev_handle *dev, const unsigned char *buf)
+static void dump_association(libusb_device_handle *dev, const unsigned char *buf)
 {
 	char cls[128], subcls[128], proto[128];
 	char func[128];
@@ -470,7 +469,7 @@ static void dump_association(struct usb_dev_handle *dev, const unsigned char *bu
 	       buf[7], func);
 }
 
-static void dump_config(struct usb_dev_handle *dev, struct usb_config_descriptor *config)
+static void dump_config(libusb_device_handle *dev, struct libusb_config_descriptor *config)
 {
 	char cfg[128];
 	int i;
@@ -502,8 +501,8 @@ static void dump_config(struct usb_dev_handle *dev, struct usb_config_descriptor
 	printf("    MaxPower            %5umA\n", config->MaxPower * 2);
 
 	/* avoid re-ordering or hiding descriptors for display */
-	if (config->extralen) {
-		int		size = config->extralen;
+	if (config->extra_length) {
+		int		size = config->extra_length;
 		const unsigned char	*buf = config->extra;
 
 		while (size >= 2) {
@@ -538,7 +537,7 @@ static void dump_config(struct usb_dev_handle *dev, struct usb_config_descriptor
 		dump_interface(dev, &config->interface[i]);
 }
 
-static void dump_altsetting(struct usb_dev_handle *dev, const struct usb_interface_descriptor *interface)
+static void dump_altsetting(libusb_device_handle *dev, const struct libusb_interface_descriptor *interface)
 {
 	char cls[128], subcls[128], proto[128];
 	char ifstr[128];
@@ -566,8 +565,8 @@ static void dump_altsetting(struct usb_dev_handle *dev, const struct usb_interfa
 	       interface->iInterface, ifstr);
 
 	/* avoid re-ordering or hiding descriptors for display */
-	if (interface->extralen) {
-		size = interface->extralen;
+	if (interface->extra_length) {
+		size = interface->extra_length;
 		buf = interface->extra;
 		while (size >= 2 * sizeof(u_int8_t)) {
 			if (buf[0] < 2) {
@@ -584,7 +583,7 @@ static void dump_altsetting(struct usb_dev_handle *dev, const struct usb_interfa
 			case USB_DT_CS_DEVICE:
 			case USB_DT_CS_INTERFACE:
 				switch (interface->bInterfaceClass) {
-				case USB_CLASS_AUDIO:
+				case LIBUSB_CLASS_AUDIO:
 					switch (interface->bInterfaceSubClass) {
 					case 1:
 						dump_audiocontrol_interface(dev, buf, interface->bInterfaceProtocol);
@@ -599,7 +598,7 @@ static void dump_altsetting(struct usb_dev_handle *dev, const struct usb_interfa
 						goto dump;
 					}
 					break;
-				case USB_CLASS_COMM:
+				case LIBUSB_CLASS_COMM:
 					dump_comm_descriptor(dev, buf,
 						"      ");
 					break;
@@ -624,7 +623,7 @@ static void dump_altsetting(struct usb_dev_handle *dev, const struct usb_interfa
 						goto dump;
 					}
 					break;
-				case USB_CLASS_HID:
+				case LIBUSB_CLASS_HID:
 					dump_hid_device(dev, interface, buf);
 					break;
 				case USB_CLASS_CCID:
@@ -640,7 +639,7 @@ static void dump_altsetting(struct usb_dev_handle *dev, const struct usb_interfa
 			 */
 			default:
 				switch (interface->bInterfaceClass) {
-				case USB_CLASS_HID:
+				case LIBUSB_CLASS_HID:
 					dump_hid_device(dev, interface, buf);
 					break;
 				case USB_CLASS_CCID:
@@ -691,7 +690,7 @@ dump:
 		dump_endpoint(dev, interface, &interface->endpoint[i]);
 }
 
-static void dump_interface(struct usb_dev_handle *dev, const struct usb_interface *interface)
+static void dump_interface(libusb_device_handle *dev, const struct libusb_interface *interface)
 {
 	int i;
 
@@ -699,7 +698,7 @@ static void dump_interface(struct usb_dev_handle *dev, const struct usb_interfac
 		dump_altsetting(dev, &interface->altsetting[i]);
 }
 
-static void dump_endpoint(struct usb_dev_handle *dev, const struct usb_interface_descriptor *interface, const struct usb_endpoint_descriptor *endpoint)
+static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interface_descriptor *interface, const struct libusb_endpoint_descriptor *endpoint)
 {
 	static const char * const typeattr[] = {
 		"Control",
@@ -752,8 +751,8 @@ static void dump_endpoint(struct usb_dev_handle *dev, const struct usb_interface
 		       endpoint->bRefresh, endpoint->bSynchAddress);
 
 	/* avoid re-ordering or hiding descriptors for display */
-	if (endpoint->extralen) {
-		size = endpoint->extralen;
+	if (endpoint->extra_length) {
+		size = endpoint->extra_length;
 		buf = endpoint->extra;
 		while (size >= 2 * sizeof(u_int8_t)) {
 			if (buf[0] < 2) {
@@ -770,8 +769,8 @@ static void dump_endpoint(struct usb_dev_handle *dev, const struct usb_interface
 			case USB_DT_CS_INTERFACE:
 				/* MISPLACED DESCRIPTOR ... less indent */
 				switch (interface->bInterfaceClass) {
-				case USB_CLASS_COMM:
-				case USB_CLASS_DATA:	/* comm data */
+				case LIBUSB_CLASS_COMM:
+				case LIBUSB_CLASS_DATA:	/* comm data */
 					dump_comm_descriptor(dev, buf,
 						"      ");
 					break;
@@ -967,7 +966,7 @@ static void dump_audio_bmcontrols(const char *prefix, int bmcontrols, const stru
 			break;
 
 		case USB_AUDIO_CLASS_2: {
-			const char *ctrl_type[] = { "read-only", "ILLEGAL (0b10)", "read/write" };
+			const char * const ctrl_type[] = { "read-only", "ILLEGAL (0b10)", "read/write" };
 			int ctrl = (bmcontrols >> (list->bit * 2)) & 0x3;
 
 			if (ctrl)
@@ -993,7 +992,7 @@ static const char * const chconfig_uac2[] = {
 	"Back Left of Center (BLC)", "Back Right of Center (BRC)"
 };
 
-static void dump_audiocontrol_interface(struct usb_dev_handle *dev, const unsigned char *buf, int protocol)
+static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigned char *buf, int protocol)
 {
 	static const char * const chconfig[] = {
 		"Left Front (L)", "Right Front (R)", "Center Front (C)", "Low Freqency Enhancement (LFE)",
@@ -1563,7 +1562,7 @@ static const struct bmcontrol uac2_as_interface_bmcontrols[] = {
 	{ NULL }
 };
 
-static void dump_audiostreaming_interface(struct usb_dev_handle *dev, const unsigned char *buf, int protocol)
+static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsigned char *buf, int protocol)
 {
 	static const char * const fmtItag[] = {
 		"TYPE_I_UNDEFINED", "PCM", "PCM8", "IEEE_FLOAT", "ALAW", "MULAW" };
@@ -1949,7 +1948,7 @@ static void dump_audiostreaming_endpoint(const unsigned char *buf, int protocol)
 	} /* switch protocol */
 }
 
-static void dump_midistreaming_interface(struct usb_dev_handle *dev, const unsigned char *buf)
+static void dump_midistreaming_interface(libusb_device_handle *dev, const unsigned char *buf)
 {
 	static const char * const jacktypes[] = {"Undefined", "Embedded", "External"};
 	char jackstr[128];
@@ -2094,7 +2093,7 @@ static void dump_midistreaming_endpoint(const unsigned char *buf)
  * Video Class descriptor dump
  */
 
-static void dump_videocontrol_interface(struct usb_dev_handle *dev, const unsigned char *buf)
+static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigned char *buf)
 {
 	static const char * const ctrlnames[] = {
 		"Brightness", "Contrast", "Hue", "Saturation", "Sharpness", "Gamma",
@@ -2886,15 +2885,15 @@ static void dump_report_desc(unsigned char *b, int l)
 	}
 }
 
-static void dump_hid_device(struct usb_dev_handle *dev,
-			    const struct usb_interface_descriptor *interface,
+static void dump_hid_device(libusb_device_handle *dev,
+			    const struct libusb_interface_descriptor *interface,
 			    const unsigned char *buf)
 {
 	unsigned int i, len;
 	unsigned int n;
 	unsigned char dbuf[8192];
 
-	if (buf[1] != USB_DT_HID)
+	if (buf[1] != LIBUSB_DT_HID)
 		printf("      Warning: Invalid descriptor\n");
 	else if (buf[0] < 6+3*buf[5])
 		printf("      Warning: Descriptor too short\n");
@@ -2923,22 +2922,22 @@ static void dump_hid_device(struct usb_dev_handle *dev,
 
 	for (i = 0; i < buf[5]; i++) {
 		/* we are just interested in report descriptors*/
-		if (buf[6+3*i] != USB_DT_REPORT)
+		if (buf[6+3*i] != LIBUSB_DT_REPORT)
 			continue;
 		len = buf[7+3*i] | (buf[8+3*i] << 8);
 		if (len > (unsigned int)sizeof(dbuf)) {
 			printf("report descriptor too long\n");
 			continue;
 		}
-		if (usb_claim_interface(dev, interface->bInterfaceNumber) == 0) {
+		if (libusb_claim_interface(dev, interface->bInterfaceNumber) == 0) {
 			int retries = 4;
 			n = 0;
 			while (n < len && retries--)
 				n = usb_control_msg(dev,
-					 USB_ENDPOINT_IN | USB_TYPE_STANDARD
-						| USB_RECIP_INTERFACE,
-					 USB_REQ_GET_DESCRIPTOR,
-					 (USB_DT_REPORT << 8),
+					 LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD
+						| LIBUSB_RECIPIENT_INTERFACE,
+					 LIBUSB_REQUEST_GET_DESCRIPTOR,
+					 (LIBUSB_DT_REPORT << 8),
 					 interface->bInterfaceNumber,
 					 dbuf, len,
 					 CTRL_TIMEOUT);
@@ -2948,7 +2947,7 @@ static void dump_hid_device(struct usb_dev_handle *dev,
 					printf("          Warning: incomplete report descriptor\n");
 				dump_report_desc(dbuf, n);
 			}
-			usb_release_interface(dev, interface->bInterfaceNumber);
+			libusb_release_interface(dev, interface->bInterfaceNumber);
 		} else {
 			/* recent Linuxes require claim() for RECIP_INTERFACE,
 			 * so "rmmod hid" will often make these available.
@@ -2960,7 +2959,7 @@ static void dump_hid_device(struct usb_dev_handle *dev,
 }
 
 static char *
-dump_comm_descriptor(struct usb_dev_handle *dev, const unsigned char *buf, char *indent)
+dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, char *indent)
 {
 	int		tmp;
 	char		str[128];
@@ -3179,7 +3178,7 @@ bad:
 
 /* ---------------------------------------------------------------------- */
 
-static void do_hub(struct usb_dev_handle *fd, unsigned tt_type, unsigned speed)
+static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed)
 {
 	unsigned char buf[7 /* base descriptor */
 			+ 2 /* bitmasks */ * HUB_STATUS_BYTELEN];
@@ -3207,8 +3206,8 @@ static void do_hub(struct usb_dev_handle *fd, unsigned tt_type, unsigned speed)
 		value = 0x29;
 
 	ret = usb_control_msg(fd,
-			USB_ENDPOINT_IN | USB_TYPE_CLASS | USB_RECIP_DEVICE,
-			USB_REQ_GET_DESCRIPTOR,
+			LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_DEVICE,
+			LIBUSB_REQUEST_GET_DESCRIPTOR,
 			value << 8, 0,
 			buf, sizeof buf, CTRL_TIMEOUT);
 	if (ret < 9 /* at least one port's bitmasks */) {
@@ -3228,9 +3227,9 @@ static void do_hub(struct usb_dev_handle *fd, unsigned tt_type, unsigned speed)
 		unsigned char status[4];
 
 		ret = usb_control_msg(fd,
-				USB_ENDPOINT_IN | USB_TYPE_CLASS
-					| USB_RECIP_OTHER,
-				USB_REQ_GET_STATUS,
+				LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_CLASS
+					| LIBUSB_RECIPIENT_OTHER,
+				LIBUSB_REQUEST_GET_STATUS,
 				0, i + 1,
 				status, sizeof status,
 				CTRL_TIMEOUT);
@@ -3289,15 +3288,15 @@ static void do_hub(struct usb_dev_handle *fd, unsigned tt_type, unsigned speed)
 	}
 }
 
-static void do_dualspeed(struct usb_dev_handle *fd)
+static void do_dualspeed(libusb_device_handle *fd)
 {
 	unsigned char buf[10];
 	char cls[128], subcls[128], proto[128];
 	int ret;
 
 	ret = usb_control_msg(fd,
-			USB_ENDPOINT_IN | USB_TYPE_STANDARD | USB_RECIP_DEVICE,
-			USB_REQ_GET_DESCRIPTOR,
+			LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD | LIBUSB_RECIPIENT_DEVICE,
+			LIBUSB_REQUEST_GET_DESCRIPTOR,
 			USB_DT_DEVICE_QUALIFIER << 8, 0,
 			buf, sizeof buf, CTRL_TIMEOUT);
 	if (ret < 0 && errno != EPIPE)
@@ -3334,14 +3333,14 @@ static void do_dualspeed(struct usb_dev_handle *fd)
 	/* FIXME also show the OTHER_SPEED_CONFIG descriptors */
 }
 
-static void do_debug(struct usb_dev_handle *fd)
+static void do_debug(libusb_device_handle *fd)
 {
 	unsigned char buf[4];
 	int ret;
 
 	ret = usb_control_msg(fd,
-			USB_ENDPOINT_IN | USB_TYPE_STANDARD | USB_RECIP_DEVICE,
-			USB_REQ_GET_DESCRIPTOR,
+			LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD | LIBUSB_RECIPIENT_DEVICE,
+			LIBUSB_REQUEST_GET_DESCRIPTOR,
 			USB_DT_DEBUG << 8, 0,
 			buf, sizeof buf, CTRL_TIMEOUT);
 	if (ret < 0 && errno != EPIPE)
@@ -3380,28 +3379,28 @@ static const unsigned char *find_otg(const unsigned char *buf, int buflen)
 	return 0;
 }
 
-static int do_otg(struct usb_config_descriptor *config)
+static int do_otg(struct libusb_config_descriptor *config)
 {
 	unsigned	i, k;
 	int		j;
 	const unsigned char	*desc;
 
 	/* each config of an otg device has an OTG descriptor */
-	desc = find_otg(config->extra, config->extralen);
+	desc = find_otg(config->extra, config->extra_length);
 	for (i = 0; !desc && i < config->bNumInterfaces; i++) {
-		const struct usb_interface *intf;
+		const struct libusb_interface *intf;
 
 		intf = &config->interface[i];
 		for (j = 0; !desc && j < intf->num_altsetting; j++) {
-			const struct usb_interface_descriptor *alt;
+			const struct libusb_interface_descriptor *alt;
 
 			alt = &intf->altsetting[j];
-			desc = find_otg(alt->extra, alt->extralen);
+			desc = find_otg(alt->extra, alt->extra_length);
 			for (k = 0; !desc && k < alt->bNumEndpoints; k++) {
-				const struct usb_endpoint_descriptor *ep;
+				const struct libusb_endpoint_descriptor *ep;
 
 				ep = &alt->endpoint[k];
-				desc = find_otg(ep->extra, ep->extralen);
+				desc = find_otg(ep->extra, ep->extra_length);
 			}
 		}
 	}
@@ -3422,14 +3421,14 @@ static int do_otg(struct usb_config_descriptor *config)
 }
 
 static void
-dump_device_status(struct usb_dev_handle *fd, int otg, int wireless)
+dump_device_status(libusb_device_handle *fd, int otg, int wireless)
 {
 	unsigned char status[8];
 	int ret;
 
-	ret = usb_control_msg(fd, USB_ENDPOINT_IN | USB_TYPE_STANDARD
-				| USB_RECIP_DEVICE,
-			USB_REQ_GET_STATUS,
+	ret = usb_control_msg(fd, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD
+				| LIBUSB_RECIPIENT_DEVICE,
+			LIBUSB_REQUEST_GET_STATUS,
 			0, 0,
 			status, 2,
 			CTRL_TIMEOUT);
@@ -3475,9 +3474,9 @@ dump_device_status(struct usb_dev_handle *fd, int otg, int wireless)
 	/* Wireless USB exposes FIVE different types of device status,
 	 * accessed by distinct wIndex values.
 	 */
-	ret = usb_control_msg(fd, USB_ENDPOINT_IN | USB_TYPE_STANDARD
-				| USB_RECIP_DEVICE,
-			USB_REQ_GET_STATUS,
+	ret = usb_control_msg(fd, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD
+				| LIBUSB_RECIPIENT_DEVICE,
+			LIBUSB_REQUEST_GET_STATUS,
 			0, 1 /* wireless status */,
 			status, 1,
 			CTRL_TIMEOUT);
@@ -3498,9 +3497,9 @@ dump_device_status(struct usb_dev_handle *fd, int otg, int wireless)
 	if (status[0] & (1 << 3))
 		printf("  Capture Packet\n");
 
-	ret = usb_control_msg(fd, USB_ENDPOINT_IN | USB_TYPE_STANDARD
-				| USB_RECIP_DEVICE,
-			USB_REQ_GET_STATUS,
+	ret = usb_control_msg(fd, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD
+				| LIBUSB_RECIPIENT_DEVICE,
+			LIBUSB_REQUEST_GET_STATUS,
 			0, 2 /* Channel Info */,
 			status, 1,
 			CTRL_TIMEOUT);
@@ -3515,9 +3514,9 @@ dump_device_status(struct usb_dev_handle *fd, int otg, int wireless)
 
 	/* 3=Received data: many bytes, for count packets or capture packet */
 
-	ret = usb_control_msg(fd, USB_ENDPOINT_IN | USB_TYPE_STANDARD
-				| USB_RECIP_DEVICE,
-			USB_REQ_GET_STATUS,
+	ret = usb_control_msg(fd, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD
+				| LIBUSB_RECIPIENT_DEVICE,
+			LIBUSB_REQUEST_GET_STATUS,
 			0, 3 /* MAS Availability */,
 			status, 8,
 			CTRL_TIMEOUT);
@@ -3531,9 +3530,9 @@ dump_device_status(struct usb_dev_handle *fd, int otg, int wireless)
 	printf("MAS Availability:    ");
 	dump_bytes(status, 8);
 
-	ret = usb_control_msg(fd, USB_ENDPOINT_IN | USB_TYPE_STANDARD
-				| USB_RECIP_DEVICE,
-			USB_REQ_GET_STATUS,
+	ret = usb_control_msg(fd, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD
+				| LIBUSB_RECIPIENT_DEVICE,
+			LIBUSB_REQUEST_GET_STATUS,
 			0, 5 /* Current Transmit Power */,
 			status, 2,
 			CTRL_TIMEOUT);
@@ -3549,7 +3548,7 @@ dump_device_status(struct usb_dev_handle *fd, int otg, int wireless)
 	printf(" TxBeacon:     :     0x%02x\n", status[1]);
 }
 
-static int do_wireless(struct usb_dev_handle *fd)
+static int do_wireless(libusb_device_handle *fd)
 {
 	/* FIXME fetch and dump BOS etc */
 	if (fd)
@@ -3644,7 +3643,7 @@ static void dump_container_id_device_capability_desc(unsigned char *buf)
 			get_guid(&buf[4]));
 }
 
-static void dump_bos_descriptor(struct usb_dev_handle *fd)
+static void dump_bos_descriptor(libusb_device_handle *fd)
 {
 	/* Total for all known BOS descriptors is 43 bytes:
 	 * 6 bytes for Wireless USB, 7 bytes for USB 2.0 extension,
@@ -3657,8 +3656,8 @@ static void dump_bos_descriptor(struct usb_dev_handle *fd)
 
 	/* Get the first 5 bytes to get the wTotalLength field */
 	ret = usb_control_msg(fd,
-			USB_ENDPOINT_IN | USB_RECIP_DEVICE,
-			USB_REQ_GET_DESCRIPTOR,
+			LIBUSB_ENDPOINT_IN | LIBUSB_RECIPIENT_DEVICE,
+			LIBUSB_REQUEST_GET_DESCRIPTOR,
 			USB_DT_BOS << 8, 0,
 			bos_desc, 5, CTRL_TIMEOUT);
 	if (ret < 0)
@@ -3686,8 +3685,8 @@ static void dump_bos_descriptor(struct usb_dev_handle *fd)
 	}
 
 	ret = usb_control_msg(fd,
-			USB_ENDPOINT_IN | USB_RECIP_DEVICE,
-			USB_REQ_GET_DESCRIPTOR,
+			LIBUSB_ENDPOINT_IN | LIBUSB_RECIPIENT_DEVICE,
+			LIBUSB_REQUEST_GET_DESCRIPTOR,
 			USB_DT_BOS << 8, 0,
 			bos_desc, bos_desc_size, CTRL_TIMEOUT);
 	if (ret < 0) {
@@ -3726,102 +3725,116 @@ static void dump_bos_descriptor(struct usb_dev_handle *fd)
 	}
 }
 
-static void dumpdev(struct usb_device *dev)
+static void dumpdev(libusb_device *dev)
 {
-	struct usb_dev_handle *udev;
-	int i;
+	libusb_device_handle *udev;
+	struct libusb_device_descriptor desc;
+	int i, ret;
 	int otg, wireless;
 
 	otg = wireless = 0;
-	udev = usb_open(dev);
-	if (!udev)
+	ret = libusb_open(dev, &udev);
+	if (ret) {
 		fprintf(stderr, "Couldn't open device, some information "
 			"will be missing\n");
+		udev = NULL;
+	}
 
-	dump_device(udev, &dev->descriptor);
-	if (dev->descriptor.bcdUSB == 0x0250)
+	libusb_get_device_descriptor(dev, &desc);
+	dump_device(udev, &desc);
+	if (desc.bcdUSB == 0x0250)
 		wireless = do_wireless(udev);
-	if (dev->config) {
-		otg = do_otg(&dev->config[0]) || otg;
-		for (i = 0; i < dev->descriptor.bNumConfigurations;
-				i++) {
-			dump_config(udev, &dev->config[i]);
+	if (desc.bNumConfigurations) {
+		struct libusb_config_descriptor *config;
+
+		libusb_get_config_descriptor(dev, 0, &config);
+		otg = do_otg(config) || otg;
+		libusb_free_config_descriptor(config);
+
+		for (i = 0; i < desc.bNumConfigurations; ++i) {
+			libusb_get_config_descriptor(dev, i, &config);
+			dump_config(udev, config);
+			libusb_free_config_descriptor(config);
 		}
 	}
 	if (!udev)
 		return;
 
-	if (dev->descriptor.bDeviceClass == USB_CLASS_HUB)
-		do_hub(udev, dev->descriptor.bDeviceProtocol, dev->descriptor.bcdUSB);
-	if (dev->descriptor.bcdUSB >= 0x0200) {
+	if (desc.bDeviceClass == LIBUSB_CLASS_HUB)
+		do_hub(udev, desc.bDeviceProtocol, desc.bcdUSB);
+	if (desc.bcdUSB >= 0x0200) {
 		do_dualspeed(udev);
 		do_debug(udev);
 	}
 	dump_device_status(udev, otg, wireless);
 	dump_bos_descriptor(udev);
-	usb_close(udev);
+	libusb_close(udev);
 }
 
 /* ---------------------------------------------------------------------- */
 
-static int dump_one_device(const char *path)
+static int dump_one_device(libusb_context *ctx, const char *path)
 {
-	struct usb_device *dev;
+	libusb_device *dev;
+	struct libusb_device_descriptor desc;
 	char vendor[128], product[128];
 
-	dev = get_usb_device(path);
+	dev = get_usb_device(ctx, path);
 	if (!dev) {
 		fprintf(stderr, "Cannot open %s\n", path);
 		return 1;
 	}
-	get_vendor_string(vendor, sizeof(vendor), dev->descriptor.idVendor);
-	get_product_string(product, sizeof(product), dev->descriptor.idVendor, dev->descriptor.idProduct);
-	printf("Device: ID %04x:%04x %s %s\n", dev->descriptor.idVendor,
-					       dev->descriptor.idProduct,
+	libusb_get_device_descriptor(dev, &desc);
+	get_vendor_string(vendor, sizeof(vendor), desc.idVendor);
+	get_product_string(product, sizeof(product), desc.idVendor, desc.idProduct);
+	printf("Device: ID %04x:%04x %s %s\n", desc.idVendor,
+					       desc.idProduct,
 					       vendor,
 					       product);
 	dumpdev(dev);
 	return 0;
 }
 
-static int list_devices(int busnum, int devnum, int vendorid, int productid)
+static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendorid, int productid)
 {
-	struct usb_bus *bus;
-	struct usb_device *dev;
+	libusb_device **list;
+	struct libusb_device_descriptor desc;
 	char vendor[128], product[128];
 	int status;
+	ssize_t num_devs, i;
 
 	status = 1; /* 1 device not found, 0 device found */
 
-	for (bus = usb_busses; bus; bus = bus->next) {
-		if (busnum != -1 && strtol(bus->dirname, NULL, 10) != busnum)
+	num_devs = libusb_get_device_list(ctx, &list);
+
+	for (i = 0; i < num_devs; ++i) {
+		libusb_device *dev = list[i];
+		uint8_t bnum = libusb_get_bus_number(dev);
+		uint8_t dnum = libusb_get_device_address(dev);
+
+		if ((busnum != -1 && busnum != bnum) ||
+		    (devnum != -1 && devnum != dnum))
 			continue;
-		for (dev = bus->devices; dev; dev = dev->next) {
-			if (devnum != -1 && strtol(dev->filename, NULL, 10)
-					!= devnum)
-				continue;
-			if ((vendorid != -1 && vendorid
-						!= dev->descriptor.idVendor)
-					|| (productid != -1 && productid
-						!= dev->descriptor.idProduct))
-				continue;
-			status = 0;
-			get_vendor_string(vendor, sizeof(vendor),
-					dev->descriptor.idVendor);
-			get_product_string(product, sizeof(product),
-					dev->descriptor.idVendor,
-					dev->descriptor.idProduct);
-			if (verblevel > 0)
-				printf("\n");
-			printf("Bus %s Device %s: ID %04x:%04x %s %s\n",
-					bus->dirname, dev->filename,
-					dev->descriptor.idVendor,
-					dev->descriptor.idProduct,
-					vendor, product);
-			if (verblevel > 0)
-				dumpdev(dev);
-		}
+		libusb_get_device_descriptor(dev, &desc);
+		if ((vendorid != -1 && vendorid != desc.idVendor) ||
+		    (productid != -1 && productid != desc.idProduct))
+			continue;
+		status = 0;
+		get_vendor_string(vendor, sizeof(vendor), desc.idVendor);
+		get_product_string(product, sizeof(product),
+				desc.idVendor, desc.idProduct);
+		if (verblevel > 0)
+			printf("\n");
+		printf("Bus %03u Device %03u: ID %04x:%04x %s %s\n",
+				bnum, dnum,
+				desc.idVendor,
+				desc.idProduct,
+				vendor, product);
+		if (verblevel > 0)
+			dumpdev(dev);
 	}
+
+	libusb_free_device_list(list, 0);
 	return status;
 }
 
@@ -3874,6 +3887,7 @@ int main(int argc, char *argv[])
 		{ "verbose", 0, 0, 'v' },
 		{ 0, 0, 0, 0 }
 	};
+	libusb_context *ctx;
 	int c, err = 0;
 	unsigned int allowctrlmsg = 0, treemode = 0;
 	int bus = -1, devnum = -1, vendor = -1, product = -1;
@@ -3971,20 +3985,22 @@ int main(int argc, char *argv[])
 				strerror(err));
 	status = 0;
 
-	usb_init();
-
-	usb_find_busses();
-	usb_find_devices();
+	err = libusb_init(&ctx);
+	if (err) {
+		fprintf(stderr, "unable to initialize libusb: %i\n", err);
+		return EXIT_FAILURE;
+	}
 
 	if (treemode) {
 		/* treemode requires at least verblevel 1 */
 		verblevel += 1 - VERBLEVEL_DEFAULT;
 		status = treedump();
 	} else if (devdump)
-		status = dump_one_device(devdump);
+		status = dump_one_device(ctx, devdump);
 	else
-		status = list_devices(bus, devnum, vendor, product);
+		status = list_devices(ctx, bus, devnum, vendor, product);
 
 	names_exit();
+	libusb_exit(ctx);
 	return status;
 }

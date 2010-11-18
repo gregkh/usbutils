@@ -26,11 +26,11 @@
 #ifndef _USBMISC_H
 #define _USBMISC_H
 
-#include <usb.h>
+#include <libusb.h>
 
 /* ---------------------------------------------------------------------- */
 
-extern struct usb_device *get_usb_device(const char *path);
+extern libusb_device *get_usb_device(libusb_context *ctx, const char *path);
 
 /* ---------------------------------------------------------------------- */
 #endif /* _USBMISC_H */
