@@ -248,6 +248,46 @@ dump_iface_list_stream_cb(struct libusb_transfer *transfer)
 }
 
 
+static const char *
+format_time_interval(unsigned int i)
+{
+    static char     buf[128];
+    char           *p           = buf;
+    unsigned int    h           = i / (60 * 60 * 1000);
+    unsigned int    m           = (i % (60 * 60 * 1000)) / (60 * 1000);
+    unsigned int    s           = (i % (60 * 1000)) / 1000;
+    unsigned int    ms          = i % 1000;
+
+#define FRACTION(_prev_sum, _name, _val) \
+    do {                                                \
+        if ((_val) > 0)                                 \
+            p += snprintf(p, sizeof(buf) - (p - buf),   \
+                          "%s%u " _name "%s",           \
+                          ((_prev_sum) > 0 ? " " : ""), \
+                          _val,                         \
+                          (((_val) == 1) ? "" : "s"));  \
+        if (p >= (buf + sizeof(buf)))                   \
+            return buf;                                 \
+    } while (0)
+
+    FRACTION(0, "hour", h);
+    FRACTION(h, "minute", m);
+    FRACTION(h + m, "second", s);
+    FRACTION(h + m + s, "millisecond", ms);
+
+#undef FRACTION
+
+    return buf;
+}
+
+
+static const char *
+format_timeout(unsigned int i)
+{
+    return (i == 0) ? "infinite" : format_time_interval(i);
+}
+
+
 static bool
 dump_iface_list_stream(libusb_context  *ctx,
                        uhd_iface       *list,
@@ -260,6 +300,11 @@ dump_iface_list_stream(libusb_context  *ctx,
     struct libusb_transfer    **ptransfer;
     uhd_iface                  *iface;
     bool                        submitted           = false;
+
+    fprintf(stderr,
+            "Starting dumping interrupt transfer stream\n"
+            "with %s timeout.\n\n",
+            format_timeout(timeout));
 
     UHD_IFACE_LIST_FOR_EACH(iface, list)
     {
