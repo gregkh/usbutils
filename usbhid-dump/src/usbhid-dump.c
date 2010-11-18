@@ -210,7 +210,7 @@ dump_iface_list_stream_cb(struct libusb_transfer *transfer)
             break;
 #define MAP(_name) \
     case LIBUSB_TRANSFER_##_name:                               \
-        fprintf(stderr, "%.3hhu:%s\n", iface->number, #_name);  \
+        fprintf(stderr, "%s:%s\n", iface->addr_str, #_name);    \
         break
 
         MAP(ERROR);
@@ -227,7 +227,9 @@ dump_iface_list_stream_cb(struct libusb_transfer *transfer)
 
 
 static bool
-dump_iface_list_stream(libusb_context *ctx, uhd_iface *list)
+dump_iface_list_stream(libusb_context  *ctx,
+                       uhd_iface       *list,
+                       unsigned int     timeout)
 {
     bool                        result              = false;
     enum libusb_error           err;
@@ -295,8 +297,7 @@ dump_iface_list_stream(libusb_context *ctx, uhd_iface *list)
                                        buf, len,
                                        dump_iface_list_stream_cb,
                                        (void *)iface,
-                                       /* Infinite timeout */
-                                       0);
+                                       timeout);
 
         /* Ask to free the buffer when the transfer is freed */
         (*ptransfer)->flags |= LIBUSB_TRANSFER_FREE_BUFFER;
@@ -426,13 +427,14 @@ cleanup:
 
 
 static int
-run(bool        dump_descriptor,
-    bool        dump_stream,
-    uint8_t     bus_num,
-    uint8_t     dev_addr,
-    uint16_t    vid,
-    uint16_t    pid,
-    int         iface_num)
+run(bool            dump_descriptor,
+    bool            dump_stream,
+    unsigned int    stream_timeout,
+    uint8_t         bus_num,
+    uint8_t         dev_addr,
+    uint16_t        vid,
+    uint16_t        pid,
+    int             iface_num)
 {
     int                 result      = 1;
     enum libusb_error   err;
@@ -475,7 +477,8 @@ run(bool        dump_descriptor,
 
     /* Run with the prepared interface list */
     result = (!dump_descriptor || dump_iface_list_descriptor(iface_list)) &&
-             (!dump_stream || dump_iface_list_stream(ctx, iface_list))
+             (!dump_stream || dump_iface_list_stream(ctx, iface_list,
+                                                     stream_timeout))
                ? 0
                : 1;
 
@@ -670,6 +673,36 @@ parse_iface_num(const char *str,
 
 
 static bool
+parse_timeout(const char   *str,
+              unsigned int *ptimeout)
+{
+    long long   timeout;
+    const char *p;
+    char       *end;
+
+    assert(str != NULL);
+
+    p = str;
+
+    /* Skip space (prevent strtoll doing so) */
+    while (isspace(*p))
+        p++;
+
+    /* Extract timeout */
+    errno = 0;
+    timeout = strtoll(p, &end, 10);
+    if (errno != 0 || end == p || timeout < 0 || timeout > UINT_MAX)
+        return false;
+
+    /* Output timeout */
+    if (ptimeout != NULL)
+        *ptimeout = timeout;
+
+    return true;
+}
+
+
+static bool
 version(FILE *stream)
 {
     return
@@ -710,13 +743,15 @@ usage(FILE *stream)
 "                                   \"stream\" or \"all\"; value can be\n"
 "                                   abbreviated\n"
 "\n"
+"  -t, --stream-timeout=NUMBER      stream interrupt transfer timeout, ms;\n"
+"                                   zero means infinity\n"
 "  -p, --stream-paused              start with the stream dump output\n"
 "                                   paused\n"
 "  -f, --stream-feedback            enable stream dumping feedback: for\n"
 "                                   every transfer dumped a dot is\n"
 "                                   printed to stderr\n"
 "\n"
-"Default options: --entity=descriptor\n"
+"Default options: --stream-timeout=60000 --entity=descriptor\n"
 "\n"
 "Signals:\n"
 "  USR1/USR2                        pause/resume the stream dump output\n"
@@ -734,6 +769,7 @@ typedef enum opt_val {
     OPT_VAL_MODEL_COMP      = 'd',
     OPT_VAL_INTERFACE       = 'i',
     OPT_VAL_ENTITY          = 'e',
+    OPT_VAL_STREAM_TIMEOUT  = 't',
     OPT_VAL_STREAM_PAUSED   = 'p',
     OPT_VAL_STREAM_FEEDBACK = 'f',
 } opt_val;
@@ -764,6 +800,10 @@ static const struct option long_opt_list[] = {
      .name      = "entity",
      .has_arg   = required_argument,
      .flag      = NULL},
+    {.val       = OPT_VAL_STREAM_TIMEOUT,
+     .name      = "stream-timeout",
+     .has_arg   = required_argument,
+     .flag      = NULL},
     {.val       = OPT_VAL_STREAM_PAUSED,
      .name      = "stream-paused",
      .has_arg   = no_argument,
@@ -779,7 +819,7 @@ static const struct option long_opt_list[] = {
 };
 
 
-static const char  *short_opt_list = "hvs:a:d:m:i:e:pf";
+static const char  *short_opt_list = "hvs:a:d:m:i:e:t:pf";
 
 
 int
@@ -799,6 +839,7 @@ main(int argc, char **argv)
 
     bool                dump_descriptor = true;
     bool                dump_stream     = false;
+    unsigned int        stream_timeout  = 60000;
 
     struct sigaction    sa;
 
@@ -859,6 +900,10 @@ main(int argc, char **argv)
                     USAGE_ERROR("Unknown entity \"%s\"", optarg);
 
                 break;
+            case OPT_VAL_STREAM_TIMEOUT:
+                if (!parse_timeout(optarg, &stream_timeout))
+                    USAGE_ERROR("Invalid stream timeout \"%s\"", optarg);
+                break;
             case OPT_VAL_STREAM_PAUSED:
                 stream_paused = 1;
                 break;
@@ -915,7 +960,7 @@ main(int argc, char **argv)
     setbuf(stdout, NULL);
 
     /* Run! */
-    result = run(dump_descriptor, dump_stream,
+    result = run(dump_descriptor, dump_stream, stream_timeout,
                  bus_num, dev_addr, vid, pid, iface_num);
 
     /*

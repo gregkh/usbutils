@@ -38,7 +38,7 @@ extern "C" {
  */
 #define UHD_MAX_DESCRIPTOR_SIZE 4096
 
-/** Generic USB I/O timeout */
+/** Generic USB I/O timeout, ms */
 #define UHD_IO_TIMEOUT      1000
 
 /** Wildcard bus number */
