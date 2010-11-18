@@ -45,11 +45,20 @@
 #define ERROR(_fmt, _args...) \
     fprintf(stderr, _fmt "\n", ##_args)
 
+#define IFACE_ERROR(_iface, _fmt, _args...) \
+    ERROR("%s:" _fmt, _iface->addr_str, ##_args)
+
 #define FAILURE(_fmt, _args...) \
-    fprintf(stderr, "Failed to " _fmt "\n", ##_args)
+    ERROR("Failed to " _fmt, ##_args)
+
+#define IFACE_FAILURE(_iface, _fmt, _args...) \
+    IFACE_ERROR(_iface, "Failed to " _fmt, ##_args)
 
 #define LIBUSB_FAILURE(_fmt, _args...) \
     FAILURE(_fmt ": %s", ##_args, libusb_strerror(err))
+
+#define LIBUSB_IFACE_FAILURE(_iface, _fmt, _args...) \
+    IFACE_FAILURE(_iface, _fmt ": %s", ##_args, libusb_strerror(err))
 
 #define ERROR_CLEANUP(_fmt, _args...) \
     do {                                \
@@ -58,19 +67,21 @@
     } while (0)
 
 #define FAILURE_CLEANUP(_fmt, _args...) \
-    ERROR_CLEANUP("Failed to " _fmt, ##_args)
-
-#define LIBUSB_ERROR_CLEANUP(_fmt, _args...) \
-    ERROR_CLEANUP(_fmt ": %s", ##_args, libusb_strerror(err))
+    do {                                \
+        FAILURE(_fmt, ##_args);         \
+        goto cleanup;                   \
+    } while (0)
 
 #define LIBUSB_FAILURE_CLEANUP(_fmt, _args...) \
-    LIBUSB_ERROR_CLEANUP("Failed to " _fmt, ##_args)
+    do {                                        \
+        LIBUSB_FAILURE(_fmt, ##_args);          \
+        goto cleanup;                           \
+    } while (0)
 
-#define LIBUSB_WATCH(_expr, _fmt, _args...) \
-    do {                                    \
-        err = _expr;                        \
-        if (err != LIBUSB_SUCCESS)          \
-            LIBUSB_FAILURE(_fmt, ##_args);  \
+#define LIBUSB_IFACE_FAILURE_CLEANUP(_iface, _fmt, _args...) \
+    do {                                                        \
+        LIBUSB_IFACE_FAILURE(_iface, _fmt, ##_args);            \
+        goto cleanup;                                           \
     } while (0)
 
 #define LIBUSB_GUARD(_expr, _fmt, _args...) \
@@ -78,6 +89,13 @@
         err = _expr;                                \
         if (err != LIBUSB_SUCCESS)                  \
             LIBUSB_FAILURE_CLEANUP(_fmt, ##_args);  \
+    } while (0)
+
+#define LIBUSB_IFACE_GUARD(_expr, _iface, _fmt, _args...) \
+    do {                                                            \
+        err = _expr;                                                \
+        if (err != LIBUSB_SUCCESS)                                  \
+            LIBUSB_IFACE_FAILURE_CLEANUP(_iface, _fmt, ##_args);    \
     } while (0)
 
 /**< Number of the signal causing the exit */
@@ -165,8 +183,7 @@ dump_iface_list_descriptor(const uhd_iface *list)
         if (rc < 0)
         {
             err = rc;
-            LIBUSB_FAILURE("retrieve interface #%hhu "
-                           "report descriptor", iface->number);
+            LIBUSB_IFACE_FAILURE(iface, "retrieve report descriptor");
             return false;
         }
         dump(iface, "DESCRIPTOR", buf, rc);
@@ -204,23 +221,28 @@ dump_iface_list_stream_cb(struct libusb_transfer *transfer)
             /* Resubmit the transfer */
             err = libusb_submit_transfer(transfer);
             if (err != LIBUSB_SUCCESS)
-                LIBUSB_FAILURE("resubmit a transfer");
-            /* Set interface "has transfer submitted" flag */
-            iface->submitted = true;
+                LIBUSB_IFACE_FAILURE(iface, "resubmit a transfer");
+            else
+            {
+                /* Set interface "has transfer submitted" flag */
+                iface->submitted = true;
+            }
             break;
-#define MAP(_name) \
-    case LIBUSB_TRANSFER_##_name:                               \
-        fprintf(stderr, "%s:%s\n", iface->addr_str, #_name);    \
+
+#define MAP(_name, _desc) \
+    case LIBUSB_TRANSFER_##_name: \
+        IFACE_ERROR(iface, _desc);  \
         break
 
-        MAP(ERROR);
-        MAP(TIMED_OUT);
-        MAP(STALL);
-        MAP(NO_DEVICE);
-        MAP(OVERFLOW);
-
+        MAP(ERROR,      "Interrupt transfer failed");
+        MAP(TIMED_OUT,  "Interrupt transfer timed out");
+        MAP(STALL,      "Interrupt transfer halted (endpoint stalled)");
+        MAP(NO_DEVICE,  "Device was disconnected");
+        MAP(OVERFLOW,   "Interrupt transfer overflowed "
+                        "(device sent more data than requested)");
 #undef MAP
-        default:
+
+        case LIBUSB_TRANSFER_CANCELLED:
             break;
     }
 }
@@ -242,11 +264,12 @@ dump_iface_list_stream(libusb_context  *ctx,
     UHD_IFACE_LIST_FOR_EACH(iface, list)
     {
         /* Set report protocol */
-        LIBUSB_GUARD(uhd_iface_set_protocol(list, true, UHD_IO_TIMEOUT),
-                     "set report protocol on an interface");
+        LIBUSB_IFACE_GUARD(uhd_iface_set_protocol(iface, true,
+                                                  UHD_IO_TIMEOUT),
+                           iface, "set report protocol");
         /* Set infinite idle duration */
-        LIBUSB_GUARD(uhd_iface_set_idle(list, 0, UHD_IO_TIMEOUT),
-                     "set infinite idle duration on an interface");
+        LIBUSB_IFACE_GUARD(uhd_iface_set_idle(iface, 0, UHD_IO_TIMEOUT),
+                           iface, "set infinite idle duration");
     }
 
     /* Calculate number of interfaces and thus transfers */
@@ -308,9 +331,8 @@ dump_iface_list_stream(libusb_context  *ctx,
          (size_t)(ptransfer - transfer_list) < transfer_num;
          ptransfer++)
     {
-        err = libusb_submit_transfer(*ptransfer);
-        if (err != LIBUSB_SUCCESS)
-            LIBUSB_ERROR_CLEANUP("submit a transfer");
+        LIBUSB_GUARD(libusb_submit_transfer(*ptransfer),
+                     "submit a transfer");
         /* Set interface "has transfer submitted" flag */
         ((uhd_iface *)(*ptransfer)->user_data)->submitted = true;
         /* Set "have any submitted transfers" flag */
@@ -469,10 +491,10 @@ run(bool            dump_descriptor,
     /* Detach and claim the interfaces */
     UHD_IFACE_LIST_FOR_EACH(iface, iface_list)
     {
-        LIBUSB_GUARD(uhd_iface_detach(iface),
-                     "detach an interface from the kernel driver");
-        LIBUSB_GUARD(uhd_iface_claim(iface),
-                     "claim an interface");
+        LIBUSB_IFACE_GUARD(uhd_iface_detach(iface),
+                           iface, "detach from the kernel driver");
+        LIBUSB_IFACE_GUARD(uhd_iface_claim(iface),
+                           iface, "claim");
     }
 
     /* Run with the prepared interface list */
@@ -487,10 +509,13 @@ cleanup:
     /* Release and attach the interfaces back */
     UHD_IFACE_LIST_FOR_EACH(iface, iface_list)
     {
-        LIBUSB_GUARD(uhd_iface_release(iface),
-                     "release an interface");
-        LIBUSB_GUARD(uhd_iface_attach(iface),
-                     "attach an interface to the kernel driver");
+        err = uhd_iface_release(iface);
+        if (err != LIBUSB_SUCCESS)
+            LIBUSB_IFACE_FAILURE(iface, "release");
+
+        err = uhd_iface_attach(iface);
+        if (err != LIBUSB_SUCCESS)
+            LIBUSB_IFACE_FAILURE(iface, "attach to the kernel driver");
     }
 
     /* Free the interface list */
