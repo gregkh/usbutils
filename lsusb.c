@@ -2501,6 +2501,22 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 		dump_junk(buf, "        ", 11);
 		break;
 
+	case 0x0a: /* FORMAT_MPEG2TS */
+		printf("(FORMAT_MPEG2TS)\n");
+		len = buf[0] < 23 ? 7 : 23;
+		if (buf[0] < len)
+			printf("      Warning: Descriptor too short\n");
+		printf("        bFormatIndex                    %5u\n"
+		       "        bDataOffset                     %5u\n"
+		       "        bPacketLength                   %5u\n"
+		       "        bStrideLength                   %5u\n",
+		       buf[3], buf[4], buf[5], buf[6]);
+		if (len > 7)
+			printf("        guidStrideFormat                      %s\n",
+			       get_guid(&buf[7]));
+		dump_junk(buf, "        ", len);
+		break;
+
 	case 0x0d: /* COLORFORMAT */
 		printf("(COLORFORMAT)\n");
 		if (buf[0] < 6)
