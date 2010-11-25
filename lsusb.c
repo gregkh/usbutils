@@ -810,7 +810,7 @@ static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interfa
 				dump_association(dev, buf);
 				break;
 			case USB_DT_SS_ENDPOINT_COMP:
-				printf("        bMaxBurst %15u\n", buf[2] + 1);
+				printf("        bMaxBurst %15u\n", buf[2]);
 				/* Print bulk streams info or isoc "Mult" */
 				if ((endpoint->bmAttributes & 3) == 2 &&
 						(buf[3] & 0x1f))
