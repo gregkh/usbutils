@@ -698,6 +698,27 @@ static void dump_interface(libusb_device_handle *dev, const struct libusb_interf
 		dump_altsetting(dev, &interface->altsetting[i]);
 }
 
+static void dump_pipe_desc(const unsigned char *buf)
+{
+	static const char *pipe_name[] = {
+		"Reserved",
+		"Command pipe",
+		"Status pipe",
+		"Data-in pipe",
+		"Data-out pipe",
+		[5 ... 0xDF] = "Reserved",
+		[0xE0 ... 0xEF] = "Vendor specific",
+		[0xF0 ... 0xFF] = "Reserved",
+	};
+	
+	if (buf[0] == 4 && buf[1] == 0x24) {
+		printf("        %s (0x%02x)\n", pipe_name[buf[2]], buf[2]);
+	} else {
+		printf("        INTERFACE CLASS: ");
+		dump_bytes(buf, buf[0]);
+	}
+}
+
 static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interface_descriptor *interface, const struct libusb_endpoint_descriptor *endpoint)
 {
 	static const char * const typeattr[] = {
@@ -773,6 +794,9 @@ static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interfa
 				case LIBUSB_CLASS_DATA:	/* comm data */
 					dump_comm_descriptor(dev, buf,
 						"      ");
+					break;
+				case LIBUSB_CLASS_MASS_STORAGE:
+					dump_pipe_desc(buf);
 					break;
 				default:
 					printf("        INTERFACE CLASS: ");
