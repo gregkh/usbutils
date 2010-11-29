@@ -3676,7 +3676,9 @@ static void dump_bos_descriptor(libusb_device_handle *fd)
 			LIBUSB_REQUEST_GET_DESCRIPTOR,
 			USB_DT_BOS << 8, 0,
 			bos_desc, 5, CTRL_TIMEOUT);
-	if (ret < 0)
+	if (ret <= 0)
+		return;
+	else if (bos_desc[0] != 5 || bos_desc[1] != USB_DT_BOS)
 		return;
 
 	bos_desc_size = bos_desc[2] + (bos_desc[3] << 8);
@@ -3778,12 +3780,14 @@ static void dumpdev(libusb_device *dev)
 
 	if (desc.bDeviceClass == LIBUSB_CLASS_HUB)
 		do_hub(udev, desc.bDeviceProtocol, desc.bcdUSB);
-	if (desc.bcdUSB >= 0x0200) {
-		do_dualspeed(udev);
-		do_debug(udev);
+	if (desc.bcdUSB >= 0x0300) {
+		dump_bos_descriptor(udev);
 	}
+	if (desc.bcdUSB == 0x0200) {
+		do_dualspeed(udev);
+	}
+	do_debug(udev);
 	dump_device_status(udev, otg, wireless);
-	dump_bos_descriptor(udev);
 	libusb_close(udev);
 }
 
