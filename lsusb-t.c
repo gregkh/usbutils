@@ -61,7 +61,7 @@ struct usbdevice {
 	char product[64];
 	char serial[64];
 	char version[64];
-	char speed[4 + 1];	/* '1.5','12','480' + '\n' */
+	char speed[5 + 1];	/* '1.5','12','480','5000' + '\n' */
 
 	char name[MY_SYSFS_FILENAME_LEN];
 	char driver[MY_SYSFS_FILENAME_LEN];
@@ -76,7 +76,7 @@ struct usbbusnode {
 	unsigned int bDeviceClass;
 	unsigned int devnum;
 	unsigned int maxchild;
-	char speed[4 + 1];	/* '1.5','12','480' + '\n' */
+	char speed[5 + 1];	/* '1.5','12','480','5000' + '\n' */
 
 	char driver[MY_SYSFS_FILENAME_LEN];
 };
