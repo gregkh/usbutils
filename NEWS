@@ -1,3 +1,34 @@
+usbutils 001
+============
+
+Greg Kroah-Hartman (2):
+      usb.ids update from linux-usb.org
+      updated usbhid-dump subproject
+
+Laurent Pinchart (2):
+      usbutils: Support UVC frame-based descriptors
+      usbutils: Support UVC MPEG2-TS format descriptor
+
+Luben Tuikov (3):
+      lsusb: Fix getting BOS and DEVQUAL descriptors
+      lsusb: Dump the Pipe Usage desciptor
+      lsusb: Fix bMaxBurst reporting
+
+Mike Frysinger (5):
+      lsusb: install into /usr/bin
+      usbmisc: pull in unistd.h for readlink()
+      lsusb: pull in stdlib.h for exit()
+      lsusb: constify!
+      usbutils: convert to libusb-1.0
+
+Nikolai Kondrashov (1):
+      Update usbhid-dump to release 1.2
+
+Sarah Sharp (2):
+      usbutils: Fix compile error on Ubuntu 9.04.
+      usbutils: Make lsusb -t show USB 3.0 devices.
+
+
 usbutils 0.91
 =============
 
