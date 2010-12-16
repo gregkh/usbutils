@@ -192,15 +192,18 @@ def find_usb_class(cid, sid, pid):
 	return ""
 
 
-devlst = (	'usb/lp',	# usblp 
-		'host', 	# usb-storage
+devlst = (	'host', 	# usb-storage
 		'video4linux/video', 	# uvcvideo et al.
 		'sound/card',	# snd-usb-audio 
 		'net/', 	# cdc_ether, ...
 		'input/input',	# usbhid
+		'usb:hiddev',	# usb hid
 		'bluetooth/hci',	# btusb
 		'ttyUSB',	# btusb
 		'tty/',		# cdc_acm
+		'usb:lp',	# usblp
+		#'usb/lp',	# usblp 
+		'usb/',		# hiddev, usblp
 	)
 
 def find_storage(hostno):
@@ -310,22 +313,40 @@ class UsbDevice:
 		try:
 			self.name = readattr(fname, "manufacturer") + " " \
 				  + readattr(fname, "product")
-			self.name += " " + readattr(fname, "serial")
+			#self.name += " " + readattr(fname, "serial")
 			if self.name[:5] == "Linux":
-				rx = re.compile(r"Linux [^ ]* (.hci_hcd) .HCI Host Controller ([0-9a-f:\.]*)")
+				rx = re.compile(r"Linux [^ ]* (.hci_hcd) .HCI Host Controller")
 				mch = rx.match(self.name)
 				if mch:
-					self.name = mch.group(1) + " " + mch.group(2)
+					self.name = mch.group(1)
 
 		except:
 			pass
 		if not self.name:
 			self.name = find_usb_prod(self.vid, self.pid)
+		# Some USB Card readers have a better name then Generic ...
+		if self.name[:7] == "Generic":
+			oldnm = self.name
+			self.name = find_usb_prod(self.vid, self.pid)
+			if not self.name:
+				self.name = oldnm
+		try:
+			ser = readattr(fname, "serial")
+			# Some USB devs report "serial" as serial no. suppress
+			if (ser and ser != "serial"):
+				self.name += " " + ser
+		except:
+			pass
 		self.usbver = readattr(fname, "version")
 		self.speed = readattr(fname, "speed")
 		self.maxpower = readattr(fname, "bMaxPower")
 		self.noports = int(readattr(fname, "maxchild"))
-		self.nointerfaces = int(readattr(fname, "bNumInterfaces"))
+		try:
+			self.nointerfaces = int(readattr(fname, "bNumInterfaces"))
+		except:
+			#print "ERROR: %s/bNumInterfaces = %s" % (fname,
+			#		readattr(fname, "bNumInterfaces"))a
+			self.nointerfaces = 0
 		try:
 			self.driver = readlink(fname, "driver")
 			self.devname = find_dev(self.driver, fname)
@@ -362,7 +383,7 @@ class UsbDevice:
 		else:
 			col = cols[1]
 		if not nohub or self.iclass != 9:
-			str = "%-16s%s%04x:%04x%s %02x %s %3sMBit/s %s %iIFs (%s%s%s)" % \
+			str = "%-16s%s%04x:%04x%s %02x %s%4sMBit/s %s %iIFs (%s%s%s)" % \
 				(" " * self.level + self.fname, 
 				 cols[1], self.vid, self.pid, cols[0],
 				 self.iclass, self.usbver, self.speed, self.maxpower,
@@ -488,10 +509,14 @@ def main(argv):
 		print "Error: excess args %s ..." % args[0]
 		sys.exit(usage())
 
-	parse_usb_ids()
-	fix_usbvend()	
-	fix_usbprod()
-	fix_usbclass()
+	try:
+		parse_usb_ids()
+		fix_usbvend()	
+		fix_usbprod()
+		fix_usbclass()
+	except:
+		print >>sys.stderr, " WARNING: Failure to read usb.ids"
+		print >>sys.stderr, sys.exc_info()
 	read_usb()
 
 # Entry point
