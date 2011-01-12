@@ -17,7 +17,8 @@ sbin_SCRIPTS = \
 	update-usbids.sh
 
 bin_SCRIPTS = \
-	usb-devices
+	usb-devices \
+	lsusb.py
 
 lsusb_SOURCES = \
 	lsusb.c \
@@ -44,6 +45,7 @@ EXTRA_DIST = \
 	lsusb.8.in \
 	usb-devices.1.in \
 	usb-devices \
+	lsusb.py \
 	usbutils.pc.in
 
 usb.ids.gz: $(srcdir)/usb.ids
