@@ -803,6 +803,17 @@ static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interfa
 					dump_bytes(buf, buf[0]);
 				}
 				break;
+			case USB_DT_CS_DEVICE:
+				/* MISPLACED DESCRIPTOR ... less indent */
+				switch (interface->bInterfaceClass) {
+				case USB_CLASS_CCID:
+					dump_ccid_device(buf);
+					break;
+				default:
+					printf("        DEVICE CLASS: ");
+					dump_bytes(buf, buf[0]);
+				}
+				break;
 			case USB_DT_OTG:
 				/* handled separately */
 				break;

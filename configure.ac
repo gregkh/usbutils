@@ -11,25 +11,15 @@ AC_SYS_LARGEFILE
 
 AC_CHECK_HEADERS([byteswap.h])
 
-USE_ZLIB=yes
 AC_ARG_ENABLE(zlib,
-	AS_HELP_STRING(--disable-zlib,disable support for zlib),
-	[
-		if eval "test x$enable_zlib = xno"; then
-			USE_ZLIB=
-		fi
-	])
-if test "$USE_ZLIB" = "yes" ; then
-	AC_CHECK_LIB(z, inflateEnd)
-	if test "${ac_cv_lib_z_inflateEnd}" = "yes" ; then
-		HAVE_ZLIB="yes"
-	fi
-fi
-AM_CONDITIONAL(HAVE_ZLIB, test x$HAVE_ZLIB = xyes)
+	AS_HELP_STRING(--disable-zlib,disable support for zlib))
+
+HAVE_ZLIB=no
+AS_IF([test "x$enable_zlib" != "xno"],
+	[AC_CHECK_LIB(z, inflateEnd, HAVE_ZLIB=yes)])
+AM_CONDITIONAL(HAVE_ZLIB, [test "$HAVE_ZLIB" = "yes"])
 
 PKG_CHECK_MODULES(LIBUSB, libusb-1.0 >= 1.0.0)
-AC_SUBST(LIBUSB_CFLAGS)
-AC_SUBST(LIBUSB_LIBS)
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
