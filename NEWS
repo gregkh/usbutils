@@ -1,3 +1,15 @@
+usbutils 002
+============
+
+Diego Elio Pettenò (2):
+      Simplify the configure script.
+      Print device class descriptors like it's done for interface descriptors.
+
+Greg Kroah-Hartman (2):
+      Updated version of lsusb.py from Kurt Garloff.
+      add lsusb.py to the bin files
+
+
 usbutils 001
 ============
 
