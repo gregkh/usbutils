@@ -6,9 +6,6 @@ AM_LDFLAGS = \
 
 data_DATA = \
 	usb.ids
-if HAVE_ZLIB
-data_DATA += usb.ids.gz
-endif
 
 bin_PROGRAMS = \
 	lsusb
@@ -34,6 +31,12 @@ lsusb_CPPFLAGS = \
 
 lsusb_LDADD = \
 	$(LIBUSB_LIBS)
+
+if HAVE_ZLIB
+data_DATA += usb.ids.gz
+lsusb_CPPFLAGS += -DHAVE_LIBZ
+lsusb_LDADD += -lz
+endif
 
 man_MANS = \
 	lsusb.8	\
