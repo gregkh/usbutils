@@ -3848,6 +3848,8 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 	status = 1; /* 1 device not found, 0 device found */
 
 	num_devs = libusb_get_device_list(ctx, &list);
+	if (num_devs < 0)
+		goto error;
 
 	for (i = 0; i < num_devs; ++i) {
 		libusb_device *dev = list[i];
@@ -3877,6 +3879,7 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 	}
 
 	libusb_free_device_list(list, 0);
+error:
 	return status;
 }
 
