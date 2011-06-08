@@ -270,6 +270,32 @@ const char *names_videoterminal(u_int16_t termt)
 
 /* ---------------------------------------------------------------------- */
 
+int get_vendor_string(char *buf, size_t size, u_int16_t vid)
+{
+        const char *cp;
+
+        if (size < 1)
+                return 0;
+        *buf = 0;
+        if (!(cp = names_vendor(vid)))
+                return 0;
+        return snprintf(buf, size, "%s", cp);
+}
+
+int get_product_string(char *buf, size_t size, u_int16_t vid, u_int16_t pid)
+{
+        const char *cp;
+
+        if (size < 1)
+                return 0;
+        *buf = 0;
+        if (!(cp = names_product(vid, pid)))
+                return 0;
+        return snprintf(buf, size, "%s", cp);
+}
+
+/* ---------------------------------------------------------------------- */
+
 static int new_vendor(const char *name, u_int16_t vendorid)
 {
 	struct vendor *v;

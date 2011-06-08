@@ -47,6 +47,10 @@ extern const char *names_langid(u_int16_t langid);
 extern const char *names_physdes(u_int8_t ph);
 extern const char *names_bias(u_int8_t b);
 extern const char *names_countrycode(unsigned int countrycode);
+
+extern int get_vendor_string(char *buf, size_t size, u_int16_t vid);
+extern int get_product_string(char *buf, size_t size, u_int16_t vid, u_int16_t pid);
+
 extern int names_init(char *n);
 extern void names_exit(void);
 
