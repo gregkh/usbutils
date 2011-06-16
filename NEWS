@@ -1,3 +1,10 @@
+usbutils 003
+============
+
+Diego Elio Pettenò (1):
+      build-sys: properly enable support for zlib in lsusb
+
+
 usbutils 002
 ============
 
