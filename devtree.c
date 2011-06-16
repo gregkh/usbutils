@@ -38,6 +38,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "names.h"
 #include "devtree.h"
 
 /* ---------------------------------------------------------------------- */
