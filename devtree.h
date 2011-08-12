@@ -80,7 +80,7 @@ extern void devtree_busdisconnect(struct usbbusnode *bus);
 extern void devtree_devconnect(struct usbdevnode *dev);
 extern void devtree_devdisconnect(struct usbdevnode *dev);
 extern void devtree_processchanges(void);
-extern void devtree_dump(void);
+extern void devtree_dump(unsigned int verblevel);
 
 extern int lprintf(unsigned int vl, const char *format, ...)
 	__attribute__ ((format (printf, 2, 3)));

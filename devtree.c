@@ -38,6 +38,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "names.h"
 #include "devtree.h"
 
 /* ---------------------------------------------------------------------- */
@@ -294,10 +295,12 @@ void devtree_processchanges(void)
 /* ---------------------------------------------------------------------- */
 
 static void dumpdevlist(struct list_head *list, unsigned int level,
-			unsigned int mask)
+			unsigned int mask, unsigned int verblevel)
 {
 	struct usbdevnode *dev;
 	struct list_head *list2;
+	char vendor[128];
+	char product[128];
 	char buf[512];
 	char *cp;
 	unsigned int i;
@@ -317,15 +320,23 @@ static void dumpdevlist(struct list_head *list, unsigned int level,
 			*cp++ = '`';
 		}
 		*cp++ = '-';
-		snprintf(cp, buf + sizeof(buf) - cp,
-			 "Dev# %3d Vendor 0x%04x Product 0x%04x",
-			 dev->devnum, dev->vendorid, dev->productid);
+		if (verblevel > 1) {
+			get_vendor_string(vendor, sizeof(vendor), dev->vendorid);
+			get_product_string(product, sizeof(product), dev->vendorid, dev->productid);
+			snprintf(cp, buf + sizeof(buf) - cp,
+				"Dev# %3d Vendor 0x%04x Product 0x%04x %s %s",
+				dev->devnum, dev->vendorid, dev->productid, vendor, product);
+		} else {
+			snprintf(cp, buf + sizeof(buf) - cp,
+				 "Dev# %3d Vendor 0x%04x Product 0x%04x",
+				 dev->devnum, dev->vendorid, dev->productid);
+		}
 		lprintf(1, "%s\n", buf);
-		dumpdevlist(&dev->childlist, level+1, mask);
+		dumpdevlist(&dev->childlist, level+1, mask, verblevel);
 	}
 }
 
-void devtree_dump(void)
+void devtree_dump(unsigned int verblevel)
 {
 	struct list_head *list;
 	struct usbbusnode *bus;
@@ -333,6 +344,6 @@ void devtree_dump(void)
 	for (list = usbbuslist.next; list != &usbbuslist; list = list->next) {
 		bus = list_entry(list, struct usbbusnode, list);
 		lprintf(1, "Bus# %2d\n", bus->busnum);
-		dumpdevlist(&bus->childlist, 0, 0);
+		dumpdevlist(&bus->childlist, 0, 0, verblevel);
 	}
 }

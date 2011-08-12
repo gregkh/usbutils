@@ -207,30 +207,6 @@ static int get_string(libusb_device_handle *dev, char *buf, size_t size, u_int8_
 	}
 }
 
-static int get_vendor_string(char *buf, size_t size, u_int16_t vid)
-{
-	const char *cp;
-
-	if (size < 1)
-		return 0;
-	*buf = 0;
-	if (!(cp = names_vendor(vid)))
-		return 0;
-	return snprintf(buf, size, "%s", cp);
-}
-
-static int get_product_string(char *buf, size_t size, u_int16_t vid, u_int16_t pid)
-{
-	const char *cp;
-
-	if (size < 1)
-		return 0;
-	*buf = 0;
-	if (!(cp = names_product(vid, pid)))
-		return 0;
-	return snprintf(buf, size, "%s", cp);
-}
-
 static int get_class_string(char *buf, size_t size, u_int8_t cls)
 {
 	const char *cp;
@@ -3940,7 +3916,7 @@ static int treedump(void)
 	}
 	devtree_parsedevfile(fd);
 	close(fd);
-	devtree_dump();
+	devtree_dump(verblevel);
 	return 0;
 }
 
