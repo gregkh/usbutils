@@ -1,3 +1,22 @@
+usbutils 004
+============
+
+Carl-Daniel Hailfinger (2):
+      Fix lsusb out-of-bounds write
+      Fix lsusb double-free
+
+Dafydd Crosby (2):
+      Verbose flag in tree mode shows vendor and product name.     When running `lsusb -tv`, devices should have the vendor and     product name appended to the row.
+      Fix compiler warning
+
+Greg Kroah-Hartman (2):
+      Merge pull request #2 from nphilipp/master--nphilipp
+      Merge pull request #3 from dafyddcrosby/lsusb-tv
+
+Nils Philippsen (1):
+      don't use invalid config descriptors
+
+
 usbutils 003
 ============
 
