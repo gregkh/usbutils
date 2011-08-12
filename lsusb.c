@@ -3800,14 +3800,25 @@ static void dumpdev(libusb_device *dev)
 	if (desc.bNumConfigurations) {
 		struct libusb_config_descriptor *config;
 
-		libusb_get_config_descriptor(dev, 0, &config);
-		otg = do_otg(config) || otg;
-		libusb_free_config_descriptor(config);
+		ret = libusb_get_config_descriptor(dev, 0, &config);
+		if (ret) {
+			fprintf(stderr, "Couldn't get configuration descriptor 0, "
+					"some information will be missing\n");
+		} else {
+			otg = do_otg(config) || otg;
+			libusb_free_config_descriptor(config);
+		}
 
 		for (i = 0; i < desc.bNumConfigurations; ++i) {
-			libusb_get_config_descriptor(dev, i, &config);
-			dump_config(udev, config);
-			libusb_free_config_descriptor(config);
+			ret = libusb_get_config_descriptor(dev, i, &config);
+			if (ret) {
+				fprintf(stderr, "Couldn't get configuration "
+						"descriptor %d, some information will "
+						"be missing\n", i);
+			} else {
+				dump_config(udev, config);
+				libusb_free_config_descriptor(config);
+			}
 		}
 	}
 	if (!udev)
