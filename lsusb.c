@@ -3614,7 +3614,7 @@ static void dump_ss_device_capability_desc(unsigned char *buf)
 	if (!(buf[3] & 0x02))
 		printf("      Latency Tolerance Messages (LTM)"
 				" Supported\n");
-	printf("    wSpeedsSupported   0x%04x\n", buf[4]);
+	printf("    wSpeedsSupported   0x%02x%02x\n", buf[5], buf[4]);
 	if (buf[4] & (1 << 0))
 		printf("      Device can operate at Low Speed (1Mbps)\n");
 	if (buf[4] & (1 << 1))
@@ -3624,8 +3624,8 @@ static void dump_ss_device_capability_desc(unsigned char *buf)
 	if (buf[4] & (1 << 3))
 		printf("      Device can operate at SuperSpeed (5Gbps)\n");
 
-	printf("    bFunctionalitySupport %3u\n", buf[5]);
-	switch(buf[5]) {
+	printf("    bFunctionalitySupport %3u\n", buf[6]);
+	switch(buf[6]) {
 	case 0:
 		printf("      Lowest fully-functional device speed is "
 				"Low Speed (1Mbps)\n");
@@ -3647,8 +3647,8 @@ static void dump_ss_device_capability_desc(unsigned char *buf)
 				"at an unknown speed!\n");
 		break;
 	}
-	printf("    bU1DevExitLat        %4u micro seconds\n", buf[6]);
-	printf("    bU2DevExitLat    %8u micro seconds\n", buf[8] + (buf[7] << 8));
+	printf("    bU1DevExitLat        %4u micro seconds\n", buf[7]);
+	printf("    bU2DevExitLat    %8u micro seconds\n", buf[9] + (buf[8] << 8));
 }
 
 static void dump_container_id_device_capability_desc(unsigned char *buf)
