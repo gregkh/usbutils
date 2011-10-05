@@ -3648,7 +3648,7 @@ static void dump_ss_device_capability_desc(unsigned char *buf)
 		break;
 	}
 	printf("    bU1DevExitLat        %4u micro seconds\n", buf[7]);
-	printf("    bU2DevExitLat    %8u micro seconds\n", buf[9] + (buf[8] << 8));
+	printf("    bU2DevExitLat    %8u micro seconds\n", buf[8] + (buf[9] << 8));
 }
 
 static void dump_container_id_device_capability_desc(unsigned char *buf)
