@@ -13908,6 +13908,7 @@
 	0103  NCM (Ethernet) Gadget
 	0104  Multifunction Composite Gadget
 	0105  FunctionFS Gadget
+	0106  Composite Gadget: ACM + Mass Storage
 	0200  Qemu Audio Device
 1e0e  Qualcomm / Option
 1e10  Point Grey Research, Inc.
