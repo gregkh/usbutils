@@ -5880,6 +5880,18 @@
 	0236  Internal Keyboard/Trackpad (ANSI)
 	0237  Internal Keyboard/Trackpad (ISO)
 	0238  Internal Keyboard/Trackpad (JIS)
+	023f  Internal Keyboard/Trackpad (ANSI)
+	0240  Internal Keyboard/Trackpad (ISO)
+	0241  Internal Keyboard/Trackpad (JIS)
+	0242  Internal Keyboard/Trackpad (ANSI)
+	0243  Internal Keyboard/Trackpad (ISO)
+	0244  Internal Keyboard/Trackpad (JIS)
+	0245  Internal Keyboard/Trackpad (ANSI)
+	0246  Internal Keyboard/Trackpad (ISO)
+	0247  Internal Keyboard/Trackpad (JIS)
+	0252  Internal Keyboard/Trackpad (ANSI)
+	0253  Internal Keyboard/Trackpad (ISO)
+	0254  Internal Keyboard/Trackpad (JIS)
 	0301  USB Mouse [Mitsumi, M4848]
 	0302  Optical Mouse [Fujitsu]
 	0304  Optical USB Mouse [Mitsumi]
@@ -5947,6 +5959,7 @@
 	8216  Bluetooth USB Host Controller
 	8217  Bluetooth USB Host Controller
 	8218  Bluetooth Host Controller
+	821a  Bluetooth Host Controller
 	8240  IR Receiver [built-in]
 	8241  IR Receiver [built-in]
 	8242  IR Receiver [built-in]
@@ -5956,6 +5969,7 @@
 	8502  Built-in iSight
 	8505  Built-in iSight
 	8507  Built-in iSight
+	8509  FaceTime HD Camera [built-in]
 	911c  Hub in A1082 [Cinema HD Display 23"]
 	912f  Hub in 30" Cinema Display
 	921c  A1082 [Cinema HD Display 23"]
