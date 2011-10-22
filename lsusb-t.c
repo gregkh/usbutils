@@ -10,6 +10,7 @@
 #include <stddef.h>
 
 #include "list.h"
+#include "lsusb.h"
 
 #define MY_SYSFS_FILENAME_LEN 255
 #define MY_PATH_MAX 4096

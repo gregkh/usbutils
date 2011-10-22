@@ -38,6 +38,7 @@
 #include <libusb.h>
 #include <unistd.h>
 
+#include "lsusb.h"
 #include "names.h"
 #include "devtree.h"
 #include "usbmisc.h"
@@ -106,7 +107,6 @@
 
 #define	HUB_STATUS_BYTELEN	3	/* max 3 bytes status = hub + 23 ports */
 
-extern int lsusb_t(void);
 static const char procbususb[] = "/proc/bus/usb";
 static unsigned int verblevel = VERBLEVEL_DEFAULT;
 static int do_report_desc = 1;
