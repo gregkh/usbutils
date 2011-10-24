@@ -1436,7 +1436,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 				printf("        baSourceID(%2u)      %5u\n", i, buf[7+i]);
 			printf("        bNrChannels         %5u\n"
 			       "        wChannelConfig      %5u\n", buf[7+j], chcfg);
-			for (i = 0; i < 26; i++)
+			for (i = 0; i < 12; i++)
 				if ((chcfg >> i) & 1)
 					printf("          %s\n", chconfig[i]);
 			printf("        iChannelNames       %5u %s\n"
