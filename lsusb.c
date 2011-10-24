@@ -1444,7 +1444,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 			dump_audio_bmcontrols("          ", buf[14+j], uac2_extension_unit_bmcontrols, protocol);
 
 			printf("        iExtension          %5u %s\n",
-			       buf[15+j+k], term);
+			       buf[15+j], term);
 			dump_junk(buf, "        ", 16+j);
 			break;
 		} /* switch (protocol) */
