@@ -14,6 +14,7 @@
 
 #define MY_SYSFS_FILENAME_LEN 255
 #define MY_PATH_MAX 4096
+#define MY_PARAM_MAX 64
 
 struct usbinterface {
 	struct list_head list;
@@ -48,7 +49,7 @@ struct usbdevice {
 	unsigned int bDeviceProtocol;
 	unsigned int bDeviceSubClass;
 	unsigned int bMaxPacketSize0;
-	char bMaxPower[64];
+	char bMaxPower[MY_PARAM_MAX];
 	unsigned int bNumConfigurations;
 	unsigned int bNumInterfaces;
 	unsigned int bcdDevice;
@@ -58,11 +59,11 @@ struct usbdevice {
 	unsigned int idProduct;
 	unsigned int idVendor;
 	unsigned int maxchild;
-	char manufacturer[64];
-	char product[64];
-	char serial[64];
-	char version[64];
-	char speed[5 + 1];	/* '1.5','12','480','5000' + '\n' */
+	char manufacturer[MY_PARAM_MAX];
+	char product[MY_PARAM_MAX];
+	char serial[MY_PARAM_MAX];
+	char version[MY_PARAM_MAX];
+	char speed[MY_PARAM_MAX];	/* '1.5','12','480','5000' + '\n' */
 
 	char name[MY_SYSFS_FILENAME_LEN];
 	char driver[MY_SYSFS_FILENAME_LEN];
@@ -84,7 +85,7 @@ struct usbbusnode {
 
 #define SYSFS_INTu(de,tgt, name) do { tgt->name = read_sysfs_file_int(de,#name,10); } while(0)
 #define SYSFS_INTx(de,tgt, name) do { tgt->name = read_sysfs_file_int(de,#name,16); } while(0)
-#define SYSFS_STR(de,tgt, name) do { read_sysfs_file_string(de, #name, tgt->name, MY_SYSFS_FILENAME_LEN); } while(0)
+#define SYSFS_STR(de,tgt, name) do { read_sysfs_file_string(de, #name, tgt->name, MY_PARAM_MAX); } while(0)
 
 LIST_HEAD(interfacelist);
 LIST_HEAD(usbdevlist);
