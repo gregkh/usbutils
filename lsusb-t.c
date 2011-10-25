@@ -319,7 +319,10 @@ static void add_usb_interface(const char *d_name)
 	p = pn + 1;
 	i = strtoul(p, &pn, 10);
 	if (!pn || p == pn)
+	{
+		free(e);
 		return;
+	}
 	e->ifnum = i;
 	if (snprintf(e->name, MY_SYSFS_FILENAME_LEN, "%s", d_name) >= MY_SYSFS_FILENAME_LEN)
 		printf("warning: '%s' truncated to '%s'\n", e->name, d_name);
