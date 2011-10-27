@@ -42,7 +42,7 @@ static int readlink_recursive(const char *path, char *buf, size_t bufsize)
 	char *ptemp;
 	int ret;
 
-	ret = readlink(path, buf, bufsize);
+	ret = readlink(path, buf, bufsize-1);
 
 	if (ret > 0) {
 		buf[ret] = 0;
