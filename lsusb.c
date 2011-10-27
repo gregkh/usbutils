@@ -1829,7 +1829,7 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 			}
 			printf("        bmMPEGFeatures       0x%02x\n", buf[7]);
 			printf("          Internal Dynamic Range Control: ");
-			switch ((buf[7] << 4) & 3) {
+			switch ((buf[7] >> 4) & 3) {
 			case 0:
 				printf("not supported\n");
 				break;
