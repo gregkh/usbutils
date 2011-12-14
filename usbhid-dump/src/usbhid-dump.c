@@ -1,6 +1,6 @@
 /** @file
  * @brief usbhid-dump - entry point *
- * Copyright (C) 2010 Nikolai Kondrashov
+ * Copyright (C) 2010-2011 Nikolai Kondrashov
  *
  * This file is part of usbhid-dump.
  *
@@ -31,6 +31,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <limits.h>
 #include <string.h>
 #include <errno.h>
 #include <signal.h>
