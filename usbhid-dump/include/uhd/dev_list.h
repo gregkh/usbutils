@@ -1,7 +1,7 @@
 /** @file
  * @brief usbhid-dump - device list
  *
- * Copyright (C) 2010 Nikolai Kondrashov
+ * Copyright (C) 2010-2011 Nikolai Kondrashov
  *
  * This file is part of usbhid-dump.
  *
@@ -27,6 +27,7 @@
 #ifndef __UHD_DEV_LIST_H__
 #define __UHD_DEV_LIST_H__
 
+#include <stddef.h>
 #include "uhd/dev.h"
 
 #ifdef __cplusplus
