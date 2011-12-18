@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010 Nikolai Kondrashov
+# Copyright (C) 2010-2011 Nikolai Kondrashov
 #
 # This file is part of usbhid-dump.
 #
@@ -23,6 +23,7 @@ AC_PREREQ(2.61)
 AC_INIT([usbhid-dump], [1.2])
 AC_CONFIG_AUX_DIR([auxdir])
 AM_INIT_AUTOMAKE([1.9 -Wall foreign])
+AM_MAINTAINER_MODE
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
