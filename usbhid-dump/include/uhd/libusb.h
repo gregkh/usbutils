@@ -1,7 +1,7 @@
 /** @file
  * @brief usbhid-dump - libusb API extensions
  *
- * Copyright (C) 2010 Nikolai Kondrashov
+ * Copyright (C) 2010-2011 Nikolai Kondrashov
  *
  * This file is part of usbhid-dump.
  *
@@ -27,7 +27,7 @@
 #ifndef __UHD_LIBUSB_H__
 #define __UHD_LIBUSB_H__
 
-#include <libusb-1.0/libusb.h>
+#include <libusb.h>
 
 #ifdef __cplusplus
 extern "C" {

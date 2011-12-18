@@ -48,10 +48,9 @@ AC_PROG_LIBTOOL
 #
 # Checks for libraries.
 #
-AC_CHECK_LIB(
-    [usb-1.0], [libusb_init], [],
-    [AC_MSG_FAILURE([libusb is required, but was not found, abort.
-                     Try installing libusb-1.0-0-dev or libusb1-devel.])])
+PKG_CHECK_MODULES(LIBUSB, libusb-1.0 >= 1.0.0)
+CFLAGS="$CFLAGS $LIBUSB_CFLAGS"
+LIBS="$LIBS $LIBUSB_LIBS"
 
 #
 # Checks for features

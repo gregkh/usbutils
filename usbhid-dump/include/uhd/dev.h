@@ -1,7 +1,7 @@
 /** @file
  * @brief usbhid-dump - device
  *
- * Copyright (C) 2010 Nikolai Kondrashov
+ * Copyright (C) 2010-2011 Nikolai Kondrashov
  *
  * This file is part of usbhid-dump.
  *
@@ -28,7 +28,7 @@
 #define __UHD_DEV_H__
 
 #include <stdbool.h>
-#include <libusb-1.0/libusb.h>
+#include "uhd/libusb.h"
 
 #ifdef __cplusplus
 extern "C" {

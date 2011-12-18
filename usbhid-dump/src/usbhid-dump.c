@@ -39,7 +39,6 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <stdio.h>
-#include <libusb-1.0/libusb.h>
 
 #include "config.h"
 
