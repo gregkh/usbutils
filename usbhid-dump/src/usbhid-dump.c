@@ -898,7 +898,7 @@ main(int argc, char **argv)
 {
     int                 result;
 
-    char                c;
+    int                 c;
 
     uint8_t             bus_num         = UHD_BUS_NUM_ANY;
     uint8_t             dev_addr        = UHD_DEV_ADDR_ANY;
