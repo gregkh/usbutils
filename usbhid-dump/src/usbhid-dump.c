@@ -153,7 +153,7 @@ dump(const uhd_iface   *iface,
         buf[1] = xd[b >> 4];
         buf[2] = xd[b & 0xF];
 
-        fwrite(buf, ((pos % 16 == 0) ? 4 : 3), 1, stdout);
+        (void)fwrite(buf, ((pos % 16 == 0) ? 4 : 3), 1, stdout);
     }
 
     if (pos % 16 != 1)
