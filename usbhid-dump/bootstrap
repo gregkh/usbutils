@@ -26,7 +26,12 @@ cat > ChangeLog <<CUT
 CUT
 
 aclocal -I m4
-libtoolize
+# Prefer glibtoolize over libtoolize on Darwin
+if command -v glibtoolize >/dev/null; then
+    glibtoolize
+else
+    libtoolize
+fi
 autoheader
 automake --add-missing
 autoconf
