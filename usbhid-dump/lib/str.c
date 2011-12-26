@@ -24,6 +24,8 @@
  * @(#) $Id$
  */
 
+#include "config.h"
+
 #include "uhd/str.h"
 #include <ctype.h>
 

@@ -24,6 +24,8 @@
  * @(#) $Id$
  */
 
+#include "config.h"
+
 #include "uhd/libusb.h"
 #include <stdbool.h>
 

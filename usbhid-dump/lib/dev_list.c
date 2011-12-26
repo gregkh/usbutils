@@ -24,6 +24,8 @@
  * @(#) $Id$
  */
 
+#include "config.h"
+
 #include "uhd/misc.h"
 #include "uhd/dev_list.h"
 #include <assert.h>

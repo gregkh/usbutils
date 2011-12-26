@@ -24,6 +24,8 @@
  * @(#) $Id$
  */
 
+#include "config.h"
+
 #include "uhd/iface_list.h"
 #include <assert.h>
 #include <stdlib.h>
