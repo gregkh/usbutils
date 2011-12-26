@@ -42,6 +42,11 @@
 #include <getopt.h>
 #include <stdio.h>
 
+/* Define LIBUSB_CALL for libusb <= 1.0.8 */
+#ifndef LIBUSB_CALL
+#define LIBUSB_CALL
+#endif
+
 #define GENERIC_ERROR(_fmt, _args...) \
     fprintf(stderr, _fmt "\n", ##_args)
 
@@ -193,7 +198,7 @@ dump_iface_list_descriptor(const uhd_iface *list)
 }
 
 
-static void
+static void LIBUSB_CALL
 dump_iface_list_stream_cb(struct libusb_transfer *transfer)
 {
     enum libusb_error   err;
