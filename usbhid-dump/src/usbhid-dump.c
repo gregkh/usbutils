@@ -42,33 +42,33 @@
 #include <getopt.h>
 #include <stdio.h>
 
-#define ERROR(_fmt, _args...) \
+#define GENERIC_ERROR(_fmt, _args...) \
     fprintf(stderr, _fmt "\n", ##_args)
 
 #define IFACE_ERROR(_iface, _fmt, _args...) \
-    ERROR("%s:" _fmt, _iface->addr_str, ##_args)
+    GENERIC_ERROR("%s:" _fmt, _iface->addr_str, ##_args)
 
-#define FAILURE(_fmt, _args...) \
-    ERROR("Failed to " _fmt, ##_args)
+#define GENERIC_FAILURE(_fmt, _args...) \
+    GENERIC_ERROR("Failed to " _fmt, ##_args)
 
 #define IFACE_FAILURE(_iface, _fmt, _args...) \
     IFACE_ERROR(_iface, "Failed to " _fmt, ##_args)
 
 #define LIBUSB_FAILURE(_fmt, _args...) \
-    FAILURE(_fmt ": %s", ##_args, libusb_strerror(err))
+    GENERIC_FAILURE(_fmt ": %s", ##_args, libusb_strerror(err))
 
 #define LIBUSB_IFACE_FAILURE(_iface, _fmt, _args...) \
     IFACE_FAILURE(_iface, _fmt ": %s", ##_args, libusb_strerror(err))
 
 #define ERROR_CLEANUP(_fmt, _args...) \
     do {                                \
-        ERROR(_fmt, ##_args);           \
+        GENERIC_ERROR(_fmt, ##_args);   \
         goto cleanup;                   \
     } while (0)
 
 #define FAILURE_CLEANUP(_fmt, _args...) \
     do {                                \
-        FAILURE(_fmt, ##_args);         \
+        GENERIC_FAILURE(_fmt, ##_args); \
         goto cleanup;                   \
     } while (0)
 
