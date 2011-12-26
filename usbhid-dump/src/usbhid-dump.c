@@ -23,6 +23,8 @@
  * @(#) $Id$
  */
 
+#include "config.h"
+
 #include "uhd/iface_list.h"
 #include "uhd/str.h"
 #include "uhd/libusb.h"
@@ -39,8 +41,6 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <stdio.h>
-
-#include "config.h"
 
 #define ERROR(_fmt, _args...) \
     fprintf(stderr, _fmt "\n", ##_args)
