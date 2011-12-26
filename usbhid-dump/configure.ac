@@ -86,6 +86,7 @@ fi
 #
 # Checks for library functions.
 #
+AC_CHECK_FUNCS(libusb_strerror)
 
 #
 # Output

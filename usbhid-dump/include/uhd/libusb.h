@@ -33,7 +33,9 @@
 extern "C" {
 #endif
 
+#ifndef HAVE_LIBUSB_STRERROR
 extern const char *libusb_strerror(enum libusb_error err);
+#endif
 
 #ifdef __cplusplus
 } /* extern "C" */
