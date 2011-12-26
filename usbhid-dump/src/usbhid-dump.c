@@ -26,7 +26,6 @@
 #include "config.h"
 
 #include "uhd/iface_list.h"
-#include "uhd/str.h"
 #include "uhd/libusb.h"
 #include "uhd/misc.h"
 
