@@ -788,7 +788,7 @@ PACKAGE_STRING "\n"
 
 
 static bool
-usage(FILE *stream)
+usage(FILE *stream, const char *program_invocation_name)
 {
     return
         fprintf(
@@ -826,7 +826,7 @@ usage(FILE *stream)
 "Signals:\n"
 "  USR1/USR2                        pause/resume the stream dump output\n"
 "\n",
-            program_invocation_short_name) >= 0;
+            program_invocation_name) >= 0;
 }
 
 
@@ -897,6 +897,8 @@ main(int argc, char **argv)
 {
     int                 result;
 
+    const char         *name;
+
     int                 c;
 
     uint8_t             bus_num         = UHD_BUS_NUM_ANY;
@@ -913,10 +915,19 @@ main(int argc, char **argv)
 
     struct sigaction    sa;
 
+    /*
+     * Extract program invocation name
+     */
+    name = rindex(argv[0], '/');
+    if (name == NULL)
+        name = argv[0];
+    else
+        name++;
+
 #define USAGE_ERROR(_fmt, _args...) \
     do {                                        \
         fprintf(stderr, _fmt "\n", ##_args);    \
-        usage(stderr);                          \
+        usage(stderr, name);                    \
         return 1;                               \
     } while (0)
 
@@ -929,7 +940,7 @@ main(int argc, char **argv)
         switch (c)
         {
             case OPT_VAL_HELP:
-                usage(stdout);
+                usage(stdout, name);
                 return 0;
                 break;
             case OPT_VAL_VERSION:
@@ -981,7 +992,7 @@ main(int argc, char **argv)
                 stream_feedback = 1;
                 break;
             case '?':
-                usage(stderr);
+                usage(stderr, name);
                 return 1;
                 break;
         }
