@@ -597,7 +597,7 @@ parse_number_pair(const char   *str,
     p = str;
 
     /* Skip space (prevent strtol doing so) */
-    while (isspace(*p))
+    while (isspace((int)*p))
         p++;
 
     /* Extract the first number */
@@ -614,7 +614,7 @@ parse_number_pair(const char   *str,
     p = end;
 
     /* Skip space */
-    while (isspace(*p))
+    while (isspace((int)*p))
         p++;
 
     /* If it is the end of string */
@@ -630,7 +630,7 @@ parse_number_pair(const char   *str,
         p++;
 
         /* Skip space (prevent strtol doing so) */
-        while (isspace(*p))
+        while (isspace((int)*p))
             p++;
 
         /* Extract the second number */
@@ -646,7 +646,7 @@ parse_number_pair(const char   *str,
         p = end;
 
         /* Skip space */
-        while (isspace(*p))
+        while (isspace((int)*p))
             p++;
 
         /* If it is not the end of string */
@@ -729,7 +729,7 @@ parse_iface_num(const char *str,
     p = str;
 
     /* Skip space (prevent strtol doing so) */
-    while (isspace(*p))
+    while (isspace((int)*p))
         p++;
 
     /* Extract interface number */
@@ -759,7 +759,7 @@ parse_timeout(const char   *str,
     p = str;
 
     /* Skip space (prevent strtoll doing so) */
-    while (isspace(*p))
+    while (isspace((int)*p))
         p++;
 
     /* Extract timeout */
