@@ -792,7 +792,7 @@ PACKAGE_STRING "\n"
 
 
 static bool
-usage(FILE *stream, const char *program_invocation_name)
+usage(FILE *stream, const char *name)
 {
     return
         fprintf(
@@ -830,7 +830,7 @@ usage(FILE *stream, const char *program_invocation_name)
 "Signals:\n"
 "  USR1/USR2                        pause/resume the stream dump output\n"
 "\n",
-            program_invocation_name) >= 0;
+            name) >= 0;
 }
 
 
