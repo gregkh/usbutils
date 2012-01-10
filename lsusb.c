@@ -3799,7 +3799,7 @@ static void dumpdev(libusb_device *dev)
 
 	if (desc.bDeviceClass == LIBUSB_CLASS_HUB)
 		do_hub(udev, desc.bDeviceProtocol, desc.bcdUSB);
-	if (desc.bcdUSB >= 0x0300) {
+	if (desc.bcdUSB >= 0x0201) {
 		dump_bos_descriptor(udev);
 	}
 	if (desc.bcdUSB == 0x0200) {
