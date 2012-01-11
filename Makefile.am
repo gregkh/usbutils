@@ -18,7 +18,7 @@ bin_SCRIPTS = \
 	lsusb.py
 
 lsusb_SOURCES = \
-	lsusb.c \
+	lsusb.c lsusb.h \
 	lsusb-t.c \
 	list.h \
 	names.c names.h \

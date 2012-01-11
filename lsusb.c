@@ -17,9 +17,6 @@
  *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *      GNU General Public License for more details.
  *
- *      You should have received a copy of the GNU General Public License
- *      along with this program; if not, write to the Free Software
- *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 /*****************************************************************************/
@@ -41,6 +38,7 @@
 #include <libusb.h>
 #include <unistd.h>
 
+#include "lsusb.h"
 #include "names.h"
 #include "devtree.h"
 #include "usbmisc.h"
@@ -109,7 +107,6 @@
 
 #define	HUB_STATUS_BYTELEN	3	/* max 3 bytes status = hub + 23 ports */
 
-extern int lsusb_t(void);
 static const char procbususb[] = "/proc/bus/usb";
 static unsigned int verblevel = VERBLEVEL_DEFAULT;
 static int do_report_desc = 1;
@@ -3617,7 +3614,7 @@ static void dump_ss_device_capability_desc(unsigned char *buf)
 	if (!(buf[3] & 0x02))
 		printf("      Latency Tolerance Messages (LTM)"
 				" Supported\n");
-	printf("    wSpeedsSupported   0x%04x\n", buf[4]);
+	printf("    wSpeedsSupported   0x%02x%02x\n", buf[5], buf[4]);
 	if (buf[4] & (1 << 0))
 		printf("      Device can operate at Low Speed (1Mbps)\n");
 	if (buf[4] & (1 << 1))
@@ -3627,8 +3624,8 @@ static void dump_ss_device_capability_desc(unsigned char *buf)
 	if (buf[4] & (1 << 3))
 		printf("      Device can operate at SuperSpeed (5Gbps)\n");
 
-	printf("    bFunctionalitySupport %3u\n", buf[5]);
-	switch(buf[5]) {
+	printf("    bFunctionalitySupport %3u\n", buf[6]);
+	switch(buf[6]) {
 	case 0:
 		printf("      Lowest fully-functional device speed is "
 				"Low Speed (1Mbps)\n");
@@ -3650,8 +3647,8 @@ static void dump_ss_device_capability_desc(unsigned char *buf)
 				"at an unknown speed!\n");
 		break;
 	}
-	printf("    bU1DevExitLat        %4u micro seconds\n", buf[6]);
-	printf("    bU2DevExitLat    %8u micro seconds\n", buf[8] + (buf[7] << 8));
+	printf("    bU1DevExitLat        %4u micro seconds\n", buf[7]);
+	printf("    bU2DevExitLat    %8u micro seconds\n", buf[8] + (buf[9] << 8));
 }
 
 static void dump_container_id_device_capability_desc(unsigned char *buf)

@@ -383,7 +383,7 @@ class UsbDevice:
 		else:
 			col = cols[1]
 		if not nohub or self.iclass != 9:
-			str = "%-16s%s%04x:%04x%s %02x %s%4sMBit/s %s %iIFs (%s%s%s)" % \
+			str = "%-16s%s%04x:%04x%s %02x %s%5sMBit/s %s %iIFs (%s%s%s)" % \
 				(" " * self.level + self.fname, 
 				 cols[1], self.vid, self.pid, cols[0],
 				 self.iclass, self.usbver, self.speed, self.maxpower,

@@ -1,3 +1,23 @@
+usbutils 005
+============
+
+Greg Kroah-Hartman (7):
+      usb.ids: updated version of the file
+      Remove the FSF address from the source files.
+      update usbhid-dump to release 1.2
+      add another Linux kernel usb id.
+      updated usb.ids file
+      lsusb-t.c: fix up some complier warnings
+      add lsusb.h to fix some complier warnings.
+
+Lukáš Nykrýn (1):
+      Add more space to lsusb.py output
+
+Sarah Sharp (2):
+      lsusb: wSpeedsSupported is 2 bytes, not one.
+      lsusb: bU2DevExitLat is little endian, not big endian.
+
+
 usbutils 004
 ============
 
