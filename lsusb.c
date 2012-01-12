@@ -185,23 +185,13 @@ static int get_string(libusb_device_handle *dev, char *buf, size_t size, u_int8_
 {
 	int ret;
 
-	if (!dev) {
-		buf[0] = 0;
-		return 0;
-	}
-
-	if (id) {
+	if (dev && id) {
 		ret = libusb_get_string_descriptor_ascii(dev, id, (void *)buf, size);
-		if (ret <= 0) {
-			buf[0] = 0;
-			return 0;
-		} else
+		if (ret > 0)
 			return ret;
-
-	} else {
-		buf[0] = 0;
-		return 0;
 	}
+	buf[0] = 0;
+	return 0;
 }
 
 static int get_class_string(char *buf, size_t size, u_int8_t cls)
