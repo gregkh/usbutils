@@ -4004,6 +4004,12 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
+	if (treemode) {
+		/* treemode requires at least verblevel 1 */
+		verblevel += 1 - VERBLEVEL_DEFAULT;
+		return treedump();
+	}
+
 	/* by default, print names as well as numbers */
 	err = names_init(DATADIR "/usb.ids");
 #ifdef HAVE_LIBZ
@@ -4023,11 +4029,7 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	if (treemode) {
-		/* treemode requires at least verblevel 1 */
-		verblevel += 1 - VERBLEVEL_DEFAULT;
-		status = treedump();
-	} else if (devdump)
+	if (devdump)
 		status = dump_one_device(ctx, devdump);
 	else
 		status = list_devices(ctx, bus, devnum, vendor, product);
