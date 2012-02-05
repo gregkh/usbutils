@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2010 Nikolai Kondrashov
+# Copyright (C) 2010 Nikolai Kondrashov
 #
 # This file is part of usbhid-dump.
 #
@@ -16,20 +16,4 @@
 # along with usbhid-dump; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-SUBDIRS = include lib src doc
-
-dist_noinst_SCRIPTS = bootstrap
-
-ACLOCAL_AMFLAGS = -I m4
-
-dist-hook:
-	@set -e; \
-	if test -d "$(srcdir)/.git"; then \
-		echo Generating ChangeLog; \
-		( cd "$(srcdir)" && auxdir/missing --run git log ) > \
-			ChangeLog.tmp; \
-		mv -f ChangeLog.tmp "$(distdir)/ChangeLog"; \
-	else \
-		echo Skipping ChangeLog generation: no .git directory >&2; \
-	fi
-
+dist_man_MANS = usbhid-dump.8

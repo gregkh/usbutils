@@ -95,5 +95,6 @@ AC_CONFIG_FILES([Makefile
                  include/Makefile
                  include/uhd/Makefile
                  lib/Makefile
-                 src/Makefile])
+                 src/Makefile
+                 doc/Makefile])
 AC_OUTPUT
