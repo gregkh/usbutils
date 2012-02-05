@@ -1,3 +1,9 @@
+2011-02-05: 1.3
+    * Add manual page.
+    * Fix several build issues.
+    * Fix infinite loop in command-line option parsing on unsigned char
+      platforms.
+
 2010-11-20: 1.2
     * Command line parameters are removed, now all HID interfaces
       of all USB devices are dumped by default. This may include the
