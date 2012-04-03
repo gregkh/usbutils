@@ -335,9 +335,7 @@ static void add_usb_interface(const char *d_name)
 	l = snprintf(driver, MY_PATH_MAX, "%s/%s/driver", sys_bus_usb_devices, d_name);
 	if (l > 0 && l < MY_PATH_MAX) {
 		l = readlink(driver, driver, MY_PATH_MAX);
-		if (l < 0)
-			perror(d_name);
-		else {
+		if (l >= 0) {
 			if (l < MY_PATH_MAX - 1)
 				driver[l] = '\0';
 			else
@@ -400,9 +398,7 @@ static void add_usb_device(const char *d_name)
 	l = snprintf(driver, MY_PATH_MAX, "%s/%s/driver", sys_bus_usb_devices, d_name);
 	if (l > 0 && l < MY_PATH_MAX) {
 		l = readlink(driver, driver, MY_PATH_MAX);
-		if (l < 0)
-			perror(d_name);
-		else {
+		if (l >= 0) {
 			if (l < MY_PATH_MAX - 1)
 				driver[l] = '\0';
 			else
@@ -423,9 +419,7 @@ static void get_roothub_driver(struct usbbusnode *b, const char *d_name)
 	l = snprintf(path, MY_PATH_MAX, "%s/%s/../driver", sys_bus_usb_devices, d_name);
 	if (l > 0 && l < MY_PATH_MAX) {
 		l = readlink(path, path, MY_PATH_MAX);
-		if (l < 0)
-			perror(d_name);
-		else {
+		if (l >= 0) {
 			if (l < MY_PATH_MAX - 1)
 				path[l] = '\0';
 			else
