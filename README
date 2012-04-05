@@ -1,3 +1,12 @@
-initialize autobuild with:
-  autoreconf --install --symlink
-  ./configure
+Steps of building usbutils:
+1. In order to get this to build you first need to get the usbhid-dump project
+into this folder.
+you can use:
+	git://digimend.git.sourceforge.net/gitroot/digimend/usbhid-dump.git
+and then:
+	cd usbhid-dump
+	./bootstrap
+2 initialize autobuild with:
+	autoreconf --install --symlink
+3. ./configure
+4. make

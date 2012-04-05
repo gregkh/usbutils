@@ -21,3 +21,4 @@ usbutils.pc
 usb-devices.1
 *.gz
 *.bz2
+usbhid-dump/*
