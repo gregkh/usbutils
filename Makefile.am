@@ -4,14 +4,12 @@ SUBDIRS = \
 AM_LDFLAGS = \
 	-Wl,--as-needed
 
-data_DATA = \
-	usb.ids
+data_DATA =
 
 bin_PROGRAMS = \
 	lsusb
 
-sbin_SCRIPTS = \
-	update-usbids.sh
+sbin_SCRIPTS =
 
 bin_SCRIPTS = \
 	usb-devices \
@@ -33,7 +31,6 @@ lsusb_LDADD = \
 	$(LIBUSB_LIBS)
 
 if HAVE_ZLIB
-data_DATA += usb.ids.gz
 lsusb_CPPFLAGS += -DHAVE_LIBZ
 lsusb_LDADD += -lz
 endif
@@ -51,12 +48,22 @@ EXTRA_DIST = \
 	lsusb.py \
 	usbutils.pc.in
 
+if INSTALL_USBIDS
+data_DATA += usb.ids
+
+if HAVE_ZLIB
+data_DATA += usb.ids.gz
+endif
+
+sbin_SCRIPTS += update-usbids.sh
+
 usb.ids.gz: $(srcdir)/usb.ids
 	gzip -c -9 $< > $@
 
 update-usbids.sh: $(srcdir)/update-usbids.sh.in
 	sed 's|@usbids@|$(datadir)/usb.ids|g' $< >$@
 	chmod 755 $@
+endif
 
 lsusb.8: $(srcdir)/lsusb.8.in
 	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
