@@ -3917,6 +3917,8 @@ int main(int argc, char *argv[])
 	static const struct option long_options[] = {
 		{ "version", 0, 0, 'V' },
 		{ "verbose", 0, 0, 'v' },
+		{ "help", 0, 0, 'h' },
+		{ "tree", 0, 0, 't' },
 		{ 0, 0, 0, 0 }
 	};
 	libusb_context *ctx;
@@ -3924,18 +3926,22 @@ int main(int argc, char *argv[])
 	unsigned int allowctrlmsg = 0, treemode = 0;
 	int bus = -1, devnum = -1, vendor = -1, product = -1;
 	const char *devdump = NULL;
+	int help = 0;
 	char *cp;
 	int status;
 
-	while ((c = getopt_long(argc, argv, "D:vxtP:p:s:d:V",
+	while ((c = getopt_long(argc, argv, "D:vxtP:p:s:d:V:h",
 			long_options, NULL)) != EOF) {
 		switch (c) {
 		case 'V':
 			printf("lsusb (" PACKAGE ") " VERSION "\n");
-			exit(0);
-
+			return EXIT_SUCCESS;
 		case 'v':
 			verblevel++;
+			break;
+		
+		case 'h':
+			help=1;
 			break;
 
 		case 'x':
@@ -3983,7 +3989,7 @@ int main(int argc, char *argv[])
 			break;
 		}
 	}
-	if (err || argc > optind) {
+	if (err || argc > optind || help) {
 		fprintf(stderr, "Usage: lsusb [options]...\n"
 			"List USB devices\n"
 			"  -v, --verbose\n"
@@ -3996,12 +4002,14 @@ int main(int argc, char *argv[])
 			"      product ID numbers (in hexadecimal)\n"
 			"  -D device\n"
 			"      Selects which device lsusb will examine\n"
-			"  -t\n"
+			"  -t, --tree\n"
 			"      Dump the physical USB device hierarchy as a tree\n"
 			"  -V, --version\n"
 			"      Show version of program\n"
+			"  -h, --help\n"
+			"      Show usage and help\n"
 			);
-		exit(1);
+		return EXIT_FAILURE;
 	}
 
 	if (treemode) {
