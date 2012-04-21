@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <limits.h> // for PATH_MAX
 
 #ifdef HAVE_BYTESWAP_H
 #include <byteswap.h>
@@ -3919,18 +3920,33 @@ int main(int argc, char *argv[])
 		{ "verbose", 0, 0, 'v' },
 		{ "help", 0, 0, 'h' },
 		{ "tree", 0, 0, 't' },
+		{ "ids", 0, 0, 'i' },
+#ifdef HAVE_LIBZ
+		{ "idz", 0, 0, 'z' },
+#endif
 		{ 0, 0, 0, 0 }
 	};
 	libusb_context *ctx;
-	int c, err = 0;
+	int c, err = 0, err_z = 0;
 	unsigned int allowctrlmsg = 0, treemode = 0;
 	int bus = -1, devnum = -1, vendor = -1, product = -1;
 	const char *devdump = NULL;
 	int help = 0;
 	char *cp;
 	int status;
+	char idsfile[PATH_MAX];
+	int have_idsfile=0;
+#ifdef HAVE_LIBZ
+	char idzfile[PATH_MAX];
+	int have_idzfile=0;
+#endif
 
-	while ((c = getopt_long(argc, argv, "D:vxtP:p:s:d:V:h",
+	while ((c = getopt_long(argc, argv,
+#ifdef HAVE_LIBZ
+			"D:vxtP:p:s:d:V:h:i:z",
+#else
+			"D:vxtP:p:s:d:V:h:i",
+#endif
 			long_options, NULL)) != EOF) {
 		switch (c) {
 		case 'V':
@@ -3982,6 +3998,16 @@ int main(int argc, char *argv[])
 		case 'D':
 			devdump = optarg;
 			break;
+		case 'i':
+			snprintf(idsfile,PATH_MAX,optarg);
+			have_idsfile = 1;
+			break;
+#ifdef HAVE_LIBZ
+		case 'z':
+			snprintf(idzfile,PATH_MAX,optarg);
+			have_idzfile = 1;
+			break;
+#endif
 
 		case '?':
 		default:
@@ -4006,6 +4032,12 @@ int main(int argc, char *argv[])
 			"      Dump the physical USB device hierarchy as a tree\n"
 			"  -V, --version\n"
 			"      Show version of program\n"
+			"  -i [file], --ids [file]\n"
+			"      Specify an alternate usb.ids file instead of the builtin " DATADIR "/usb.ids\n"
+#ifdef HAVE_LIBZ
+			"  -z [file], --idz [file]\n"
+			"      Specify an alternate usb.ids.gz file instead of the builtin " DATADIR "/usb.ids.gz\n"
+#endif
 			"  -h, --help\n"
 			"      Show usage and help\n"
 			);
@@ -4018,17 +4050,34 @@ int main(int argc, char *argv[])
 		return treedump();
 	}
 
+	/* calculate the file name of usb.ids */
+	if(!have_idsfile) {
+		snprintf(idsfile,PATH_MAX,DATADIR "/usb.ids");
+	}
+	if(!have_idzfile) {
+		snprintf(idzfile,PATH_MAX,DATADIR "/usb.ids.gz");
+	}
+
 	/* by default, print names as well as numbers */
-	err = names_init(DATADIR "/usb.ids");
+	err = names_init(idsfile);
 #ifdef HAVE_LIBZ
 	if (err != 0)
-		err = names_init(DATADIR "/usb.ids.gz");
+		err_z = names_init(idzfile);
 #endif
-	if (err != 0)
-		fprintf(stderr, "%s: cannot open \"%s\", %s\n",
+	if (err != 0 && err_z != 0) {
+		fprintf(stderr, "%s: could not open \"%s\" (%s)\n",
 				argv[0],
-				DATADIR "/usb.ids",
-				strerror(err));
+				idsfile,
+				strerror(err)
+		);
+#ifdef HAVE_LIBZ
+		fprintf(stderr, "%s: and could not open \"%s\" (%s)\n",
+				argv[0],
+				idzfile,
+				strerror(err_z)
+		);
+#endif
+	}
 	status = 0;
 
 	err = libusb_init(&ctx);
