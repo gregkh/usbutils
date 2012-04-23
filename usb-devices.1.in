@@ -13,7 +13,7 @@ buses in the system and the devices connected to them.
 The output of the script is similar to the \fIusb/devices\fP file
 available either under \fI/proc/bus\fP (if usbfs is mounted), or under
 \fI/sys/kernel/debug\fP (if debugfs is mounted there). The script is
-primairily intended to be used if the file is not available.
+primarily intended to be used if the file is not available.
 
 In contrast to the \fIusb/devices\fP file, this script only lists
 \fIactive\fP interfaces (those marked with a "*" in the \fIusb/devices\fP
