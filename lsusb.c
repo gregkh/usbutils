@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <limits.h> // for PATH_MAX
+#include <string.h> // for strncpy(3)
 
 #ifdef HAVE_BYTESWAP_H
 #include <byteswap.h>
@@ -3916,13 +3917,13 @@ static int treedump(void)
 int main(int argc, char *argv[])
 {
 	static const struct option long_options[] = {
-		{ "version", 0, 0, 'V' },
-		{ "verbose", 0, 0, 'v' },
-		{ "help", 0, 0, 'h' },
-		{ "tree", 0, 0, 't' },
-		{ "ids", 0, 0, 'i' },
+		{ "version", no_argument, NULL, 'V' },
+		{ "verbose", no_argument, NULL, 'v' },
+		{ "help", no_argument, NULL, 'h' },
+		{ "tree", no_argument, NULL, 't' },
+		{ "ids", required_argument, NULL, 'i' },
 #ifdef HAVE_LIBZ
-		{ "idz", 0, 0, 'z' },
+		{ "idz", required_argument, NULL, 'z' },
 #endif
 		{ 0, 0, 0, 0 }
 	};
@@ -3943,9 +3944,9 @@ int main(int argc, char *argv[])
 
 	while ((c = getopt_long(argc, argv,
 #ifdef HAVE_LIBZ
-			"D:vxtP:p:s:d:V:h:i:z",
+			"D:vxtP:p:s:d:V:h:i:z:",
 #else
-			"D:vxtP:p:s:d:V:h:i",
+			"D:vxtP:p:s:d:V:h:i:",
 #endif
 			long_options, NULL)) != EOF) {
 		switch (c) {
@@ -3999,12 +4000,12 @@ int main(int argc, char *argv[])
 			devdump = optarg;
 			break;
 		case 'i':
-			snprintf(idsfile,PATH_MAX,optarg);
+			strncpy(idsfile,optarg,PATH_MAX);
 			have_idsfile = 1;
 			break;
 #ifdef HAVE_LIBZ
 		case 'z':
-			snprintf(idzfile,PATH_MAX,optarg);
+			strncpy(idzfile,optarg,PATH_MAX);
 			have_idzfile = 1;
 			break;
 #endif
@@ -4052,11 +4053,13 @@ int main(int argc, char *argv[])
 
 	/* calculate the file name of usb.ids */
 	if(!have_idsfile) {
-		snprintf(idsfile,PATH_MAX,DATADIR "/usb.ids");
+		strncpy(idsfile,DATADIR "/usb.ids",PATH_MAX);
 	}
+#ifdef HAVE_LIBZ
 	if(!have_idzfile) {
-		snprintf(idzfile,PATH_MAX,DATADIR "/usb.ids.gz");
+		strncpy(idzfile,DATADIR "/usb.ids.gz",PATH_MAX);
 	}
+#endif
 
 	/* by default, print names as well as numbers */
 	err = names_init(idsfile);
