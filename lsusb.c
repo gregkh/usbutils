@@ -3930,7 +3930,7 @@ int main(int argc, char *argv[])
 	char *cp;
 	int status;
 
-	while ((c = getopt_long(argc, argv, "D:vxtP:p:s:d:V:h",
+	while ((c = getopt_long(argc, argv, "D:vxtP:p:s:d:Vh",
 			long_options, NULL)) != EOF) {
 		switch (c) {
 		case 'V':
