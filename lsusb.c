@@ -3944,9 +3944,9 @@ int main(int argc, char *argv[])
 
 	while ((c = getopt_long(argc, argv,
 #ifdef HAVE_LIBZ
-			"D:vxtP:p:s:d:V:h:i:z:",
+			"D:vxtP:p:s:d:Vhi:z:",
 #else
-			"D:vxtP:p:s:d:V:h:i:",
+			"D:vxtP:p:s:d:Vhi:",
 #endif
 			long_options, NULL)) != EOF) {
 		switch (c) {
