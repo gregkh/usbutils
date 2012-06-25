@@ -3609,7 +3609,7 @@ static void dump_ss_device_capability_desc(unsigned char *buf)
 			"    bDevCapabilityType  %5u\n"
 			"    bmAttributes         0x%02x\n",
 			buf[0], buf[1], buf[2], buf[3]);
-	if (!(buf[3] & 0x02))
+	if (buf[3] & 0x02)
 		printf("      Latency Tolerance Messages (LTM)"
 				" Supported\n");
 	printf("    wSpeedsSupported   0x%02x%02x\n", buf[5], buf[4]);
