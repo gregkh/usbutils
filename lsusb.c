@@ -3435,7 +3435,7 @@ static int do_otg(struct libusb_config_descriptor *config)
 }
 
 static void
-dump_device_status(libusb_device_handle *fd, int otg, int wireless)
+dump_device_status(libusb_device_handle *fd, int otg, int wireless, int super_speed)
 {
 	unsigned char status[8];
 	int ret;
@@ -3461,13 +3461,21 @@ dump_device_status(libusb_device_handle *fd, int otg, int wireless)
 		printf("  (Bus Powered)\n");
 	if (status[0] & (1 << 1))
 		printf("  Remote Wakeup Enabled\n");
-	if (status[0] & (1 << 2)) {
+	if (status[0] & (1 << 2) && !super_speed) {
 		/* for high speed devices */
 		if (!wireless)
 			printf("  Test Mode\n");
 		/* for devices with Wireless USB support */
 		else
 			printf("  Battery Powered\n");
+	}
+	if (super_speed) {
+		if (status[0] & (1 << 2))
+			printf("  U1 Enabled\n");
+		if (status[0] & (1 << 3))
+			printf("  U2 Enabled\n");
+		if (status[0] & (1 << 4))
+			printf("  Latency Tolerance Messaging (LTM) Enabled\n");
 	}
 	/* if both HOST and DEVICE support OTG */
 	if (otg) {
@@ -3796,7 +3804,7 @@ static void dumpdev(libusb_device *dev)
 		do_dualspeed(udev);
 	}
 	do_debug(udev);
-	dump_device_status(udev, otg, wireless);
+	dump_device_status(udev, otg, wireless, desc.bcdUSB >= 0x0300);
 	libusb_close(udev);
 }
 
