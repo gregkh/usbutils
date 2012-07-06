@@ -290,6 +290,30 @@ int get_product_string(char *buf, size_t size, u_int16_t vid, u_int16_t pid)
         return snprintf(buf, size, "%s", cp);
 }
 
+int get_class_string(char *buf, size_t size, u_int8_t cls)
+{
+	const char *cp;
+
+	if (size < 1)
+		return 0;
+	*buf = 0;
+	if (!(cp = names_class(cls)))
+		return 0;
+	return snprintf(buf, size, "%s", cp);
+}
+
+int get_subclass_string(char *buf, size_t size, u_int8_t cls, u_int8_t subcls)
+{
+	const char *cp;
+
+	if (size < 1)
+		return 0;
+	*buf = 0;
+	if (!(cp = names_subclass(cls, subcls)))
+		return 0;
+	return snprintf(buf, size, "%s", cp);
+}
+
 /* ---------------------------------------------------------------------- */
 
 static int new_vendor(const char *name, u_int16_t vendorid)

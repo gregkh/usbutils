@@ -194,30 +194,6 @@ static int get_string(libusb_device_handle *dev, char *buf, size_t size, u_int8_
 	return 0;
 }
 
-static int get_class_string(char *buf, size_t size, u_int8_t cls)
-{
-	const char *cp;
-
-	if (size < 1)
-		return 0;
-	*buf = 0;
-	if (!(cp = names_class(cls)))
-		return 0;
-	return snprintf(buf, size, "%s", cp);
-}
-
-static int get_subclass_string(char *buf, size_t size, u_int8_t cls, u_int8_t subcls)
-{
-	const char *cp;
-
-	if (size < 1)
-		return 0;
-	*buf = 0;
-	if (!(cp = names_subclass(cls, subcls)))
-		return 0;
-	return snprintf(buf, size, "%s", cp);
-}
-
 static int get_protocol_string(char *buf, size_t size, u_int8_t cls, u_int8_t subcls, u_int8_t proto)
 {
 	const char *cp;
@@ -4015,11 +3991,6 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	if (treemode) {
-		/* treemode requires at least verblevel 1 */
-		verblevel += 1 - VERBLEVEL_DEFAULT;
-		return treedump();
-	}
 
 	/* by default, print names as well as numbers */
 	err = names_init(DATADIR "/usb.ids");
@@ -4033,6 +4004,14 @@ int main(int argc, char *argv[])
 				DATADIR "/usb.ids",
 				strerror(err));
 	status = 0;
+
+	if (treemode) {
+		/* treemode requires at least verblevel 1 */
+		verblevel += 1 - VERBLEVEL_DEFAULT;
+		status = treedump();
+		names_exit();
+		return status;
+	}
 
 	err = libusb_init(&ctx);
 	if (err) {

@@ -11,6 +11,7 @@
 
 #include "list.h"
 #include "lsusb.h"
+#include "names.h"
 
 #define MY_SYSFS_FILENAME_LEN 255
 #define MY_PATH_MAX 4096
@@ -117,58 +118,6 @@ static void dump_usbinterface(struct usbinterface *i)
 #endif
 
 static char tmp_str[128];
-static const char *bInterfaceClass_to_str(unsigned int dc)
-{
-	const char *s;
-	switch (dc) {
-	case 0:
-		s = ">ifc";
-		break;
-	case 1:
-		s = "audio";
-		break;
-	case 2:
-		s = "comm.";
-		break;
-	case 3:
-		s = "HID";
-		break;
-	case 5:
-		s = "PID";
-		break;
-	case 6:
-		s = "still";
-		break;
-	case 7:
-		s = "print";
-		break;
-	case 8:
-		s = "stor.";
-		break;
-	case 9:
-		s = "hub";
-		break;
-	case 10:
-		s = "data";
-		break;
-	case 11:
-		s = "scard";
-		break;
-	case 13:
-		s = "c-sec";
-		break;
-	case 254:
-		s = "app.";
-		break;
-	case 255:
-		s = "vend.";
-		break;
-	default:
-		snprintf(tmp_str, 128, "'bInterfaceClass 0x%02x not yet handled'", dc);;
-		s = tmp_str;
-	}
-	return s;
-}
 static const char *bDeviceClass_to_str(unsigned int dc)
 {
 	const char *s;
@@ -190,11 +139,15 @@ static void print_usbbusnode(struct usbbusnode *b)
 
 static void print_usbdevice(struct usbdevice *d, struct usbinterface *i)
 {
+	char subcls[128];
+
+	get_class_string(subcls, sizeof(subcls), i->bInterfaceClass);
+
 	if (i->bInterfaceClass == 9)
-		printf("Port %u: Dev %u, If %u, Class=%s, Driver=%s/%up, %sM\n", d->portnum, d->devnum, i->ifnum, bInterfaceClass_to_str(i->bInterfaceClass),
+		printf("Port %u: Dev %u, If %u, Class=%s, Driver=%s/%up, %sM\n", d->portnum, d->devnum, i->ifnum, subcls,
 		       i->driver, d->maxchild, d->speed);
 	else
-		printf("Port %u: Dev %u, If %u, Class=%s, Driver=%s, %sM\n", d->portnum, d->devnum, i->ifnum, bInterfaceClass_to_str(i->bInterfaceClass), i->driver,
+		printf("Port %u: Dev %u, If %u, Class=%s, Driver=%s, %sM\n", d->portnum, d->devnum, i->ifnum, subcls, i->driver,
 		       d->speed);
 }
 
