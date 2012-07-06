@@ -2791,14 +2791,13 @@ static void dump_ccid_device(const unsigned char *buf)
 
 static void dump_report_desc(unsigned char *b, int l)
 {
-	unsigned int t, j, bsize, btag, btype, data = 0xffff, hut = 0xffff;
+	unsigned int j, bsize, btag, btype, data = 0xffff, hut = 0xffff;
 	int i;
 	char *types[4] = { "Main", "Global", "Local", "reserved" };
 	char indent[] = "                            ";
 
 	printf("          Report Descriptor: (length is %d)\n", l);
 	for (i = 0; i < l; ) {
-		t = b[i];
 		bsize = b[i] & 0x03;
 		if (bsize == 3)
 			bsize = 4;
@@ -3931,14 +3930,14 @@ int main(int argc, char *argv[])
 	};
 	libusb_context *ctx;
 	int c, err = 0;
-	unsigned int allowctrlmsg = 0, treemode = 0;
+	unsigned int treemode = 0;
 	int bus = -1, devnum = -1, vendor = -1, product = -1;
 	const char *devdump = NULL;
 	int help = 0;
 	char *cp;
 	int status;
 
-	while ((c = getopt_long(argc, argv, "D:vxtP:p:s:d:Vh",
+	while ((c = getopt_long(argc, argv, "D:vtP:p:s:d:Vh",
 			long_options, NULL)) != EOF) {
 		switch (c) {
 		case 'V':
@@ -3947,13 +3946,9 @@ int main(int argc, char *argv[])
 		case 'v':
 			verblevel++;
 			break;
-		
+
 		case 'h':
 			help=1;
-			break;
-
-		case 'x':
-			allowctrlmsg = 1;
 			break;
 
 		case 't':
