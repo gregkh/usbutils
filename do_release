@@ -1,0 +1,3 @@
+gpg -a -b usbutils-005.tar
+kup --host gregkh@geb.kernel.org put usbutils-005.tar usbutils-005.tar.asc /pub/linux/utils/usb/usbutils/usbutils-005.tar.gz
+
