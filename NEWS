@@ -1,3 +1,47 @@
+usbutils 006
+============
+
+Aurelien Jarno (1):
+      usb-devices(1): fix a typo
+
+Diego Elio Pettenò (1):
+      build: add a --disable-usbids option to avoid installing usb.ids
+
+Greg Kroah-Hartman (7):
+      update usbhid-dump to 1.3
+      lsusb.c: remove unused variables and the unused -x command line option
+      Make 'lsusb -t' use the correct device class string names
+      Update usb.ids file with latest version.
+
+Lukas Nykryn (7):
+      Possible buffer overflow when using SYSFS_STR
+      Reading 26 item in array with size 12.
+      Using uninitialized value as index
+      Possible resource leak
+      Wrong shifting of bmMPEGFeatures byte
+      Buffer overun
+      lsusb-t: don't show error when driver link is missing
+
+Mark Veltzer (1):
+      --tree, --help, and better build documentation
+
+Nikolai Kondrashov (1):
+      Update usbhid-dump to complete 1.3 release
+
+Roger Tseng (1):
+      Option -V(version) doesn't require an argument.
+
+Sarah Sharp (3):
+      usbutils: Dump BOS descriptor for USB 2.01 devices.
+      lsusb: Show USB 3.0 U1, U2, and LTM status.
+      lsusb: Fix LTM capabilities reporting.
+
+Thierry Vignaud (3):
+      set arrays to NULL when freeing them.
+      simplify get_string()
+      make treedump() work if the database isn't there.
+
+
 usbutils 005
 ============
 
