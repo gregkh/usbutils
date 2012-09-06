@@ -3151,6 +3151,29 @@ dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, char *
 	case 0x17:		/* command set detail desc */
 	case 0x18:		/* telephone control model functional desc */
 #endif
+	case 0x1b:		/* MBIM functional desc */
+		type = "MBIM";
+		if (buf[0] != 12)
+			goto bad;
+		printf("%sCDC MBIM:\n"
+		       "%s  bcdMBIMVersion       %x.%02x\n"
+		       "%s  wMaxControlMessage   %d\n"
+		       "%s  bNumberFilters       %d\n"
+		       "%s  bMaxFilterSize       %d\n"
+		       "%s  wMaxSegmentSize      %d\n"
+		       "%s  bmNetworkCapabilities 0x%02x\n",
+		       indent,
+		       indent, buf[4], buf[3],
+		       indent, (buf[6] << 8) | buf[5],
+		       indent, buf[7],
+		       indent, buf[8],
+		       indent, (buf[10] << 8) | buf[9],
+		       indent, buf[11]);
+		if (buf[11] & 0x20)
+			printf("%s    8-byte ntb input size\n", indent);
+		if (buf[11] & 0x08)
+			printf("%s    max datagram size\n", indent);
+		break;
 	default:
 		/* FIXME there are about a dozen more descriptor types */
 		printf("%sUNRECOGNIZED CDC: ", indent);
