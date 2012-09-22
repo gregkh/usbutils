@@ -3146,8 +3146,21 @@ dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, char *
 		       indent,
 		       indent, buf[4], buf[3]);
 		break;
-#if 0
 	case 0x16:		/* command set functional desc */
+		type = "Command Set";
+		if (buf[0] != 22)
+			goto bad;
+		get_string(dev, str, sizeof str, buf[5]);
+		printf("%sCDC Command Set:\n"
+		       "%s  bcdVersion           %x.%02x\n"
+		       "%s  iCommandSet          %4d %s\n"
+		       "%s  bGUID                %s\n",
+		       indent,
+		       indent, buf[4], buf[3],
+		       indent, buf[5], (buf[5] && *str) ? str : "(?\?)",
+		       indent, get_guid(buf + 6));
+		break;
+#if 0
 	case 0x17:		/* command set detail desc */
 	case 0x18:		/* telephone control model functional desc */
 #endif
