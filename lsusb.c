@@ -3312,7 +3312,7 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed)
 					(status[0] & 0x01) ? " connect" : "");
 		} else {
 			link_state = ((status[0] & 0xe0) >> 5) +
-				((status[1] & 0x1) << 4);
+				((status[1] & 0x1) << 3);
 			printf("%s%s%s%s%s%s",
 					(status[2] & 0x80) ? " C_CONFIG_ERROR" : "",
 					(status[2] & 0x40) ? " C_LINK_STATE" : "",
