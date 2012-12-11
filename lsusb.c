@@ -3146,11 +3146,47 @@ dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, char *
 		       indent,
 		       indent, buf[4], buf[3]);
 		break;
-#if 0
 	case 0x16:		/* command set functional desc */
+		type = "Command Set";
+		if (buf[0] != 22)
+			goto bad;
+		get_string(dev, str, sizeof str, buf[5]);
+		printf("%sCDC Command Set:\n"
+		       "%s  bcdVersion           %x.%02x\n"
+		       "%s  iCommandSet          %4d %s\n"
+		       "%s  bGUID                %s\n",
+		       indent,
+		       indent, buf[4], buf[3],
+		       indent, buf[5], (buf[5] && *str) ? str : "(?\?)",
+		       indent, get_guid(buf + 6));
+		break;
+#if 0
 	case 0x17:		/* command set detail desc */
 	case 0x18:		/* telephone control model functional desc */
 #endif
+	case 0x1a:		/* NCM functional desc */
+		type = "NCM";
+		if (buf[0] != 6)
+			goto bad;
+		printf("%sCDC NCM:\n"
+		       "%s  bcdNcmVersion        %x.%02x\n"
+		       "%s  bmNetworkCapabilities 0x%02x\n",
+		       indent,
+		       indent, buf[4], buf[3],
+		       indent, buf[5]);
+		if (buf[5] & 1<<5)
+			printf("%s    8-byte ntb input size\n", indent);
+		if (buf[5] & 1<<4)
+			printf("%s    crc mode\n", indent);
+		if (buf[5] & 1<<3)
+			printf("%s    max datagram size\n", indent);
+		if (buf[5] & 1<<2)
+			printf("%s    encapsulated commands\n", indent);
+		if (buf[5] & 1<<1)
+			printf("%s    net address\n", indent);
+		if (buf[5] & 1<<0)
+			printf("%s    packet filter\n", indent);
+		break;
 	case 0x1b:		/* MBIM functional desc */
 		type = "MBIM";
 		if (buf[0] != 12)
