@@ -40,7 +40,6 @@
 
 #include "lsusb.h"
 #include "names.h"
-#include "devtree.h"
 #include "usbmisc.h"
 
 #include <getopt.h>
@@ -162,24 +161,6 @@ static inline int typesafe_control_msg(libusb_device_handle *dev,
 
 #define usb_control_msg		typesafe_control_msg
 
-/* ---------------------------------------------------------------------- */
-
-int lprintf(unsigned int vl, const char *format, ...)
-{
-	va_list ap;
-	int r;
-
-	if (vl > verblevel)
-		return 0;
-	va_start(ap, format);
-	r = vfprintf(stderr, format, ap);
-	va_end(ap);
-	if (!vl)
-		exit(1);
-	return r;
-}
-
-/* ---------------------------------------------------------------------- */
 
 static int get_string(libusb_device_handle *dev, char *buf, size_t size, u_int8_t id)
 {
@@ -3912,45 +3893,6 @@ error:
 	return status;
 }
 
-/* ---------------------------------------------------------------------- */
-
-void devtree_busconnect(struct usbbusnode *bus)
-{
-	bus = bus;	/* reduce compiler warnings */
-}
-
-void devtree_busdisconnect(struct usbbusnode *bus)
-{
-	bus = bus;	/* reduce compiler warnings */
-}
-
-void devtree_devconnect(struct usbdevnode *dev)
-{
-	dev = dev;	/* reduce compiler warnings */
-}
-
-void devtree_devdisconnect(struct usbdevnode *dev)
-{
-	dev = dev;	/* reduce compiler warnings */
-}
-
-static int treedump(void)
-{
-	int fd;
-	char buf[512];
-
-	snprintf(buf, sizeof(buf), "%s/devices", procbususb);
-	if (access(buf, R_OK) < 0)
-		return lsusb_t();
-	if ((fd = open(buf, O_RDONLY)) == -1) {
-		fprintf(stderr, "cannot open %s, %s (%d)\n", buf, strerror(errno), errno);
-		return 1;
-	}
-	devtree_parsedevfile(fd);
-	close(fd);
-	devtree_dump(verblevel);
-	return 0;
-}
 
 /* ---------------------------------------------------------------------- */
 
@@ -4067,7 +4009,7 @@ int main(int argc, char *argv[])
 	if (treemode) {
 		/* treemode requires at least verblevel 1 */
 		verblevel += 1 - VERBLEVEL_DEFAULT;
-		status = treedump();
+		status = lsusb_t();
 		names_exit();
 		return status;
 	}

@@ -20,7 +20,6 @@ lsusb_SOURCES = \
 	lsusb-t.c \
 	list.h \
 	names.c names.h \
-	devtree.c devtree.h \
 	usbmisc.c usbmisc.h
 
 lsusb_CPPFLAGS = \
