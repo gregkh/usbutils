@@ -77,7 +77,7 @@ print_interface() {
 	fi
 	classname=`class_decode $class`
 	printf "I:  If#=%2i Alt=%2i #EPs=%2i Cls=%s(%s) Sub=%s Prot=%s Driver=%s\n" \
-		$ifnum $altset $numeps $class "$classname" $subclass \
+		${ifnum#0} ${altset#0} ${numeps#0} $class "$classname" $subclass \
 		$protocol $driver
 
 	for endpoint in $ifpath/ep_??
