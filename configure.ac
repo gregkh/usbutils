@@ -10,6 +10,7 @@ AC_USE_SYSTEM_EXTENSIONS
 AC_SYS_LARGEFILE
 
 AC_CHECK_HEADERS([byteswap.h])
+AC_CHECK_FUNCS([nl_langinfo iconv])
 
 AC_ARG_ENABLE(zlib,
 	AS_HELP_STRING(--disable-zlib,disable support for zlib))

@@ -27,5 +27,7 @@
 
 extern libusb_device *get_usb_device(libusb_context *ctx, const char *path);
 
+extern char *get_dev_string(libusb_device_handle *dev, u_int8_t id);
+
 /* ---------------------------------------------------------------------- */
 #endif /* _USBMISC_H */
