@@ -24,9 +24,18 @@
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <limits.h>
+
+#ifdef HAVE_ICONV
+#include <iconv.h>
+#endif
+
+#ifdef HAVE_NL_LANGINFO
+#include <langinfo.h>
+#endif
 
 #include "usbmisc.h"
 
@@ -144,4 +153,89 @@ libusb_device *get_usb_device(libusb_context *ctx, const char *path)
 
 	libusb_free_device_list(list, 0);
 	return dev;
+}
+
+static char *get_dev_string_ascii(libusb_device_handle *dev, size_t size,
+                                  u_int8_t id)
+{
+	char *buf = malloc(size);
+	int ret = libusb_get_string_descriptor_ascii(dev, id,
+	                                             (unsigned char *) buf,
+	                                             size);
+
+	if (ret < 0) {
+		free(buf);
+		return strdup("(error)");
+	}
+
+	return buf;
+}
+
+#if defined(HAVE_NL_LANGINFO) && defined(HAVE_ICONV)
+static u_int16_t get_any_langid(libusb_device_handle *dev)
+{
+	unsigned char buf[4];
+	int ret = libusb_get_string_descriptor(dev, 0, 0, buf, sizeof buf);
+	if (ret != sizeof buf) return 0;
+	return buf[2] | (buf[3] << 8);
+}
+
+static char *usb_string_to_native(char * str, size_t len)
+{
+	size_t num_converted;
+	iconv_t conv;
+	char *result, *result_end;
+	size_t in_bytes_left, out_bytes_left;
+
+	conv = iconv_open(nl_langinfo(CODESET), "UTF-16LE");
+
+	if (conv == (iconv_t) -1)
+		return NULL;
+
+	in_bytes_left = len * 2;
+	out_bytes_left = len * MB_CUR_MAX;
+	result = result_end = malloc(out_bytes_left + 1);
+
+	num_converted = iconv(conv, &str, &in_bytes_left,
+	                      &result_end, &out_bytes_left);
+
+	iconv_close(conv);
+	if (num_converted == (size_t) -1) {
+		free(result);
+		return NULL;
+	}
+
+	*result_end = 0;
+	return result;
+}
+#endif
+
+char *get_dev_string(libusb_device_handle *dev, u_int8_t id)
+{
+#if defined(HAVE_NL_LANGINFO) && defined(HAVE_ICONV)
+	int ret;
+	char *buf, unicode_buf[254];
+	u_int16_t langid;
+#endif
+
+	if (!dev || !id) return strdup("");
+
+#if defined(HAVE_NL_LANGINFO) && defined(HAVE_ICONV)
+	langid = get_any_langid(dev);
+	if (!langid) return strdup("(error)");
+
+	ret = libusb_get_string_descriptor(dev, id, langid,
+	                                   (unsigned char *) unicode_buf,
+	                                   sizeof unicode_buf);
+	if (ret < 2) return strdup("(error)");
+
+	buf = usb_string_to_native(unicode_buf + 2,
+	                           ((unsigned char) unicode_buf[0] - 2) / 2);
+
+	if (!buf) return get_dev_string_ascii(dev, 127, id);
+
+	return buf;
+#else
+	return get_dev_string_ascii(dev, 127, id);
+#endif
 }
