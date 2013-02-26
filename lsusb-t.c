@@ -210,8 +210,13 @@ static void read_sysfs_file_string(const char *d_name, const char *file, char *b
 
 static void append_dev_interface(struct usbinterface *i, struct usbinterface *new)
 {
-	while (i->next)
+	while (i->next) {
+		if (i == new)
+			return;
 		i = i->next;
+	}
+		if (i == new)
+			return;
 	i->next = new;
 }
 
@@ -230,8 +235,13 @@ static void append_businterface(unsigned int busnum, struct usbinterface *new)
 		if (b->busnum == busnum) {
 			i = b->first_interface;
 			if (i) {
-				while (i->next)
+				while (i->next) {
+					if (i == new)
+						return;
 					i = i->next;
+				}
+				if (i == new)
+					return;
 				i->next = new;
 			} else
 				b->first_interface = new;
