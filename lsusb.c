@@ -1576,7 +1576,7 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 
 			printf("        bFormatType         %5u\n", buf[5]);
 			fmttag = buf[6] | (buf[7] << 8) | (buf[8] << 16) | (buf[9] << 24);
-			printf("        bmFormats           %5u\n", fmttag);
+			printf("        bmFormats         0x%08x\n", fmttag);
 			for (i=0; i<5; i++)
 				if ((fmttag >> i) & 1)
 					printf("          %s\n", fmtItag[i+1]);
