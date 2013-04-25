@@ -586,6 +586,22 @@ static void dump_altsetting(libusb_device_handle *dev, const struct libusb_inter
 						goto dump;
 					}
 					break;
+				case LIBUSB_CLASS_AUDIO:
+					switch (buf[1]) {
+					/* MISPLACED DESCRIPTOR */
+					case USB_DT_CS_ENDPOINT:
+						switch (interface->bInterfaceSubClass) {
+						case 2:
+							dump_audiostreaming_endpoint(buf, interface->bInterfaceProtocol);
+							break;
+						default:
+							goto dump;
+						}
+						break;
+					default:
+						goto dump;
+					}
+					break;
 				default:
 					/* ... not everything is class-specific */
 					switch (buf[1]) {
