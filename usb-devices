@@ -71,7 +71,7 @@ print_interface() {
 	protocol=`cat $ifpath/bInterfaceProtocol`
 	if [ -L $ifpath/driver ]; then		# v4: allow for no driver
 		driver=`readlink $ifpath/driver`
-		driver=`basename $driver`
+		driver=`basename "$driver"`
 	else
 		driver="(none)"
 	fi
