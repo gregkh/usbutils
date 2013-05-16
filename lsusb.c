@@ -3629,7 +3629,7 @@ static void dump_usb2_device_capability_desc(unsigned char *buf)
 	unsigned int wide;
 
 	wide = buf[3] + (buf[4] << 8) +
-		(buf[5] << 8) + (buf[6] << 8);
+		(buf[5] << 16) + (buf[6] << 24);
 	printf("  USB 2.0 Extension Device Capability:\n"
 			"    bLength             %5u\n"
 			"    bDescriptorType     %5u\n"
