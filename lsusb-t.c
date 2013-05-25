@@ -328,7 +328,7 @@ static void add_usb_device(const char *d_name)
 		return;
 	memset(d, 0, sizeof(struct usbdevice));
 	d->busnum = i;
-	while (pn) {
+	while (*pn) {
 		p = pn + 1;
 		i = strtoul(p, &pn, 10);
 		if (p == pn)
