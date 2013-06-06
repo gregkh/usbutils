@@ -15325,6 +15325,7 @@
 	0104  Multifunction Composite Gadget
 	0105  FunctionFS Gadget
 	0200  Qemu Audio Device
+	0246  BlueZ Host Stack
 1de1  Actions Microelectronics Co.
 	1101  Generic Display Device (Mass storage mode)
 	c101  Generic Display Device
