@@ -1,3 +1,42 @@
+usbutils 007
+============
+
+Aurelien Jarno (1):
+      usb-devices: correctly quote driver path
+
+Bjørn Mork (4):
+      lsusb: decode CDC MBIM descriptor
+      lsusb: decode CDC NCM functional descriptor
+      lsusb: decode CDC Command Set descriptor
+      usb-devices: avoid numbers being seen as octal by printf
+
+Daniel Mack (1):
+      lsusb: parse bmFormats inside UAC2 interface headers as hex
+
+Greg Kroah-Hartman (12):
+      do_release notes
+      update of usb.ids file from upstream
+      remove devtree logic
+      usb.ids update
+      usb.ids add BlueZ Host stack device id.
+
+Jethro Beekman (1):
+      Fix lsusb -t potentially not listing all devices
+
+Lukas Nykryn (1):
+      lsusb-t: make sure that interfaces are added to lists only once
+
+Sarah Sharp (2):
+      lsusb: Fix USB 3.0 link state reporting.
+      lsusb: Fix bug in USB 2.0 extended caps descriptor.
+
+Torstein Hegge (1):
+      lsusb: Parse misplaced UAC1 AudioControl Endpoint Descriptor
+
+Роман Донченко (1):
+      lsusb: Support non-ASCII string descriptors.
+
+
 usbutils 006
 ============
 
