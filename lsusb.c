@@ -2719,7 +2719,7 @@ static void dump_ccid_device(const unsigned char *buf)
 	if ((us & 0x0100))
 		fputs("          CCID can set ICC in clock stop mode\n", stdout);
 	if ((us & 0x0200))
-		fputs("          NAD value other than 0x00 accpeted\n", stdout);
+		fputs("          NAD value other than 0x00 accepted\n", stdout);
 	if ((us & 0x0400))
 		fputs("          Auto IFSD exchange\n", stdout);
 
