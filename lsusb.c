@@ -3639,9 +3639,18 @@ static void dump_usb2_device_capability_desc(unsigned char *buf)
 			buf[0], buf[1], buf[2], wide);
 	if (!(wide & 0x02))
 		printf("      (Missing must-be-set LPM bit!)\n");
-	else
-		printf("      Link Power Management (LPM)"
+	else if (!(wide & 0x04))
+		printf("      HIRD Link Power Management (LPM)"
 				" Supported\n");
+	else {
+		printf("      BESL Link Power Management (LPM)"
+				" Supported\n");
+		if (wide & 0x08)
+			printf("    BESL value    %5u us \n", wide & 0xf00);
+		if (wide & 0x10)
+			printf("    Deep BESL value    %5u us \n",
+					wide & 0xf000);
+	}
 }
 
 static void dump_ss_device_capability_desc(unsigned char *buf)
