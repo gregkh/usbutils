@@ -3317,6 +3317,7 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed)
 					(status[1] & 0x04) ? " highspeed" : "",
 					(status[1] & 0x02) ? " lowspeed" : "",
 					(status[1] & 0x01) ? " power" : "",
+					(status[0] & 0x20) ? " L1" : "",
 					(status[0] & 0x10) ? " RESET" : "",
 					(status[0] & 0x08) ? " oc" : "",
 					(status[0] & 0x04) ? " suspend" : "",
