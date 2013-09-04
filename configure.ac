@@ -26,6 +26,8 @@ AM_CONDITIONAL([INSTALL_USBIDS], [test "x$enable_usbids" != "xno"])
 
 PKG_CHECK_MODULES(LIBUSB, libusb-1.0 >= 1.0.0)
 
+PKG_CHECK_MODULES(UDEV, libudev >= 196)
+
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
 	Makefile

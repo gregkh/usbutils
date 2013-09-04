@@ -3,6 +3,7 @@
  *      names.c  --  USB name database manipulation routines
  *
  *      Copyright (C) 1999, 2000  Thomas Sailer (sailer@ife.ee.ethz.ch)
+ *      Copyright (C) 2013  Tom Gundersen (teg@jklm.no)
  *
  *      This program is free software; you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -34,6 +35,8 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#include <libudev.h>
+
 #ifdef HAVE_LIBZ
 #include <zlib.h>
 #define 	usb_file			gzFile
@@ -51,36 +54,6 @@
 
 
 /* ---------------------------------------------------------------------- */
-
-struct vendor {
-	struct vendor *next;
-	u_int16_t vendorid;
-	char name[1];
-};
-
-struct product {
-	struct product *next;
-	u_int16_t vendorid, productid;
-	char name[1];
-};
-
-struct class {
-	struct class *next;
-	u_int8_t classid;
-	char name[1];
-};
-
-struct subclass {
-	struct subclass *next;
-	u_int8_t classid, subclassid;
-	char name[1];
-};
-
-struct protocol {
-	struct protocol *next;
-	u_int8_t classid, subclassid, protocolid;
-	char name[1];
-};
 
 struct audioterminal {
 	struct audioterminal *next;
@@ -118,11 +91,8 @@ static unsigned int hashnum(unsigned int num)
 
 /* ---------------------------------------------------------------------- */
 
-static struct vendor *vendors[HASHSZ] = { NULL, };
-static struct product *products[HASHSZ] = { NULL, };
-static struct class *classes[HASHSZ] = { NULL, };
-static struct subclass *subclasses[HASHSZ] = { NULL, };
-static struct protocol *protocols[HASHSZ] = { NULL, };
+static struct udev *udev = NULL;
+static struct udev_hwdb *hwdb = NULL;
 static struct audioterminal *audioterminals[HASHSZ] = { NULL, };
 static struct videoterminal *videoterminals[HASHSZ] = { NULL, };
 static struct genericstrtable *hiddescriptors[HASHSZ] = { NULL, };
@@ -187,59 +157,55 @@ const char *names_countrycode(unsigned int countrycode)
 	return names_genericstrtable(countrycodes, countrycode);
 }
 
+static const char *hwdb_get(const char *modalias, const char *key)
+{
+	struct udev_list_entry *entry;
+
+	udev_list_entry_foreach(entry, udev_hwdb_get_properties_list_entry(hwdb, modalias, 0))
+		if (strcmp(udev_list_entry_get_name(entry), key) == 0)
+			return udev_list_entry_get_value(entry);
+
+	return NULL;
+}
+
 const char *names_vendor(u_int16_t vendorid)
 {
-	struct vendor *v;
+	char modalias[64];
 
-	v = vendors[hashnum(vendorid)];
-	for (; v; v = v->next)
-		if (v->vendorid == vendorid)
-			return v->name;
-	return NULL;
+	sprintf(modalias, "usb:v%04X*", vendorid);
+	return hwdb_get(modalias, "ID_VENDOR_FROM_DATABASE");
 }
 
 const char *names_product(u_int16_t vendorid, u_int16_t productid)
 {
-	struct product *p;
+	char modalias[64];
 
-	p = products[hashnum((vendorid << 16) | productid)];
-	for (; p; p = p->next)
-		if (p->vendorid == vendorid && p->productid == productid)
-			return p->name;
-	return NULL;
+	sprintf(modalias, "usb:v%04Xp%04X*", vendorid, productid);
+	return hwdb_get(modalias, "ID_MODEL_FROM_DATABASE");
 }
 
 const char *names_class(u_int8_t classid)
 {
-	struct class *c;
+	char modalias[64];
 
-	c = classes[hashnum(classid)];
-	for (; c; c = c->next)
-		if (c->classid == classid)
-			return c->name;
-	return NULL;
+	sprintf(modalias, "usb:v*p*d*dc%02X*", classid);
+	return hwdb_get(modalias, "ID_USB_CLASS_FROM_DATABASE");
 }
 
 const char *names_subclass(u_int8_t classid, u_int8_t subclassid)
 {
-	struct subclass *s;
+	char modalias[64];
 
-	s = subclasses[hashnum((classid << 8) | subclassid)];
-	for (; s; s = s->next)
-		if (s->classid == classid && s->subclassid == subclassid)
-			return s->name;
-	return NULL;
+	sprintf(modalias, "usb:v*p*d*dc%02Xdsc%02X*", classid, subclassid);
+	return hwdb_get(modalias, "ID_USB_SUBCLASS_FROM_DATABASE");
 }
 
 const char *names_protocol(u_int8_t classid, u_int8_t subclassid, u_int8_t protocolid)
 {
-	struct protocol *p;
+	char modalias[64];
 
-	p = protocols[hashnum((classid << 16) | (subclassid << 8) | protocolid)];
-	for (; p; p = p->next)
-		if (p->classid == classid && p->subclassid == subclassid && p->protocolid == protocolid)
-			return p->name;
-	return NULL;
+	sprintf(modalias, "usb:v*p*d*dc%02Xdsc%02Xdp%02X*", classid, subclassid, protocolid);
+	return hwdb_get(modalias, "ID_USB_PROTOCOL_FROM_DATABASE");
 }
 
 const char *names_audioterminal(u_int16_t termt)
@@ -315,105 +281,6 @@ int get_subclass_string(char *buf, size_t size, u_int8_t cls, u_int8_t subcls)
 }
 
 /* ---------------------------------------------------------------------- */
-
-static int new_vendor(const char *name, u_int16_t vendorid)
-{
-	struct vendor *v;
-	unsigned int h = hashnum(vendorid);
-
-	v = vendors[h];
-	for (; v; v = v->next)
-		if (v->vendorid == vendorid)
-			return -1;
-	v = malloc(sizeof(struct vendor) + strlen(name));
-	if (!v)
-		return -1;
-	strcpy(v->name, name);
-	v->vendorid = vendorid;
-	v->next = vendors[h];
-	vendors[h] = v;
-	return 0;
-}
-
-static int new_product(const char *name, u_int16_t vendorid, u_int16_t productid)
-{
-	struct product *p;
-	unsigned int h = hashnum((vendorid << 16) | productid);
-
-	p = products[h];
-	for (; p; p = p->next)
-		if (p->vendorid == vendorid && p->productid == productid)
-			return -1;
-	p = malloc(sizeof(struct product) + strlen(name));
-	if (!p)
-		return -1;
-	strcpy(p->name, name);
-	p->vendorid = vendorid;
-	p->productid = productid;
-	p->next = products[h];
-	products[h] = p;
-	return 0;
-}
-
-static int new_class(const char *name, u_int8_t classid)
-{
-	struct class *c;
-	unsigned int h = hashnum(classid);
-
-	c = classes[h];
-	for (; c; c = c->next)
-		if (c->classid == classid)
-			return -1;
-	c = malloc(sizeof(struct class) + strlen(name));
-	if (!c)
-		return -1;
-	strcpy(c->name, name);
-	c->classid = classid;
-	c->next = classes[h];
-	classes[h] = c;
-	return 0;
-}
-
-static int new_subclass(const char *name, u_int8_t classid, u_int8_t subclassid)
-{
-	struct subclass *s;
-	unsigned int h = hashnum((classid << 8) | subclassid);
-
-	s = subclasses[h];
-	for (; s; s = s->next)
-		if (s->classid == classid && s->subclassid == subclassid)
-			return -1;
-	s = malloc(sizeof(struct subclass) + strlen(name));
-	if (!s)
-		return -1;
-	strcpy(s->name, name);
-	s->classid = classid;
-	s->subclassid = subclassid;
-	s->next = subclasses[h];
-	subclasses[h] = s;
-	return 0;
-}
-
-static int new_protocol(const char *name, u_int8_t classid, u_int8_t subclassid, u_int8_t protocolid)
-{
-	struct protocol *p;
-	unsigned int h = hashnum((classid << 16) | (subclassid << 8) | protocolid);
-
-	p = protocols[h];
-	for (; p; p = p->next)
-		if (p->classid == classid && p->subclassid == subclassid && p->protocolid == protocolid)
-			return -1;
-	p = malloc(sizeof(struct protocol) + strlen(name));
-	if (!p)
-		return -1;
-	strcpy(p->name, name);
-	p->classid = classid;
-	p->subclassid = subclassid;
-	p->protocolid = protocolid;
-	p->next = protocols[h];
-	protocols[h] = p;
-	return 0;
-}
 
 static int new_audioterminal(const char *name, u_int16_t termt)
 {
@@ -512,86 +379,6 @@ static int new_countrycode(const char *name, unsigned int countrycode)
 }
 
 /* ---------------------------------------------------------------------- */
-
-static void free_vendor(void)
-{
-	struct vendor *cur, *tmp;
-	int i;
-
-	for (i = 0; i < HASHSZ; i++) {
-		cur = vendors[i];
-		vendors[i] = NULL;
-		while (cur) {
-			tmp = cur;
-			cur = cur->next;
-			free(tmp);
-		}
-	}
-}
-
-static void free_product(void)
-{
-	struct product *cur, *tmp;
-	int i;
-
-	for (i = 0; i < HASHSZ; i++) {
-		cur = products[i];
-		products[i] = NULL;
-		while (cur) {
-			tmp = cur;
-			cur = cur->next;
-			free(tmp);
-		}
-	}
-}
-
-static void free_class(void)
-{
-	struct class *cur, *tmp;
-	int i;
-
-	for (i = 0; i < HASHSZ; i++) {
-		cur = classes[i];
-		classes[i] = NULL;
-		while (cur) {
-			tmp = cur;
-			cur = cur->next;
-			free(tmp);
-		}
-	}
-}
-
-static void free_subclass(void)
-{
-	struct subclass *cur, *tmp;
-	int i;
-
-	for (i = 0; i < HASHSZ; i++) {
-		cur = subclasses[i];
-		subclasses[i] = NULL;
-		while (cur) {
-			tmp = cur;
-			cur = cur->next;
-			free(tmp);
-		}
-	}
-}
-
-static void free_protocol(void)
-{
-	struct protocol *cur, *tmp;
-	int i;
-
-	for (i = 0; i < HASHSZ; i++) {
-		cur = protocols[i];
-		protocols[i] = NULL;
-		while (cur) {
-			tmp = cur;
-			cur = cur->next;
-			free(tmp);
-		}
-	}
-}
 
 static void free_audioterminal(void)
 {
@@ -765,29 +552,6 @@ static void parse(usb_file f)
 			lastlang = u;
 			continue;
 		}
-		if (buf[0] == 'C' && /*isspace(buf[1])*/ buf[1] == ' ') {
-			/* class spec */
-			cp = buf+2;
-			while (isspace(*cp))
-				cp++;
-			if (!isxdigit(*cp)) {
-				fprintf(stderr, "Invalid class spec at line %u\n", linectr);
-				continue;
-			}
-			u = strtoul(cp, &cp, 16);
-			while (isspace(*cp))
-				cp++;
-			if (!*cp) {
-				fprintf(stderr, "Invalid class spec at line %u\n", linectr);
-				continue;
-			}
-			if (new_class(cp, u))
-				fprintf(stderr, "Duplicate class spec at line %u class %04x %s\n", linectr, u, cp);
-			DBG(printf("line %5u class %02x %s\n", linectr, u, cp));
-			lasthut = lastlang = lastvendor = lastsubclass = -1;
-			lastclass = u;
-			continue;
-		}
 		if (buf[0] == 'A' && buf[1] == 'T' && isspace(buf[2])) {
 			/* audio terminal type spec */
 			cp = buf+3;
@@ -851,22 +615,6 @@ static void parse(usb_file f)
 			DBG(printf("line %5u keyboard country code %02u %s\n", linectr, u, cp));
 			continue;
 		}
-		if (isxdigit(*cp)) {
-			/* vendor */
-			u = strtoul(cp, &cp, 16);
-			while (isspace(*cp))
-				cp++;
-			if (!*cp) {
-				fprintf(stderr, "Invalid vendor spec at line %u\n", linectr);
-				continue;
-			}
-			if (new_vendor(cp, u))
-				fprintf(stderr, "Duplicate vendor spec at line %u vendor %04x %s\n", linectr, u, cp);
-			DBG(printf("line %5u vendor %04x %s\n", linectr, u, cp));
-			lastvendor = u;
-			lasthut = lastlang = lastclass = lastsubclass = -1;
-			continue;
-		}
 		if (buf[0] == '\t' && isxdigit(buf[1])) {
 			/* product or subclass spec */
 			u = strtoul(buf+1, &cp, 16);
@@ -874,19 +622,6 @@ static void parse(usb_file f)
 				cp++;
 			if (!*cp) {
 				fprintf(stderr, "Invalid product/subclass spec at line %u\n", linectr);
-				continue;
-			}
-			if (lastvendor != -1) {
-				if (new_product(cp, lastvendor, u))
-					fprintf(stderr, "Duplicate product spec at line %u product %04x:%04x %s\n", linectr, lastvendor, u, cp);
-				DBG(printf("line %5u product %04x:%04x %s\n", linectr, lastvendor, u, cp));
-				continue;
-			}
-			if (lastclass != -1) {
-				if (new_subclass(cp, lastclass, u))
-					fprintf(stderr, "Duplicate subclass spec at line %u class %02x:%02x %s\n", linectr, lastclass, u, cp);
-				DBG(printf("line %5u subclass %02x:%02x %s\n", linectr, lastclass, u, cp));
-				lastsubclass = u;
 				continue;
 			}
 			if (lasthut != -1) {
@@ -900,24 +635,6 @@ static void parse(usb_file f)
 				continue;
 			}
 			fprintf(stderr, "Product/Subclass spec without prior Vendor/Class spec at line %u\n", linectr);
-			continue;
-		}
-		if (buf[0] == '\t' && buf[1] == '\t' && isxdigit(buf[2])) {
-			/* protocol spec */
-			u = strtoul(buf+2, &cp, 16);
-			while (isspace(*cp))
-				cp++;
-			if (!*cp) {
-				fprintf(stderr, "Invalid protocol spec at line %u\n", linectr);
-				continue;
-			}
-			if (lastclass != -1 && lastsubclass != -1) {
-				if (new_protocol(cp, lastclass, lastsubclass, u))
-					fprintf(stderr, "Duplicate protocol spec at line %u class %02x:%02x:%02x %s\n", linectr, lastclass, lastsubclass, u, cp);
-				DBG(printf("line %5u protocol %02x:%02x:%02x %s\n", linectr, lastclass, lastsubclass, u, cp));
-				continue;
-			}
-			fprintf(stderr, "Protocol spec without prior Class and Subclass spec at line %u\n", linectr);
 			continue;
 		}
 		if (buf[0] == 'H' && buf[1] == 'I' && buf[2] == 'D' && /*isspace(buf[3])*/ buf[3] == ' ') {
@@ -994,23 +711,25 @@ static void parse(usb_file f)
 int names_init(char *n)
 {
 	usb_file f;
+	int r = 0;
 
 	f = usb_fopen(n, "r");
 	if (!f)
-		return errno;
+		r = errno;
 
 	parse(f);
 	usb_close(f);
-	return 0;
+
+	udev = udev_new();
+	hwdb = udev_hwdb_new(udev);
+
+	return r;
 }
 
 void names_exit(void)
 {
-	free_vendor();
-	free_product();
-	free_class();
-	free_subclass();
-	free_protocol();
+	hwdb = udev_hwdb_unref(hwdb);
+	udev = udev_unref(udev);
 	free_audioterminal();
 	free_videoterminal();
 	free_genericstrtable();
