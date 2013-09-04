@@ -20,6 +20,7 @@ lsusb_SOURCES = \
 	lsusb-t.c \
 	list.h \
 	names.c names.h \
+	usb-spec.h \
 	usbmisc.c usbmisc.h
 
 lsusb_CPPFLAGS = \
@@ -30,40 +31,16 @@ lsusb_LDADD = \
 	$(LIBUSB_LIBS) \
 	$(UDEV_LIBS)
 
-if HAVE_ZLIB
-lsusb_CPPFLAGS += -DHAVE_LIBZ
-lsusb_LDADD += -lz
-endif
-
 man_MANS = \
 	lsusb.8	\
 	usb-devices.1
 
 EXTRA_DIST = \
-	usb.ids \
-	update-usbids.sh.in \
 	lsusb.8.in \
 	usb-devices.1.in \
 	usb-devices \
 	lsusb.py \
 	usbutils.pc.in
-
-if INSTALL_USBIDS
-data_DATA += usb.ids
-
-if HAVE_ZLIB
-data_DATA += usb.ids.gz
-endif
-
-sbin_SCRIPTS += update-usbids.sh
-
-usb.ids.gz: $(srcdir)/usb.ids
-	gzip -c -9 $< > $@
-
-update-usbids.sh: $(srcdir)/update-usbids.sh.in
-	sed 's|@usbids@|$(datadir)/usb.ids|g' $< >$@
-	chmod 755 $@
-endif
 
 lsusb.8: $(srcdir)/lsusb.8.in
 	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
@@ -78,10 +55,8 @@ usbutils.pc: $(srcdir)/usbutils.pc.in
 	sed 's|@usbids@|$(datadir)/usb.ids|g;s|@VERSION[@]|$(VERSION)|g' $< >$@
 
 DISTCLEANFILES = \
-	usb.ids.gz \
 	lsusb.8 \
 	usb-devices.1 \
-	update-usbids.sh \
 	usbutils.pc
 
 distclean-local:
