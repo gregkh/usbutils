@@ -2,6 +2,7 @@
 # lsusb.py
 # Displays your USB devices in reasonable form.
 # (c) Kurt Garloff <garloff@suse.de>, 2/2009, GPL v2 or v3.
+# (c) Kurt Garloff <kurt@garloff.de>, 9/2013, GPL v2 or v3.
 # Usage: See usage()
 
 import os, sys, re, getopt
@@ -14,6 +15,7 @@ showhubint = False
 noemptyhub = False
 nohub = False
 warnsort = False
+showeps = False
 
 prefix = "/sys/bus/usb/devices/"
 usbids = "/usr/share/usb.ids"
@@ -24,8 +26,9 @@ bold = esc + "[0;1m"
 red =  esc + "[0;31m"
 green= esc + "[0;32m"
 amber= esc + "[0;33m"
+blue = esc + "[0;34m"
 
-cols = ("", "", "", "", "")
+cols = ("", "", "", "", "", "")
 
 def readattr(path, name):
 	"Read attribute from sysfs and return as string"
@@ -243,11 +246,45 @@ def find_dev(driver, usbname):
 	return res
 
 
+class UsbEndpoint:
+	"Container for USB endpoint info"
+	def __init__(self, parent = None, indent = 18):
+		self.parent = parent
+		self.indent = indent
+		self.fname = ""
+		self.epaddr = 0
+		self.len = 0
+		self.ival = ""
+		self.type = ""
+		self.attr = 0
+		self.max = 0
+
+	def read(self, fname):
+		fullpath = ""
+		if self.parent:
+			fullpath = self.parent.fullpath + "/"
+		fullpath += fname
+		self.epaddr = int(readattr(fullpath, "bEndpointAddress"), 16)
+		ival = int(readattr(fullpath, "bInterval"), 16)
+		if ival:
+			self.ival = "(%s)" % readattr(fullpath, "interval")
+		self.len = int(readattr(fullpath, "bLength"), 16)
+		self.type = readattr(fullpath, "type")
+		self.attr = int(readattr(fullpath, "bmAttributes"), 16)
+		self.max = int(readattr(fullpath, "wMaxPacketSize"), 16)
+
+	def __str__(self):
+		return "%-17s  %s(EP) %02x: %s %s attr %02x len %02x max %03x%s\n" % \
+			(" " * self.indent, cols[5], self.epaddr, self.type,
+			 self.ival, self.attr, self.len, self.max, cols[0])
+
+
 class UsbInterface:
 	"Container for USB interface info"
 	def __init__(self, parent = None, level = 1):
 		self.parent = parent
 		self.level = level
+		self.fullpath = ""
 		self.fname = ""
 		self.iclass = 0
 		self.isclass = 0
@@ -256,12 +293,13 @@ class UsbInterface:
 		self.driver = ""
 		self.devname = ""
 		self.protoname = ""
+		self.eps = []
 	def read(self, fname):
 		fullpath = ""
 		if self.parent:
 			fullpath += self.parent.fname + "/"
 		fullpath += fname
-		#self.fname = fullpath
+		self.fullpath = fullpath
 		self.fname = fname
 		self.iclass = int(readattr(fullpath, "bInterfaceClass"),16)
 		self.isclass = int(readattr(fullpath, "bInterfaceSubClass"),16)
@@ -273,13 +311,28 @@ class UsbInterface:
 		except:
 			pass
 		self.protoname = find_usb_class(self.iclass, self.isclass, self.iproto)
+		if showeps:
+			for epfnm in os.listdir(prefix + fullpath):
+				if epfnm[:3] == "ep_":
+					ep = UsbEndpoint(self, self.level+len(self.fname))
+					ep.read(epfnm)
+					self.eps.append(ep)
+
 	def __str__(self):
-		return "%-16s(IF) %02x:%02x:%02x %iEPs (%s) %s%s %s%s%s\n" % \
+		if self.noep == 1:
+			plural = " "
+		else:
+			plural = "s"
+		strg = "%-17s (IF) %02x:%02x:%02x %iEP%s (%s) %s%s %s%s%s\n" % \
 			(" " * self.level+self.fname, self.iclass,
 			 self.isclass, self.iproto, self.noep,
-			 self.protoname, 
+			 plural, self.protoname, 
 			 cols[3], self.driver,
 			 cols[4], self.devname, cols[0])
+		if showeps and self.eps:
+			for ep in self.eps:
+				strg += ep.__str__()
+		return strg
 
 class UsbDevice:
 	"Container for USB device info"
@@ -287,6 +340,7 @@ class UsbDevice:
 		self.parent = parent
 		self.level = level
 		self.fname = ""
+		self.fullpath = ""
 		self.iclass = 0
 		self.isclass = 0
 		self.iproto = 0
@@ -305,6 +359,7 @@ class UsbDevice:
 
 	def read(self, fname):
 		self.fname = fname
+		self.fullpath = fname
 		self.iclass = int(readattr(fname, "bDeviceClass"), 16)
 		self.isclass = int(readattr(fname, "bDeviceSubClass"), 16)
 		self.iproto = int(readattr(fname, "bDeviceProtocol"), 16)
@@ -383,17 +438,25 @@ class UsbDevice:
 		else:
 			col = cols[1]
 		if not nohub or self.iclass != 9:
-			str = "%-16s%s%04x:%04x%s %02x %s%5sMBit/s %s %iIFs (%s%s%s)" % \
+			if self.nointerfaces == 1:
+				plural = " "
+			else:
+				plural = "s"
+			str = "%-16s %s%04x:%04x%s %02x %s%5sMBit/s %s %iIF%s (%s%s%s)" % \
 				(" " * self.level + self.fname, 
 				 cols[1], self.vid, self.pid, cols[0],
 				 self.iclass, self.usbver, self.speed, self.maxpower,
-				 self.nointerfaces, col, self.name, cols[0])
+				 self.nointerfaces, plural, col, self.name, cols[0])
 			#if self.driver != "usb":
 			#	str += " %s" % self.driver
 			if self.iclass == 9 and not showhubint:
 				str += " %shub%s\n" % (cols[2], cols[0])
 			else:
 				str += "\n"
+				if showeps:
+					ep = UsbEndpoint(self, self.level+len(self.fname))
+					ep.read("ep_00")
+					str += ep.__str__()
 				if showint:	
 					for iface in self.interfaces:
 						str += iface.__str__()
@@ -455,8 +518,10 @@ def usage():
 	print " -u suppress empty hubs"
 	print " -U suppress all hubs"
 	print " -c use colors"
+	print " -e display endpoint info"
 	print " -w display warning if usb.ids is not sorted correctly"
 	print " -f FILE override filename for /usr/share/usb.ids"
+	print "Use lsusb.py -ciu to get a nice overview of your USB devices."
 	return 2
 
 def read_usb():
@@ -472,9 +537,10 @@ def read_usb():
 
 def main(argv):
 	"main entry point"
-	global showint, showhubint, noemptyhub, nohub, warnsort, cols, usbids
+	global showint, showhubint, noemptyhub, nohub
+	global warnsort, cols, usbids, showeps
 	try:
-		(optlist, args) = getopt.gnu_getopt(argv[1:], "hiIuUwcf:", ("help",))
+		(optlist, args) = getopt.gnu_getopt(argv[1:], "hiIuUwcef:", ("help",))
 	except getopt.GetoptError, exc:
 		print "Error:", exc
 		sys.exit(usage())
@@ -497,13 +563,16 @@ def main(argv):
 			nohub = True
 			continue
 		if opt[0] == "-c":
-			cols = (norm, bold, red, green, amber)
+			cols = (norm, bold, red, green, amber, blue)
 			continue
 		if opt[0] == "-w":
 			warnsort = True
 			continue
 		if opt[0] == "-f":
 			usbids = opt[1]
+			continue
+		if opt[0] == "-e":
+			showeps = True
 			continue
 	if len(args) > 0:
 		print "Error: excess args %s ..." % args[0]
