@@ -229,6 +229,9 @@ char *get_dev_string(libusb_device_handle *dev, u_int8_t id)
 	                                   sizeof unicode_buf);
 	if (ret < 2) return strdup("(error)");
 
+	if (unicode_buf[0] < 2 || unicode_buf[1] != LIBUSB_DT_STRING)
+		return strdup("(error)");
+
 	buf = usb_string_to_native(unicode_buf + 2,
 	                           ((unsigned char) unicode_buf[0] - 2) / 2);
 
