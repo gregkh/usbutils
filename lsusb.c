@@ -3219,6 +3219,19 @@ dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, char *
 		if (buf[11] & 0x08)
 			printf("%s    max datagram size\n", indent);
 		break;
+	case 0x1c:		/* MBIM extended functional desc */
+		type = "MBIM Extended";
+		if (buf[0] != 8)
+			goto bad;
+		printf("%sCDC MBIM Extended:\n"
+		       "%s  bcdMBIMExtendedVersion          %2x.%02x\n"
+		       "%s  bMaxOutstandingCommandMessages    %3d\n"
+		       "%s  wMTU                            %5d\n",
+		       indent,
+		       indent, buf[4], buf[3],
+		       indent, buf[5],
+		       indent, buf[6] | (buf[7] << 8));
+		break;
 	default:
 		/* FIXME there are about a dozen more descriptor types */
 		printf("%sUNRECOGNIZED CDC: ", indent);
