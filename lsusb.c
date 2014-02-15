@@ -3324,7 +3324,7 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed)
 					(status[2] & 0x04) ? " C_SUSPEND" : "",
 					(status[2] & 0x02) ? " C_ENABLE" : "",
 					(status[2] & 0x01) ? " C_CONNECT" : "");
-			printf("%s%s%s%s%s%s%s%s%s%s\n",
+			printf("%s%s%s%s%s%s%s%s%s%s%s\n",
 					(status[1] & 0x10) ? " indicator" : "",
 					(status[1] & 0x08) ? " test" : "",
 					(status[1] & 0x04) ? " highspeed" : "",
