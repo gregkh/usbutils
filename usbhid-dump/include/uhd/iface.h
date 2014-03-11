@@ -27,6 +27,7 @@
 #ifndef __UHD_IFACE_H__
 #define __UHD_IFACE_H__
 
+#include <stdint.h>
 #include "uhd/dev.h"
 
 #ifdef __cplusplus

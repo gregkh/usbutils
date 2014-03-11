@@ -40,6 +40,7 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <stdio.h>
+#include <stdint.h>
 
 /* Define LIBUSB_CALL for libusb <= 1.0.8 */
 #ifndef LIBUSB_CALL

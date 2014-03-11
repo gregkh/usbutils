@@ -27,6 +27,7 @@
 #ifndef __UHD_IFACE_LIST_H__
 #define __UHD_IFACE_LIST_H__
 
+#include <stdint.h>
 #include "uhd/dev_list.h"
 #include "uhd/iface.h"
 

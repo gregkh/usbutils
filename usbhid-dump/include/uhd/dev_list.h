@@ -28,6 +28,7 @@
 #define __UHD_DEV_LIST_H__
 
 #include <stddef.h>
+#include <stdint.h>
 #include "uhd/dev.h"
 
 #ifdef __cplusplus
