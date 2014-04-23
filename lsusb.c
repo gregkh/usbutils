@@ -143,7 +143,7 @@ static unsigned int convert_le_u32 (const unsigned char *buf)
 /* ---------------------------------------------------------------------- */
 
 /* workaround libusb API goofs:  "byte" should never be sign extended;
- * using "char" is trouble.  Likewise, sizes should never be negative.
+ * using "char" is trouble.
  */
 
 static inline int typesafe_control_msg(libusb_device_handle *dev,
@@ -154,10 +154,7 @@ static inline int typesafe_control_msg(libusb_device_handle *dev,
 	int ret = libusb_control_transfer(dev, requesttype, request, value,
 					idx, bytes, size, timeout);
 
-	if (ret < 0)
-		return -ret;
-	else
-		return ret;
+	return ret;
 }
 
 #define usb_control_msg		typesafe_control_msg
@@ -3283,14 +3280,17 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed)
 			LIBUSB_REQUEST_GET_DESCRIPTOR,
 			value << 8, 0,
 			buf, sizeof buf, CTRL_TIMEOUT);
-	if (ret < 9 /* at least one port's bitmasks */) {
-		if (ret >= 0)
-			fprintf(stderr,
-				"incomplete hub descriptor, %d bytes\n",
-				ret);
+	if (ret < 0) {
 		/* Linux returns EHOSTUNREACH for suspended devices */
-		else if (errno != EHOSTUNREACH)
-			perror("can't get hub descriptor");
+		if (errno != EHOSTUNREACH)
+			fprintf(stderr, "can't get hub descriptor, %s (%s)\n",
+				libusb_error_name(ret), strerror(errno));
+		return;
+	}
+	if (ret < 9 /* at least one port's bitmasks */) {
+		fprintf(stderr,
+			"incomplete hub descriptor, %d bytes\n",
+			ret);
 		return;
 	}
 	dump_hub("", buf, tt_type);
