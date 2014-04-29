@@ -609,7 +609,7 @@ static void sort_busses(void)
 		p = usbbuslist;
 		pp = &usbbuslist;
 		swapped = 0;
-		while (p->next) {
+		while (p && p->next) {
 			if (p->busnum < p->next->busnum) {
 				t = p->next;
 				p->next = t->next;
