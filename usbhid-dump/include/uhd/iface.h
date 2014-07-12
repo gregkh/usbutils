@@ -45,6 +45,7 @@ struct uhd_iface {
     uint8_t                 int_in_ep_addr; /**< Interrupt IN EP address */
     uint16_t                int_in_ep_maxp; /**< Interrupt IN EP maximum
                                                  packet size */
+    uint16_t                rd_len;         /**< Report descriptor length */
     bool                    detached;       /**< True if the interface was
                                                  detached from the kernel
                                                  driver, false otherwise */
@@ -77,13 +78,15 @@ extern bool uhd_iface_valid(const uhd_iface *iface);
  * @param number            Interface number.
  * @param int_in_ep_addr    Interrupt in endpoint address.
  * @param int_in_ep_maxp    Interrupt in endpoint maximum packet size.
+ * @param rd_len            Report descriptor length.
  *
  * @return New interface or NULL, if failed to allocate.
  */
 extern uhd_iface *uhd_iface_new(const uhd_dev  *dev,
                                 uint8_t         number,
                                 uint8_t         int_in_ep_addr,
-                                uint16_t        int_in_ep_maxp);
+                                uint16_t        int_in_ep_maxp,
+                                uint16_t        rd_len);
 
 /**
  * Free an interface.

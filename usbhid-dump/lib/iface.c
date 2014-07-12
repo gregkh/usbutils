@@ -45,7 +45,8 @@ uhd_iface *
 uhd_iface_new(const uhd_dev    *dev,
               uint8_t           number,
               uint8_t           int_in_ep_addr,
-              uint16_t          int_in_ep_maxp)
+              uint16_t          int_in_ep_maxp,
+              uint16_t          rd_len)
 {
     uhd_iface      *iface;
     libusb_device  *lusb_dev;
@@ -60,6 +61,7 @@ uhd_iface_new(const uhd_dev    *dev,
     iface->number           = number;
     iface->int_in_ep_addr   = int_in_ep_addr;
     iface->int_in_ep_maxp   = int_in_ep_maxp;
+    iface->rd_len           = rd_len;
     iface->detached         = false;
     iface->claimed          = false;
     iface->submitted        = false;

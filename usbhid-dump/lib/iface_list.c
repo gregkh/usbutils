@@ -27,6 +27,7 @@
 #include "config.h"
 
 #include "uhd/iface_list.h"
+#include "uhd/misc.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -76,6 +77,10 @@ uhd_iface_list_new(uhd_dev     *dev_list,
     uhd_dev                                    *dev;
     struct libusb_config_descriptor            *config          = NULL;
     const struct libusb_interface              *lusb_iface;
+    const struct libusb_interface_descriptor   *iface_desc;
+    const uhd_hid_descriptor                   *hid_desc;
+    const uhd_hid_descriptor_extra             *hid_desc_extra;
+    uint16_t                                    rd_len;
     const struct libusb_endpoint_descriptor    *ep_list;
     uint8_t                                     ep_num;
     const struct libusb_endpoint_descriptor    *ep;
@@ -101,14 +106,51 @@ uhd_iface_list_new(uhd_dev     *dev_list,
              lusb_iface - config->interface < config->bNumInterfaces;
              lusb_iface++)
         {
-            /* Skip interfaces with altsettings and non-HID interfaces */
-            if (lusb_iface->num_altsetting != 1 ||
-                lusb_iface->altsetting->bInterfaceClass != LIBUSB_CLASS_HID)
+            /* Skip interfaces with altsettings */
+            if (lusb_iface->num_altsetting != 1)
                 continue;
 
+            iface_desc = lusb_iface->altsetting;
+
+            /* Skip non-HID interfaces */
+            if (iface_desc->bInterfaceClass != LIBUSB_CLASS_HID)
+                continue;
+
+            /*
+             * Try to retrieve report descriptor length
+             */
+            rd_len = UHD_MAX_DESCRIPTOR_SIZE;
+            /* If interface descriptor has space for a HID descriptor */
+            if (iface_desc->extra_length >= (int)sizeof(uhd_hid_descriptor))
+            {
+                hid_desc = (const uhd_hid_descriptor *)iface_desc->extra;
+                /* If this is truly a HID class descriptor */
+                if (hid_desc->bDescriptorType == LIBUSB_DT_HID)
+                {
+                    /* For each extra HID descriptor entry */
+                    for (hid_desc_extra = hid_desc->extra;
+                         hid_desc_extra <
+                            hid_desc->extra + hid_desc->bNumDescriptors &&
+                         (uint8_t *)hid_desc_extra <
+                            (uint8_t *)hid_desc + hid_desc->bLength &&
+                         (unsigned char *)hid_desc_extra <
+                            iface_desc->extra +
+                            iface_desc->extra_length;
+                         hid_desc_extra++) {
+                        /* If this is a report descriptor entry */
+                        if (hid_desc_extra->bDescriptorType ==
+                                LIBUSB_DT_REPORT)
+                        {
+                            rd_len = hid_desc_extra->wDescriptorLength;
+                            break;
+                        }
+                    }
+                }
+            }
+
             /* Retrieve endpoint list */
-            ep_list = lusb_iface->altsetting->endpoint;
-            ep_num = lusb_iface->altsetting->bNumEndpoints;
+            ep_list = iface_desc->endpoint;
+            ep_num = iface_desc->bNumEndpoints;
 
             /* For each endpoint */
             for (ep = ep_list; (ep - ep_list) < ep_num; ep++)
@@ -123,8 +165,9 @@ uhd_iface_list_new(uhd_dev     *dev_list,
                 /* Create the interface */
                 iface = uhd_iface_new(
                             dev,
-                            lusb_iface->altsetting->bInterfaceNumber,
-                            ep->bEndpointAddress, ep->wMaxPacketSize);
+                            iface_desc->bInterfaceNumber,
+                            ep->bEndpointAddress, ep->wMaxPacketSize,
+                            rd_len);
                 if (iface == NULL)
                 {
                     err = LIBUSB_ERROR_NO_MEM;

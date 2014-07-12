@@ -27,9 +27,35 @@
 #ifndef __UHD_MISC_H__
 #define __UHD_MISC_H__
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#pragma pack(1)
+
+/** HID extra descriptor record */
+typedef struct uhd_hid_descriptor_extra uhd_hid_descriptor_extra;
+
+struct uhd_hid_descriptor_extra {
+    uint8_t     bDescriptorType;
+    uint16_t    wDescriptorLength;
+};
+
+/** HID class-specific descriptor */
+typedef struct uhd_hid_descriptor uhd_hid_descriptor;
+
+struct uhd_hid_descriptor {
+    uint8_t                     bLength;
+    uint8_t                     bDescriptorType;
+    uint16_t                    bcdHID;
+    uint8_t                     bCountryCode;
+    uint8_t                     bNumDescriptors;
+    uhd_hid_descriptor_extra    extra[1];
+};
+
+#pragma pack()
 
 /**
  * Maximum descriptor size.

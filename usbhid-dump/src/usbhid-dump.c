@@ -179,12 +179,20 @@ dump_iface_list_descriptor(const uhd_iface *list)
 
     UHD_IFACE_LIST_FOR_EACH(iface, list)
     {
+        if (iface->rd_len > sizeof(buf))
+        {
+            err = LIBUSB_ERROR_NO_MEM;
+            LIBUSB_IFACE_FAILURE(iface, "report descriptor too long: %hu",
+                                 iface->rd_len);
+            return false;
+        }
+
         rc = libusb_control_transfer(iface->dev->handle,
                                      /* See HID spec, 7.1.1 */
                                      0x81,
                                      LIBUSB_REQUEST_GET_DESCRIPTOR,
                                      (LIBUSB_DT_REPORT << 8), iface->number,
-                                     buf, sizeof(buf), UHD_IO_TIMEOUT);
+                                     buf, iface->rd_len, UHD_IO_TIMEOUT);
         if (rc < 0)
         {
             err = rc;
