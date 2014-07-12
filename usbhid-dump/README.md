@@ -6,7 +6,7 @@ Usbhid-dump is a USB HID dumping utility based on libusb 1.0. It dumps USB HID d
 Installation
 ------------
 
-Run `./configure && make` to build and `make install` to install. Usbhid-dump can also be run directly from the source directory as `src/usbhid-dump`, without installation.
+Run `./configure && make` to build and `make install` to install. If building from a Git tree, run `./bootstrap` first. Usbhid-dump can also be run directly from the source directory as `src/usbhid-dump`, without installation.
 
 Usage
 -----
