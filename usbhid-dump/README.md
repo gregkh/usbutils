@@ -60,22 +60,31 @@ Here is an example of a report descriptor and stream dump from a mouse:
      15 00 25 01 75 01 95 03 81 02 75 05 95 01 81 01
      05 01 09 30 09 31 09 38 15 81 25 7F 75 08 95 03
      81 06 C0 C0
+
     Starting dumping interrupt transfer stream
     with 1 minute timeout.
+
     002:003:000:STREAM             1290272185.210022
      00 FF 00 00
+
     002:003:000:STREAM             1290272185.217988
      00 FE 00 00
+
     002:003:000:STREAM             1290272185.225985
      00 FC 01 00
+
     002:003:000:STREAM             1290272185.233995
      00 FE 01 00
+
     002:003:000:STREAM             1290272185.241992
      00 FF 01 00
+
     002:003:000:STREAM             1290272185.249995
      00 FE 02 00
+
     002:003:000:STREAM             1290272185.257993
      00 FF 01 00
+
     ^C
 
 In the output above "002" is the bus number, "003" is the device address and "000" is the interface number. "DESCRIPTOR" indicates descriptor chunk and "STREAM" - stream chunk. The number to the right is the timestamp in seconds since epoch. The hexadecimal numbers below is the chunk dump itself. Usually every stream chunk includes a whole report, but if the report is bigger than endpoint's wMaxPacketSize, it will span several chunks.
