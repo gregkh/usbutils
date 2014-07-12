@@ -73,6 +73,7 @@ uhd_iface_new(const uhd_dev    *dev,
                   libusb_get_bus_number(lusb_dev),
                   libusb_get_device_address(lusb_dev),
                   number);
+    (void)rc;
     assert(rc == (sizeof(iface->addr_str) - 1));
 
     assert(uhd_iface_valid(iface));
