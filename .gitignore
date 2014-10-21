@@ -14,6 +14,7 @@ autom4te.cache/
 depcomp
 install-sh
 missing
+compile
 lsusb
 lsusb.8
 update-usbids.sh
