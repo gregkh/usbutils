@@ -1,3 +1,45 @@
+usbutils 008
+============
+
+Alexandra Yates (2):
+      lsusb: Reports if USB2.0 port is on L1 state
+      lsusb: Reports devices that support BESL on USB2.0
+
+Aurelien Jarno (1):
+      dump_ccid_device: fix a typo
+
+Ben Chan (1):
+      lsusb: decode CDC MBIM extended functional descriptor
+
+Greg Kroah-Hartman (8):
+      lsusb: fix incorrect printf() for CAPS
+      lsusb-t: handle problem if there is no usb bus list
+      .gitignore: add compile to the list of things we need to ignore
+
+John Freed (1):
+      Fix logic error
+
+Kurt Garloff (1):
+      Update lsusb.py in usbutils
+
+Lukas Nykryn (2):
+      update COPYING file
+      lsusb-t: don't segfault when usbbuslist is empty
+
+Peter Wu (1):
+      Ignore invalid string descriptors
+
+Raphaël Droz (1):
+      usb-devices: hexadecimal bInterfaceNumber handling
+
+Tom Gundersen (2):
+      lsusb: port to hwdb
+      drop dependency on usb.ids
+
+Vadim Rutkovsky (1):
+      New path for usbhid-dump submodule
+
+
 usbutils 007
 ============
 
