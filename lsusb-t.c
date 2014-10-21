@@ -607,6 +607,8 @@ static void sort_busses(void)
 	int swapped;
 	do {
 		p = usbbuslist;
+		if (p == NULL)
+			return;
 		pp = &usbbuslist;
 		swapped = 0;
 		while (p && p->next) {
