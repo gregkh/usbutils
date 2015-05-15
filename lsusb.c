@@ -3269,8 +3269,8 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed)
 		" Loopback",
 	};
 
-	/* USB 3.0 hubs have a slightly different descriptor */
-	if (speed == 0x0300)
+	/* USB 3.x hubs have a slightly different descriptor */
+	if (speed >= 0x0300)
 		value = 0x2A;
 	else
 		value = 0x29;
