@@ -2373,7 +2373,7 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 			printf("Random pattern of fields 1 and 2\n");
 			break;
 		}
-		printf("          bCopyProtect                  %5u\n", buf[26]);
+		printf("        bCopyProtect                  %5u\n", buf[26]);
 		if (buf[2] == 0x10)
 			printf("          bVariableSize                 %5u\n", buf[27]);
 		dump_junk(buf, "        ", len);
@@ -2477,7 +2477,7 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 			printf("Random pattern of fields 1 and 2\n");
 			break;
 		}
-		printf("          bCopyProtect                  %5u\n", buf[10]);
+		printf("        bCopyProtect                  %5u\n", buf[10]);
 		dump_junk(buf, "        ", 11);
 		break;
 
