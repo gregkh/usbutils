@@ -382,7 +382,7 @@ static void dump_association(libusb_device_handle *dev, const unsigned char *buf
 	free(func);
 }
 
-static void dump_config(libusb_device_handle *dev, struct libusb_config_descriptor *config)
+static void dump_config(libusb_device_handle *dev, struct libusb_config_descriptor *config, unsigned speed)
 {
 	char *cfg;
 	int i;
@@ -415,7 +415,7 @@ static void dump_config(libusb_device_handle *dev, struct libusb_config_descript
 		printf("      Remote Wakeup\n");
 	if (config->bmAttributes & 0x10)
 		printf("      Battery Powered\n");
-	printf("    MaxPower            %5umA\n", config->MaxPower * 2);
+	printf("    MaxPower            %5umA\n", config->MaxPower * (speed >= 0x0300 ? 8 : 2));
 
 	/* avoid re-ordering or hiding descriptors for display */
 	if (config->extra_length) {
@@ -3269,8 +3269,8 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed)
 		" Loopback",
 	};
 
-	/* USB 3.0 hubs have a slightly different descriptor */
-	if (speed == 0x0300)
+	/* USB 3.x hubs have a slightly different descriptor */
+	if (speed >= 0x0300)
 		value = 0x2A;
 	else
 		value = 0x29;
@@ -3856,7 +3856,7 @@ static void dumpdev(libusb_device *dev)
 						"descriptor %d, some information will "
 						"be missing\n", i);
 			} else {
-				dump_config(udev, config);
+				dump_config(udev, config, desc.bcdUSB);
 				libusb_free_config_descriptor(config);
 			}
 		}
