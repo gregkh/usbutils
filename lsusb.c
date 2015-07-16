@@ -2375,7 +2375,7 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 		}
 		printf("        bCopyProtect                  %5u\n", buf[26]);
 		if (buf[2] == 0x10)
-			printf("          bVariableSize                 %5u\n", buf[27]);
+			printf("        bVariableSize                 %5u\n", buf[27]);
 		dump_junk(buf, "        ", len);
 		break;
 
