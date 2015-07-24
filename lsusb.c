@@ -3254,19 +3254,19 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed)
 			+ 2 /* bitmasks */ * HUB_STATUS_BYTELEN];
 	int i, ret, value;
 	unsigned int link_state;
-	char *link_state_descriptions[] = {
-		" U0",
-		" U1",
-		" U2",
-		" suspend",
-		" SS.disabled",
-		" Rx.Detect",
-		" SS.Inactive",
-		" Polling",
-		" Recovery",
-		" Hot Reset",
-		" Compliance",
-		" Loopback",
+	const char * const link_state_descriptions[] = {
+		"U0",
+		"U1",
+		"U2",
+		"suspend",
+		"SS.disabled",
+		"Rx.Detect",
+		"SS.Inactive",
+		"Polling",
+		"Recovery",
+		"Hot Reset",
+		"Compliance",
+		"Loopback",
 	};
 
 	/* USB 3.x hubs have a slightly different descriptor */
@@ -3352,7 +3352,7 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed)
 			/* Link state is bits 8:5 */
 			if (link_state < (sizeof(link_state_descriptions) /
 						sizeof(*link_state_descriptions)))
-				printf("%s", link_state_descriptions[link_state]);
+				printf(" %s", link_state_descriptions[link_state]);
 			printf("%s%s%s%s\n",
 					(status[0] & 0x10) ? " RESET" : "",
 					(status[0] & 0x08) ? " oc" : "",
