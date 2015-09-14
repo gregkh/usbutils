@@ -69,6 +69,7 @@
 #define USB_DC_20_EXTENSION		0x02
 #define USB_DC_SUPERSPEED		0x03
 #define USB_DC_CONTAINER_ID		0x04
+#define USB_DC_SUPERSPEEDPLUS		0x0a
 
 /* Conventional codes for class-specific descriptors.  The convention is
  * defined in the USB "Common Class" Spec (3.11).  Individual class specs
@@ -3718,6 +3719,42 @@ static void dump_ss_device_capability_desc(unsigned char *buf)
 	printf("    bU2DevExitLat    %8u micro seconds\n", buf[8] + (buf[9] << 8));
 }
 
+static void dump_ssp_device_capability_desc(unsigned char *buf)
+{
+	int i;
+	unsigned int bm_attr, ss_attr;
+	char bitrate_prefix[] = " KMG";
+
+	if (buf[0] < 12) {
+		printf("  Bad SuperSpeedPlus USB Device Capability descriptor.\n");
+		return;
+	}
+
+	bm_attr = convert_le_u32(buf + 4);
+	printf("  SuperSpeedPlus USB Device Capability:\n"
+			"    bLength             %5u\n"
+			"    bDescriptorType     %5u\n"
+			"    bDevCapabilityType  %5u\n"
+			"    bmAttributes         0x%08x\n",
+			buf[0], buf[1], buf[2], bm_attr);
+
+	printf("      Sublink Speed Attribute count %u\n", buf[4] & 0x1f);
+	printf("      Sublink Speed ID count %u\n", (bm_attr >> 5) & 0xf);
+	printf("    wFunctionalitySupport   0x%02x%02x\n", buf[9], buf[8]);
+
+	for (i = 0; i <= (buf[4] & 0x1f); i++) {
+		ss_attr = convert_le_u32(buf + 12 + (i * 4));
+		printf("    bmSublinkSpeedAttr[%u]   0x%08x\n", i, ss_attr);
+		printf("      Speed Attribute ID: %u %u%cb/s %s %s SuperSpeed%s\n",
+		       ss_attr & 0x0f,
+		       ss_attr >> 16,
+		       (bitrate_prefix[((ss_attr >> 4) & 0x3)]),
+		       (ss_attr & 0x40)? "Asymmetric" : "Symmetric",
+		       (ss_attr & 0x80)? "TX" : "RX",
+		       (ss_attr & 0x4000)? "Plus": "" );
+	}
+}
+
 static void dump_container_id_device_capability_desc(unsigned char *buf)
 {
 	if (buf[0] < 20) {
@@ -3805,6 +3842,9 @@ static void dump_bos_descriptor(libusb_device_handle *fd)
 			break;
 		case USB_DC_SUPERSPEED:
 			dump_ss_device_capability_desc(buf);
+			break;
+		case USB_DC_SUPERSPEEDPLUS:
+			dump_ssp_device_capability_desc(buf);
 			break;
 		case USB_DC_CONTAINER_ID:
 			dump_container_id_device_capability_desc(buf);
