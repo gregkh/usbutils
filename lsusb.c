@@ -3736,11 +3736,13 @@ static void dump_container_id_device_capability_desc(unsigned char *buf)
 
 static void dump_bos_descriptor(libusb_device_handle *fd)
 {
-	/* Total for all known BOS descriptors is 43 bytes:
-	 * 6 bytes for Wireless USB, 7 bytes for USB 2.0 extension,
-	 * 10 bytes for SuperSpeed, 20 bytes for Container ID.
+	/* Total length of BOS descriptors varies.
+	 * Read first static 5 bytes which include the total length before
+	 * allocating and readig the full BOS
 	 */
-	unsigned char bos_desc[43];
+
+	unsigned char bos_desc_static[5];
+	unsigned char *bos_desc;
 	unsigned int bos_desc_size;
 	int size, ret;
 	unsigned char *buf;
@@ -3750,32 +3752,31 @@ static void dump_bos_descriptor(libusb_device_handle *fd)
 			LIBUSB_ENDPOINT_IN | LIBUSB_RECIPIENT_DEVICE,
 			LIBUSB_REQUEST_GET_DESCRIPTOR,
 			USB_DT_BOS << 8, 0,
-			bos_desc, 5, CTRL_TIMEOUT);
+			bos_desc_static, 5, CTRL_TIMEOUT);
 	if (ret <= 0)
 		return;
-	else if (bos_desc[0] != 5 || bos_desc[1] != USB_DT_BOS)
+	else if (bos_desc_static[0] != 5 || bos_desc_static[1] != USB_DT_BOS)
 		return;
 
-	bos_desc_size = bos_desc[2] + (bos_desc[3] << 8);
+	bos_desc_size = bos_desc_static[2] + (bos_desc_static[3] << 8);
 	printf("Binary Object Store Descriptor:\n"
 	       "  bLength             %5u\n"
 	       "  bDescriptorType     %5u\n"
 	       "  wTotalLength        %5u\n"
 	       "  bNumDeviceCaps      %5u\n",
-	       bos_desc[0], bos_desc[1],
-	       bos_desc_size, bos_desc[4]);
+	       bos_desc_static[0], bos_desc_static[1],
+	       bos_desc_size, bos_desc_static[4]);
 
 	if (bos_desc_size <= 5) {
-		if (bos_desc[4] > 0)
+		if (bos_desc_static[4] > 0)
 			fprintf(stderr, "Couldn't get "
 					"device capability descriptors\n");
 		return;
 	}
-	if (bos_desc_size > sizeof bos_desc) {
-		fprintf(stderr, "FIXME: alloc bigger buffer for "
-				"device capability descriptors\n");
+	bos_desc = malloc(bos_desc_size);
+	if (!bos_desc)
 		return;
-	}
+	memset(bos_desc, 0, bos_desc_size);
 
 	ret = usb_control_msg(fd,
 			LIBUSB_ENDPOINT_IN | LIBUSB_RECIPIENT_DEVICE,
@@ -3784,7 +3785,7 @@ static void dump_bos_descriptor(libusb_device_handle *fd)
 			bos_desc, bos_desc_size, CTRL_TIMEOUT);
 	if (ret < 0) {
 		fprintf(stderr, "Couldn't get device capability descriptors\n");
-		return;
+		goto out;
 	}
 
 	size = bos_desc_size - 5;
@@ -3793,7 +3794,7 @@ static void dump_bos_descriptor(libusb_device_handle *fd)
 	while (size >= 3) {
 		if (buf[0] < 3) {
 			printf("buf[0] = %u\n", buf[0]);
-			return;
+			goto out;
 		}
 		switch (buf[2]) {
 		case USB_DC_WIRELESS_USB:
@@ -3816,6 +3817,8 @@ static void dump_bos_descriptor(libusb_device_handle *fd)
 		size -= buf[0];
 		buf += buf[0];
 	}
+out:
+	free(bos_desc);
 }
 
 static void dumpdev(libusb_device *dev)
