@@ -70,6 +70,7 @@
 #define USB_DC_SUPERSPEED		0x03
 #define USB_DC_CONTAINER_ID		0x04
 #define USB_DC_SUPERSPEEDPLUS		0x0a
+#define USB_DC_BILLBOARD		0x0d
 
 /* Conventional codes for class-specific descriptors.  The convention is
  * defined in the USB "Common Class" Spec (3.11).  Individual class specs
@@ -108,6 +109,8 @@
 
 #define	HUB_STATUS_BYTELEN	3	/* max 3 bytes status = hub + 23 ports */
 
+#define BILLBOARD_MAX_NUM_ALT_MODE	(0x34)
+
 static const char procbususb[] = "/proc/bus/usb";
 static unsigned int verblevel = VERBLEVEL_DEFAULT;
 static int do_report_desc = 1;
@@ -117,6 +120,24 @@ static const char * const encryption_type[] = {
 	"CCM_1",
 	"RSA_1",
 	"RESERVED"
+};
+
+static const char * const vconn_power[] = {
+	"1W",
+	"1.5W",
+	"2W",
+	"3W",
+	"4W",
+	"5W",
+	"6W",
+	"reserved"
+};
+
+static const char * const alt_mode_state[] = {
+	"Unspecified Error",
+	"Alternate Mode configuration not attempted",
+	"Alternate Mode configuration attempted but unsuccessful",
+	"Alternate Mode configuration successful"
 };
 
 static void dump_interface(libusb_device_handle *dev, const struct libusb_interface *interface);
@@ -133,12 +154,18 @@ static void dump_audiostreaming_endpoint(const unsigned char *buf, int protocol)
 static void dump_midistreaming_endpoint(const unsigned char *buf);
 static void dump_hub(const char *prefix, const unsigned char *p, int tt_type);
 static void dump_ccid_device(const unsigned char *buf);
+static void dump_billboard_device_capability_desc(libusb_device_handle *dev, unsigned char *buf);
 
 /* ---------------------------------------------------------------------- */
 
 static unsigned int convert_le_u32 (const unsigned char *buf)
 {
 	return buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
+}
+
+static unsigned int convert_le_u16 (const unsigned char *buf)
+{
+	return buf[0] | (buf[1] << 8);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -3670,7 +3697,7 @@ static void dump_usb2_device_capability_desc(unsigned char *buf)
 static void dump_ss_device_capability_desc(unsigned char *buf)
 {
 	if (buf[0] < 10) {
-		printf("  Bad SuperSpeed USB Device Capability descriptor.\n");
+		fprintf(stderr, "  Bad SuperSpeed USB Device Capability descriptor.\n");
 		return;
 	}
 	printf("  SuperSpeed USB Device Capability:\n"
@@ -3726,7 +3753,7 @@ static void dump_ssp_device_capability_desc(unsigned char *buf)
 	char bitrate_prefix[] = " KMG";
 
 	if (buf[0] < 12) {
-		printf("  Bad SuperSpeedPlus USB Device Capability descriptor.\n");
+		fprintf(stderr, "  Bad SuperSpeedPlus USB Device Capability descriptor.\n");
 		return;
 	}
 
@@ -3758,7 +3785,7 @@ static void dump_ssp_device_capability_desc(unsigned char *buf)
 static void dump_container_id_device_capability_desc(unsigned char *buf)
 {
 	if (buf[0] < 20) {
-		printf("  Bad Container ID Device Capability descriptor.\n");
+		fprintf(stderr, "  Bad Container ID Device Capability descriptor.\n");
 		return;
 	}
 	printf("  Container ID Device Capability:\n"
@@ -3769,6 +3796,84 @@ static void dump_container_id_device_capability_desc(unsigned char *buf)
 			buf[0], buf[1], buf[2], buf[3]);
 	printf("    ContainerID             %s\n",
 			get_guid(&buf[4]));
+}
+
+static void dump_billboard_device_capability_desc(libusb_device_handle *dev, unsigned char *buf)
+{
+	char *url, *alt_mode_str;
+	int w_vconn_power, alt_mode, i, svid, state;
+	const char *vconn;
+	unsigned char *bmConfigured;
+
+	if (buf[0] < 48) {
+		fprintf(stderr, "  Bad Billboard Capability descriptor.\n");
+		return;
+	}
+
+	if (buf[4] > BILLBOARD_MAX_NUM_ALT_MODE) {
+		fprintf(stderr, "  Invalid value for bNumberOfAlternateModes.\n");
+		return;
+	}
+
+	if (buf[0] < (44 + buf[4] * 4)) {
+		fprintf(stderr, "  bLength does not match with bNumberOfAlternateModes.\n");
+		return;
+	}
+
+	url = get_dev_string(dev, buf[3]);
+	w_vconn_power = convert_le_u16(buf+6);
+	if (w_vconn_power & (1 << 15)) {
+		vconn = "VCONN power not required";
+	} else if (w_vconn_power < 7) {
+		vconn = vconn_power[w_vconn_power & 0x7];
+	} else {
+		vconn = "reserved";
+	}
+	printf("  Billboard Capability:\n"
+			"    bLength                 %5u\n"
+			"    bDescriptorType         %5u\n"
+			"    bDevCapabilityType      %5u\n"
+			"    iAddtionalInfoURL       %5u %s\n"
+			"    bNumberOfAlternateModes %5u\n"
+			"    bPreferredAlternateMode %5u\n"
+			"    VCONN Power             %5u %s\n",
+			buf[0], buf[1], buf[2],
+			buf[3], url,
+			buf[4], buf[5],
+			w_vconn_power, vconn);
+
+	bmConfigured = &buf[8];
+
+	printf("    bmConfigured               ");
+	dump_bytes(bmConfigured, 32);
+
+	printf(
+			"    bcdVersion              %2x.%02x\n"
+			"    bAdditionalFailureInfo  %5u\n"
+			"    bReserved               %5u\n",
+			(buf[41] == 0) ? 1 : buf[41], buf[40],
+			buf[42], buf[43]);
+
+	printf("    Alternate Modes supported by Device Container:\n");
+	i = 44; /* Alternate mode 0 starts at index 44 */
+	for (alt_mode = 0; alt_mode < buf[4]; alt_mode++) {
+		svid = convert_le_u16(buf+i);
+		alt_mode_str = get_dev_string(dev, buf[i+3]);
+		state = ((bmConfigured[alt_mode >> 2]) >> ((alt_mode & 0x3) << 1)) & 0x3;
+		printf(
+			"    Alternate Mode %d : %s\n"
+			"      wSVID[%d]                    0x%04X\n"
+			"      bAlternateMode[%d]       %5u\n"
+			"      iAlternateModeString[%d] %5u %s\n",
+			alt_mode, alt_mode_state[state],
+			alt_mode, svid,
+			alt_mode, buf[i+2],
+			alt_mode, buf[i+3], alt_mode_str);
+		free(alt_mode_str);
+		i += 4;
+	}
+
+	free (url);
 }
 
 static void dump_bos_descriptor(libusb_device_handle *fd)
@@ -3848,6 +3953,9 @@ static void dump_bos_descriptor(libusb_device_handle *fd)
 			break;
 		case USB_DC_CONTAINER_ID:
 			dump_container_id_device_capability_desc(buf);
+			break;
+		case USB_DC_BILLBOARD:
+			dump_billboard_device_capability_desc(fd, buf);
 			break;
 		default:
 			printf("  ** UNRECOGNIZED: ");
