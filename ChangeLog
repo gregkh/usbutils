@@ -100,7 +100,7 @@
 2005-09-26 David Brownell <dbrownell@users.sourceforge.net>
 	* lsusb.c: dump device status; start dumping wireless info.  don't
 	  yet dump security, BOS, "endpoint companion", or other new
-	  descriptors.  (Security can work without wireles support...)
+	  descriptors.  (Security can work without wireless support...)
 	* usb.ids: update to current version
 
 2005-06-19 Aurelien Jarno <aurelien@aurel32.net> 
@@ -134,7 +134,7 @@
 	* configure.in: fix typo, recommend libusb 0.1.8 not 1.8
 
 2005-01-30 David Brownell <dbrownell@users.sourceforge.net>
-	Fix some more warnings reported by Aurelian, and configure
+	Fix some more warnings reported by Aurelien, and configure
 	gcc for "-W -Wunused" to discourage more from appearing.
 
 2005-01-27 Aurelien Jarno <aurelien@aurel32.net> 
