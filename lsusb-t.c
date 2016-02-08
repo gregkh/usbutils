@@ -36,7 +36,7 @@ struct usbinterface {
 };
 
 struct usbdevice {
-	struct list_head list;	/* connect devices independant of the bus */
+	struct list_head list;	/* connect devices independent of the bus */
 	struct usbdevice *next;	/* next port on this hub */
 	struct usbinterface *first_interface;	/* list of interfaces */
 	struct usbdevice *first_child;	/* connect devices on this port */
@@ -73,7 +73,7 @@ struct usbdevice {
 struct usbbusnode {
 	struct usbbusnode *next;
 	struct usbinterface *first_interface;	/* list of interfaces */
-	struct usbdevice *first_child;	/* connect childs belonging to this bus */
+	struct usbdevice *first_child;	/* connect children belonging to this bus */
 	unsigned int busnum;
 
 	unsigned int bDeviceClass;

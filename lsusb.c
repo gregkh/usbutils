@@ -994,7 +994,7 @@ static const char * const chconfig_uac2[] = {
 static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigned char *buf, int protocol)
 {
 	static const char * const chconfig[] = {
-		"Left Front (L)", "Right Front (R)", "Center Front (C)", "Low Freqency Enhancement (LFE)",
+		"Left Front (L)", "Right Front (R)", "Center Front (C)", "Low Frequency Enhancement (LFE)",
 		"Left Surround (LS)", "Right Surround (RS)", "Left of Center (LC)", "Right of Center (RC)",
 		"Surround (S)", "Side Left (SL)", "Side Right (SR)", "Top (T)"
 	};
@@ -2735,11 +2735,11 @@ static void dump_ccid_device(const unsigned char *buf)
 	if ((us & 0x0020))
 		fputs("          Auto baud rate change\n", stdout);
 	if ((us & 0x0040))
-		fputs("          Auto parameter negotation made by CCID\n", stdout);
+		fputs("          Auto parameter negotiation made by CCID\n", stdout);
 	else if ((us & 0x0080))
 		fputs("          Auto PPS made by CCID\n", stdout);
 	else if ((us & (0x0040 | 0x0080)))
-		fputs("        WARNING: conflicting negotation features\n", stdout);
+		fputs("        WARNING: conflicting negotiation features\n", stdout);
 
 	if ((us & 0x0100))
 		fputs("          CCID can set ICC in clock stop mode\n", stdout);
@@ -3880,7 +3880,7 @@ static void dump_bos_descriptor(libusb_device_handle *fd)
 {
 	/* Total length of BOS descriptors varies.
 	 * Read first static 5 bytes which include the total length before
-	 * allocating and readig the full BOS
+	 * allocating and reading the full BOS
 	 */
 
 	unsigned char bos_desc_static[5];

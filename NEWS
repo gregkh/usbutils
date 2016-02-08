@@ -100,7 +100,7 @@ Lukas Nykryn (7):
       Using uninitialized value as index
       Possible resource leak
       Wrong shifting of bmMPEGFeatures byte
-      Buffer overun
+      Buffer overrun
       lsusb-t: don't show error when driver link is missing
 
 Mark Veltzer (1):
@@ -132,8 +132,8 @@ Greg Kroah-Hartman (7):
       update usbhid-dump to release 1.2
       add another Linux kernel usb id.
       updated usb.ids file
-      lsusb-t.c: fix up some complier warnings
-      add lsusb.h to fix some complier warnings.
+      lsusb-t.c: fix up some compiler warnings
+      add lsusb.h to fix some compiler warnings.
 
 Lukáš Nykrýn (1):
       Add more space to lsusb.py output
@@ -194,7 +194,7 @@ Laurent Pinchart (2):
 
 Luben Tuikov (3):
       lsusb: Fix getting BOS and DEVQUAL descriptors
-      lsusb: Dump the Pipe Usage desciptor
+      lsusb: Dump the Pipe Usage descriptor
       lsusb: Fix bMaxBurst reporting
 
 Mike Frysinger (5):
