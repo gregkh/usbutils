@@ -12,7 +12,7 @@ AC_SYS_LARGEFILE
 AC_CHECK_HEADERS([byteswap.h])
 AC_CHECK_FUNCS([nl_langinfo iconv])
 
-PKG_CHECK_MODULES(LIBUSB, libusb-1.0 >= 1.0.0)
+PKG_CHECK_MODULES(LIBUSB, libusb-1.0 >= 1.0.9)
 
 PKG_CHECK_MODULES(UDEV, libudev >= 196)
 
