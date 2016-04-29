@@ -3803,6 +3803,7 @@ static void dump_platform_device_capability_desc(unsigned char *buf)
 {
 	unsigned char desc_len = buf[0];
 	unsigned char cap_data_len = desc_len - 20;
+	unsigned char i;
 	if (desc_len < 20) {
 		fprintf(stderr, "  Bad Platform Device Capability descriptor.\n");
 		return;
@@ -3815,7 +3816,7 @@ static void dump_platform_device_capability_desc(unsigned char *buf)
 			buf[0], buf[1], buf[2], buf[3]);
 	printf("    PlatformCapabilityUUID    %s\n",
 			get_guid(&buf[4]));
-	for (unsigned char i = 0; i < cap_data_len; i++) {
+	for (i = 0; i < cap_data_len; i++) {
 		printf("    CapabilityData[%u]    0x%02x\n", i, buf[20 + i]);
 	}
 }
