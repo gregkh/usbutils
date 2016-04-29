@@ -69,6 +69,7 @@
 #define USB_DC_20_EXTENSION		0x02
 #define USB_DC_SUPERSPEED		0x03
 #define USB_DC_CONTAINER_ID		0x04
+#define USB_DC_PLATFORM 		0x05
 #define USB_DC_SUPERSPEEDPLUS		0x0a
 #define USB_DC_BILLBOARD		0x0d
 
@@ -674,7 +675,7 @@ static void dump_pipe_desc(const unsigned char *buf)
 		[0xE0 ... 0xEF] = "Vendor specific",
 		[0xF0 ... 0xFF] = "Reserved",
 	};
-	
+
 	if (buf[0] == 4 && buf[1] == 0x24) {
 		printf("        %s (0x%02x)\n", pipe_name[buf[2]], buf[2]);
 	} else {
@@ -3798,6 +3799,27 @@ static void dump_container_id_device_capability_desc(unsigned char *buf)
 			get_guid(&buf[4]));
 }
 
+static void dump_platform_device_capability_desc(unsigned char *buf)
+{
+	unsigned char desc_len = buf[0];
+	unsigned char cap_data_len = desc_len - 20;
+	if (desc_len < 20) {
+		fprintf(stderr, "  Bad Platform Device Capability descriptor.\n");
+		return;
+	}
+	printf("  Platform Device Capability:\n"
+			"    bLength             %5u\n"
+			"    bDescriptorType     %5u\n"
+			"    bDevCapabilityType  %5u\n"
+			"    bReserved           %5u\n",
+			buf[0], buf[1], buf[2], buf[3]);
+	printf("    PlatformCapabilityUUID    %s\n",
+			get_guid(&buf[4]));
+	for (unsigned char i = 0; i < cap_data_len; i++) {
+	    printf("    CapabilityData[%u]    0x%02x\n", i, buf[20 + i]);
+	}
+}
+
 static void dump_billboard_device_capability_desc(libusb_device_handle *dev, unsigned char *buf)
 {
 	char *url, *alt_mode_str;
@@ -3953,6 +3975,9 @@ static void dump_bos_descriptor(libusb_device_handle *fd)
 			break;
 		case USB_DC_CONTAINER_ID:
 			dump_container_id_device_capability_desc(buf);
+			break;
+		case USB_DC_PLATFORM:
+			dump_platform_device_capability_desc(buf);
 			break;
 		case USB_DC_BILLBOARD:
 			dump_billboard_device_capability_desc(fd, buf);
