@@ -1,5 +1,9 @@
 #!/bin/sh -e
 
+if test ! -f usbhid-dump/bootstrap; then
+git submodule update --init --recursive
+fi
+
 cd usbhid-dump
 ./bootstrap
 cd ..
