@@ -237,9 +237,9 @@ static const char *get_guid(const unsigned char *buf)
 			"-%02x%02x"
 			"-%02x%02x"
 			"-%02x%02x%02x%02x%02x%02x}",
-	       buf[0], buf[1], buf[2], buf[3],
-	       buf[4], buf[5],
-	       buf[6], buf[7],
+	       buf[3], buf[2], buf[1], buf[0],
+	       buf[5], buf[4],
+	       buf[7], buf[6],
 	       buf[8], buf[9],
 	       buf[10], buf[11], buf[12], buf[13], buf[14], buf[15]);
 	return guid;
