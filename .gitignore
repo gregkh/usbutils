@@ -16,6 +16,7 @@ install-sh
 missing
 compile
 lsusb
+lsusb.py
 lsusb.8
 usbutils.pc
 usb-devices.1
