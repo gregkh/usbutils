@@ -27,7 +27,6 @@ struct usbentry {
 	char product_name[128];
 };
 
-
 static char *sysfs_attr(const char *dev, const char *attr)
 {
 	int fd, len = 0;
@@ -37,8 +36,8 @@ static char *sysfs_attr(const char *dev, const char *attr)
 	memset(buf, 0, sizeof(buf));
 	snprintf(path, sizeof(path) - 1, "/sys/bus/usb/devices/%s/%s", dev, attr);
 
-	if ((fd = open(path, O_RDONLY)) >= 0)
-	{
+	fd = open(path, O_RDONLY);
+	if (fd >= 0) {
 		len = read(fd, buf, sizeof(buf) - 1);
 		close(fd);
 	}
@@ -49,7 +48,7 @@ static char *sysfs_attr(const char *dev, const char *attr)
 	return (len >= 0) ? buf : NULL;
 }
 
-static struct usbentry * parse_devlist(DIR *d)
+static struct usbentry *parse_devlist(DIR *d)
 {
 	char *attr;
 	struct dirent *e;
@@ -60,27 +59,32 @@ static struct usbentry * parse_devlist(DIR *d)
 
 		if (!e)
 			return NULL;
-	}
-	while(!isdigit(e->d_name[0]) || strchr(e->d_name, ':'));
+	} while (!isdigit(e->d_name[0]) || strchr(e->d_name, ':'));
 
 	memset(&dev, 0, sizeof(dev));
 
-	if ((attr = sysfs_attr(e->d_name, "busnum")) != NULL)
+	attr = sysfs_attr(e->d_name, "busnum");
+	if (attr)
 		dev.bus_num = strtoul(attr, NULL, 10);
 
-	if ((attr = sysfs_attr(e->d_name, "devnum")) != NULL)
+	attr = sysfs_attr(e->d_name, "devnum");
+	if (attr)
 		dev.dev_num = strtoul(attr, NULL, 10);
 
-	if ((attr = sysfs_attr(e->d_name, "idVendor")) != NULL)
+	attr = sysfs_attr(e->d_name, "idVendor");
+	if (attr)
 		dev.vendor_id = strtoul(attr, NULL, 16);
 
-	if ((attr = sysfs_attr(e->d_name, "idProduct")) != NULL)
+	attr = sysfs_attr(e->d_name, "idProduct");
+	if (attr)
 		dev.product_id = strtoul(attr, NULL, 16);
 
-	if ((attr = sysfs_attr(e->d_name, "manufacturer")) != NULL)
+	attr = sysfs_attr(e->d_name, "manufacturer");
+	if (attr)
 		strcpy(dev.vendor_name, attr);
 
-	if ((attr = sysfs_attr(e->d_name, "product")) != NULL)
+	attr = sysfs_attr(e->d_name, "product");
+	if (attr)
 		strcpy(dev.product_name, attr);
 
 	if (dev.bus_num && dev.dev_num && dev.vendor_id && dev.product_id)
@@ -98,19 +102,16 @@ static void list_devices(void)
 		return;
 
 	while ((dev = parse_devlist(devs)) != NULL)
-	{
 		printf("  Number %03d/%03d  ID %04x:%04x  %s\n",
 			   dev->bus_num, dev->dev_num,
 			   dev->vendor_id, dev->product_id,
 			   dev->product_name);
-	}
 
 	closedir(devs);
 }
 
-struct usbentry * find_device(int *bus, int *dev,
-                              int *vid, int *pid,
-                              const char *product)
+struct usbentry *find_device(int *bus, int *dev, int *vid, int *pid,
+			const char *product)
 {
 	DIR *devs = opendir("/sys/bus/usb/devices");
 
@@ -120,15 +121,12 @@ struct usbentry * find_device(int *bus, int *dev,
 		return NULL;
 
 	while ((e = parse_devlist(devs)) != NULL)
-	{
 		if ((bus && (e->bus_num == *bus) && (e->dev_num == *dev)) ||
 			(vid && (e->vendor_id == *vid) && (e->product_id == *pid)) ||
-			(product && !strcasecmp(e->product_name, product)))
-		{
+			(product && !strcasecmp(e->product_name, product))) {
 			match = e;
 			break;
 		}
-	}
 
 	closedir(devs);
 
@@ -141,21 +139,19 @@ static void reset_device(struct usbentry *dev)
 	char path[PATH_MAX];
 
 	snprintf(path, sizeof(path) - 1, "/dev/bus/usb/%03d/%03d",
-	         dev->bus_num, dev->dev_num);
+		dev->bus_num, dev->dev_num);
 
 	printf("Resetting %s ... ", dev->product_name);
 
-	if ((fd = open(path, O_WRONLY)) > -1)
-	{
+	fd = open(path, O_WRONLY);
+	if (fd  > -1) {
 		if (ioctl(fd, USBDEVFS_RESET, 0) < 0)
 			printf("failed [%s]\n", strerror(errno));
 		else
 			printf("ok\n");
 
 		close(fd);
-	}
-	else
-	{
+	} else {
 		printf("can't open [%s]\n", strerror(errno));
 	}
 }
@@ -167,19 +163,12 @@ int main(int argc, char **argv)
 	struct usbentry *dev;
 
 	if ((argc == 2) && (sscanf(argv[1], "%3d/%3d", &id1, &id2) == 2))
-	{
 		dev = find_device(&id1, &id2, NULL, NULL, NULL);
-	}
 	else if ((argc == 2) && (sscanf(argv[1], "%4x:%4x", &id1, &id2) == 2))
-	{
 		dev = find_device(NULL, NULL, &id1, &id2, NULL);
-	}
 	else if ((argc == 2) && strlen(argv[1]) < 128)
-	{
 		dev = find_device(NULL, NULL, NULL, NULL, argv[1]);
-	}
-	else
-	{
+	else {
 		printf("Usage:\n"
 		       "  usbreset PPPP:VVVV - reset by product and vendor id\n"
 		       "  usbreset BBB/DDD   - reset by bus and device number\n"
@@ -189,8 +178,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	if (!dev)
-	{
+	if (!dev) {
 		fprintf(stderr, "No such device found\n");
 		return 1;
 	}
