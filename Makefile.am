@@ -39,8 +39,12 @@ EXTRA_DIST = \
 	lsusb.8.in \
 	usb-devices.1.in \
 	usb-devices \
-	lsusb.py \
+	lsusb.py.in \
 	usbutils.pc.in
+
+lsusb.py: $(srcdir)/lsusb.py.in
+	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
+	chmod 755 $@
 
 lsusb.8: $(srcdir)/lsusb.8.in
 	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
@@ -55,6 +59,7 @@ usbutils.pc: $(srcdir)/usbutils.pc.in
 	sed 's|@usbids@|$(datadir)/usb.ids|g;s|@VERSION[@]|$(VERSION)|g' $< >$@
 
 DISTCLEANFILES = \
+	lsusb.py \
 	lsusb.8 \
 	usb-devices.1 \
 	usbutils.pc

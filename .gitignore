@@ -16,8 +16,8 @@ install-sh
 missing
 compile
 lsusb
+lsusb.py
 lsusb.8
-update-usbids.sh
 usbutils.pc
 usb-devices.1
 *.gz

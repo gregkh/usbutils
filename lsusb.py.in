@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# lsusb.py
+# lsusb-VERSION.py
 # Displays your USB devices in reasonable form.
 # (c) Kurt Garloff <garloff@suse.de>, 2/2009, GPL v2 or v3.
 # (c) Kurt Garloff <kurt@garloff.de>, 9/2013, GPL v2 or v3.
@@ -18,7 +18,7 @@ warnsort = False
 showeps = False
 
 prefix = "/sys/bus/usb/devices/"
-usbids = "/usr/share/usb.ids"
+usbids = "@usbids@"
 
 esc = chr(27)
 norm = esc + "[0;0m"

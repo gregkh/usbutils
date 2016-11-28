@@ -33,7 +33,6 @@ AC_MSG_RESULT([
 	mandir:                 ${mandir}
 
 	usb.ids:                ${datadir}/usb.ids
-	zlib:                   ${USE_ZLIB}
 
 	compiler:               ${CC}
 	cflags:                 ${CFLAGS}
