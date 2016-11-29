@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# -Wsign-compare -Wtype-limits
 # Warnings enabled
 CFLAGS="-Wall -Wextra"
 
@@ -7,8 +8,11 @@ CFLAGS+=" -Wbad-function-cast"
 #CFLAGS+=" -Wcast-align"
 CFLAGS+=" -Wchar-subscripts"
 CFLAGS+=" -Wempty-body"
-CFLAGS+=" -Wformat"
-CFLAGS+=" -Wformat-security"
+CFLAGS+=" -Wformat=2"
+#CFLAGS+=" -Wformat"
+#CFLAGS+=" -Wformat-nonliteral"
+#CFLAGS+=" -Wformat-security"
+#CFLAGS+=" -Wformat-y2k"
 CFLAGS+=" -Winit-self"
 CFLAGS+=" -Winline"
 CFLAGS+=" -Wmissing-declarations"
@@ -24,8 +28,11 @@ CFLAGS+=" -Wswitch-enum"
 CFLAGS+=" -Wundef"
 CFLAGS+=" -Wuninitialized"
 CFLAGS+=" -Wunused"
+CFLAGS+=" -Wunused-variable"
+CFLAGS+=" -Wsign-compare"
+CFLAGS+=" -Wtype-limits"
 CFLAGS+=" -Wwrite-strings"
-CFLAGS+=" -fdiagnostics-color=auto"
+# clang only: CFLAGS+=" -fdiagnostics-color=auto"
 
 # warnings disabled on purpose
 CFLAGS+=" -Wno-unused-parameter"
@@ -34,8 +41,11 @@ CFLAGS+=" -Wno-deprecated-declarations"
 
 # should be removed and the code fixed
 CFLAGS+=" -Wno-incompatible-pointer-types-discards-qualifiers"
+CFLAGS+=" -Wno-missing-field-initializers"
 
-# fails on warning
-CFLAGS+=" -Werror"
+# fails on warning -- leave it diesabled; not all flags are
+# compatible with both compiler (gcc/clang)
+#CFLAGS+=" -Werror"
 
-./autogen.sh
+export CFLAGS
+./autogen.sh "$@"
