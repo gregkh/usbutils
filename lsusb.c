@@ -112,7 +112,6 @@
 
 #define BILLBOARD_MAX_NUM_ALT_MODE	(0x34)
 
-static const char procbususb[] = "/proc/bus/usb";
 static unsigned int verblevel = VERBLEVEL_DEFAULT;
 static int do_report_desc = 1;
 static const char * const encryption_type[] = {

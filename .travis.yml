@@ -25,5 +25,5 @@ addons:
             - ubuntu-toolchain-r-test
 
 script:
-    - ./autogen.sh && make -j4
+    - ./autogen.sh && make -j4 && make maintainer-clean
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./travis-autogen.sh && make -j4; fi
