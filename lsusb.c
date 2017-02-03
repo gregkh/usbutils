@@ -2116,6 +2116,14 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 		"Roll (Absolute)", "Roll (Relative)", "Reserved", "Reserved", "Focus, Auto",
 		"Privacy"
 	};
+	static const char * const enctrlnames[] = {
+		"Select Layer", "Profile and Toolset", "Video Resolution", "Minimum Frame Interval",
+		"Slice Mode", "Rate Control Mode", "Average Bit Rate", "CPB Size", "Peak Bit Rate",
+		"Quantization Parameter", "Synchronization and Long-Term Reference Frame",
+		"Long-Term Buffer", "Picture Long-Term Reference", "LTR Validation",
+		"Level IDC", "SEI Message", "QP Range", "Priority ID", "Start or Stop Layer/View",
+		"Error Resiliency"
+	};
 	static const char * const stdnames[] = {
 		"None", "NTSC - 525/60", "PAL - 625/50", "SECAM - 625/50",
 		"NTSC - 625/50", "PAL - 525/60" };
@@ -2261,6 +2269,30 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 		printf("        iExtension          %5u %s\n",
 		       buf[23+p+n], term);
 		dump_junk(buf, "        ", 24+p+n);
+		break;
+
+	case 0x07: /* ENCODING UNIT */
+		printf("(ENCODING UNIT)\n");
+		term = get_dev_string(dev, buf[5]);
+		if (buf[0] < 13)
+			printf("      Warning: Descriptor too short\n");
+		printf("        bUnitID             %5u\n"
+		       "        bSourceID           %5u\n"
+		       "        iEncoding           %5u %s\n"
+		       "        bControlSize        %5u\n",
+		       buf[3], buf[4], buf[5], term, buf[6]);
+		for (i = 0; i < 3; i++)
+			ctrls = (ctrls << 8) | buf[9-i];
+		printf("        bmControls              0x%08x\n", ctrls);
+		for (i = 0; i < 20;  i++)
+			if ((ctrls >> i) & 1)
+				printf("          %s\n", enctrlnames[i]);
+		for (i = 0; i< 3; i++)
+			ctrls = (ctrls << 8) | buf[12-i];
+		printf("        bmControlsRuntime       0x%08x\n", ctrls);
+		for (i = 0; i < 20; i++)
+			if ((ctrls >> i) & 1)
+				printf("          %s\n", enctrlnames[i]);
 		break;
 
 	default:
