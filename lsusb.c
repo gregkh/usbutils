@@ -103,6 +103,10 @@
 #define USB_AUDIO_CLASS_2		0x20
 #endif
 
+#ifndef USB_VIDEO_PROTOCOL_15
+#define USB_VIDEO_PROTOCOL_15		0x01
+#endif
+
 #define VERBLEVEL_DEFAULT 0	/* 0 gives lspci behaviour; 1, lsusb-0.9 */
 
 #define CTRL_RETRIES	 2
@@ -145,7 +149,7 @@ static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interfa
 static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigned char *buf, int protocol);
 static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsigned char *buf, int protocol);
 static void dump_midistreaming_interface(libusb_device_handle *dev, const unsigned char *buf);
-static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigned char *buf);
+static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigned char *buf, int protocol);
 static void dump_videostreaming_interface(const unsigned char *buf);
 static void dump_dfu_interface(const unsigned char *buf);
 static char *dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, char *indent);
@@ -553,7 +557,7 @@ static void dump_altsetting(libusb_device_handle *dev, const struct libusb_inter
 				case USB_CLASS_VIDEO:
 					switch (interface->bInterfaceSubClass) {
 					case 1:
-						dump_videocontrol_interface(dev, buf);
+						dump_videocontrol_interface(dev, buf, interface->bInterfaceProtocol);
 						break;
 					case 2:
 						dump_videostreaming_interface(buf);
@@ -2099,14 +2103,14 @@ static void dump_midistreaming_endpoint(const unsigned char *buf)
  * Video Class descriptor dump
  */
 
-static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigned char *buf)
+static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigned char *buf, int protocol)
 {
 	static const char * const ctrlnames[] = {
 		"Brightness", "Contrast", "Hue", "Saturation", "Sharpness", "Gamma",
 		"White Balance Temperature", "White Balance Component", "Backlight Compensation",
 		"Gain", "Power Line Frequency", "Hue, Auto", "White Balance Temperature, Auto",
 		"White Balance Component, Auto", "Digital Multiplier", "Digital Multiplier Limit",
-		"Analog Video Standard", "Analog Video Lock Status"
+		"Analog Video Standard", "Analog Video Lock Status", "Contrast, Auto"
 	};
 	static const char * const camctrlnames[] = {
 		"Scanning Mode", "Auto-Exposure Mode", "Auto-Exposure Priority",
@@ -2114,7 +2118,7 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 		"Focus (Relative)", "Iris (Absolute)", "Iris (Relative)", "Zoom (Absolute)",
 		"Zoom (Relative)", "PanTilt (Absolute)", "PanTilt (Relative)",
 		"Roll (Absolute)", "Roll (Relative)", "Reserved", "Reserved", "Focus, Auto",
-		"Privacy"
+		"Privacy", "Focus, Simple", "Window", "Region of Interest"
 	};
 	static const char * const enctrlnames[] = {
 		"Select Layer", "Profile and Toolset", "Video Resolution", "Minimum Frame Interval",
@@ -2183,9 +2187,16 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 			for (i = 0; i < 3 && i < buf[14]; i++)
 				ctrls = (ctrls << 8) | buf[8+n-i-1];
 			printf("        bmControls           0x%08x\n", ctrls);
-			for (i = 0; i < 19; i++)
-				if ((ctrls >> i) & 1)
-					printf("          %s\n", camctrlnames[i]);
+			if (protocol == USB_VIDEO_PROTOCOL_15) {
+				for (i = 0; i < 22; i++)
+					if ((ctrls >> i) & 1)
+						printf("          %s\n", camctrlnames[i]);
+			}
+			else {
+				for (i = 0; i < 19; i++)
+					if ((ctrls >> i) & 1)
+						printf("          %s\n", camctrlnames[i]);
+			}
 		}
 		dump_junk(buf, "        ", 8+n);
 		break;
@@ -2238,9 +2249,16 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 		for (i = 0; i < 3 && i < n; i++)
 			ctrls = (ctrls << 8) | buf[8+n-i-1];
 		printf("        bmControls     0x%08x\n", ctrls);
-		for (i = 0; i < 18; i++)
-			if ((ctrls >> i) & 1)
-				printf("          %s\n", ctrlnames[i]);
+		if (protocol == USB_VIDEO_PROTOCOL_15) {
+			for (i = 0; i < 19; i++)
+				if ((ctrls >> i) & 1)
+					printf("          %s\n", ctrlnames[i]);
+		}
+		else {
+			for (i = 0; i < 18; i++)
+				if ((ctrls >> i) & 1)
+					printf("          %s\n", ctrlnames[i]);
+		}
 		stds = buf[9+n];
 		printf("        iProcessing         %5u %s\n"
 		       "        bmVideoStandards     0x%2x\n", buf[8+n], term, stds);
