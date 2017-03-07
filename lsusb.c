@@ -2261,7 +2261,7 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 		}
 		stds = buf[9+n];
 		printf("        iProcessing         %5u %s\n"
-		       "        bmVideoStandards     0x%2x\n", buf[8+n], term, stds);
+		       "        bmVideoStandards     0x%02x\n", buf[8+n], term, stds);
 		for (i = 0; i < 6; i++)
 			if ((stds >> i) & 1)
 				printf("          %s\n", stdnames[i]);
