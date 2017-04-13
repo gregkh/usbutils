@@ -2993,6 +2993,12 @@ static void dump_hid_device(libusb_device_handle *dev,
 		return;
 	}
 
+	/* To display about a report descriptor properly, we need detach the kernel
+	 * driver on an interface when claiming the interface, and attach it when
+	 * releasing the interface. This function automatically do it.
+	 */
+	libusb_set_auto_detach_kernel_driver(dev, 1);
+
 	for (i = 0; i < buf[5]; i++) {
 		/* we are just interested in report descriptors*/
 		if (buf[6+3*i] != LIBUSB_DT_REPORT)
