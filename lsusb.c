@@ -2364,7 +2364,7 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 		for (i = 0; i < p; i++)
 			printf(
 			"        bmaControls(%2u)                 %5u\n",
-				i, buf[13+p*n]);
+				i, buf[13+i*n]);
 		dump_junk(buf, "        ", 13+p*n);
 		break;
 
@@ -2383,7 +2383,7 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 		for (i = 0; i < p; i++)
 			printf(
 			"        bmaControls(%2u)             %5u\n",
-				i, buf[9+p*n]);
+				i, buf[9+i*n]);
 		dump_junk(buf, "        ", 9+p*n);
 		break;
 
