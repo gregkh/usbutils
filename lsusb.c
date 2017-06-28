@@ -2401,7 +2401,7 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 			       "        wHeight(%2u)                     %5u\n",
 			       i, buf[5+4*i] | (buf[6+4*i] << 8),
 			       i, buf[7+4*i] | (buf[8+4*i] << 8));
-		printf("        bNumCompressionPatterns           %3u\n", n);
+		printf("        bNumCompressionPatterns           %3u\n", m);
 		for (i = 0; i < m; i++)
 			printf("        bCompression(%2u)                %5u\n",
 			       i, buf[6+4*n+i]);
