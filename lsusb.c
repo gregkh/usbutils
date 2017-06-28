@@ -2205,7 +2205,7 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 		printf("(OUTPUT_TERMINAL)\n");
 		term = get_dev_string(dev, buf[8]);
 		termt = buf[4] | (buf[5] << 8);
-		get_audioterminal_string(termts, sizeof(termts), termt);
+		get_videoterminal_string(termts, sizeof(termts), termt);
 		if (buf[0] < 9)
 			printf("      Warning: Descriptor too short\n");
 		printf("        bTerminalID         %5u\n"
