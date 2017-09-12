@@ -116,6 +116,11 @@
 
 #define BILLBOARD_MAX_NUM_ALT_MODE	(0x34)
 
+/* from WebUSB specification : https://wicg.github.io/webusb/ */
+#define WEBUSB_GUID		"{3408b638-09a9-47a0-8bfd-a0768815b665}"
+#define WEBUSB_GET_URL		0x02
+#define USB_DT_WEBUSB_URL	0x03
+
 static unsigned int verblevel = VERBLEVEL_DEFAULT;
 static int do_report_desc = 1;
 static const char * const encryption_type[] = {
@@ -3848,11 +3853,57 @@ static void dump_container_id_device_capability_desc(unsigned char *buf)
 			get_guid(&buf[4]));
 }
 
-static void dump_platform_device_capability_desc(unsigned char *buf)
+static char *get_webusb_url(libusb_device_handle *fd, u_int8_t vendor_req, u_int8_t id)
+{
+	unsigned char url_buf[255];
+	char *scheme;
+	char *url, *chr;
+	unsigned char i;
+	int ret;
+
+	ret = usb_control_msg(fd,
+			LIBUSB_ENDPOINT_IN | LIBUSB_RECIPIENT_DEVICE | LIBUSB_REQUEST_TYPE_VENDOR,
+			vendor_req, id, WEBUSB_GET_URL,
+			url_buf, sizeof(url_buf), CTRL_TIMEOUT);
+	if (ret <= 0)
+		return strdup("");
+	else if (url_buf[0] <= 3 || url_buf[1] != USB_DT_WEBUSB_URL || ret != url_buf[0])
+		return strdup("");
+
+	switch (url_buf[2]) {
+	case 0:
+		scheme = "http://";
+		break;
+	case 1:
+		scheme = "https://";
+		break;
+	case 255:
+		scheme = "";
+		break;
+	default:
+		fprintf(stderr, "Bad URL scheme.\n");
+		return strdup("");
+	}
+	url = malloc(strlen(scheme) + (url_buf[0] - 3)  + 1);
+	if (!url)
+		return strdup("");
+	strcpy(url, scheme);
+	chr = url + strlen(scheme);
+	for (i = 3; i < url_buf[0]; i++)
+		/* crude UTF-8 to ASCII conversion */
+		if (url_buf[i] < 0x80)
+			*chr++ = url_buf[i];
+	*chr = '\0';
+
+	return url;
+}
+
+static void dump_platform_device_capability_desc(libusb_device_handle *fd, unsigned char *buf)
 {
 	unsigned char desc_len = buf[0];
 	unsigned char cap_data_len = desc_len - 20;
 	unsigned char i;
+	const char *guid;
 	if (desc_len < 20) {
 		fprintf(stderr, "  Bad Platform Device Capability descriptor.\n");
 		return;
@@ -3863,8 +3914,21 @@ static void dump_platform_device_capability_desc(unsigned char *buf)
 			"    bDevCapabilityType  %5u\n"
 			"    bReserved           %5u\n",
 			buf[0], buf[1], buf[2], buf[3]);
-	printf("    PlatformCapabilityUUID    %s\n",
-			get_guid(&buf[4]));
+	guid = get_guid(&buf[4]);
+	printf("    PlatformCapabilityUUID    %s\n", guid);
+
+	if (!strcmp(WEBUSB_GUID , guid) && desc_len == 24) {
+		/* WebUSB platform descriptor */
+		char *url = get_webusb_url(fd, buf[22], buf[23]);
+		printf("      WebUSB:\n"
+				"        bcdVersion   %2x.%02x\n"
+				"        bVendorCode  %5u\n"
+				"        iLandingPage %5u %s\n",
+				buf[21], buf[20], buf[22], buf[23], url);
+		free(url);
+		return;
+	}
+
 	for (i = 0; i < cap_data_len; i++) {
 		printf("    CapabilityData[%u]    0x%02x\n", i, buf[20 + i]);
 	}
@@ -4027,7 +4091,7 @@ static void dump_bos_descriptor(libusb_device_handle *fd)
 			dump_container_id_device_capability_desc(buf);
 			break;
 		case USB_DC_PLATFORM:
-			dump_platform_device_capability_desc(buf);
+			dump_platform_device_capability_desc(fd, buf);
 			break;
 		case USB_DC_BILLBOARD:
 			dump_billboard_device_capability_desc(fd, buf);
