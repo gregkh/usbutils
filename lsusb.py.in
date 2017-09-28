@@ -585,7 +585,7 @@ def main(argv):
 		fix_usbclass()
 	except:
 		print >>sys.stderr, " WARNING: Failure to read usb.ids"
-		print >>sys.stderr, sys.exc_info()
+		#print >>sys.stderr, sys.exc_info()
 	read_usb()
 
 # Entry point
