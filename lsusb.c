@@ -2205,7 +2205,7 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 		printf("(OUTPUT_TERMINAL)\n");
 		term = get_dev_string(dev, buf[8]);
 		termt = buf[4] | (buf[5] << 8);
-		get_audioterminal_string(termts, sizeof(termts), termt);
+		get_videoterminal_string(termts, sizeof(termts), termt);
 		if (buf[0] < 9)
 			printf("      Warning: Descriptor too short\n");
 		printf("        bTerminalID         %5u\n"
@@ -2364,7 +2364,7 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 		for (i = 0; i < p; i++)
 			printf(
 			"        bmaControls(%2u)                 %5u\n",
-				i, buf[13+p*n]);
+				i, buf[13+i*n]);
 		dump_junk(buf, "        ", 13+p*n);
 		break;
 
@@ -2383,7 +2383,7 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 		for (i = 0; i < p; i++)
 			printf(
 			"        bmaControls(%2u)             %5u\n",
-				i, buf[9+p*n]);
+				i, buf[9+i*n]);
 		dump_junk(buf, "        ", 9+p*n);
 		break;
 
@@ -2401,7 +2401,7 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 			       "        wHeight(%2u)                     %5u\n",
 			       i, buf[5+4*i] | (buf[6+4*i] << 8),
 			       i, buf[7+4*i] | (buf[8+4*i] << 8));
-		printf("        bNumCompressionPatterns           %3u\n", n);
+		printf("        bNumCompressionPatterns           %3u\n", m);
 		for (i = 0; i < m; i++)
 			printf("        bCompression(%2u)                %5u\n",
 			       i, buf[6+4*n+i]);
