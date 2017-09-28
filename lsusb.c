@@ -771,6 +771,18 @@ static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interfa
 				case LIBUSB_CLASS_MASS_STORAGE:
 					dump_pipe_desc(buf);
 					break;
+				case USB_CLASS_VIDEO:
+					switch (interface->bInterfaceSubClass) {
+					case 1:
+						dump_videocontrol_interface(dev, buf, interface->bInterfaceProtocol);
+						break;
+					case 2:
+						dump_videostreaming_interface(buf);
+						break;
+					default:
+						goto dump;
+					}
+				        break;
 				default:
 					printf("        INTERFACE CLASS: ");
 					dump_bytes(buf, buf[0]);
@@ -807,7 +819,7 @@ static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interfa
 				break;
 			default:
 				/* often a misplaced class descriptor */
-				printf("        ** UNRECOGNIZED: ");
+dump:				printf("        ** UNRECOGNIZED: ");
 				dump_bytes(buf, buf[0]);
 				break;
 			}
