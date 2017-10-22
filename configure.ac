@@ -1,5 +1,5 @@
 AC_INIT([usbutils],
-	[008],
+	[009],
 	[linux-usb@vger.kernel.org])
 AC_PREREQ(2.60)
 AM_INIT_AUTOMAKE([check-news foreign 1.9 dist-bzip2])

@@ -1,3 +1,83 @@
+usbutils 009
+============
+
+Bjørn Mork (1):
+      usbreset: coding style
+
+Emmanuele Bassi (1):
+      Don't use C99-ism
+
+Greg Kroah-Hartman (22):
+      usbhid-dump: update submodule to latest version
+      add usbreset.c example program
+      update usbhid-dump to latest
+      lsusb.py: Don't dump a trace dump if usb.ids is not present
+
+Grueninger, Tobias (1):
+      USB: usb-devices: Interface number can be a string
+
+Heinrich Schuchardt (1):
+      autogen.sh: checkout usbhid-dump
+
+Jaejoong Kim (4):
+      lsusb : add support for the Encoding Unit Desc for uvc 1.5 device
+      lsusb: fix alignment for Video Streaming interface desc
+      lsusb: parse additional control fileds in USB video control interfaces for UVC1.5
+      lsusb: proper display hexadecimal value for UVC control interface
+
+Jakub Wilk (1):
+      Fix typos
+
+Jo-Philipp Wich (1):
+      usbreset.c: import usability improvements from OpenWrt
+
+Justin McBride (2):
+      Update lsusb.c
+      Un-indent bVariableSize for Frame-Based Format descriptors
+
+Kylie McClain (1):
+      Makefile: install pkgconfig file to arch-dependent location
+
+Mathias Nyman (2):
+      lsusb: Allocate the BOS descriptor buffer dynamically
+      lsusb: Add support for the USB 3.1 SuperSpeedPlus device capability desc
+
+Muthu M (2):
+      lsusb: Fix issue with lengthy string descriptors
+      lsusb: Added support for Billboard Capability descriptor
+
+Nikolai Kondrashov (2):
+      Update usbhid-dump repo URL
+      Update usbhid-dump to v1.4
+
+Stephan Linz (7):
+      travis-ci: add control files borrowed from libusb
+      configure: remove summary about unused USE_ZLIB
+      drop unused input file for usb.ids update script
+      substitute usb.id location in lsusb Python script
+      travis-ci: cleanup before second run
+      travis-ci: rework travis-autogen.sh
+      lsusb: remove unused variable procbususb
+
+Tobias Klauser (4):
+      lsusb: Report correct MaxPower for USB 3.0 devices
+      lsusb: Request proper descriptor type for USB 3.1
+      lsusb: Store link state descriptions without preceding space
+      build: Request at least libusb 1.0.9
+
+Torleiv Sundre (2):
+      Added support for Platform Device Capability descriptor
+      lsusb: change endianness of first three fields when printing UUID/GUIDs.
+
+Vianney le Clément de Saint-Marcq (3):
+      lsusb: Fix UVC STILL_IMAGE_FRAME descriptor
+      lsusb: Fix UVC VideoStreaming interface header descriptor
+      lsusb: Fix UVC OUTPUT_TERMINAL descriptor
+
+Vincent Palatin (1):
+      lsusb: print WebUSB platform descriptor
+
+
 usbutils 008
 ============
 
