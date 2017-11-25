@@ -40,7 +40,8 @@ EXTRA_DIST = \
 	usb-devices.1.in \
 	usb-devices \
 	lsusb.py.in \
-	usbutils.pc.in
+	usbutils.pc.in \
+	usbreset.c
 
 lsusb.py: $(srcdir)/lsusb.py.in
 	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
