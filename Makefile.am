@@ -40,7 +40,6 @@ EXTRA_DIST = \
 	usb-devices.1.in \
 	usb-devices \
 	lsusb.py.in \
-	usbutils.pc.in \
 	usbreset.c
 
 lsusb.py: $(srcdir)/lsusb.py.in
@@ -53,17 +52,10 @@ lsusb.8: $(srcdir)/lsusb.8.in
 usb-devices.1: $(srcdir)/usb-devices.1.in
 	sed 's|VERSION|$(VERSION)|g' $< >$@
 
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = usbutils.pc
-
-usbutils.pc: $(srcdir)/usbutils.pc.in
-	sed 's|@usbids@|$(datadir)/usb.ids|g;s|@VERSION[@]|$(VERSION)|g' $< >$@
-
 DISTCLEANFILES = \
 	lsusb.py \
 	lsusb.8 \
-	usb-devices.1 \
-	usbutils.pc
+	usb-devices.1
 
 distclean-local:
 	rm -rf autom4te.cache
