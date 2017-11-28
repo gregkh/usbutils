@@ -106,6 +106,11 @@
 #define USB_AUDIO_CLASS_2		0x20
 #endif
 
+/* USB DCD for Audio Devices Release 3.0: Section A.6, pp139 */
+#ifndef USB_AUDIO_CLASS_3
+#define USB_AUDIO_CLASS_3		0x30
+#endif
+
 #ifndef USB_VIDEO_PROTOCOL_15
 #define USB_VIDEO_PROTOCOL_15		0x01
 #endif
@@ -890,11 +895,12 @@ static void dump_audio_subtype(libusb_device_handle *dev,
                                int protocol,
                                unsigned int indent)
 {
-	static const char * const strings[] = { "UAC1", "UAC2" };
+	static const char * const strings[] = { "UAC1", "UAC2", "UAC3" };
 	unsigned int idx = 0;
 
 	switch (protocol) {
 	case USB_AUDIO_CLASS_2: idx = 1; break;
+	case USB_AUDIO_CLASS_3: idx = 2; break;
 	}
 
 	printf("(%s)\n", name);
@@ -933,25 +939,28 @@ enum uac_interface_subtype {
 
 
 /*
- * UAC1, and UAC2 define bDescriptorSubtype differently for the
+ * UAC1, UAC2, and UAC3 define bDescriptorSubtype differently for the
  * AudioControl interface, so we need to do some ugly remapping:
  *
- * val  | UAC1            | UAC2
- * -----|-----------------|----------------------
- * 0x00 | AC UNDEFINED    | AC UNDEFINED
- * 0x01 | HEADER          | HEADER
- * 0x02 | INPUT_TERMINAL  | INPUT_TERMINAL
- * 0x03 | OUTPUT_TERMINAL | OUTPUT_TERMINAL
- * 0x04 | MIXER_UNIT      | MIXER_UNIT
- * 0x05 | SELECTOR_UNIT   | SELECTOR_UNIT
- * 0x06 | FEATURE_UNIT    | FEATURE_UNIT
- * 0x07 | PROCESSING_UNIT | EFFECT_UNIT
- * 0x08 | EXTENSION_UNIT  | PROCESSING_UNIT
- * 0x09 | -               | EXTENSION_UNIT
- * 0x0a | -               | CLOCK_SOURCE
- * 0x0b | -               | CLOCK_SELECTOR
- * 0x0c | -               | CLOCK_MULTIPLIER
- * 0x0d | -               | SAMPLE_RATE_CONVERTER
+ * val  | UAC1            | UAC2                  | UAC3
+ * -----|-----------------|-----------------------|---------------------
+ * 0x00 | AC UNDEFINED    | AC UNDEFINED          | AC UNDEFINED
+ * 0x01 | HEADER          | HEADER                | HEADER
+ * 0x02 | INPUT_TERMINAL  | INPUT_TERMINAL        | INPUT_TERMINAL
+ * 0x03 | OUTPUT_TERMINAL | OUTPUT_TERMINAL       | OUTPUT_TERMINAL
+ * 0x04 | MIXER_UNIT      | MIXER_UNIT            | EXTENDED_TERMINAL
+ * 0x05 | SELECTOR_UNIT   | SELECTOR_UNIT         | MIXER_UNIT
+ * 0x06 | FEATURE_UNIT    | FEATURE_UNIT          | SELECTOR_UNIT
+ * 0x07 | PROCESSING_UNIT | EFFECT_UNIT           | FEATURE_UNIT
+ * 0x08 | EXTENSION_UNIT  | PROCESSING_UNIT       | EFFECT_UNIT
+ * 0x09 | -               | EXTENSION_UNIT        | PROCESSING_UNIT
+ * 0x0a | -               | CLOCK_SOURCE          | EXTENSION_UNIT
+ * 0x0b | -               | CLOCK_SELECTOR        | CLOCK_SOURCE
+ * 0x0c | -               | CLOCK_MULTIPLIER      | CLOCK_SELECTOR
+ * 0x0d | -               | SAMPLE_RATE_CONVERTER | CLOCK_MULTIPLIER
+ * 0x0e | -               | -                     | SAMPLE_RATE_CONVERTER
+ * 0x0f | -               | -                     | CONNECTORS
+ * 0x10 | -               | -                     | POWER_DOMAIN
  */
 static enum uac_interface_subtype get_uac_interface_subtype(unsigned char c, int protocol)
 {
@@ -978,6 +987,9 @@ static enum uac_interface_subtype get_uac_interface_subtype(unsigned char c, int
 		case 0x0c: return UAC_INTERFACE_SUBTYPE_CLOCK_MULTIPLIER;
 		case 0x0d: return UAC_INTERFACE_SUBTYPE_SAMPLE_RATE_CONVERTER;
 		}
+		break;
+	case USB_AUDIO_CLASS_3:
+		/* No mapping required */
 		break;
 	}
 
@@ -1051,6 +1063,10 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 
 	case UAC_INTERFACE_SUBTYPE_EFFECT_UNIT:
 		dump_audio_subtype(dev, "EFFECT_UNIT", desc_audio_ac_effect_unit, buf, protocol, 4);
+		break;
+
+	case UAC_INTERFACE_SUBTYPE_POWER_DOMAIN:
+		dump_audio_subtype(dev, "POWER_DOMAIN", desc_audio_ac_power_domain, buf, protocol, 4);
 		break;
 
 	default:
