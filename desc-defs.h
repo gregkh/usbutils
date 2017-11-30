@@ -43,6 +43,7 @@ enum desc_type {
 	DESC_BMCONTROL_1,    /**< UAC1 style bmControl field */
 	DESC_BMCONTROL_2,    /**< UAC2/UAC3 style bmControl field */
 	DESC_STR_DESC_INDEX, /**< String index. */
+	DESC_CS_STR_DESC_ID, /**< UAC3 style class-specific string request. */
 	DESC_TERMINAL_STR,   /**< Audio terminal string. */
 	DESC_BITMAP_STRINGS, /**< Bitfield with string per bit. */
 	DESC_NUMBER_STRINGS, /**< Use for enum-style value to string. */
@@ -134,6 +135,8 @@ extern const struct desc * const desc_audio_ac_header[3];
 extern const struct desc * const desc_audio_ac_effect_unit[3];
 extern const struct desc * const desc_audio_ac_input_terminal[3];
 extern const struct desc * const desc_audio_ac_output_terminal[3];
+extern const struct desc * const desc_audio_ac_extended_terminal[3];
+extern const struct desc * const desc_audio_ac_power_domain[3];
 extern const struct desc * const desc_audio_ac_mixer_unit[3];
 extern const struct desc * const desc_audio_ac_selector_unit[3];
 extern const struct desc * const desc_audio_ac_processing_unit[3];

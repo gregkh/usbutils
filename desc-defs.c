@@ -61,9 +61,28 @@ static const char * const uac2_input_term_bmcontrols[] = {
 	NULL
 };
 
+/* USB DCD for Audio Devices Release 3.0: Section 4.5.2.1, Table 4-16, pp67 */
+static const char * const uac3_input_term_bmcontrols[] = {
+	"Insertion",
+	"Overload",
+	"Underflow",
+	"Overflow",
+	"Underflow",
+	NULL
+};
+
 static const char * const uac2_output_term_bmcontrols[] = {
 	"Copy Protect",
 	"Connector",
+	"Overload",
+	"Underflow",
+	"Overflow",
+	NULL
+};
+
+/* USB DCD for Audio Devices Release 3.0: Section 4.5.2.2, Table 4-17, pp69 */
+static const char * const uac3_output_term_bmcontrols[] = {
+	"Insertion",
 	"Overload",
 	"Underflow",
 	"Overflow",
@@ -77,9 +96,23 @@ static const char * const uac2_mixer_unit_bmcontrols[] = {
 	NULL
 };
 
+/* USB DCD for Audio Devices Release 3.0: Section 4.5.2.5, Table 4-29, pp79 */
+static const char * const uac3_mixer_unit_bmcontrols[] = {
+	"Underflow",
+	"Overflow",
+	NULL
+};
+
 static const char * const uac2_extension_unit_bmcontrols[] = {
 	"Enable",
 	"Cluster",
+	"Underflow",
+	"Overflow",
+	NULL
+};
+
+/* USB DCD for Audio Devices Release 3.0: Section 4.5.2.11, Table 4-42, pp91 */
+static const char * const uac3_extension_unit_bmcontrols[] = {
 	"Underflow",
 	"Overflow",
 	NULL
@@ -146,10 +179,18 @@ static const struct desc desc_audio_2_ac_header[] = {
 			.bmcontrol = uac2_interface_header_bmcontrols },
 	{ .field = NULL }
 };
+/** UAC3: 4.5.2 Class-Specific AC Interface Descriptor; Table 4-15. */
+static const struct desc desc_audio_3_ac_header[] = {
+	{ .field = "bCategory",    .size = 1, .type = DESC_CONSTANT },
+	{ .field = "wTotalLength", .size = 2, .type = DESC_NUMBER },
+	{ .field = "bmControls",   .size = 4, .type = DESC_BMCONTROL_2,
+			.bmcontrol = uac2_interface_header_bmcontrols },
+	{ .field = NULL }
+};
 const struct desc * const desc_audio_ac_header[3] = {
 	desc_audio_1_ac_header,
 	desc_audio_2_ac_header,
-	NULL, /* UAC3 not implemented yet */
+	desc_audio_3_ac_header,
 };
 
 /** UAC2: 4.7.2.10 Effect Unit Descriptor; Table 4-15. */
@@ -162,10 +203,20 @@ static const struct desc desc_audio_2_ac_effect_unit[] = {
 	{ .field = "iEffects",    .size = 1, .type = DESC_STR_DESC_INDEX },
 	{ .field = NULL }
 };
+/** UAC3: 4.5.2.9 Effect Unit Descriptor; Table 4-33. */
+static const struct desc desc_audio_3_ac_effect_unit[] = {
+	{ .field = "bUnitID",          .size = 1, .type = DESC_NUMBER },
+	{ .field = "wEffectType",      .size = 2, .type = DESC_CONSTANT },
+	{ .field = "bSourceID",        .size = 1, .type = DESC_CONSTANT },
+	{ .field = "bmaControls",      .size = 4, .type = DESC_BITMAP,
+			.array = { .array = true } },
+	{ .field = "wEffectsDescrStr", .size = 2, .type = DESC_CS_STR_DESC_ID },
+	{ .field = NULL }
+};
 const struct desc * const desc_audio_ac_effect_unit[3] = {
 	NULL, /* UAC1 not supported */
 	desc_audio_2_ac_effect_unit,
-	NULL, /* UAC3 not implemented yet */
+	desc_audio_3_ac_effect_unit,
 };
 
 
@@ -196,10 +247,24 @@ static const struct desc desc_audio_2_ac_input_terminal[] = {
 	{ .field = "iTerminal",       .size = 1, .type = DESC_STR_DESC_INDEX },
 	{ .field = NULL }
 };
+/** UAC3: 4.5.2.1 Input Terminal Descriptor; Table 4-16. */
+static const struct desc desc_audio_3_ac_input_terminal[] = {
+	{ .field = "bTerminalID",        .size = 1, .type = DESC_NUMBER },
+	{ .field = "wTerminalType",      .size = 2, .type = DESC_TERMINAL_STR },
+	{ .field = "bAssocTerminal",     .size = 1, .type = DESC_NUMBER },
+	{ .field = "bCSourceID",         .size = 1, .type = DESC_NUMBER },
+	{ .field = "bmControls",         .size = 4, .type = DESC_BMCONTROL_2,
+			.bmcontrol = uac3_input_term_bmcontrols },
+	{ .field = "wClusterDescrID",    .size = 2, .type = DESC_NUMBER },
+	{ .field = "wExTerminalDescrID", .size = 2, .type = DESC_NUMBER },
+	{ .field = "wConnectorsDescrID", .size = 2, .type = DESC_NUMBER },
+	{ .field = "wTerminalDescrStr",  .size = 2, .type = DESC_CS_STR_DESC_ID },
+	{ .field = NULL }
+};
 const struct desc * const desc_audio_ac_input_terminal[3] = {
 	desc_audio_1_ac_input_terminal,
 	desc_audio_2_ac_input_terminal,
-	NULL, /* UAC3 not implemented yet */
+	desc_audio_3_ac_input_terminal,
 };
 
 
@@ -224,10 +289,55 @@ static const struct desc desc_audio_2_ac_output_terminal[] = {
 	{ .field = "iTerminal",      .size = 1, .type = DESC_STR_DESC_INDEX },
 	{ .field = NULL }
 };
+/** UAC3: 4.5.2.2 Output Terminal Descriptor; Table 4-17. */
+static const struct desc desc_audio_3_ac_output_terminal[] = {
+	{ .field = "bTerminalID",        .size = 1, .type = DESC_NUMBER },
+	{ .field = "wTerminalType",      .size = 2, .type = DESC_TERMINAL_STR },
+	{ .field = "bAssocTerminal",     .size = 1, .type = DESC_NUMBER },
+	{ .field = "bSourceID",          .size = 1, .type = DESC_NUMBER },
+	{ .field = "bCSourceID",         .size = 1, .type = DESC_NUMBER },
+	{ .field = "bmControls",         .size = 4, .type = DESC_BMCONTROL_2,
+			.bmcontrol = uac3_output_term_bmcontrols },
+	{ .field = "wExTerminalDescrID", .size = 2, .type = DESC_NUMBER },
+	{ .field = "wConnectorsDescrID", .size = 2, .type = DESC_NUMBER },
+	{ .field = "wTerminalDescrStr",  .size = 2, .type = DESC_CS_STR_DESC_ID },
+	{ .field = NULL }
+};
 const struct desc * const desc_audio_ac_output_terminal[3] = {
 	desc_audio_1_ac_output_terminal,
 	desc_audio_2_ac_output_terminal,
-	NULL, /* UAC3 not implemented yet */
+	desc_audio_3_ac_output_terminal,
+};
+
+
+/** UAC3: 4.5.2.3.1 Extended Terminal Header Descriptor; Table 4-18. */
+static const struct desc desc_audio_3_ac_extended_terminal_header[] = {
+	{ .field = "wDescriptorID", .size = 2, .type = DESC_NUMBER },
+	{ .field = "bNrChannels",   .size = 1, .type = DESC_NUMBER },
+	{ .field = NULL }
+};
+const struct desc * const desc_audio_ac_extended_terminal[3] = {
+	NULL, /* UAC1 not supported */
+	NULL, /* UAC2 not supported */
+	desc_audio_3_ac_extended_terminal_header,
+};
+
+
+/** UAC3: 4.5.2.15 Power Domain Descriptor; Table 4-46. */
+static const struct desc desc_audio_3_ac_power_domain[] = {
+	{ .field = "bPowerDomainID",    .size = 1, .type = DESC_NUMBER },
+	{ .field = "waRecoveryTime(1)", .size = 2, .type = DESC_NUMBER },
+	{ .field = "waRecoveryTime(2)", .size = 2, .type = DESC_NUMBER },
+	{ .field = "bNrEntities",       .size = 1, .type = DESC_NUMBER },
+	{ .field = "baEntityID",        .size = 1, .type = DESC_NUMBER,
+			.array = { .array = true, .length_field1 = "bNrEntities" } },
+	{ .field = "wPDomainDescrStr",  .size = 2, .type = DESC_CS_STR_DESC_ID },
+	{ .field = NULL }
+};
+const struct desc * const desc_audio_ac_power_domain[3] = {
+	NULL, /* UAC1 not supported */
+	NULL, /* UAC2 not supported */
+	desc_audio_3_ac_power_domain,
 };
 
 
@@ -267,10 +377,24 @@ static const struct desc desc_audio_2_ac_mixer_unit[] = {
 	{ .field = "iMixer",         .size = 1, .type = DESC_STR_DESC_INDEX },
 	{ .field = NULL }
 };
+/** UAC3: 4.5.2.5 Mixer Unit Descriptor; Table 4-29. */
+static const struct desc desc_audio_3_ac_mixer_unit[] = {
+	{ .field = "bUnitID",        .size = 1, .type = DESC_NUMBER },
+	{ .field = "bNrInPins",      .size = 1, .type = DESC_NUMBER },
+	{ .field = "baSourceID",     .size = 1, .type = DESC_NUMBER,
+			.array = { .array = true, .length_field1 = "bNrInPins" } },
+	{ .field = "wClusterDescrID",.size = 2, .type = DESC_NUMBER },
+	{ .field = "bmMixerControls",.size = 1, .type = DESC_BITMAP,
+			.array = { .array = true } },
+	{ .field = "bmControls",     .size = 4, .type = DESC_BMCONTROL_2,
+			.bmcontrol = uac3_mixer_unit_bmcontrols },
+	{ .field = "wMixerDescrStr", .size = 2, .type = DESC_CS_STR_DESC_ID },
+	{ .field = NULL }
+};
 const struct desc * const desc_audio_ac_mixer_unit[3] = {
 	desc_audio_1_ac_mixer_unit,
 	desc_audio_2_ac_mixer_unit,
-	NULL, /* UAC3 not implemented yet */
+	desc_audio_3_ac_mixer_unit,
 };
 
 
@@ -294,10 +418,21 @@ static const struct desc desc_audio_2_ac_selector_unit[] = {
 	{ .field = "iSelector",  .size = 1, .type = DESC_STR_DESC_INDEX },
 	{ .field = NULL }
 };
+/** UAC3: 4.5.2.6 Selector Unit Descriptor; Table 4-30. */
+static const struct desc desc_audio_3_ac_selector_unit[] = {
+	{ .field = "bUnitID",           .size = 1, .type = DESC_NUMBER },
+	{ .field = "bNrInPins",         .size = 1, .type = DESC_NUMBER },
+	{ .field = "baSourceID",        .size = 1, .type = DESC_NUMBER,
+			.array = { .array = true, .length_field1 = "bNrInPins" } },
+	{ .field = "bmControls",        .size = 4, .type = DESC_BMCONTROL_2,
+			.bmcontrol = uac2_selector_bmcontrols },
+	{ .field = "wSelectorDescrStr", .size = 2, .type = DESC_CS_STR_DESC_ID },
+	{ .field = NULL }
+};
 const struct desc * const desc_audio_ac_selector_unit[3] = {
 	desc_audio_1_ac_selector_unit,
 	desc_audio_2_ac_selector_unit,
-	NULL, /* UAC3 not implemented yet */
+	desc_audio_3_ac_selector_unit,
 };
 
 
@@ -339,10 +474,22 @@ static const struct desc desc_audio_2_ac_processing_unit[] = {
 			.array = { .array = true } },
 	{ .field = NULL }
 };
+/** UAC3: 4.5.2.10 Processing Unit Descriptor; Table 4-38. */
+static const struct desc desc_audio_3_ac_processing_unit[] = {
+	{ .field = "bUnitID",             .size = 1, .type = DESC_NUMBER },
+	{ .field = "wProcessType",        .size = 2, .type = DESC_CONSTANT },
+	{ .field = "bNrInPins",           .size = 1, .type = DESC_NUMBER },
+	{ .field = "baSourceID",          .size = 1, .type = DESC_NUMBER,
+			.array = { .array = true, .length_field1 = "bNrInPins" } },
+	{ .field = "wProcessingDescrStr", .size = 2, .type = DESC_CS_STR_DESC_ID },
+	{ .field = "Process-specific",    .size = 1, .type = DESC_BITMAP,
+			.array = { .array = true } },
+	{ .field = NULL }
+};
 const struct desc * const desc_audio_ac_processing_unit[3] = {
 	desc_audio_1_ac_processing_unit,
 	desc_audio_2_ac_processing_unit,
-	NULL, /* UAC3 not implemented yet */
+	desc_audio_3_ac_processing_unit,
 };
 
 
@@ -365,10 +512,19 @@ static const struct desc desc_audio_2_ac_feature_unit[] = {
 	{ .field = "iFeature",    .size = 1, .type = DESC_STR_DESC_INDEX },
 	{ .field = NULL }
 };
+/** UAC3: 4.5.2.7 Feature Unit Descriptor; Table 4-31. */
+static const struct desc desc_audio_3_ac_feature_unit[] = {
+	{ .field = "bUnitID",          .size = 1, .type = DESC_NUMBER },
+	{ .field = "bSourceID",        .size = 1, .type = DESC_NUMBER },
+	{ .field = "bmaControls",      .size = 4, .type = DESC_BMCONTROL_2,
+			.bmcontrol = uac_feature_unit_bmcontrols, .array = { .array = true } },
+	{ .field = "wFeatureDescrStr", .size = 2, .type = DESC_CS_STR_DESC_ID },
+	{ .field = NULL }
+};
 const struct desc * const desc_audio_ac_feature_unit[3] = {
 	desc_audio_1_ac_feature_unit,
 	desc_audio_2_ac_feature_unit,
-	NULL, /* UAC3 not implemented yet */
+	desc_audio_3_ac_feature_unit,
 };
 
 
@@ -405,10 +561,23 @@ static const struct desc desc_audio_2_ac_extension_unit[] = {
 	{ .field = "iExtension",      .size = 1, .type = DESC_STR_DESC_INDEX },
 	{ .field = NULL }
 };
+/** UAC3: 4.5.2.11 Extension Unit Descriptor; Table 4-42. */
+static const struct desc desc_audio_3_ac_extension_unit[] = {
+	{ .field = "bUnitID",            .size = 1, .type = DESC_NUMBER },
+	{ .field = "wExtensionCode",     .size = 2, .type = DESC_CONSTANT },
+	{ .field = "bNrInPins",          .size = 1, .type = DESC_NUMBER },
+	{ .field = "baSourceID",         .size = 1, .type = DESC_NUMBER,
+			.array = { .array = true, .length_field1 = "bNrInPins" } },
+	{ .field = "wExtensionDescrStr", .size = 2, .type = DESC_CS_STR_DESC_ID },
+	{ .field = "bmControls",         .size = 4, .type = DESC_BMCONTROL_2,
+			.bmcontrol = uac3_extension_unit_bmcontrols },
+	{ .field = "wClusterDescrID",    .size = 2, .type = DESC_NUMBER },
+	{ .field = NULL }
+};
 const struct desc * const desc_audio_ac_extension_unit[3] = {
 	desc_audio_1_ac_extension_unit,
 	desc_audio_2_ac_extension_unit,
-	NULL, /* UAC3 not implemented yet */
+	desc_audio_3_ac_extension_unit,
 };
 
 
@@ -435,6 +604,16 @@ static void desc_snowflake_dump_uac2_clk_src_bmattr(
 			(value & 0x4) ? uac3_clk_src_bmattr[3] : "");
 }
 
+/** Special rendering function for UAC3 clock source bmAttributes */
+static void desc_snowflake_dump_uac3_clk_src_bmattr(
+		unsigned long long value,
+		unsigned int indent)
+{
+	printf(" %s clock %s\n",
+			uac3_clk_src_bmattr[(value & 0x1)],
+			uac3_clk_src_bmattr[0x2 | ((value & 0x2) >> 1)]);
+}
+
 /** UAC2: 4.7.2.1 Clock Source Descriptor; Table 4-6. */
 static const struct desc desc_audio_2_ac_clock_source[] = {
 	{ .field = "bClockID",       .size = 1, .type = DESC_CONSTANT },
@@ -446,10 +625,21 @@ static const struct desc desc_audio_2_ac_clock_source[] = {
 	{ .field = "iClockSource",   .size = 1, .type = DESC_STR_DESC_INDEX },
 	{ .field = NULL }
 };
+/** UAC3: 4.5.2.12 Clock Source Descriptor; Table 4-43. */
+static const struct desc desc_audio_3_ac_clock_source[] = {
+	{ .field = "bClockID",           .size = 1, .type = DESC_NUMBER },
+	{ .field = "bmAttributes",       .size = 1, .type = DESC_SNOWFLAKE,
+			.snowflake = desc_snowflake_dump_uac3_clk_src_bmattr },
+	{ .field = "bmControls",         .size = 4, .type = DESC_BMCONTROL_2,
+			.bmcontrol = uac2_clock_source_bmcontrols },
+	{ .field = "bReferenceTerminal", .size = 1, .type = DESC_NUMBER },
+	{ .field = "wClockSourceStr",    .size = 2, .type = DESC_CS_STR_DESC_ID },
+	{ .field = NULL }
+};
 const struct desc * const desc_audio_ac_clock_source[3] = {
 	NULL, /* UAC1 not supported */
 	desc_audio_2_ac_clock_source,
-	NULL, /* UAC3 not implemented yet */
+	desc_audio_3_ac_clock_source,
 };
 
 
@@ -464,10 +654,21 @@ static const struct desc desc_audio_2_ac_clock_selector[] = {
 	{ .field = "iClockSelector", .size = 1, .type = DESC_STR_DESC_INDEX },
 	{ .field = NULL }
 };
+/** UAC3: 4.5.2.13 Clock Selector Descriptor; Table 4-44. */
+static const struct desc desc_audio_3_ac_clock_selector[] = {
+	{ .field = "bClockID",           .size = 1, .type = DESC_NUMBER },
+	{ .field = "bNrInPins",          .size = 1, .type = DESC_NUMBER },
+	{ .field = "baCSourceID",        .size = 1, .type = DESC_NUMBER,
+			.array = { .array = true, .length_field1 = "bNrInPins" } },
+	{ .field = "bmControls",         .size = 4, .type = DESC_BMCONTROL_2,
+			.bmcontrol = uac2_clock_selector_bmcontrols },
+	{ .field = "wCSelectorDescrStr", .size = 2, .type = DESC_CS_STR_DESC_ID },
+	{ .field = NULL }
+};
 const struct desc * const desc_audio_ac_clock_selector[3] = {
 	NULL, /* UAC1 not supported */
 	desc_audio_2_ac_clock_selector,
-	NULL, /* UAC3 not implemented yet */
+	desc_audio_3_ac_clock_selector,
 };
 
 
@@ -480,10 +681,19 @@ static const struct desc desc_audio_2_ac_clock_multiplier[] = {
 	{ .field = "iClockMultiplier", .size = 1, .type = DESC_STR_DESC_INDEX },
 	{ .field = NULL }
 };
+/** UAC3: 4.5.2.14 Clock Multiplier Descriptor; Table 4-45. */
+static const struct desc desc_audio_3_ac_clock_multiplier[] = {
+	{ .field = "bClockID",             .size = 1, .type = DESC_NUMBER },
+	{ .field = "bCSourceID",           .size = 1, .type = DESC_NUMBER },
+	{ .field = "bmControls",           .size = 4, .type = DESC_BMCONTROL_2,
+			.bmcontrol = uac2_clock_multiplier_bmcontrols },
+	{ .field = "wCMultiplierDescrStr", .size = 2, .type = DESC_CS_STR_DESC_ID },
+	{ .field = NULL }
+};
 const struct desc * const desc_audio_ac_clock_multiplier[3] = {
 	NULL, /* UAC1 not supported */
 	desc_audio_2_ac_clock_multiplier,
-	NULL, /* UAC3 not implemented yet */
+	desc_audio_3_ac_clock_multiplier,
 };
 
 
@@ -496,16 +706,31 @@ static const struct desc desc_audio_2_ac_sample_rate_converter[] = {
 	{ .field = "iSRC",          .size = 1, .type = DESC_STR_DESC_INDEX },
 	{ .field = NULL }
 };
+/** UAC3: 4.5.2.8 Sampling Rate Converter Descriptor; Table 4-32. */
+static const struct desc desc_audio_3_ac_sample_rate_converter[] = {
+	{ .field = "bUnitID",       .size = 1, .type = DESC_NUMBER },
+	{ .field = "bSourceID",     .size = 1, .type = DESC_NUMBER },
+	{ .field = "bCSourceInID",  .size = 1, .type = DESC_NUMBER },
+	{ .field = "bCSourceOutID", .size = 1, .type = DESC_NUMBER },
+	{ .field = "wSRCDescrStr",  .size = 2, .type = DESC_CS_STR_DESC_ID },
+	{ .field = NULL }
+};
 const struct desc * const desc_audio_ac_sample_rate_converter[3] = {
 	NULL, /* UAC1 not supported */
 	desc_audio_2_ac_sample_rate_converter,
-	NULL, /* UAC3 not implemented yet */
+	desc_audio_3_ac_sample_rate_converter,
 };
 
 
 static const char * const uac2_as_interface_bmcontrols[] = {
 	"Active Alternate Setting",
 	"Valid Alternate Setting",
+	NULL
+};
+static const char * const uac3_as_interface_bmcontrols[] = {
+	"Active Alternate Setting",
+	"Valid Alternate Setting",
+	"Audio Data Format Control",
 	NULL
 };
 static const char * const audio_data_format_type_i[] = {
@@ -591,10 +816,23 @@ static const struct desc desc_audio_2_as_interface[] = {
 	{ .field = "iChannelNames",   .size = 1, .type = DESC_STR_DESC_INDEX },
 	{ .field = NULL }
 };
+/** UAC3: 4.7.2 Class-Specific AS Interface Descriptor; Table 4-49. */
+static const struct desc desc_audio_3_as_interface[] = {
+	{ .field = "bTerminalLink",   .size = 1, .type = DESC_NUMBER },
+	{ .field = "bmControls",      .size = 4, .type = DESC_BMCONTROL_2,
+			.bmcontrol = uac3_as_interface_bmcontrols },
+	{ .field = "wClusterDescrID", .size = 2, .type = DESC_NUMBER },
+	{ .field = "bmFormats",       .size = 8, .type = DESC_BITMAP },
+	{ .field = "bSubslotSize",    .size = 1, .type = DESC_NUMBER },
+	{ .field = "bBitResolution",  .size = 1, .type = DESC_NUMBER },
+	{ .field = "bmAuxProtocols",  .size = 2, .type = DESC_BITMAP },
+	{ .field = "bControlSize",    .size = 1, .type = DESC_NUMBER },
+	{ .field = NULL }
+};
 const struct desc * const desc_audio_as_interface[3] = {
 	desc_audio_1_as_interface,
 	desc_audio_2_as_interface,
-	NULL, /* UAC3 not implemented yet */
+	desc_audio_3_as_interface,
 };
 
 
@@ -640,8 +878,17 @@ static const struct desc desc_audio_2_as_isochronous_audio_data_endpoint[] = {
 	{ .field = "wLockDelay",      .size = 2, .type = DESC_NUMBER },
 	{ .field = NULL }
 };
+/** UAC3: 4.8.1.2 Class-Specific AS Isochronous Audio Data Endpoint Descriptor; Table 4-52. */
+static const struct desc desc_audio_3_as_isochronous_audio_data_endpoint[] = {
+	{ .field = "bmControls",      .size = 4, .type = DESC_BMCONTROL_2,
+			.bmcontrol = uac2_as_isochronous_audio_data_endpoint_bmcontrols },
+	{ .field = "bLockDelayUnits", .size = 1, .type = DESC_NUMBER_STRINGS,
+			.number_strings = uac_as_isochronous_audio_data_endpoint_blockdelayunits },
+	{ .field = "wLockDelay",      .size = 2, .type = DESC_NUMBER },
+	{ .field = NULL }
+};
 const struct desc * const desc_audio_as_isochronous_audio_data_endpoint[3] = {
 	desc_audio_1_as_isochronous_audio_data_endpoint,
 	desc_audio_2_as_isochronous_audio_data_endpoint,
-	NULL, /* UAC3 not implemented yet */
+	desc_audio_3_as_isochronous_audio_data_endpoint,
 };

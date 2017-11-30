@@ -272,6 +272,11 @@ static void value_renderer(
 		}
 		break;
 	}
+	case DESC_CS_STR_DESC_ID:
+		number_renderer(buf, size_chars, offset, current_size);
+		/* TODO: Add support for UAC3 class-specific String descriptor */
+		printf("\n");
+		break;
 	case DESC_TERMINAL_STR:
 		number_renderer(buf, size_chars, offset, current_size);
 		printf(" %s\n", names_audioterminal(
