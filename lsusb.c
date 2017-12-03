@@ -75,6 +75,7 @@
 #define USB_DC_PLATFORM 		0x05
 #define USB_DC_SUPERSPEEDPLUS		0x0a
 #define USB_DC_BILLBOARD		0x0d
+#define USB_DC_CONFIGURATION_SUMMARY	0x10
 
 /* Conventional codes for class-specific descriptors.  The convention is
  * defined in the USB "Common Class" Spec (3.11).  Individual class specs
@@ -3512,6 +3513,11 @@ static void dump_bos_descriptor(libusb_device_handle *fd)
 			break;
 		case USB_DC_BILLBOARD:
 			dump_billboard_device_capability_desc(fd, buf);
+			break;
+		case USB_DC_CONFIGURATION_SUMMARY:
+			printf("  Configuration Summary Device Capability:\n");
+			desc_dump(fd, desc_usb3_dc_configuration_summary,
+					buf, DESC_BUF_LEN_FROM_BUF, 2);
 			break;
 		default:
 			printf("  ** UNRECOGNIZED: ");
