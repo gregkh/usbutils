@@ -151,6 +151,9 @@ extern const struct desc * const desc_audio_ac_sample_rate_converter[3];
 extern const struct desc * const desc_audio_as_interface[3];
 extern const struct desc * const desc_audio_as_isochronous_audio_data_endpoint[3];
 
+/* Device Capability (DC) descriptor definitions */
+extern const struct desc desc_usb3_dc_configuration_summary[];
+
 /* ---------------------------------------------------------------------- */
 
 #endif /* _DESC_DEFS_H */
