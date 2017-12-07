@@ -1000,8 +1000,87 @@ static const char * const chconfig_uac2[] = {
 	"Back Left of Center (BLC)", "Back Right of Center (BRC)"
 };
 
+/* USB Audio Class subtypes */
+enum uac_interface_subtype {
+	UAC_INTERFACE_SUBTYPE_AC_DESCRIPTOR_UNDEFINED = 0x00,
+	UAC_INTERFACE_SUBTYPE_HEADER                  = 0x01,
+	UAC_INTERFACE_SUBTYPE_INPUT_TERMINAL          = 0x02,
+	UAC_INTERFACE_SUBTYPE_OUTPUT_TERMINAL         = 0x03,
+	UAC_INTERFACE_SUBTYPE_EXTENDED_TERMINAL       = 0x04,
+	UAC_INTERFACE_SUBTYPE_MIXER_UNIT              = 0x05,
+	UAC_INTERFACE_SUBTYPE_SELECTOR_UNIT           = 0x06,
+	UAC_INTERFACE_SUBTYPE_FEATURE_UNIT            = 0x07,
+	UAC_INTERFACE_SUBTYPE_EFFECT_UNIT             = 0x08,
+	UAC_INTERFACE_SUBTYPE_PROCESSING_UNIT         = 0x09,
+	UAC_INTERFACE_SUBTYPE_EXTENSION_UNIT          = 0x0a,
+	UAC_INTERFACE_SUBTYPE_CLOCK_SOURCE            = 0x0b,
+	UAC_INTERFACE_SUBTYPE_CLOCK_SELECTOR          = 0x0c,
+	UAC_INTERFACE_SUBTYPE_CLOCK_MULTIPLIER        = 0x0d,
+	UAC_INTERFACE_SUBTYPE_SAMPLE_RATE_CONVERTER   = 0x0e,
+	UAC_INTERFACE_SUBTYPE_CONNECTORS              = 0x0f,
+	UAC_INTERFACE_SUBTYPE_POWER_DOMAIN            = 0x10,
+};
+
+/*
+ * UAC1, and UAC2 define bDescriptorSubtype differently for the
+ * AudioControl interface, so we need to do some ugly remapping:
+ *
+ * val  | UAC1            | UAC2
+ * -----|-----------------|----------------------
+ * 0x00 | AC UNDEFINED    | AC UNDEFINED
+ * 0x01 | HEADER          | HEADER
+ * 0x02 | INPUT_TERMINAL  | INPUT_TERMINAL
+ * 0x03 | OUTPUT_TERMINAL | OUTPUT_TERMINAL
+ * 0x04 | MIXER_UNIT      | MIXER_UNIT
+ * 0x05 | SELECTOR_UNIT   | SELECTOR_UNIT
+ * 0x06 | FEATURE_UNIT    | FEATURE_UNIT
+ * 0x07 | PROCESSING_UNIT | EFFECT_UNIT
+ * 0x08 | EXTENSION_UNIT  | PROCESSING_UNIT
+ * 0x09 | -               | EXTENSION_UNIT
+ * 0x0a | -               | CLOCK_SOURCE
+ * 0x0b | -               | CLOCK_SELECTOR
+ * 0x0c | -               | CLOCK_MULTIPLIER
+ * 0x0d | -               | SAMPLE_RATE_CONVERTER
+ */
+static enum uac_interface_subtype get_uac_interface_subtype(unsigned char c, int protocol)
+{
+	switch (protocol) {
+	case USB_AUDIO_CLASS_1:
+		switch(c) {
+		case 0x04: return UAC_INTERFACE_SUBTYPE_MIXER_UNIT;
+		case 0x05: return UAC_INTERFACE_SUBTYPE_SELECTOR_UNIT;
+		case 0x06: return UAC_INTERFACE_SUBTYPE_FEATURE_UNIT;
+		case 0x07: return UAC_INTERFACE_SUBTYPE_PROCESSING_UNIT;
+		case 0x08: return UAC_INTERFACE_SUBTYPE_EXTENSION_UNIT;
+		}
+		break;
+	case USB_AUDIO_CLASS_2:
+		switch(c) {
+		case 0x04: return UAC_INTERFACE_SUBTYPE_MIXER_UNIT;
+		case 0x05: return UAC_INTERFACE_SUBTYPE_SELECTOR_UNIT;
+		case 0x06: return UAC_INTERFACE_SUBTYPE_FEATURE_UNIT;
+		case 0x07: return UAC_INTERFACE_SUBTYPE_EFFECT_UNIT;
+		case 0x08: return UAC_INTERFACE_SUBTYPE_PROCESSING_UNIT;
+		case 0x09: return UAC_INTERFACE_SUBTYPE_EXTENSION_UNIT;
+		case 0x0a: return UAC_INTERFACE_SUBTYPE_CLOCK_SOURCE;
+		case 0x0b: return UAC_INTERFACE_SUBTYPE_CLOCK_SELECTOR;
+		case 0x0c: return UAC_INTERFACE_SUBTYPE_CLOCK_MULTIPLIER;
+		case 0x0d: return UAC_INTERFACE_SUBTYPE_SAMPLE_RATE_CONVERTER;
+		}
+		break;
+	default:
+		/* Unknown protocol */
+		break;
+	}
+
+	/* If the protocol was unknown, or the value was not known to require
+	 * mapping, just return it unchanged. */
+	return c;
+}
+
 static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigned char *buf, int protocol)
 {
+	enum uac_interface_subtype subtype;
 	static const char * const chconfig[] = {
 		"Left Front (L)", "Right Front (R)", "Center Front (C)", "Low Frequency Enhancement (LFE)",
 		"Left Surround (LS)", "Right Surround (RS)", "Left of Center (LC)", "Right of Center (RC)",
@@ -1010,7 +1089,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 	static const char * const clock_source_attrs[] = {
 		"External", "Internal fixed", "Internal variable", "Internal programmable"
 	};
-	unsigned int i, chcfg, j, k, N, termt, subtype;
+	unsigned int i, chcfg, j, k, N, termt;
 	char *chnames = NULL, *term = NULL, termts[128];
 
 	if (buf[1] != USB_DT_CS_INTERFACE)
@@ -1023,29 +1102,10 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 	       "        bDescriptorSubtype  %5u ",
 	       buf[0], buf[1], buf[2]);
 
-	/*
-	 * This is an utter mess - UAC2 defines some bDescriptorSubtype differently, so we have to do some ugly remapping here:
-	 *
-	 * bDescriptorSubtype		UAC1			UAC2
-	 * ------------------------------------------------------------------------
-	 * 0x07				PROCESSING_UNIT		EFFECT_UNIT
-	 * 0x08				EXTENSION_UNIT		PROCESSING_UNIT
-	 * 0x09				-			EXTENSION_UNIT
-	 *
-	 */
-
-	if (protocol == USB_AUDIO_CLASS_2)
-		switch(buf[2]) {
-		case 0x07: subtype = 0xf0; break; /* effect unit */
-		case 0x08: subtype = 0x07; break; /* processing unit */
-		case 0x09: subtype = 0x08; break; /* extension unit */
-		default: subtype = buf[2]; break; /* everything else is identical */
-		}
-	else
-		subtype = buf[2];
+	subtype = get_uac_interface_subtype(buf[2], protocol);
 
 	switch (subtype) {
-	case 0x01:  /* HEADER */
+	case UAC_INTERFACE_SUBTYPE_HEADER:
 		printf("(HEADER)\n");
 		switch (protocol) {
 		case USB_AUDIO_CLASS_1:
@@ -1072,7 +1132,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 		}
 		break;
 
-	case 0x02:  /* INPUT_TERMINAL */
+	case UAC_INTERFACE_SUBTYPE_INPUT_TERMINAL:
 		printf("(INPUT_TERMINAL)\n");
 		termt = buf[4] | (buf[5] << 8);
 		get_audioterminal_string(termts, sizeof(termts), termt);
@@ -1125,7 +1185,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 
 		break;
 
-	case 0x03:  /* OUTPUT_TERMINAL */
+	case UAC_INTERFACE_SUBTYPE_OUTPUT_TERMINAL:
 		printf("(OUTPUT_TERMINAL)\n");
 		switch (protocol) {
 		case USB_AUDIO_CLASS_1:
@@ -1163,7 +1223,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 
 		break;
 
-	case 0x04:  /* MIXER_UNIT */
+	case UAC_INTERFACE_SUBTYPE_MIXER_UNIT:
 		printf("(MIXER_UNIT)\n");
 
 		switch (protocol) {
@@ -1234,7 +1294,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 		} /* switch (protocol) */
 		break;
 
-	case 0x05:  /* SELECTOR_UNIT */
+	case UAC_INTERFACE_SUBTYPE_SELECTOR_UNIT:
 		printf("(SELECTOR_UNIT)\n");
 		switch (protocol) {
 		case USB_AUDIO_CLASS_1:
@@ -1271,7 +1331,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 
 		break;
 
-	case 0x06:  /* FEATURE_UNIT */
+	case UAC_INTERFACE_SUBTYPE_FEATURE_UNIT:
 		printf("(FEATURE_UNIT)\n");
 
 		switch (protocol) {
@@ -1322,7 +1382,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 
 		break;
 
-	case 0x07:  /* PROCESSING_UNIT */
+	case UAC_INTERFACE_SUBTYPE_PROCESSING_UNIT:
 		printf("(PROCESSING_UNIT)\n");
 
 		switch (protocol) {
@@ -1388,7 +1448,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 
 		break;
 
-	case 0x08:  /* EXTENSION_UNIT */
+	case UAC_INTERFACE_SUBTYPE_EXTENSION_UNIT:
 		printf("(EXTENSION_UNIT)\n");
 
 		switch (protocol) {
@@ -1451,7 +1511,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 
 		break;
 
-	case 0x0a:  /* CLOCK_SOURCE */
+	case UAC_INTERFACE_SUBTYPE_CLOCK_SOURCE:
 		printf ("(CLOCK_SOURCE)\n");
 		if (protocol != USB_AUDIO_CLASS_2)
 			printf("      Warning: CLOCK_SOURCE descriptors are illegal for UAC1\n");
@@ -1473,7 +1533,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 		dump_junk(buf, "        ", 8);
 		break;
 
-	case 0x0b:  /* CLOCK_SELECTOR */
+	case UAC_INTERFACE_SUBTYPE_CLOCK_SELECTOR:
 		printf("(CLOCK_SELECTOR)\n");
 		if (protocol != USB_AUDIO_CLASS_2)
 			printf("      Warning: CLOCK_SELECTOR descriptors are illegal for UAC1\n");
@@ -1495,7 +1555,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 		dump_junk(buf, "        ", 7+buf[4]);
 		break;
 
-	case 0x0c:  /* CLOCK_MULTIPLIER */
+	case UAC_INTERFACE_SUBTYPE_CLOCK_MULTIPLIER:
 		printf("(CLOCK_MULTIPLIER)\n");
 		if (protocol != USB_AUDIO_CLASS_2)
 			printf("      Warning: CLOCK_MULTIPLIER descriptors are illegal for UAC1\n");
@@ -1515,7 +1575,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 		dump_junk(buf, "        ", 7);
 		break;
 
-	case 0x0d:  /* SAMPLE_RATE_CONVERTER_UNIT */
+	case UAC_INTERFACE_SUBTYPE_SAMPLE_RATE_CONVERTER:
 		printf("(SAMPLE_RATE_CONVERTER_UNIT)\n");
 		if (protocol != USB_AUDIO_CLASS_2)
 			printf("      Warning: SAMPLE_RATE_CONVERTER_UNIT descriptors are illegal for UAC1\n");
@@ -1533,7 +1593,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 		dump_junk(buf, "        ", 8);
 		break;
 
-	case 0xf0:  /* EFFECT_UNIT - the real value is 0x07, see above for the reason for remapping */
+	case UAC_INTERFACE_SUBTYPE_EFFECT_UNIT:
 		printf("(EFFECT_UNIT)\n");
 
 		if (buf[0] < 16)
