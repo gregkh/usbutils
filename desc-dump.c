@@ -64,17 +64,16 @@ static void desc_bmcontrol_dump(
 	       (type == DESC_BMCONTROL_2));
 
 	while (strings[count] != NULL) {
-		if (strings[0] != '\0') {
+		if (strings[count][0] != '\0') {
 			if (type == DESC_BMCONTROL_1) {
-				if ((strings[count][0] != '\0') &&
-				    (bmcontrols >> count) & 0x1) {
+				if ((bmcontrols >> count) & 0x1) {
 					printf("%*s%s Control\n",
 							indent * 2, "",
 							strings[count]);
 				}
 			} else {
 				control = (bmcontrols >> (count * 2)) & 0x3;
-				if ((strings[count][0] != '\0') && control) {
+				if (control) {
 					printf("%*s%s Control (%s)\n",
 							indent * 2, "",
 							strings[count],
