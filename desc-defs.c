@@ -978,3 +978,18 @@ const struct desc * const desc_audio_as_isochronous_audio_data_endpoint[3] = {
 	desc_audio_2_as_isochronous_audio_data_endpoint,
 	desc_audio_3_as_isochronous_audio_data_endpoint,
 };
+
+/** USB3: 9.6.2.7 Configuration Summary Descriptor; Table 9-21. */
+const struct desc desc_usb3_dc_configuration_summary[] = {
+	{ .field = "bLength",             .size = 1, .type = DESC_NUMBER },
+	{ .field = "bDescriptorType",     .size = 1, .type = DESC_CONSTANT },
+	{ .field = "bDevCapabilityType",  .size = 1, .type = DESC_NUMBER },
+	{ .field = "bcdVersion",          .size = 2, .type = DESC_BCD },
+	{ .field = "bClass",              .size = 1, .type = DESC_NUMBER },
+	{ .field = "bSubClass",           .size = 1, .type = DESC_NUMBER },
+	{ .field = "bProtocol",           .size = 1, .type = DESC_NUMBER },
+	{ .field = "bConfigurationCount", .size = 1, .type = DESC_NUMBER },
+	{ .field = "bConfigurationIndex", .size = 1, .type = DESC_NUMBER,
+			.array = { .array = true, .length_field1 = "bConfigurationCount" } },
+	{ .field = NULL }
+};
