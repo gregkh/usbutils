@@ -2304,6 +2304,7 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 		       "        iEncoding           %5u %s\n"
 		       "        bControlSize        %5u\n",
 		       buf[3], buf[4], buf[5], term, buf[6]);
+		ctrls = 0;
 		for (i = 0; i < 3; i++)
 			ctrls = (ctrls << 8) | buf[9-i];
 		printf("        bmControls              0x%08x\n", ctrls);
