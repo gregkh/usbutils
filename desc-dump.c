@@ -423,7 +423,7 @@ static unsigned int get_array_entry_count(
 			}
 		}
 
-		entries = size / array_entry->size;
+		entries = size / get_entry_size(buf, desc, array_entry);
 	}
 
 	return entries;
