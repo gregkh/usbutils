@@ -19,6 +19,8 @@ lsusb_SOURCES = \
 	lsusb.c lsusb.h \
 	lsusb-t.c \
 	list.h \
+	desc-defs.c desc-defs.h \
+	desc-dump.c desc-dump.h \
 	names.c names.h \
 	usb-spec.h \
 	usbmisc.c usbmisc.h
