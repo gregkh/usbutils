@@ -353,7 +353,7 @@ static void dump_security(const unsigned char *buf)
 	printf("    Security Descriptor:\n"
 	       "      bLength             %5u\n"
 	       "      bDescriptorType     %5u\n"
-	       "      wTotalLength        %5u\n"
+	       "      wTotalLength       0x%04x\n"
 	       "      bNumEncryptionTypes %5u\n",
 	       buf[0], buf[1], (buf[3] << 8 | buf[2]), buf[4]);
 }
@@ -411,7 +411,7 @@ static void dump_config(libusb_device_handle *dev, struct libusb_config_descript
 	printf("  Configuration Descriptor:\n"
 	       "    bLength             %5u\n"
 	       "    bDescriptorType     %5u\n"
-	       "    wTotalLength        %5u\n"
+	       "    wTotalLength       0x%04x\n"
 	       "    bNumInterfaces      %5u\n"
 	       "    bConfigurationValue %5u\n"
 	       "    iConfiguration      %5u %s\n"
@@ -1379,7 +1379,7 @@ static void dump_midistreaming_interface(libusb_device_handle *dev, const unsign
 			printf("      Warning: Descriptor too short\n");
 		tlength = buf[5] | (buf[6] << 8);
 		printf("        bcdADC              %2x.%02x\n"
-		       "        wTotalLength        %5u\n",
+		       "        wTotalLength       0x%04x\n",
 		       buf[4], buf[3], tlength);
 		dump_junk(buf, "        ", 7);
 		break;
@@ -1551,7 +1551,7 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 			printf("      Warning: Descriptor too short\n");
 		freq = buf[7] | (buf[8] << 8) | (buf[9] << 16) | (buf[10] << 24);
 		printf("        bcdUVC              %2x.%02x\n"
-		       "        wTotalLength        %5u\n"
+		       "        wTotalLength       0x%04x\n"
 		       "        dwClockFrequency    %5u.%06uMHz\n"
 		       "        bInCollection       %5u\n",
 		       buf[4], buf[3], buf[5] | (buf[6] << 8), freq / 1000000,
@@ -1752,7 +1752,7 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 		if (buf[0] < 13+p*n)
 			printf("      Warning: Descriptor too short\n");
 		printf("        bNumFormats                     %5u\n"
-		       "        wTotalLength                    %5u\n"
+		       "        wTotalLength                   0x%04x\n"
 		       "        bEndPointAddress                %5u\n"
 		       "        bmInfo                          %5u\n"
 		       "        bTerminalLink                   %5u\n"
@@ -1776,7 +1776,7 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 		if (buf[0] < 9+p*n)
 			printf("      Warning: Descriptor too short\n");
 		printf("        bNumFormats                 %5u\n"
-		       "        wTotalLength                %5u\n"
+		       "        wTotalLength               0x%04x\n"
 		       "        bEndpointAddress            %5u\n"
 		       "        bTerminalLink               %5u\n"
 		       "        bControlSize                %5u\n",
@@ -3436,7 +3436,7 @@ static void dump_bos_descriptor(libusb_device_handle *fd)
 	printf("Binary Object Store Descriptor:\n"
 	       "  bLength             %5u\n"
 	       "  bDescriptorType     %5u\n"
-	       "  wTotalLength        %5u\n"
+	       "  wTotalLength       0x%04x\n"
 	       "  bNumDeviceCaps      %5u\n",
 	       bos_desc_static[0], bos_desc_static[1],
 	       bos_desc_size, bos_desc_static[4]);
