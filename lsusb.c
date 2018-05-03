@@ -1989,6 +1989,18 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 		dump_junk(buf, "        ", 6);
 		break;
 
+	case 0x12: /* FORMAT_STREAM_BASED */
+		printf("(FORMAT_STREAM_BASED)\n");
+		if (buf[0] != 24)
+			printf("      Warning: Incorrect descriptor length\n");
+
+		printf("        bFormatIndex                    %5u\n"
+		       "        guidFormat                            %s\n"
+		       "        dwPacketLength                %7u\n",
+		       buf[3], get_guid(&buf[4]), buf[20]);
+		dump_junk(buf, "        ", 24);
+		break;
+
 	default:
 		printf("        Invalid desc subtype:");
 		dump_bytes(buf+3, buf[0]-3);
