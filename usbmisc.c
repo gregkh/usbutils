@@ -42,14 +42,14 @@ static int readlink_recursive(const char *path, char *buf, size_t bufsize)
 	if (ret > 0) {
 		buf[ret] = 0;
 		if (*buf != '/') {
-			strncpy(temp, path, sizeof(temp));
+			strncpy(temp, path, sizeof(temp) - 1);
 			ptemp = temp + strlen(temp);
 			while (*ptemp != '/' && ptemp != temp)
 				ptemp--;
 			ptemp++;
-			strncpy(ptemp, buf, bufsize + temp - ptemp);
+			strncpy(ptemp, buf, bufsize + temp - ptemp - 1);
 		} else
-			strncpy(temp, buf, sizeof(temp));
+			strncpy(temp, buf, sizeof(temp) - 1);
 		return readlink_recursive(temp, buf, bufsize);
 	} else {
 		strncpy(buf, path, bufsize);
