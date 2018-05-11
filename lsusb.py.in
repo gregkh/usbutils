@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # lsusb-VERSION.py
 # Displays your USB devices in reasonable form.
 # (c) Kurt Garloff <garloff@suse.de>, 2/2009, GPL v2 or v3.
@@ -475,7 +475,7 @@ def display_diff(lst1, lst2, fmtstr, args):
 	"Compare lists (same length!) and display differences"
 	for idx in range(0, len(lst1)):
 		if lst1[idx] != lst2[idx]:
-			print "Warning: " + fmtstr % args(lst2[idx])
+			print("Warning: " + fmtstr % args(lst2[idx]))
 
 def fix_usbvend():
 	"Sort USB vendor list and (optionally) display diffs"
@@ -510,18 +510,18 @@ def fix_usbclass():
 
 def usage():
 	"Displays usage information"
-	print "Usage: lsusb.py [options]"
-	print "Options:"
-	print " -h display this help"
-	print " -i display interface information"
-	print " -I display interface information, even for hubs"
-	print " -u suppress empty hubs"
-	print " -U suppress all hubs"
-	print " -c use colors"
-	print " -e display endpoint info"
-	print " -w display warning if usb.ids is not sorted correctly"
-	print " -f FILE override filename for /usr/share/usb.ids"
-	print "Use lsusb.py -ciu to get a nice overview of your USB devices."
+	print("Usage: lsusb.py [options]")
+	print("Options:")
+	print(" -h display this help")
+	print(" -i display interface information")
+	print(" -I display interface information, even for hubs")
+	print(" -u suppress empty hubs")
+	print(" -U suppress all hubs")
+	print(" -c use colors")
+	print(" -e display endpoint info")
+	print(" -w display warning if usb.ids is not sorted correctly")
+	print(" -f FILE override filename for /usr/share/usb.ids")
+	print("Use lsusb.py -ciu to get a nice overview of your USB devices.")
 	return 2
 
 def read_usb():
@@ -533,7 +533,7 @@ def read_usb():
 		usbdev = UsbDevice(None, 0)
 		usbdev.read(dirent)
 		usbdev.readchildren()
-		os.write(sys.stdout.fileno(), usbdev.__str__())
+		os.write(sys.stdout.fileno(), str.encode(usbdev.__str__()))
 
 def main(argv):
 	"main entry point"
@@ -541,8 +541,8 @@ def main(argv):
 	global warnsort, cols, usbids, showeps
 	try:
 		(optlist, args) = getopt.gnu_getopt(argv[1:], "hiIuUwcef:", ("help",))
-	except getopt.GetoptError, exc:
-		print "Error:", exc
+	except getopt.GetoptError as exc:
+		print("Error:", exc)
 		sys.exit(usage())
 	for opt in optlist:
 		if opt[0] == "-h" or opt[0] == "--help":
@@ -575,7 +575,7 @@ def main(argv):
 			showeps = True
 			continue
 	if len(args) > 0:
-		print "Error: excess args %s ..." % args[0]
+		print("Error: excess args %s ..." % args[0])
 		sys.exit(usage())
 
 	try:
@@ -584,7 +584,7 @@ def main(argv):
 		fix_usbprod()
 		fix_usbclass()
 	except:
-		print >>sys.stderr, " WARNING: Failure to read usb.ids"
+		print(" WARNING: Failure to read usb.ids", file=sys.stderr)
 		#print >>sys.stderr, sys.exc_info()
 	read_usb()
 
