@@ -267,7 +267,7 @@ static void add_usb_interface(const char *d_name)
 {
 	struct usbinterface *e;
 	const char *p;
-	char *pn, driver[MY_PATH_MAX];
+	char *pn, driver[MY_PATH_MAX], link[MY_PATH_MAX];
 	unsigned long i;
 	int l;
 	p = strchr(d_name, ':');
@@ -296,9 +296,9 @@ static void add_usb_interface(const char *d_name)
 	SYSFS_INTx(d_name, e, bInterfaceProtocol);
 	SYSFS_INTx(d_name, e, bInterfaceSubClass);
 	SYSFS_INTx(d_name, e, bNumEndpoints);
-	l = snprintf(driver, MY_PATH_MAX, "%s/%s/driver", sys_bus_usb_devices, d_name);
+	l = snprintf(link, MY_PATH_MAX, "%s/%s/driver", sys_bus_usb_devices, d_name);
 	if (l > 0 && l < MY_PATH_MAX) {
-		l = readlink(driver, driver, MY_PATH_MAX);
+		l = readlink(link, driver, MY_PATH_MAX);
 		if (l >= 0) {
 			if (l < MY_PATH_MAX - 1)
 				driver[l] = '\0';
@@ -317,7 +317,7 @@ static void add_usb_device(const char *d_name)
 {
 	struct usbdevice *d;
 	const char *p;
-	char *pn, driver[MY_PATH_MAX];
+	char *pn, driver[MY_PATH_MAX], link[MY_PATH_MAX];
 	unsigned long i;
 	int l;
 	p = d_name;
@@ -359,9 +359,9 @@ static void add_usb_device(const char *d_name)
 	SYSFS_STR(d_name, d, serial);
 	SYSFS_STR(d_name, d, version);
 	SYSFS_STR(d_name, d, speed);
-	l = snprintf(driver, MY_PATH_MAX, "%s/%s/driver", sys_bus_usb_devices, d_name);
+	l = snprintf(link, MY_PATH_MAX, "%s/%s/driver", sys_bus_usb_devices, d_name);
 	if (l > 0 && l < MY_PATH_MAX) {
-		l = readlink(driver, driver, MY_PATH_MAX);
+		l = readlink(link, driver, MY_PATH_MAX);
 		if (l >= 0) {
 			if (l < MY_PATH_MAX - 1)
 				driver[l] = '\0';
@@ -378,11 +378,11 @@ static void add_usb_device(const char *d_name)
 
 static void get_roothub_driver(struct usbbusnode *b, const char *d_name)
 {
-	char *p, path[MY_PATH_MAX];
+	char *p, path[MY_PATH_MAX], link[MY_PATH_MAX];
 	int l;
-	l = snprintf(path, MY_PATH_MAX, "%s/%s/../driver", sys_bus_usb_devices, d_name);
+	l = snprintf(link, MY_PATH_MAX, "%s/%s/../driver", sys_bus_usb_devices, d_name);
 	if (l > 0 && l < MY_PATH_MAX) {
-		l = readlink(path, path, MY_PATH_MAX);
+		l = readlink(link, path, MY_PATH_MAX);
 		if (l >= 0) {
 			if (l < MY_PATH_MAX - 1)
 				path[l] = '\0';
