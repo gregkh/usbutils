@@ -10,6 +10,10 @@
  * sometimes we already know the next/prev entries and we can
  * generate better code by using them directly rather than
  * using the generic single-entry routines.
+ *
+ * Copyright (c) 2004 Thomas Sailer <sailer@ife.ee.ethz.ch>
+ *
+ * Based on list.h from the Linux kernel source tree.
  */
 
 struct list_head {
