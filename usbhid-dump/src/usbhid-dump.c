@@ -526,8 +526,8 @@ run(bool            dump_descriptor,
     /* Create libusb context */
     LIBUSB_GUARD(libusb_init(&ctx), "create libusb context");
 
-    /* Set libusb debug level */
-    libusb_set_debug(ctx, 3);
+    /* Set libusb debug level to informational only */
+    libusb_set_option(ctx, LIBUSB_OPTION_LOG_LEVEL, LIBUSB_LOG_LEVEL_INFO);
 
     /* Open device list */
     LIBUSB_GUARD(uhd_dev_list_open(ctx, bus_num, dev_addr,
