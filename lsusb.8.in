@@ -1,3 +1,5 @@
+.\"SPDX-License-Identifier: GPL-2.0
+.\"Copyright (c) 1999 Thomas Sailer <sailer@ife.ee.ethz.ch>
 .TH lsusb 8 "6 May 2009" "usbutils-VERSION" "Linux USB Utilities"
 .IX lsusb
 .SH NAME
