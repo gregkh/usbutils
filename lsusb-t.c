@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0
+/* Copyright (c) 2009 Greg Kroah-Hartman <gregkh@suse.de> */
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
