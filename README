@@ -1,9 +1,0 @@
-first get usbhid-dump:
-	git submodule init
-	git submodule update
-initialize autobuild with:
-	autoreconf --install --symlink
-configure with:
-	./configure
-build with:
-	make
