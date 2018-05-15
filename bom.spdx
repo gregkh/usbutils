@@ -1,0 +1,401 @@
+SPDXVersion: SPDX-2.1
+DataLicense: CC0-1.0
+SPDXID: SPDXRef-DOCUMENT
+DocumentName: usbutils
+DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-6003ff8f-56fc-46d4-a6a9-7530a93d4752
+Creator: Person: Anonymous ()
+Creator: Organization: Anonymous ()
+Creator: Tool: reuse-0.2.0
+Created: 2018-05-15T10:19:41Z
+CreatorComment: <text>This document was created automatically using available reuse information consistent with the REUSE Initiative.</text>
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-6c17d1dd6beb0ac4e8dbdc1d3d89d077d1ed091f
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-d1f43f45055e4f55af9904a21c03f3ac2e23f780
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-d5b4de16d947214ec306bd57bed1bd23a939b5f9
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-9f621eb5fd3bcb2fa5c7bd228c9b1ad42edc46c8
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-6c3981b5733e947489b6d6359cea90114e5edbca
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-d76c453f0eb741d665569f48cd3df8d69535edad
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-69e27356ef629022720d868ab0c0e3394775b6c1
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-e375f2da25f0471168cc6c97a8ac35c43eb9e951
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-01f9f98ab7d1aacab858a82f2243dfbc6ec781ff
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-acc196920bb7c53a8e1932c42e4ae88bdfbba913
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-25ba0c97baff0f8a9d08ad328942a324acdc6523
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-e736d76d2b41789dff55067923064015cedce1ae
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-7b5d245d23c26fe4b0b395d0c0c1a91d2e68e16d
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-c335a27a082cc8d17dd36dc0eda3086cb0c9baaa
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-311ad8c899f518cdbe5ab94754d182f09d6ed6fc
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-c648c84097681019e5f1446c635b85ff2a486198
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-87db583be5c13c1f7b3c958b10e03d67b6a2ca06
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-f0c5c70d49864d35245e4b1a630182e33fb993ca
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-7445606fbf8f3683cd42bdc54b05d7a0bc2dfc44
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-f17f27205281653e3e67d0509a122b1861090085
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-152c3993c79ed609cfec1b4276c2eb31f4d518b3
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-3063d6bd093390b22c258c36bc7d09aa42baf7f5
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-00fe7828d56d7a3ee4030d6cea057cf13f50e70c
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-306a1cc131ed293066f5657c413a396b70065483
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-0f4a4d5f1432f3f2ad8a87b3d9cbb4162e85afcc
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-dad57a4c245a8007c90257aef0514c8b6a0f600c
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-dea01dd89a3b602828e630677fde5d77c06441c8
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-de5d0aaef5920a283d740908c6e021d40fe12de0
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-9d45eba6476202ac65ec45c3ba12118d12f2ef84
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-b5afcfeafd17ff89556dcde7e7d1baefc4b36c76
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-727e654f9158303b2dddb5c435ccffb7df627d09
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-534c09b61b58cbfef5a383f5be6864051db5bd1a
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-e7c1d0ffd0ba8ea407f4fcb7ee3717c2460456b8
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-5edef310d5d94ad7293749401bc114eda84bdf27
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-0ccb2a5e2004a47c238a1ad5f97a8b6b140f6609
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-f8ffd668553b011c77c049c23596f4ac16b2442b
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-c0d6c4c7b3ffddbebd269646cb37316dd18ce702
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-c8becd4c81cfd2a2dec5bf5f98096f24dcea48e9
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-d073c8d1cdb5b1f1c923af71a80f3317b21e62ed
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-6b2a3e275cae2f8322ff624e013951d8e7d23b83
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-a66285338b82121f7347923b8ca006b160125d01
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-a8e3a2d9873b55c84b0cb046855447674b65146e
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-3055f9d157f6ce27aef346c81bdf132fdd5bc2f8
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-9ffeec08dbf2185c660fc69f401c6754cc250aff
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-4cb440034519ea41c61d5a741cf167faa947a5d5
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-3bb3d8ca023b0861c7f6dfcc04e06f2c37fe1bb7
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-d75a77accdc47f63ea09d5e541fb17c075259791
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-7c44a8e2ff7c7482515cc94e0244db0c747da71d
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-73de39af2d0e901f694232da4801eb2c8a66d20b
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-a5f2edbd8b8b3304dea21ffd974c0bc9bd772af5
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-e8ec4dd62c7540c8cb45b05a895c168bcc13048b
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-d57b0b3be1ce716faee2d4c80c5f9a91ba8f1ecc
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-6454de685ba7cf12cfc0804a23c0bd7bdfa0bfd7
+
+FileName: ./lsusb.c
+SPDXID: SPDXRef-6c17d1dd6beb0ac4e8dbdc1d3d89d077d1ed091f
+FileChecksum: SHA1: f36d9493b6aec212f8d1a8f498ae8e46fd1b4244
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0+
+FileCopyrightText: <text>Copyright (C) 1999-2001, 2003 Thomas Sailer (t.sailer@alumni.ethz.ch)</text>
+FileCopyrightText: <text>Copyright (C) 2003-2005 David Brownell</text>
+
+FileName: ./usb-devices.1.in
+SPDXID: SPDXRef-d1f43f45055e4f55af9904a21c03f3ac2e23f780
+FileChecksum: SHA1: 650301f02cf63907fb5c8e82a340f9b514cb0ddf
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./Makefile.am
+SPDXID: SPDXRef-d5b4de16d947214ec306bd57bed1bd23a939b5f9
+FileChecksum: SHA1: 1f5b288a68c8cc13abf478fd5592458d39197a57
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./NEWS
+SPDXID: SPDXRef-9f621eb5fd3bcb2fa5c7bd228c9b1ad42edc46c8
+FileChecksum: SHA1: 7c91af537f10a452aab19d981e1ba60cc69dafed
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./names.c
+SPDXID: SPDXRef-6c3981b5733e947489b6d6359cea90114e5edbca
+FileChecksum: SHA1: b09952044590cb5c7a6efd0f1cf4c2c8e9acd8cd
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0+
+FileCopyrightText: <text>Copyright (C) 1999, 2000 Thomas Sailer (sailer@ife.ee.ethz.ch)</text>
+FileCopyrightText: <text>Copyright (C) 2013 Tom Gundersen (teg@jklm.no)</text>
+
+FileName: ./list.h
+SPDXID: SPDXRef-d76c453f0eb741d665569f48cd3df8d69535edad
+FileChecksum: SHA1: 7d2bdab88b0187a4c571a882a7caf02d0e17d244
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0
+FileCopyrightText: NONE
+
+FileName: ./README
+SPDXID: SPDXRef-69e27356ef629022720d868ab0c0e3394775b6c1
+FileChecksum: SHA1: 5c65219082f0a23e01eb0992fd83673a51f4ca8a
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./usb-devices
+SPDXID: SPDXRef-e375f2da25f0471168cc6c97a8ac35c43eb9e951
+FileChecksum: SHA1: 0d407269e4572232221dac9487f95ead3256c627
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0+
+FileCopyrightText: <text>Copyright (c) 2009 Frans Pop <elendil@planet.nl></text>
+FileCopyrightText: <text>Copyright (c) 2009 Greg Kroah-Hartman <greg@kroah.com></text>
+FileCopyrightText: <text>Copyright (c) 2009 Randy Dunlap <rdunlap@xenotime.net></text>
+
+FileName: ./lsusb.8.in
+SPDXID: SPDXRef-01f9f98ab7d1aacab858a82f2243dfbc6ec781ff
+FileChecksum: SHA1: 3c6a095630de195ed25ca12f940f778937e3cba2
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./usbmisc.h
+SPDXID: SPDXRef-acc196920bb7c53a8e1932c42e4ae88bdfbba913
+FileChecksum: SHA1: b12afc48068aba9913a06709c42153223bc11860
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0+
+FileCopyrightText: <text>Copyright (C) 2003 Aurelien Jarno (aurelien@aurel32.net)</text>
+
+FileName: ./names.h
+SPDXID: SPDXRef-25ba0c97baff0f8a9d08ad328942a324acdc6523
+FileChecksum: SHA1: 33d326b5b664bd6d586018d6a745cb23599f09a0
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0+
+FileCopyrightText: <text>Copyright (C) 1999, 2000 Thomas Sailer (sailer@ife.ee.ethz.ch)</text>
+
+FileName: ./desc-dump.h
+SPDXID: SPDXRef-e736d76d2b41789dff55067923064015cedce1ae
+FileChecksum: SHA1: 4d409e266e6c978ab2ee65232789bd345817a3cb
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0+
+FileCopyrightText: <text>Copyright (C) 2017 Michael Drake <michael.drake@codethink.co.uk></text>
+
+FileName: ./desc-defs.c
+SPDXID: SPDXRef-7b5d245d23c26fe4b0b395d0c0c1a91d2e68e16d
+FileChecksum: SHA1: c59f51b1fd5d62ba19a463afc5d671772394d30d
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0+
+FileCopyrightText: <text>Copyright (C) 2017 Michael Drake <michael.drake@codethink.co.uk></text>
+
+FileName: ./INSTALL
+SPDXID: SPDXRef-c335a27a082cc8d17dd36dc0eda3086cb0c9baaa
+FileChecksum: SHA1: 016d81ea69d45c242ec7c4c47051da97d199aeb2
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./desc-defs.h
+SPDXID: SPDXRef-311ad8c899f518cdbe5ab94754d182f09d6ed6fc
+FileChecksum: SHA1: b918b79d00ced67534a755ba452603cc25da0f5f
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0+
+FileCopyrightText: <text>Copyright (C) 2017 Michael Drake <michael.drake@codethink.co.uk></text>
+
+FileName: ./usb-spec.h
+SPDXID: SPDXRef-c648c84097681019e5f1446c635b85ff2a486198
+FileChecksum: SHA1: 8caa588edf7307bb5bdc0556b5d80696ed4e7cfc
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0+
+FileCopyrightText: <text>Copyright (C) 2013 Tom Gundersen <teg@jklm.no></text>
+
+FileName: ./configure.ac
+SPDXID: SPDXRef-87db583be5c13c1f7b3c958b10e03d67b6a2ca06
+FileChecksum: SHA1: 46a1ba7bf6cc9bfae9d5323038bdb6d47a591979
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./usbmisc.c
+SPDXID: SPDXRef-f0c5c70d49864d35245e4b1a630182e33fb993ca
+FileChecksum: SHA1: a13c902ebe2e7086c985dfde4cc2bad0b77c613a
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0+
+FileCopyrightText: <text>Copyright (C) 2003 Aurelien Jarno (aurelien@aurel32.net)</text>
+
+FileName: ./.gitmodules
+SPDXID: SPDXRef-7445606fbf8f3683cd42bdc54b05d7a0bc2dfc44
+FileChecksum: SHA1: b053c3a6d6a982a274dcf213b3fdeca53f2c9920
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./lsusb.py.in
+SPDXID: SPDXRef-f17f27205281653e3e67d0509a122b1861090085
+FileChecksum: SHA1: 3dd8ffa973b195acaa5199d833568a2e18db5481
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0 OR GPL-3.0
+FileCopyrightText: NONE
+
+FileName: ./autogen.sh
+SPDXID: SPDXRef-152c3993c79ed609cfec1b4276c2eb31f4d518b3
+FileChecksum: SHA1: d6abf074808bff7d883fca3203d40d5826933a07
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./travis-autogen.sh
+SPDXID: SPDXRef-3063d6bd093390b22c258c36bc7d09aa42baf7f5
+FileChecksum: SHA1: 4d92e87b3666ccb5bf74aae1724e1959362b4635
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./ChangeLog
+SPDXID: SPDXRef-00fe7828d56d7a3ee4030d6cea057cf13f50e70c
+FileChecksum: SHA1: a1e71c481a76ee55945b92ce8ce499a2cbc58cf2
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./usbreset.c
+SPDXID: SPDXRef-306a1cc131ed293066f5657c413a396b70065483
+FileChecksum: SHA1: 4ae0b588fe4276a2c3ecac761ae05201220fd3a8
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0
+FileCopyrightText: NONE
+
+FileName: ./do_release
+SPDXID: SPDXRef-0f4a4d5f1432f3f2ad8a87b3d9cbb4162e85afcc
+FileChecksum: SHA1: 92f1675464d923f248eb36636d2bd1924e6e00bc
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./AUTHORS
+SPDXID: SPDXRef-dad57a4c245a8007c90257aef0514c8b6a0f600c
+FileChecksum: SHA1: 974006f16929d1b01a8a7c6644cfa697a96e63ca
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./.travis.yml
+SPDXID: SPDXRef-dea01dd89a3b602828e630677fde5d77c06441c8
+FileChecksum: SHA1: 6bfd3be1b68af4be702ec6069c7ec40bf5ef5c23
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./lsusb.h
+SPDXID: SPDXRef-de5d0aaef5920a283d740908c6e021d40fe12de0
+FileChecksum: SHA1: b703a54ba37b7f77816f77365034b9800c0da613
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0+
+FileCopyrightText: <text>Copyright 2011 (c) Greg Kroah-Hartman <gregkh@suse.de></text>
+
+FileName: ./lsusb-t.c
+SPDXID: SPDXRef-9d45eba6476202ac65ec45c3ba12118d12f2ef84
+FileChecksum: SHA1: 9366eda2ceb3abed27c60c4db816af4245d0b350
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0
+FileCopyrightText: <text>Copyright (c) 2009 Greg Kroah-Hartman <gregkh@suse.de></text>
+
+FileName: ./desc-dump.c
+SPDXID: SPDXRef-b5afcfeafd17ff89556dcde7e7d1baefc4b36c76
+FileChecksum: SHA1: 2402892718aacfdd9275e7428b288e863b8ea6bc
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0+
+FileCopyrightText: <text>Copyright (C) 2017 Michael Drake <michael.drake@codethink.co.uk></text>
+
+FileName: ./usbhid-dump/Makefile.am
+SPDXID: SPDXRef-727e654f9158303b2dddb5c435ccffb7df627d09
+FileChecksum: SHA1: 3535cca0ba7bac1531b77d715fcd5567aa1ca60a
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2009-2010 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/NEWS
+SPDXID: SPDXRef-534c09b61b58cbfef5a383f5be6864051db5bd1a
+FileChecksum: SHA1: 66a51fa38cb3f71d7514d982c104ebcb120a89f5
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./usbhid-dump/README.md
+SPDXID: SPDXRef-e7c1d0ffd0ba8ea407f4fcb7ee3717c2460456b8
+FileChecksum: SHA1: 783567bddef5cfee242810cec17a2dd1da8d2a9a
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./usbhid-dump/configure.ac
+SPDXID: SPDXRef-5edef310d5d94ad7293749401bc114eda84bdf27
+FileChecksum: SHA1: 2b7a78bb3b06bd10a384dfaafd3a68309efa6a22
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010-2011 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/bootstrap
+SPDXID: SPDXRef-0ccb2a5e2004a47c238a1ad5f97a8b6b140f6609
+FileChecksum: SHA1: 4d3b5ad4b4eddfb431dff0e932636f9de4ab3d93
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (c) 2010 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/include/Makefile.am
+SPDXID: SPDXRef-f8ffd668553b011c77c049c23596f4ac16b2442b
+FileChecksum: SHA1: ef95fac01183b533f4391eab74594c44b459137c
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/include/uhd/Makefile.am
+SPDXID: SPDXRef-c0d6c4c7b3ffddbebd269646cb37316dd18ce702
+FileChecksum: SHA1: 2a0e7d6af768255ec307a4dbb579d542e77d7e41
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/include/uhd/dev.h
+SPDXID: SPDXRef-c8becd4c81cfd2a2dec5bf5f98096f24dcea48e9
+FileChecksum: SHA1: 715b1e0ae2eff0104a379a92f6ea0f117c992c97
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010-2011 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/include/uhd/iface.h
+SPDXID: SPDXRef-d073c8d1cdb5b1f1c923af71a80f3317b21e62ed
+FileChecksum: SHA1: da7f40ed9dfdc03048af1512fa96f1e166bf1ba7
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/include/uhd/iface_list.h
+SPDXID: SPDXRef-6b2a3e275cae2f8322ff624e013951d8e7d23b83
+FileChecksum: SHA1: 7407f60437e35af297f429863a28344fef62dc42
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/include/uhd/libusb.h
+SPDXID: SPDXRef-a66285338b82121f7347923b8ca006b160125d01
+FileChecksum: SHA1: 29b0e137d8d9ebc27534d6d62a9a778759eefb0d
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010-2011 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/include/uhd/dev_list.h
+SPDXID: SPDXRef-a8e3a2d9873b55c84b0cb046855447674b65146e
+FileChecksum: SHA1: 529334bc310028933bed64be6ae6e54dd3ebf3a5
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010-2011 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/include/uhd/misc.h
+SPDXID: SPDXRef-3055f9d157f6ce27aef346c81bdf132fdd5bc2f8
+FileChecksum: SHA1: 5d77ac9550fdf8eb747288791847ac8dc49043ac
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/src/Makefile.am
+SPDXID: SPDXRef-9ffeec08dbf2185c660fc69f401c6754cc250aff
+FileChecksum: SHA1: 0a472632a048aa27df19971060f70541d39998df
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/src/usbhid-dump.c
+SPDXID: SPDXRef-4cb440034519ea41c61d5a741cf167faa947a5d5
+FileChecksum: SHA1: f766dc2ec7821f9a24b7ed54798e820e3a2e81cb
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010-2011 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/doc/Makefile.am
+SPDXID: SPDXRef-3bb3d8ca023b0861c7f6dfcc04e06f2c37fe1bb7
+FileChecksum: SHA1: 9be240875c99a8abc4703dee8d184e28f84a1cb9
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/doc/usbhid-dump.8
+SPDXID: SPDXRef-d75a77accdc47f63ea09d5e541fb17c075259791
+FileChecksum: SHA1: 366ab4785a54650ddcfb4f8663ff5b9630fe4e62
+LicenseConcluded: NOASSERTION
+FileCopyrightText: NONE
+
+FileName: ./usbhid-dump/lib/Makefile.am
+SPDXID: SPDXRef-7c44a8e2ff7c7482515cc94e0244db0c747da71d
+FileChecksum: SHA1: edaa1c6500e6144af33a259d4334d95130aa5d13
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2009-2010 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/lib/iface_list.c
+SPDXID: SPDXRef-73de39af2d0e901f694232da4801eb2c8a66d20b
+FileChecksum: SHA1: 26fbfbadf28b0a4a6219873464594ddd4d95f145
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/lib/dev.c
+SPDXID: SPDXRef-a5f2edbd8b8b3304dea21ffd974c0bc9bd772af5
+FileChecksum: SHA1: 0a03aec4473b8bf11917d6d6955eb1a81e687aca
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/lib/iface.c
+SPDXID: SPDXRef-e8ec4dd62c7540c8cb45b05a895c168bcc13048b
+FileChecksum: SHA1: b3c828cceeaea8d20fd440f6f7e5225d5ec26146
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/lib/dev_list.c
+SPDXID: SPDXRef-d57b0b3be1ce716faee2d4c80c5f9a91ba8f1ecc
+FileChecksum: SHA1: 2fc4fd5b6c8fcfde7a563b56cf0ba639cdad679b
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov</text>
+
+FileName: ./usbhid-dump/lib/libusb.c
+SPDXID: SPDXRef-6454de685ba7cf12cfc0804a23c0bd7bdfa0bfd7
+FileChecksum: SHA1: 58f7d1c78541bfd310e46e24435540a0ec83d3c4
+LicenseConcluded: NOASSERTION
+FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov</text>
