@@ -2,11 +2,11 @@ SPDXVersion: SPDX-2.1
 DataLicense: CC0-1.0
 SPDXID: SPDXRef-DOCUMENT
 DocumentName: usbutils
-DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-372b638a-adcd-4ad2-b64e-54c8b2a5f543
+DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-4e8b7ede-2ef4-4380-a63c-533dd02e4f47
 Creator: Person: Anonymous ()
 Creator: Organization: Anonymous ()
 Creator: Tool: reuse-0.2.0
-Created: 2018-05-15T14:10:53Z
+Created: 2018-05-15T14:17:33Z
 CreatorComment: <text>This document was created automatically using available reuse information consistent with the REUSE Initiative.</text>
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-6c17d1dd6beb0ac4e8dbdc1d3d89d077d1ed091f
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-d1f43f45055e4f55af9904a21c03f3ac2e23f780
@@ -63,34 +63,35 @@ SPDXID: SPDXRef-6c17d1dd6beb0ac4e8dbdc1d3d89d077d1ed091f
 FileChecksum: SHA1: f36d9493b6aec212f8d1a8f498ae8e46fd1b4244
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0+
-FileCopyrightText: <text>Copyright (C) 2003-2005 David Brownell</text>
 FileCopyrightText: <text>Copyright (C) 1999-2001, 2003 Thomas Sailer (t.sailer@alumni.ethz.ch)</text>
+FileCopyrightText: <text>Copyright (C) 2003-2005 David Brownell</text>
 
 FileName: ./usb-devices.1.in
 SPDXID: SPDXRef-d1f43f45055e4f55af9904a21c03f3ac2e23f780
 FileChecksum: SHA1: ec56b9e8c52cff364db5cca7215ac659dcecbd35
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0
+FileCopyrightText: <text>Copyright (c) 2004 Frans Pop <elendil@planet.nl></text>
 FileCopyrightText: <text>Copyright (c) 2004 Randy Dunlap <rdunlap@xenotime.net></text>
 FileCopyrightText: <text>Copyright (c) 2004 Greg Kroah-Hartman <greg@kroah.com></text>
-FileCopyrightText: <text>Copyright (c) 2004 Frans Pop <elendil@planet.nl></text>
 
 FileName: ./Makefile.am
 SPDXID: SPDXRef-d5b4de16d947214ec306bd57bed1bd23a939b5f9
 FileChecksum: SHA1: c167455c7c1eea2d5e142c9690875a4514e0f0f9
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0+
-FileCopyrightText: <text>Copyright (c) 2009 Greg Kroah-Hartman <gregkh@suse.de></text>
-FileCopyrightText: <text>Copyright (c) 2009 Kay Sievers <kay.sievers@vrfy.org></text>
-FileCopyrightText: <text>Copyright (c) 2004 Thomas Sailer <sailer@ife.ee.ethz.ch></text>
 FileCopyrightText: <text>Copyright (c) 2005-2006 David Brownell <dbrownell@users.sourceforge.net></text>
+FileCopyrightText: <text>Copyright (c) 2009 Kay Sievers <kay.sievers@vrfy.org></text>
+FileCopyrightText: <text>Copyright (c) 2009 Greg Kroah-Hartman <gregkh@suse.de></text>
+FileCopyrightText: <text>Copyright (c) 2004 Thomas Sailer <sailer@ife.ee.ethz.ch></text>
 
 FileName: ./NEWS
 SPDXID: SPDXRef-9f621eb5fd3bcb2fa5c7bd228c9b1ad42edc46c8
-FileChecksum: SHA1: 93c9075d27aa1e41660f156d6f6245625540ba3a
+FileChecksum: SHA1: 878a7a3162648dfa0c617248d2e95d889c22de49
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0
 FileCopyrightText: <text>Copyright (c) 2018 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+FileCopyrightText: <text>Copyright strings</text>
 
 FileName: ./names.c
 SPDXID: SPDXRef-6c3981b5733e947489b6d6359cea90114e5edbca
@@ -120,8 +121,8 @@ FileChecksum: SHA1: 0d407269e4572232221dac9487f95ead3256c627
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0+
 FileCopyrightText: <text>Copyright (c) 2009 Frans Pop <elendil@planet.nl></text>
-FileCopyrightText: <text>Copyright (c) 2009 Randy Dunlap <rdunlap@xenotime.net></text>
 FileCopyrightText: <text>Copyright (c) 2009 Greg Kroah-Hartman <greg@kroah.com></text>
+FileCopyrightText: <text>Copyright (c) 2009 Randy Dunlap <rdunlap@xenotime.net></text>
 
 FileName: ./lsusb.8.in
 SPDXID: SPDXRef-01f9f98ab7d1aacab858a82f2243dfbc6ec781ff
@@ -174,7 +175,7 @@ FileCopyrightText: <text>Copyright (C) 2013 Tom Gundersen <teg@jklm.no></text>
 
 FileName: ./configure.ac
 SPDXID: SPDXRef-87db583be5c13c1f7b3c958b10e03d67b6a2ca06
-FileChecksum: SHA1: 91bd3d551120593aa0a9bde4896700f3eb47ba7d
+FileChecksum: SHA1: 04ab423765541b3a34eca63f04a8688c2aef1816
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0
 FileCopyrightText: <text>Copyright (c) 2009 Kay Sievers <kay.sievers@vrfy.org></text>
@@ -198,8 +199,8 @@ SPDXID: SPDXRef-f17f27205281653e3e67d0509a122b1861090085
 FileChecksum: SHA1: 59e8b90ae66abc28f863824f40304ddc023ab0b2
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0 OR GPL-3.0
-FileCopyrightText: <text>Copyright (c) 2009 Kurt Garloff <garloff@suse.de></text>
 FileCopyrightText: <text>Copyright (c) 2013 Kurt Garloff <kurt@garloff.de></text>
+FileCopyrightText: <text>Copyright (c) 2009 Kurt Garloff <garloff@suse.de></text>
 
 FileName: ./autogen.sh
 SPDXID: SPDXRef-152c3993c79ed609cfec1b4276c2eb31f4d518b3

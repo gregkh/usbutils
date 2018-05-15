@@ -7,6 +7,69 @@
 # history (i.e. packaged versions of the software).
 #
 
+usbutils 010
+============
+
+Aurelien Jarno (2):
+      usbreset.c: add missing <stdlib.h> include
+      Do not create and install usbutils.pc
+
+Greg Kroah-Hartman (32):
+      fix dump_videocontrol_interface for unitialized variable usage
+      Add correct SPDX license identifiers to all files
+      Add SPDX identifiers on files that did not have a specific license.
+      wTotalLength should be printed as a hex number
+      usbmisc: fix up some strncpy() issues
+      lsusb-t: fix up error with readlink()
+      lsusb.py.in: add proper SPDX license identifier
+      usb-devices: reword the copyright identifier
+      LICENSES: move the GPL 2 license to the LICENSES directory
+      LICENSES/GPL-3.0.txt: add the file
+      lsusb.h: add copyright notice
+      lsusb-t: add copyright info
+      bom.spdx: Add bill of materials file in SPDX format.
+      ChangeLog: remove it.
+      AUTHORS: remove file
+      do_release: drop file
+      NEWS: add SPDX header and comment
+      autogen.sh: add SPDX and copyright header
+      list.h: add copyright information
+      travis-autogen.sh: add SPDX and copyright information.
+      INSTALL: remove the file, it's boiler-plate
+      configure.ac: add SPDX and copyright
+      man pages: add SPDX and copyright information
+      Makefile.am: add SPDX and copyright information
+      .gitmodules: add SPDX and copyright lines
+      lsusb.py.in: fix up Copyright strings
+      usbreset.c: add Alan's copyright
+      .travis.yml: add correct SPDX and copyright notices
+      bom.spdx: update with latest copyright and SPDX identifier additions
+      README.md: move the README file to markdown
+      README.md: fix fomatting
+      bom.spdx: upate with README -> README.md change
+
+Lukas Nykryn (1):
+      lsusb.py: convert to python3
+
+Michael Drake (11):
+      lsusb: Split subtype mapping out of AudioControl interface handling.
+      lsusb: Add declarative definitions for UAC1 and UAC2 descriptors.
+      lsusb: Add code to dump descriptor data using descriptor definition.
+      lsusb: Switch to descriptor-definition based dump for UAC1 and UAC2.
+      lsusb: Add descriptor definitions for UAC3.
+      lsusb: Add initial support for USB Audio Device Class 3.
+      lsusb: Add descriptor definition for USB3 BOS Configuration Summary.
+      lsusb: Dump USB3 BOS Configuration Summary Descriptor.
+      lsusb: Squash Wpointer-compare warning.
+      lsusb: Remove unused function.
+      lsusb: Fix array entry count for variable sized entries.
+
+Robby Workman (1):
+      Makefile.am: Include usbreset.c in the release tarball
+
+Torleiv Sundre (1):
+      lsusb: Dump UVC Stream based payload descriptor.
+
 
 usbutils 009
 ============
