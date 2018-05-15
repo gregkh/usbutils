@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (c) 2009 Kay Sievers <kay.sievers@vrfy.org>
+
 AC_INIT([usbutils],
 	[009],
 	[linux-usb@vger.kernel.org])
