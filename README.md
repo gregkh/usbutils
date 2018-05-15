@@ -14,20 +14,29 @@ a USB device (i.e. a device you plug into a USB host.)
 Note, usbutils depends on libusb, be sure that library is properly
 installed first.
 
-To work with the "raw" repo, after cloneing it just do:
+To work with the "raw" repo, after cloning it just do:
+
 	./autogen.sh
 
-or if you like doing things "by hand" you can try the following:
+Or if you like doing things "by hand" you can try the following:
 
-	get the usbhid-dump git submodule:
-		git submodule init
-		git submodule update
+Get the usbhid-dump git submodule:
 
-	initialize autobuild with:
-		autoreconf --install --symlink
+	git submodule init
+	git submodule update
 
-	configure with:
-		./configure
+Initialize autobuild with:
 
-	build with:
-		make
+	autoreconf --install --symlink
+
+Configure the project with:
+
+	./configure
+
+Build everything with:
+
+	make
+
+Install it, if you really want to, with:
+
+	make install
