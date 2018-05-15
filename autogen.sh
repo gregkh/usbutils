@@ -1,4 +1,6 @@
 #!/bin/sh -e
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (c) 2009,2010 Greg Kroah-Hartman <gregkh@suse.de>
 
 if test ! -f usbhid-dump/bootstrap; then
 git submodule update --init --recursive
