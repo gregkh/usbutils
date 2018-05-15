@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 /* usbreset -- send a USB port reset to a USB device */
+/* Copyright (c) 2009-2016 Alan Stern */
 /* To build:  gcc -o usbreset usbreset.c */
 
 #include <stdio.h>
