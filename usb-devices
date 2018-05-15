@@ -1,9 +1,9 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-2.0+
 #
-# Copyright: 2009 Greg Kroah-Hartman <greg@kroah.com>
-#            2009 Randy Dunlap <rdunlap@xenotime.net>
-#            2009 Frans Pop <elendil@planet.nl>
+# Copyright (c) 2009 Greg Kroah-Hartman <greg@kroah.com>
+# Copyright (c) 2009 Randy Dunlap <rdunlap@xenotime.net>
+# Copyright (c) 2009 Frans Pop <elendil@planet.nl>
 
 print_string() {
 	file=$1
