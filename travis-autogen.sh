@@ -1,4 +1,6 @@
 #!/bin/bash
+# SPDX-License-Identifier: GPL-2.0
+# Copyright 2016 Stephan Linz <linz@li-pro.net>
 
 # -Wsign-compare -Wtype-limits
 # Warnings enabled
