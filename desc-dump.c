@@ -446,6 +446,35 @@ static unsigned int get_char_count_for_array_index(unsigned int array_entries)
 	return 3;
 }
 
+/**
+ * Render a field's name.
+ *
+ * \param[in] entry       Current entry number (for arrays).
+ * \param[in] entries     Entry count (for arrays).
+ * \param[in] field_len   Character width of field name space for alignment.
+ * \param[in] current     Descriptor definition of field to render.
+ * \param[in] indent      Current indent level.
+ */
+static void field_render(
+		unsigned int entry,
+		unsigned int entries,
+		unsigned int field_len,
+		const struct desc *current,
+		unsigned int indent)
+{
+	if (current->array.array) {
+		unsigned int needed_chars = field_len -
+				get_char_count_for_array_index(entries) -
+				strlen(current->field);
+		printf("%*s%s(%u)%*s", indent * 2, "",
+				current->field, entry,
+				needed_chars, "");
+	} else {
+		printf("%*s%-*s", indent * 2, "",
+				field_len, current->field);
+	}
+}
+
 /* Function documented in desc-dump.h */
 void desc_dump(
 		libusb_device_handle *dev,
@@ -506,19 +535,11 @@ void desc_dump(
 				printf("\n");
 				return;
 			}
+
 			/* Dump the field name */
-			if (current->array.array) {
-				needed_chars = field_len -
-						get_char_count_for_array_index(
-								entries) -
-						strlen(current->field);
-				printf("%*s%s(%u)%*s", indent * 2, "",
-						current->field, entry,
-						needed_chars, "");
-			} else {
-				printf("%*s%-*s", indent * 2, "",
-						field_len, current->field);
-			}
+			field_render(entry, entries, field_len,
+					current, indent);
+
 			/* Dump the value */
 			value_renderer(dev, current, current_size, buf,
 					indent, offset);
