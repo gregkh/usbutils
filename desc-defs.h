@@ -2,7 +2,7 @@
 /*
  * USB descriptor definitions
  *
- * Copyright (C) 2017 Michael Drake <michael.drake@codethink.co.uk>
+ * Copyright (C) 2017-2018 Michael Drake <michael.drake@codethink.co.uk>
  */
 
 #ifndef _DESC_DEFS_H
@@ -33,6 +33,7 @@ enum desc_type {
 	DESC_TERMINAL_STR,   /**< Audio terminal string. */
 	DESC_BITMAP_STRINGS, /**< Bitfield with string per bit. */
 	DESC_NUMBER_STRINGS, /**< Use for enum-style value to string. */
+	DESC_EXTENSION,      /**< Various possible descriptor extensions. */
 	DESC_SNOWFLAKE,  /**< Value with custom annotation callback function. */
 };
 
@@ -96,6 +97,39 @@ struct desc {
 		 */
 		const char *number_postfix;
 		/**
+		 * Corresponds to type DESC_EXTENSION.
+		 *
+		 * This allows the value of this field to be processed by
+		 * another descriptor definition.  The definition used to
+		 * process the value of this field can be controlled by
+		 * the value of another field.
+		 */
+		struct {
+			/**
+			 * Name of field specifying descriptor type to select.
+			 */
+			const char *type_field;
+			/**
+			 * Array of descriptor definitions and their
+			 * associated types values.  Array must be terminated
+			 * by entry with NULL `desc` member.
+			 */
+			const struct desc_ext {
+				/**
+				 * Array of descriptor field definitions.
+				 * Terminated by entry with NULL `field` member.
+				 */
+				const struct desc *desc;
+				/**
+				 * Type value for this descriptor definition.
+				 * If it matches the type read from the
+				 * field `type_field`, then this descriptor
+				 * definition will be used to decode this value.
+				 */
+				unsigned int type;
+			} *d;
+		} extension;
+		/**
 		 * Corresponds to type DESC_SNOWFLAKE.
 		 *
 		 * Callback function called to annotate snowflake value type.
@@ -115,6 +149,9 @@ struct desc {
 };
 
 /* ---------------------------------------------------------------------- */
+
+/* Undefined descriptor */
+extern const struct desc desc_undefined[];
 
 /* Audio Control (AC) descriptor definitions */
 extern const struct desc * const desc_audio_ac_header[3];

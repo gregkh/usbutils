@@ -2,7 +2,7 @@
 /*
  * USB descriptor dumping
  *
- * Copyright (C) 2017 Michael Drake <michael.drake@codethink.co.uk>
+ * Copyright (C) 2017-2018 Michael Drake <michael.drake@codethink.co.uk>
  */
 
 #include "config.h"
@@ -110,6 +110,57 @@ static unsigned long long get_n_bytes_as_ull(
 }
 
 /**
+ * Get the size of a descriptor field in bytes.
+ *
+ * Normally the size is provided in the entry's size parameter, but some
+ * fields have a variable size, with the actual size being stored in as
+ * the value of another field.
+ *
+ * \param[in] buf    Descriptor data.
+ * \param[in] desc   First field in the descriptor definition array.
+ * \param[in] entry  The descriptor definition field to get size for.
+ * \return Size of the field in bytes.
+ */
+static unsigned int get_entry_size(
+		const unsigned char *buf,
+		const struct desc *desc,
+		const struct desc *entry);
+
+/**
+ * Read a value from a field of given name.
+ *
+ * \param[in] buf    Descriptor data.
+ * \param[in] desc   First field in the descriptor definition array.
+ * \param[in] field  The name of the field to get the value for.
+ * \return The value from the given field.
+ */
+static unsigned long long get_value_from_field(
+		const unsigned char *buf,
+		const struct desc *desc,
+		const char *field)
+{
+	size_t offset = 0;
+	const struct desc *current;
+	unsigned long long value = 0;
+
+	/* Search descriptor definition array for the field who's value
+	 * gives the value of the entry we're interested in. */
+	for (current = desc; current->field != NULL; current++) {
+		if (strcmp(current->field, field) == 0) {
+			value = get_n_bytes_as_ull(buf, offset,
+					current->size);
+			break;
+		}
+
+		/* Keep track of our offset in the descriptor data
+		 * as we look for the field we want. */
+		offset += get_entry_size(buf, desc, current);
+	}
+
+	return value;
+}
+
+/**
  * Dump a number as hex to stdout.
  *
  * \param[in] buf     Descriptor buffer to get values to render from.
@@ -160,8 +211,10 @@ static void number_renderer(
  *
  * \param[in] dev           LibUSB device handle.
  * \param[in] current       Descriptor definition field to render.
- * \param[in] current_size  Descriptor definition field to render.
+ * \param[in] current_size  Size of value to render.
  * \param[in] buf           Byte array containing the descriptor date to dump.
+ * \param[in] buf_len       Byte length of `buf`.
+ * \param[in] desc          First field in the descriptor definition.
  * \param[in] indent        Current indent level.
  * \param[in] offset        Offset to current value in `buf`.
  */
@@ -170,6 +223,8 @@ static void value_renderer(
 		const struct desc *current,
 		unsigned int current_size,
 		const unsigned char *buf,
+		unsigned int buf_len,
+		const struct desc *desc,
 		unsigned int indent,
 		size_t offset)
 {
@@ -261,6 +316,31 @@ static void value_renderer(
 		printf(" %s\n", names_audioterminal(
 				get_n_bytes_as_ull(buf, offset, current_size)));
 		break;
+	case DESC_EXTENSION: {
+		unsigned int type = get_value_from_field(buf, desc,
+				current->extension.type_field);
+		const struct desc *ext_desc;
+		const struct desc_ext *ext;
+
+		/* Lookup the extention descriptor definitions to use, */
+		for (ext = current->extension.d; ext->desc != NULL; ext++) {
+			if (ext->type == type) {
+				ext_desc = ext->desc;
+				break;
+			}
+		}
+
+		/* If the type didn't match a known type, use the
+		 * undefined descriptor. */
+		if (ext->desc == NULL) {
+			ext_desc = desc_undefined;
+		}
+
+		desc_dump(dev, ext_desc, buf + offset,
+				buf_len - offset, indent);
+
+		break;
+	}
 	case DESC_SNOWFLAKE:
 		number_renderer(buf, size_chars, offset, current_size);
 		current->snowflake(
@@ -270,18 +350,7 @@ static void value_renderer(
 	}
 }
 
-/**
- * Get the size of a descriptor field in bytes.
- *
- * Normally the size is provided in the entry's size parameter, but some
- * fields have a variable size, with the actual size being stored in as
- * the value of another field.
- *
- * \param[in] buf    Descriptor data.
- * \param[in] desc   First field in the descriptor definition array.
- * \param[in] entry  The descriptor definition field to get size for.
- * \return Size of the field in bytes.
- */
+/* Documented at forward declaration above. */
 static unsigned int get_entry_size(
 		const unsigned char *buf,
 		const struct desc *desc,
@@ -292,24 +361,7 @@ static unsigned int get_entry_size(
 
 	if (entry->size_field != NULL) {
 		/* Variable field length, given by `size_field`'s value. */
-		size_t offset = 0;
-
-		/* Search descriptor definition array for the field who's value
-		 * gives the size of the entry we're interested in. */
-		for (current = desc; current->field != NULL; current++) {
-			if (strcmp(current->field, entry->size_field) == 0) {
-				/* Found the field who's value gives us the
-				 * size of, so read that field's value out of
-				 * the descriptor data buffer. */
-				size = get_n_bytes_as_ull(buf, offset,
-						current->size);
-				break;
-			}
-
-			/* Keep track of our offset in the descriptor data
-			 * as we look for the field we want. */
-			offset += get_entry_size(buf, desc, current);
-		}
+		size = get_value_from_field(buf, desc, entry->size_field);
 	}
 
 	if (size == 0) {
@@ -347,27 +399,14 @@ static unsigned int get_array_entry_count(
 
 	if (array_entry->array.length_field1) {
 		/* We can get the array size from the length_field1. */
-		size_t offset = 0;
-		for (current = desc; current->field != NULL; current++) {
-			if (strcmp(current->field, array_entry->array.length_field1) == 0) {
-				entries = get_n_bytes_as_ull(buf, offset, current->size);
-				break;
-			}
+		entries = get_value_from_field(buf, desc,
+				array_entry->array.length_field1);
 
-			offset += get_entry_size(buf, desc, current);
-		}
-		offset = 0; /* skip first three common 1-byte fields */
 		if (array_entry->array.length_field2 != NULL) {
 			/* There's a second field specifying length.  The two
 			 * lengths are multiplied. */
-			for (current = desc; current->field != NULL; current++) {
-				if (strcmp(current->field, array_entry->array.length_field2) == 0) {
-					entries *= get_n_bytes_as_ull(buf, offset, current->size);
-					break;
-				}
-
-				offset += get_entry_size(buf, desc, current);
-			}
+			entries *= get_value_from_field(buf, desc,
+					array_entry->array.length_field2);
 		}
 
 		/* If the bits flag is set, then the entry count so far
@@ -436,6 +475,35 @@ static unsigned int get_char_count_for_array_index(unsigned int array_entries)
 	return 3;
 }
 
+/**
+ * Render a field's name.
+ *
+ * \param[in] entry       Current entry number (for arrays).
+ * \param[in] entries     Entry count (for arrays).
+ * \param[in] field_len   Character width of field name space for alignment.
+ * \param[in] current     Descriptor definition of field to render.
+ * \param[in] indent      Current indent level.
+ */
+static void field_render(
+		unsigned int entry,
+		unsigned int entries,
+		unsigned int field_len,
+		const struct desc *current,
+		unsigned int indent)
+{
+	if (current->array.array) {
+		unsigned int needed_chars = field_len -
+				get_char_count_for_array_index(entries) -
+				strlen(current->field);
+		printf("%*s%s(%u)%*s", indent * 2, "",
+				current->field, entry,
+				needed_chars, "");
+	} else {
+		printf("%*s%-*s", indent * 2, "",
+				field_len, current->field);
+	}
+}
+
 /* Function documented in desc-dump.h */
 void desc_dump(
 		libusb_device_handle *dev,
@@ -496,24 +564,25 @@ void desc_dump(
 				printf("\n");
 				return;
 			}
+
 			/* Dump the field name */
-			if (current->array.array) {
-				needed_chars = field_len -
-						get_char_count_for_array_index(
-								entries) -
-						strlen(current->field);
-				printf("%*s%s(%u)%*s", indent * 2, "",
-						current->field, entry,
-						needed_chars, "");
-			} else {
-				printf("%*s%-*s", indent * 2, "",
-						field_len, current->field);
+			if (current->type != DESC_EXTENSION) {
+				field_render(entry, entries, field_len,
+						current, indent);
 			}
+
 			/* Dump the value */
-			value_renderer(dev, current, current_size, buf,
-					indent, offset);
-			/* Advance offset in buffer */
-			offset += current_size;
+			value_renderer(dev, current, current_size, buf, buf_len,
+					desc, indent, offset);
+
+			if (current->type == DESC_EXTENSION) {
+				/* A desc extension consumes all remaining
+				 * value buffer. */
+				offset = buf_len;
+			} else {
+				/* Advance offset in buffer */
+				offset += current_size;
+			}
 		}
 	}
 

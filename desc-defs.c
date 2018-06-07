@@ -2,7 +2,7 @@
 /*
  * USB descriptor definitions
  *
- * Copyright (C) 2017 Michael Drake <michael.drake@codethink.co.uk>
+ * Copyright (C) 2017-2018 Michael Drake <michael.drake@codethink.co.uk>
  */
 
 #include "config.h"
@@ -15,6 +15,15 @@
 
 /** Macro for computing number of elements in array. */
 #define ARRAY_LEN(a) ((sizeof(a)) / (sizeof(a[0])))
+
+/**
+ * Undefined descriptor
+ *
+ * Ensures remaining data is dumped as garbage at end of descriptor.
+ */
+const struct desc desc_undefined[] = {
+	{ .field = NULL }
+};
 
 /** USB Audio Device Class 1 Channel Names.  (Note: Order matters.) */
 static const char * const uac1_channel_names[] = {
@@ -401,10 +410,38 @@ const struct desc * const desc_audio_ac_selector_unit[3] = {
 	desc_audio_3_ac_selector_unit,
 };
 
+/** UAC1: Table A-7: Processing Unit Process Types */
+static const char * const uac1_proc_unit_types[] = {
+	[0] = "Undefined",
+	[1] = "Up/Down-mix",
+	[2] = "Dolby Prologic",
+	[3] = "3D Stereo Extender",
+	[4] = "Reverberation",
+	[5] = "Chorus",
+	[6] = "Dyn Range Comp",
+	[7] = NULL
+};
+
+/** UAC1: Up/Down-mix and Dolby Prologic proc unit descriptor extensions Table 4-9, Table 4-10. */
+static const struct desc desc_audio_1_ac_proc_unit_extended[] = {
+	{ .field = "bNrModes",         .size = 1, .type = DESC_NUMBER },
+	{ .field = "waModes",          .size = 2, .type = DESC_BITMAP,
+			.array = { .array = true, .length_field1 = "bNrModes" } },
+	{ .field = NULL }
+};
+
+/** UAC1: Table A-7: Processing Unit Process Types */
+static const struct desc_ext desc_audio_1_ac_proc_unit_specific[] = {
+	{ .type = 1, .desc = desc_audio_1_ac_proc_unit_extended },
+	{ .type = 2, .desc = desc_audio_1_ac_proc_unit_extended },
+	{ .desc = NULL }
+};
+
 /** UAC1: 4.3.2.6 Processing Unit Descriptor; Table 4-8. */
 static const struct desc desc_audio_1_ac_processing_unit[] = {
 	{ .field = "bUnitID",          .size = 1, .type = DESC_NUMBER },
-	{ .field = "wProcessType",     .size = 2, .type = DESC_CONSTANT },
+	{ .field = "wProcessType",     .size = 2, .type = DESC_NUMBER_STRINGS,
+			.number_strings = uac1_proc_unit_types },
 	{ .field = "bNrInPins",        .size = 1, .type = DESC_NUMBER },
 	{ .field = "baSourceID",       .size = 1, .type = DESC_NUMBER,
 			.array = { .array = true, .length_field1 = "bNrInPins" } },
@@ -416,15 +453,48 @@ static const struct desc desc_audio_1_ac_processing_unit[] = {
 	{ .field = "bmControls",       .size = 1, .type = DESC_BITMAP,
 			.array = { .array = true, .length_field1 = "bControlSize" } },
 	{ .field = "iProcessing",      .size = 1, .type = DESC_STR_DESC_INDEX },
-	{ .field = "Process-specific", .size = 1, .type = DESC_BITMAP,
-			.array = { .array = true } },
+	{ .field = "Process-specific", .size = 1, .type = DESC_EXTENSION,
+		.extension = { .type_field = "wProcessType", .d = desc_audio_1_ac_proc_unit_specific } },
 	{ .field = NULL }
+};
+
+/** UAC2: 4.7.2.11.1 Up/Down-mix Processing Unit Descriptor; Table 4-21. */
+static const struct desc desc_audio_2_ac_proc_unit_up_down_mix[] = {
+	{ .field = "bNrModes",         .size = 1, .type = DESC_NUMBER },
+	{ .field = "daModes",          .size = 4, .type = DESC_BITMAP,
+			.array = { .array = true, .length_field1 = "bNrModes" } },
+	{ .field = NULL }
+};
+
+/** UAC2: 4.7.2.11.2 Dolby prologic Processing Unit Descriptor; Table 4-22. */
+static const struct desc desc_audio_2_ac_proc_unit_dolby_prologic[] = {
+	{ .field = "bNrModes",         .size = 1, .type = DESC_NUMBER },
+	{ .field = "daModes",          .size = 4, .type = DESC_BITMAP,
+			.array = { .array = true, .length_field1 = "bNrModes" } },
+	{ .field = NULL }
+};
+
+/** UAC2: Table A-12: Processing Unit Process Types */
+static const struct desc_ext desc_audio_2_ac_proc_unit_specific[] = {
+	{ .type = 1, .desc = desc_audio_2_ac_proc_unit_up_down_mix },
+	{ .type = 2, .desc = desc_audio_2_ac_proc_unit_dolby_prologic },
+	{ .desc = NULL }
+};
+
+/** UAC2: Table A-12: Processing Unit Process Types */
+static const char * const uac2_proc_unit_types[] = {
+	[0] = "Undefined",
+	[1] = "Up/Down-mix",
+	[2] = "Dolby Prologic",
+	[3] = "Stereo Extender",
+	[4] = NULL
 };
 
 /** UAC2: 4.7.2.11 Processing Unit Descriptor; Table 4-20. */
 static const struct desc desc_audio_2_ac_processing_unit[] = {
 	{ .field = "bUnitID",          .size = 1, .type = DESC_NUMBER },
-	{ .field = "wProcessType",     .size = 2, .type = DESC_CONSTANT },
+	{ .field = "wProcessType",     .size = 2, .type = DESC_NUMBER_STRINGS,
+			.number_strings = uac2_proc_unit_types },
 	{ .field = "bNrInPins",        .size = 1, .type = DESC_NUMBER },
 	{ .field = "baSourceID",       .size = 1, .type = DESC_NUMBER,
 			.array = { .array = true, .length_field1 = "bNrInPins" } },
@@ -432,25 +502,105 @@ static const struct desc desc_audio_2_ac_processing_unit[] = {
 	{ .field = "bmChannelConfig",  .size = 4, .type = DESC_BITMAP_STRINGS,
 			.bitmap_strings = { .strings = uac2_channel_names, .count = 26 } },
 	{ .field = "iChannelNames",    .size = 1, .type = DESC_STR_DESC_INDEX },
-	{ .field = "bControlSize",     .size = 1, .type = DESC_NUMBER },
-	{ .field = "bmControls",       .size = 2, .type = DESC_BITMAP,
-			.array = { .array = true, .length_field1 = "bControlSize" } },
+	{ .field = "bmControls",       .size = 2, .type = DESC_BITMAP },
 	{ .field = "iProcessing",      .size = 1, .type = DESC_STR_DESC_INDEX },
-	{ .field = "Process-specific", .size = 1, .type = DESC_BITMAP,
-			.array = { .array = true } },
+	{ .field = "Process-specific", .size = 1, .type = DESC_EXTENSION,
+		.extension = { .type_field = "wProcessType", .d = desc_audio_2_ac_proc_unit_specific } },
 	{ .field = NULL }
+};
+
+/** Processor unit Up/Down-mix bmControls; Human readable bit meanings. */
+static const char * const uac3_proc_unit_up_down_mix_bmcontrols[] = {
+	[0] = "Mode Select",
+	[1] = "Underflow",
+	[2] = "Overflow",
+	[3] = NULL
+};
+
+/** UAC3: 4.5.2.10.1 Up/Down-mix Processing Unit Descriptor; Table 4-39. */
+static const struct desc desc_audio_3_ac_proc_unit_up_down_mix[] = {
+	{ .field = "bmControls",       .size = 4, .type = DESC_BMCONTROL_2,
+			.bmcontrol = uac3_proc_unit_up_down_mix_bmcontrols },
+	{ .field = "bNrModes",         .size = 1, .type = DESC_NUMBER },
+	{ .field = "waClusterDescrID", .size = 2, .type = DESC_NUMBER,
+			.array = { .array = true, .length_field1 = "bNrModes" } },
+	{ .field = NULL }
+};
+
+/** Processor unit stereo extender bmControls; Human readable bit meanings. */
+static const char * const uac3_proc_unit_stereo_extender_bmcontrols[] = {
+	[0] = "Width",
+	[1] = "Underflow",
+	[2] = "Overflow",
+	[3] = NULL
+};
+
+/** UAC3: 4.5.2.10.2 Stereo Extender Processing Unit Descriptor; Table 4-40. */
+static const struct desc desc_audio_3_ac_proc_unit_stereo_extender[] = {
+	{ .field = "bmControls", .size = 4, .type = DESC_BMCONTROL_2,
+			.bmcontrol = uac3_proc_unit_stereo_extender_bmcontrols },
+	{ .field = NULL }
+};
+
+/** UAC3: 4.5.2.10.3 Multi Func Proc Unit Descriptor; Algorithms; Table 4-41. */
+static const char *uac3_proc_unit_multi_func_algorithms[] = {
+	[0] = "Algorithm Undefined.",
+	[1] = "Beam Forming.",
+	[2] = "Acoustic Echo Cancellation.",
+	[3] = "Active Noise Cancellation.",
+	[4] = "Blind Source Separation.",
+	[5] = "Noise Suppression/Reduction.",
+	[6] = NULL
+};
+
+/** Processor unit Multi Func bmControls; Human readable bit meanings. */
+static const char * const uac3_proc_unit_multi_func_bmcontrols[] = {
+	[0] = "Underflow",
+	[1] = "Overflow",
+	[2] = NULL
+};
+
+/** UAC3: 4.5.2.10.3 Multi Function Processing Unit Descriptor; Table 4-41. */
+static const struct desc desc_audio_3_ac_proc_unit_multi_function[] = {
+	{ .field = "bmControls",       .size = 4, .type = DESC_BMCONTROL_2,
+			.bmcontrol = uac3_proc_unit_multi_func_bmcontrols },
+	{ .field = "wClusterDescrID",  .size = 2, .type = DESC_NUMBER, },
+	{ .field = "bmAlgorithms", .size = 4, .type = DESC_BITMAP_STRINGS,
+			.bitmap_strings = {
+				.strings = uac3_proc_unit_multi_func_algorithms,
+				.count = 6
+			} },
+	{ .field = NULL }
+};
+
+/** UAC3: Table A-20: Processing Unit Process Types */
+static const char * const uac3_proc_unit_types[] = {
+	[0] = "Undefined",
+	[1] = "Up/Down-mix",
+	[2] = "Stereo Extender",
+	[3] = "Multi-Function",
+	[4] = NULL
+};
+
+/** UAC3: Table A-20: Processing Unit Process Types */
+static const struct desc_ext desc_audio_3_ac_proc_unit_specific[] = {
+	{ .type = 1, .desc = desc_audio_3_ac_proc_unit_up_down_mix },
+	{ .type = 2, .desc = desc_audio_3_ac_proc_unit_stereo_extender },
+	{ .type = 3, .desc = desc_audio_3_ac_proc_unit_multi_function },
+	{ .desc = NULL }
 };
 
 /** UAC3: 4.5.2.10 Processing Unit Descriptor; Table 4-38. */
 static const struct desc desc_audio_3_ac_processing_unit[] = {
 	{ .field = "bUnitID",             .size = 1, .type = DESC_NUMBER },
-	{ .field = "wProcessType",        .size = 2, .type = DESC_CONSTANT },
+	{ .field = "wProcessType",        .size = 2, .type = DESC_NUMBER_STRINGS,
+			.number_strings = uac3_proc_unit_types },
 	{ .field = "bNrInPins",           .size = 1, .type = DESC_NUMBER },
 	{ .field = "baSourceID",          .size = 1, .type = DESC_NUMBER,
 			.array = { .array = true, .length_field1 = "bNrInPins" } },
 	{ .field = "wProcessingDescrStr", .size = 2, .type = DESC_CS_STR_DESC_ID },
-	{ .field = "Process-specific",    .size = 1, .type = DESC_BITMAP,
-			.array = { .array = true } },
+	{ .field = "Process-specific",    .size = 1, .type = DESC_EXTENSION,
+		.extension = { .type_field = "wProcessType", .d = desc_audio_3_ac_proc_unit_specific } },
 	{ .field = NULL }
 };
 
