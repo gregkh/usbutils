@@ -2,7 +2,7 @@
 /*
  * USB descriptor definitions
  *
- * Copyright (C) 2017 Michael Drake <michael.drake@codethink.co.uk>
+ * Copyright (C) 2017-2018 Michael Drake <michael.drake@codethink.co.uk>
  */
 
 #include "config.h"
@@ -438,6 +438,15 @@ static const struct desc desc_audio_2_ac_processing_unit[] = {
 	{ .field = "iProcessing",      .size = 1, .type = DESC_STR_DESC_INDEX },
 	{ .field = "Process-specific", .size = 1, .type = DESC_BITMAP,
 			.array = { .array = true } },
+	{ .field = NULL }
+};
+
+/**
+ * Undefined descriptor
+ *
+ * Ensures remaining data is dumped as garbage at end of descriptor.
+ */
+const struct desc desc_undefined[] = {
 	{ .field = NULL }
 };
 

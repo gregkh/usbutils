@@ -211,8 +211,10 @@ static void number_renderer(
  *
  * \param[in] dev           LibUSB device handle.
  * \param[in] current       Descriptor definition field to render.
- * \param[in] current_size  Descriptor definition field to render.
+ * \param[in] current_size  Size of value to render.
  * \param[in] buf           Byte array containing the descriptor date to dump.
+ * \param[in] buf_len       Byte length of `buf`.
+ * \param[in] desc          First field in the descriptor definition.
  * \param[in] indent        Current indent level.
  * \param[in] offset        Offset to current value in `buf`.
  */
@@ -221,6 +223,8 @@ static void value_renderer(
 		const struct desc *current,
 		unsigned int current_size,
 		const unsigned char *buf,
+		unsigned int buf_len,
+		const struct desc *desc,
 		unsigned int indent,
 		size_t offset)
 {
@@ -312,6 +316,31 @@ static void value_renderer(
 		printf(" %s\n", names_audioterminal(
 				get_n_bytes_as_ull(buf, offset, current_size)));
 		break;
+	case DESC_EXTENSION: {
+		unsigned int type = get_value_from_field(buf, desc,
+				current->extension.type_field);
+		const struct desc *ext_desc;
+		const struct desc_ext *ext;
+
+		/* Lookup the extention descriptor definitions to use, */
+		for (ext = current->extension.d; ext->desc != NULL; ext++) {
+			if (ext->type == type) {
+				ext_desc = ext->desc;
+				break;
+			}
+		}
+
+		/* If the type didn't match a known type, use the
+		 * undefined descriptor. */
+		if (ext->desc == NULL) {
+			ext_desc = desc_undefined;
+		}
+
+		desc_dump(dev, ext_desc, buf + offset,
+				buf_len - offset, indent);
+
+		break;
+	}
 	case DESC_SNOWFLAKE:
 		number_renderer(buf, size_chars, offset, current_size);
 		current->snowflake(
@@ -537,14 +566,23 @@ void desc_dump(
 			}
 
 			/* Dump the field name */
-			field_render(entry, entries, field_len,
-					current, indent);
+			if (current->type != DESC_EXTENSION) {
+				field_render(entry, entries, field_len,
+						current, indent);
+			}
 
 			/* Dump the value */
-			value_renderer(dev, current, current_size, buf,
-					indent, offset);
-			/* Advance offset in buffer */
-			offset += current_size;
+			value_renderer(dev, current, current_size, buf, buf_len,
+					desc, indent, offset);
+
+			if (current->type == DESC_EXTENSION) {
+				/* A desc extension consumes all remaining
+				 * value buffer. */
+				offset = buf_len;
+			} else {
+				/* Advance offset in buffer */
+				offset += current_size;
+			}
 		}
 	}
 
