@@ -356,7 +356,6 @@ static unsigned int get_entry_size(
 		const struct desc *desc,
 		const struct desc *entry)
 {
-	const struct desc *current;
 	unsigned int size = entry->size;
 
 	if (entry->size_field != NULL) {
