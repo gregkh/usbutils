@@ -2,7 +2,7 @@
 /*
  * USB descriptor dumping
  *
- * Copyright (C) 2017 Michael Drake <michael.drake@codethink.co.uk>
+ * Copyright (C) 2017-2018 Michael Drake <michael.drake@codethink.co.uk>
  */
 
 #include "config.h"
@@ -107,6 +107,57 @@ static unsigned long long get_n_bytes_as_ull(
 	}
 
 	return ret;
+}
+
+/**
+ * Get the size of a descriptor field in bytes.
+ *
+ * Normally the size is provided in the entry's size parameter, but some
+ * fields have a variable size, with the actual size being stored in as
+ * the value of another field.
+ *
+ * \param[in] buf    Descriptor data.
+ * \param[in] desc   First field in the descriptor definition array.
+ * \param[in] entry  The descriptor definition field to get size for.
+ * \return Size of the field in bytes.
+ */
+static unsigned int get_entry_size(
+		const unsigned char *buf,
+		const struct desc *desc,
+		const struct desc *entry);
+
+/**
+ * Read a value from a field of given name.
+ *
+ * \param[in] buf    Descriptor data.
+ * \param[in] desc   First field in the descriptor definition array.
+ * \param[in] field  The name of the field to get the value for.
+ * \return The value from the given field.
+ */
+static unsigned long long get_value_from_field(
+		const unsigned char *buf,
+		const struct desc *desc,
+		const char *field)
+{
+	size_t offset = 0;
+	const struct desc *current;
+	unsigned long long value = 0;
+
+	/* Search descriptor definition array for the field who's value
+	 * gives the value of the entry we're interested in. */
+	for (current = desc; current->field != NULL; current++) {
+		if (strcmp(current->field, field) == 0) {
+			value = get_n_bytes_as_ull(buf, offset,
+					current->size);
+			break;
+		}
+
+		/* Keep track of our offset in the descriptor data
+		 * as we look for the field we want. */
+		offset += get_entry_size(buf, desc, current);
+	}
+
+	return value;
 }
 
 /**
@@ -270,18 +321,7 @@ static void value_renderer(
 	}
 }
 
-/**
- * Get the size of a descriptor field in bytes.
- *
- * Normally the size is provided in the entry's size parameter, but some
- * fields have a variable size, with the actual size being stored in as
- * the value of another field.
- *
- * \param[in] buf    Descriptor data.
- * \param[in] desc   First field in the descriptor definition array.
- * \param[in] entry  The descriptor definition field to get size for.
- * \return Size of the field in bytes.
- */
+/* Documented at forward declaration above. */
 static unsigned int get_entry_size(
 		const unsigned char *buf,
 		const struct desc *desc,
@@ -292,24 +332,7 @@ static unsigned int get_entry_size(
 
 	if (entry->size_field != NULL) {
 		/* Variable field length, given by `size_field`'s value. */
-		size_t offset = 0;
-
-		/* Search descriptor definition array for the field who's value
-		 * gives the size of the entry we're interested in. */
-		for (current = desc; current->field != NULL; current++) {
-			if (strcmp(current->field, entry->size_field) == 0) {
-				/* Found the field who's value gives us the
-				 * size of, so read that field's value out of
-				 * the descriptor data buffer. */
-				size = get_n_bytes_as_ull(buf, offset,
-						current->size);
-				break;
-			}
-
-			/* Keep track of our offset in the descriptor data
-			 * as we look for the field we want. */
-			offset += get_entry_size(buf, desc, current);
-		}
+		size = get_value_from_field(buf, desc, entry->size_field);
 	}
 
 	if (size == 0) {
@@ -347,27 +370,14 @@ static unsigned int get_array_entry_count(
 
 	if (array_entry->array.length_field1) {
 		/* We can get the array size from the length_field1. */
-		size_t offset = 0;
-		for (current = desc; current->field != NULL; current++) {
-			if (strcmp(current->field, array_entry->array.length_field1) == 0) {
-				entries = get_n_bytes_as_ull(buf, offset, current->size);
-				break;
-			}
+		entries = get_value_from_field(buf, desc,
+				array_entry->array.length_field1);
 
-			offset += get_entry_size(buf, desc, current);
-		}
-		offset = 0; /* skip first three common 1-byte fields */
 		if (array_entry->array.length_field2 != NULL) {
 			/* There's a second field specifying length.  The two
 			 * lengths are multiplied. */
-			for (current = desc; current->field != NULL; current++) {
-				if (strcmp(current->field, array_entry->array.length_field2) == 0) {
-					entries *= get_n_bytes_as_ull(buf, offset, current->size);
-					break;
-				}
-
-				offset += get_entry_size(buf, desc, current);
-			}
+			entries *= get_value_from_field(buf, desc,
+					array_entry->array.length_field2);
 		}
 
 		/* If the bits flag is set, then the entry count so far
