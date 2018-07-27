@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # SPDX-License-Identifier: GPL-2.0+
 #
 # Copyright (c) 2009 Greg Kroah-Hartman <greg@kroah.com>
