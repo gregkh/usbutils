@@ -3759,8 +3759,6 @@ int main(int argc, char *argv[])
 	status = 0;
 
 	if (treemode) {
-		/* treemode requires at least verblevel 1 */
-		verblevel += 1 - VERBLEVEL_DEFAULT;
 		status = lsusb_t();
 		names_exit();
 		return status;
