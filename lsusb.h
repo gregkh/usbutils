@@ -4,5 +4,6 @@
 #define _LSUSB_H
 
 extern int lsusb_t(void);
+extern unsigned int verblevel;
 
 #endif

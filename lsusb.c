@@ -115,7 +115,7 @@
 #define WEBUSB_GET_URL		0x02
 #define USB_DT_WEBUSB_URL	0x03
 
-static unsigned int verblevel = VERBLEVEL_DEFAULT;
+unsigned int verblevel = VERBLEVEL_DEFAULT;
 static int do_report_desc = 1;
 static const char * const encryption_type[] = {
 	"UNSECURE",
