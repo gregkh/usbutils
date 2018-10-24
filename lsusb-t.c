@@ -290,7 +290,7 @@ static void add_usb_interface(const char *d_name)
 	}
 	e->ifnum = i;
 	if (snprintf(e->name, MY_SYSFS_FILENAME_LEN, "%s", d_name) >= MY_SYSFS_FILENAME_LEN)
-		printf("warning: '%s' truncated to '%s'\n", e->name, d_name);
+		printf("warning: '%s' truncated to '%s'\n", d_name, e->name);
 	SYSFS_INTu(d_name, e, bAlternateSetting);
 	SYSFS_INTx(d_name, e, bInterfaceClass);
 	SYSFS_INTx(d_name, e, bInterfaceNumber);
@@ -339,7 +339,7 @@ static void add_usb_device(const char *d_name)
 		d->portnum = i;
 	}
 	if (snprintf(d->name, MY_SYSFS_FILENAME_LEN, "%s", d_name) >= MY_SYSFS_FILENAME_LEN)
-		printf("warning: '%s' truncated to '%s'\n", d->name, d_name);
+		printf("warning: '%s' truncated to '%s'\n", d_name, d->name);
 	SYSFS_INTu(d_name, d, bConfigurationValue);
 	SYSFS_INTx(d_name, d, bDeviceClass);
 	SYSFS_INTx(d_name, d, bDeviceProtocol);
