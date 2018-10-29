@@ -21,6 +21,9 @@ bin_SCRIPTS = \
 	usb-devices \
 	lsusb.py
 
+noinst_PROGRAMS = \
+	usbreset
+
 lsusb_SOURCES = \
 	lsusb.c lsusb.h \
 	lsusb-t.c \
@@ -38,6 +41,9 @@ lsusb_CPPFLAGS = \
 lsusb_LDADD = \
 	$(LIBUSB_LIBS) \
 	$(UDEV_LIBS)
+
+usbreset_SOURCES = \
+	usbreset.c
 
 man_MANS = \
 	lsusb.8	\
