@@ -153,6 +153,7 @@ static void dump_videostreaming_interface(const unsigned char *buf);
 static void dump_dfu_interface(const unsigned char *buf);
 static char *dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, char *indent);
 static void dump_hid_device(libusb_device_handle *dev, const struct libusb_interface_descriptor *interface, const unsigned char *buf);
+static void dump_printer_device(libusb_device_handle *dev, const struct libusb_interface_descriptor *interface, const unsigned char *buf);
 static void dump_audiostreaming_endpoint(libusb_device_handle *dev, const unsigned char *buf, int protocol);
 static void dump_midistreaming_endpoint(const unsigned char *buf);
 static void dump_hub(const char *prefix, const unsigned char *p, int tt_type);
@@ -564,6 +565,9 @@ static void dump_altsetting(libusb_device_handle *dev, const struct libusb_inter
 					break;
 				case LIBUSB_CLASS_HID:
 					dump_hid_device(dev, interface, buf);
+					break;
+				case LIBUSB_CLASS_PRINTER:
+					dump_printer_device(dev, interface, buf);
 					break;
 				case USB_CLASS_CCID:
 					dump_ccid_device(buf);
@@ -2368,6 +2372,63 @@ static void dump_report_desc(unsigned char *b, int l)
 			break;
 		}
 		i += 1 + bsize;
+	}
+}
+
+static void dump_printer_device(libusb_device_handle *dev,
+				const struct libusb_interface_descriptor *interface,
+				const unsigned char *buf)
+{
+	unsigned int i;
+	unsigned int n;
+
+	if (interface->bInterfaceProtocol != 0x04)  /* IPP-over-USB */
+		return;
+
+	printf("        IPP Printer Descriptor:\n"
+	       "          bLength             %5u\n"
+	       "          bDescriptorType     %5u\n"
+	       "          bcdReleaseNumber    %5u\n"
+	       "          bcdNumDescriptors   %5u\n",
+	       buf[0], buf[1], buf[2], buf[3]);
+
+	n = 4;
+	for (i = 0 ; i < buf[3] ; i++) {
+		switch (buf[n]) {
+		case 0x00: {  /* Basic capabilities */
+			uint16_t caps = le16_to_cpu(*((uint16_t*)&buf[n+2]));
+			char *uuid = get_dev_string(dev, buf[n+5]);
+
+			printf("            iIPPVersionsSupported %5u\n", buf[n+4]);
+			printf("            iIPPPrinterUUID       %5u %s\n", buf[n+5], uuid);
+			printf("            wBasicCapabilities   0x%04x ", caps);
+			if (caps & 0x01)
+				printf(" Print");
+			if (caps & 0x02)
+				printf(" Scan");
+			if (caps & 0x04)
+				printf(" Fax");
+			if (caps & 0x08)
+				printf(" Other");
+			if (caps & 0x10)
+				printf(" HTTP-over-USB");
+			if ((caps & 0x60) == 0x00)
+				printf(" No-Auth");
+			else if ((caps & 0x60) == 0x20)
+				printf(" Username-Auth");
+			else if ((caps & 0x60) == 0x40)
+				printf(" Reserved-Auth");
+			else if ((caps & 0x60) == 0x60)
+				printf(" Negotiable-Auth");
+			printf("\n");
+			break;
+		}
+		default:
+			/* Vendor Specific, Ignore for now. */
+			printf("            UnknownCapabilities   %5u %5u\n", buf[n], buf[n+1]);
+			break;
+		}
+		n += 2 + buf[n+1];
 	}
 }
 
