@@ -80,9 +80,12 @@ struct usbbusnode {
 
 	unsigned int bDeviceClass;
 	unsigned int devnum;
+	unsigned int idProduct;
+	unsigned int idVendor;
 	unsigned int maxchild;
 	char speed[5 + 1];	/* '1.5','12','480','5000' + '\n' */
 
+	char name[MY_SYSFS_FILENAME_LEN];
 	char driver[MY_SYSFS_FILENAME_LEN];
 };
 
@@ -135,13 +138,23 @@ static const char *bDeviceClass_to_str(unsigned int dc)
 }
 static void print_usbbusnode(struct usbbusnode *b)
 {
+	char vendor[128], product[128];
 	printf("/:  Bus %02u.Port %u: Dev %u, Class=%s, Driver=%s/%up, %sM\n", b->busnum, 1,
 	       b->devnum, bDeviceClass_to_str(b->bDeviceClass), b->driver, b->maxchild, b->speed);
+	if (verblevel >= 1) {
+		get_vendor_string(vendor, sizeof(vendor), b->idVendor);
+		get_product_string(product, sizeof(product), b->idVendor, b->idProduct);
+		printf("    ID %04x:%04x %s %s\n", b->idVendor, b->idProduct, vendor, product);
+	}
+	if (verblevel >= 2) {
+		printf("    %s/%s  /dev/bus/usb/%03d/%03d\n", sys_bus_usb_devices, b->name, b->busnum, b->devnum);
+	}
 }
 
 static void print_usbdevice(struct usbdevice *d, struct usbinterface *i)
 {
 	char subcls[128];
+	char vendor[128], product[128];
 
 	get_class_string(subcls, sizeof(subcls), i->bInterfaceClass);
 
@@ -151,6 +164,16 @@ static void print_usbdevice(struct usbdevice *d, struct usbinterface *i)
 	else
 		printf("Port %u: Dev %u, If %u, Class=%s, Driver=%s, %sM\n", d->portnum, d->devnum, i->ifnum, subcls, i->driver,
 		       d->speed);
+	if (verblevel >= 1) {
+		printf(" %*s", indent, "    ");
+		get_vendor_string(vendor, sizeof(vendor), d->idVendor);
+		get_product_string(product, sizeof(product), d->idVendor, d->idProduct);
+		printf("ID %04x:%04x %s %s\n", d->idVendor, d->idProduct, vendor, product);
+	}
+	if (verblevel >= 2) {
+		printf(" %*s", indent, "    ");
+		printf("%s/%s  /dev/bus/usb/%03d/%03d\n", sys_bus_usb_devices, d->name, d->busnum, d->devnum);
+	}
 }
 
 static unsigned int read_sysfs_file_int(const char *d_name, const char *file, int base)
@@ -290,7 +313,7 @@ static void add_usb_interface(const char *d_name)
 	}
 	e->ifnum = i;
 	if (snprintf(e->name, MY_SYSFS_FILENAME_LEN, "%s", d_name) >= MY_SYSFS_FILENAME_LEN)
-		printf("warning: '%s' truncated to '%s'\n", e->name, d_name);
+		printf("warning: '%s' truncated to '%s'\n", d_name, e->name);
 	SYSFS_INTu(d_name, e, bAlternateSetting);
 	SYSFS_INTx(d_name, e, bInterfaceClass);
 	SYSFS_INTx(d_name, e, bInterfaceNumber);
@@ -339,7 +362,7 @@ static void add_usb_device(const char *d_name)
 		d->portnum = i;
 	}
 	if (snprintf(d->name, MY_SYSFS_FILENAME_LEN, "%s", d_name) >= MY_SYSFS_FILENAME_LEN)
-		printf("warning: '%s' truncated to '%s'\n", d->name, d_name);
+		printf("warning: '%s' truncated to '%s'\n", d_name, d->name);
 	SYSFS_INTu(d_name, d, bConfigurationValue);
 	SYSFS_INTx(d_name, d, bDeviceClass);
 	SYSFS_INTx(d_name, d, bDeviceProtocol);
@@ -404,8 +427,12 @@ static void add_usb_bus(const char *d_name)
 	if (bus) {
 		memset(bus, 0, sizeof(struct usbbusnode));
 		bus->busnum = strtoul(d_name + 3, NULL, 10);
+		if (snprintf(bus->name, MY_SYSFS_FILENAME_LEN, "%s", d_name) >= MY_SYSFS_FILENAME_LEN)
+			printf("warning: '%s' truncated to '%s'\n", d_name, bus->name);
 		SYSFS_INTu(d_name, bus, devnum);
 		SYSFS_INTx(d_name, bus, bDeviceClass);
+		SYSFS_INTx(d_name, bus, idProduct);
+		SYSFS_INTx(d_name, bus, idVendor);
 		SYSFS_INTu(d_name, bus, maxchild);
 		SYSFS_STR(d_name, bus, speed);
 		append_busnode(bus);
