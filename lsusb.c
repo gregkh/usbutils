@@ -60,6 +60,7 @@
 #define USB_DC_PLATFORM 		0x05
 #define USB_DC_SUPERSPEEDPLUS		0x0a
 #define USB_DC_BILLBOARD		0x0d
+#define USB_DC_BILLBOARD_ALT_MODE	0x0f
 #define USB_DC_CONFIGURATION_SUMMARY	0x10
 
 /* Conventional codes for class-specific descriptors.  The convention is
@@ -159,6 +160,7 @@ static void dump_midistreaming_endpoint(const unsigned char *buf);
 static void dump_hub(const char *prefix, const unsigned char *p, int tt_type);
 static void dump_ccid_device(const unsigned char *buf);
 static void dump_billboard_device_capability_desc(libusb_device_handle *dev, unsigned char *buf);
+static void dump_billboard_alt_mode_capability_desc(libusb_device_handle *dev, unsigned char *buf);
 
 /* ---------------------------------------------------------------------- */
 
@@ -3481,6 +3483,23 @@ static void dump_billboard_device_capability_desc(libusb_device_handle *dev, uns
 	free (url);
 }
 
+static void dump_billboard_alt_mode_capability_desc(libusb_device_handle *dev, unsigned char *buf)
+{
+	if (buf[0] != 8) {
+		fprintf(stderr, "  Bad Billboard Alternate Mode Capability descriptor.\n");
+		return;
+	}
+
+	printf("  Billboard Alternate Mode Capability:\n"
+			"    bLength                 %5u\n"
+			"    bDescriptorType         %5u\n"
+			"    bDevCapabilityType      %5u\n"
+			"    bIndex                  %5u\n"
+			"    dwAlternateModeVdo          0x%02X%02X%02X%02X\n",
+			buf[0], buf[1], buf[2], buf[3],
+			buf[4], buf[5], buf[6], buf[7]);
+}
+
 static void dump_bos_descriptor(libusb_device_handle *fd)
 {
 	/* Total length of BOS descriptors varies.
@@ -3564,6 +3583,9 @@ static void dump_bos_descriptor(libusb_device_handle *fd)
 			break;
 		case USB_DC_BILLBOARD:
 			dump_billboard_device_capability_desc(fd, buf);
+			break;
+		case USB_DC_BILLBOARD_ALT_MODE:
+			dump_billboard_alt_mode_capability_desc(fd, buf);
 			break;
 		case USB_DC_CONFIGURATION_SUMMARY:
 			printf("  Configuration Summary Device Capability:\n");
