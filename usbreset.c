@@ -19,7 +19,7 @@
 #include <linux/usbdevice_fs.h>
 
 
-static char *usbfs = NULL;
+/* static char *usbfs = NULL; */
 
 struct usbentry {
 	int bus_num;
@@ -113,8 +113,8 @@ static void list_devices(void)
 	closedir(devs);
 }
 
-struct usbentry *find_device(int *bus, int *dev, int *vid, int *pid,
-			const char *product)
+static struct usbentry *find_device(int *bus, int *dev, int *vid, int *pid,
+				    const char *product)
 {
 	DIR *devs = opendir("/sys/bus/usb/devices");
 
