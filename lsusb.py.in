@@ -441,7 +441,7 @@ class UsbDevice:
 				plural = " "
 			else:
 				plural = "s"
-			str = "%-16s %s%04x:%04x%s %02x %s%5sMBit/s %s %iIF%s (%s%s%s)" % \
+			str = "%-16s %s%04x:%04x%s %02x %s%5sMbit/s %s %iIF%s (%s%s%s)" % \
 				(" " * self.level + self.fname, 
 				 cols[1], self.vid, self.pid, cols[0],
 				 self.iclass, self.usbver, self.speed, self.maxpower,
