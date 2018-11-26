@@ -20,5 +20,6 @@ lsusb.py
 lsusb.8
 usbutils.pc
 usb-devices.1
+usbreset
 *.gz
 *.bz2
