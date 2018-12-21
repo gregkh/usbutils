@@ -9,6 +9,7 @@
 #define _NAMES_H
 
 #include <sys/types.h>
+#include <stdint.h>
 
 /* ---------------------------------------------------------------------- */
 
@@ -33,6 +34,8 @@ extern int get_vendor_string(char *buf, size_t size, u_int16_t vid);
 extern int get_product_string(char *buf, size_t size, u_int16_t vid, u_int16_t pid);
 extern int get_class_string(char *buf, size_t size, u_int8_t cls);
 extern int get_subclass_string(char *buf, size_t size, u_int8_t cls, u_int8_t subcls);
+
+extern int read_sysfs_prop(char *buf, size_t size, uint8_t bnum, uint8_t pnum, char *propname);
 
 extern int names_init(void);
 extern void names_exit(void);
