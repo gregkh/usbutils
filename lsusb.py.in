@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 # SPDX-License-Identifier: GPL-2.0 OR GPL-3.0
 #
 # lsusb-VERSION.py
@@ -10,6 +10,8 @@
 #
 # Usage: See usage()
 
+# Py2 compat
+from __future__ import print_function
 import os, sys, re, getopt
 
 # Global options
@@ -94,6 +96,12 @@ def ishexdigit(str):
 			return False
 	return True
 
+def open_read_ign(fn):
+	try:
+		return open(fn, 'r', errors='ignore')
+	except:
+		return open(fn, 'r')
+
 def myenum(*args):
 	enums = dict(zip(args, range(len(args))))
 	return type('MyEnum', (), enums)
@@ -109,7 +117,7 @@ def parse_usb_ids():
 	for unm in usbids:
 		if os.path.exists(unm):
 			break
-	for ln in open(unm, "r", errors="ignore").readlines():
+	for ln in open_read_ign(unm).readlines():
 		if ln[0] == '#':
 			continue
 		ln = ln.rstrip('\n')
