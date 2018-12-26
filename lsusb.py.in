@@ -6,7 +6,7 @@
 # Displays your USB devices in reasonable form.
 #
 # Copyright (c) 2009 Kurt Garloff <garloff@suse.de>
-# Copyright (c) 2013 Kurt Garloff <kurt@garloff.de>
+# Copyright (c) 2013,2018 Kurt Garloff <kurt@garloff.de>
 #
 # Usage: See usage()
 
@@ -21,7 +21,7 @@ warnsort = False
 showeps = False
 
 prefix = "/sys/bus/usb/devices/"
-usbids = "@usbids@"
+usbids = ("@usbids@", "/usr/share/usb.ids", "/usr/share/libosinfo/usb.ids", "/usr/share/kcmusb/usb.ids", )
 
 esc = chr(27)
 norm = esc + "[0;0m"
@@ -101,7 +101,10 @@ def parse_usb_ids():
 	mode = 0
 	strg = ""
 	cstrg = ""
-	for ln in open(usbids, "r", errors="ignore"):
+	for unm in usbids:
+		if os.path.exists(unm):
+			break
+	for ln in open(unm, "r", errors="ignore"):
 		if ln[0] == '#':
 			continue
 		ln = ln.rstrip('\n')
@@ -526,13 +529,14 @@ def usage():
 def read_usb():
 	"Read toplevel USB entries and print"
 	for dirent in os.listdir(prefix):
-		#print(dirent)
+		#print(dirent,)
 		if not dirent[0:3] == "usb":
 			continue
 		usbdev = UsbDevice(None, 0)
 		usbdev.read(dirent)
 		usbdev.readchildren()
 		os.write(sys.stdout.fileno(), str.encode(usbdev.__str__()))
+		#print(usbdev.__str__())
 
 def main(argv):
 	"main entry point"
@@ -568,7 +572,8 @@ def main(argv):
 			warnsort = True
 			continue
 		if opt[0] == "-f":
-			usbids = opt[1]
+			#usbids = (opt[1], *usbids)
+			usbids = (opt[1],)
 			continue
 		if opt[0] == "-e":
 			showeps = True
@@ -577,14 +582,15 @@ def main(argv):
 		print("Error: excess args %s ..." % args[0])
 		sys.exit(usage())
 
-	try:
-		parse_usb_ids()
-		fix_usbvend()	
-		fix_usbprod()
-		fix_usbclass()
-	except:
-		print(" WARNING: Failure to read usb.ids", file=sys.stderr)
-		#print(sys.exc_info(), file=sys.stderr)
+	if usbids[0]:
+		try:
+			parse_usb_ids()
+			fix_usbvend()
+			fix_usbprod()
+			fix_usbclass()
+		except:
+			print(" WARNING: Failure to read usb.ids", file=sys.stderr)
+			#print(sys.exc_info(), file=sys.stderr)
 	read_usb()
 
 # Entry point
