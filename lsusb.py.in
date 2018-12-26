@@ -94,52 +94,61 @@ def ishexdigit(str):
 			return False
 	return True
 
+def myenum(*args):
+	enums = dict(zip(args, range(len(args))))
+	return type('MyEnum', (), enums)
+
 def parse_usb_ids():
 	"Parse /usr/share/usb.ids and fill usbvendors, usbproducts, usbclasses"
-	id = 0
-	sid = 0
-	mode = 0
+	vid = 0
+	did = 0
+	modes = myenum('Vendor', 'Class', 'Misc')
+	mode = modes.Vendor
 	strg = ""
 	cstrg = ""
 	for unm in usbids:
 		if os.path.exists(unm):
 			break
-	for ln in open(unm, "r", errors="ignore"):
+	for ln in open(unm, "r", errors="ignore").readlines():
 		if ln[0] == '#':
 			continue
 		ln = ln.rstrip('\n')
 		if len(ln) == 0:
 			continue
 		if ishexdigit(ln[0:4]):
-			mode = 0
-			id = int(ln[:4], 16)
-			usbvendors.append(UsbVendor(id, ln[6:]))
+			mode = modes.Vendor
+			vid = int(ln[:4], 16)
+			usbvendors.append(UsbVendor(vid, ln[6:]))
 			continue
 		if ln[0] == '\t' and ishexdigit(ln[1:3]):
-			sid = int(ln[1:5], 16)
+			# usb.ids has a device id of 01xy, sigh
+			if ln[3:5] == "xy":
+				did = int(ln[1:3], 16)*256
+			else:
+				did = int(ln[1:5], 16)
 			# USB devices
-			if mode == 0:
-				usbproducts.append(UsbProduct(id, sid, ln[7:]))
+			if mode == modes.Vendor:
+				usbproducts.append(UsbProduct(vid, did, ln[7:]))
 				continue
-			elif mode == 1:
+			elif mode == modes.Class:
 				nm = ln[5:]
 				if nm != "Unused":
 					strg = cstrg + ":" + nm
 				else:
 					strg = cstrg + ":"
-				usbclasses.append(UsbClass(id, sid, -1, strg))
+				usbclasses.append(UsbClass(vid, did, -1, strg))
 				continue
 		if ln[0] == 'C':
-			mode = 1
-			id = int(ln[2:4], 16)
+			mode = modes.Class
+			cid = int(ln[2:4], 16)
 			cstrg = ln[6:]
-			usbclasses.append(UsbClass(id, -1, -1, cstrg))
+			usbclasses.append(UsbClass(cid, -1, -1, cstrg))
 			continue
-		if mode == 1 and ln[0] == '\t' and ln[1] == '\t' and ishexdigit(ln[2:4]):
+		if mode == modes.Class and ln[0] == '\t' and ln[1] == '\t' and ishexdigit(ln[2:4]):
 			prid = int(ln[2:4], 16)
-			usbclasses.append(UsbClass(id, sid, prid, strg + ":" + ln[6:]))
+			usbclasses.append(UsbClass(cid, did, prid, strg + ":" + ln[6:]))
 			continue
-		mode = 2
+		mode = modes.Misc
 
 def bin_search(first, last, item, list):
 	"binary search on list, returns -1 on fail, match idx otherwise, recursive"
@@ -227,18 +236,20 @@ def find_storage(hostno):
 def find_dev(driver, usbname):
 	"Return pseudo devname that's driven by driver"
 	res = ""
+	#print("find_dev(%s, %s)" % (driver, usbname))
 	for nm in devlst:
-		dir = prefix + usbname
+		dirnm = prefix + usbname
 		prep = ""
 		#print(nm)
 		idx = nm.find('/')
 		if idx != -1:
 			prep = nm[:idx+1]
-			dir += "/" + nm[:idx]
+			dirnm += "/" + nm[:idx]
 			nm = nm[idx+1:]
 		ln = len(nm)
+		#print(" search %s for %s" % (dirnm, nm))
 		try:
-			for ent in os.listdir(dir):
+			for ent in os.listdir(dirnm):
 				if ent[:ln] == nm:
 					res += prep+ent+" "
 					if nm == "host":
