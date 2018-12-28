@@ -3,6 +3,7 @@
 /* Copyright (c) 2009-2016 Alan Stern */
 /* To build:  gcc -o usbreset usbreset.c */
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -14,7 +15,6 @@
 #include <limits.h>
 #include <dirent.h>
 #include <sys/ioctl.h>
-#include <sys/types.h>
 
 #include <linux/usbdevice_fs.h>
 

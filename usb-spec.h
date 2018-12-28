@@ -8,19 +8,17 @@
 #ifndef _USB_SPEC_H
 #define _USB_SPEC_H
 
-#include <sys/types.h>
-
 /* ---------------------------------------------------------------------- */
 
 struct audioterminal {
        struct audioterminal *next;
-       const u_int16_t termt;
+       const uint16_t termt;
        const char *name;
 };
 
 struct videoterminal {
        struct videoterminal *next;
-       const u_int16_t termt;
+       const uint16_t termt;
        const char *name;
 };
 

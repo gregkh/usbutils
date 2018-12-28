@@ -142,7 +142,7 @@ libusb_device *get_usb_device(libusb_context *ctx, const char *path)
 }
 
 static char *get_dev_string_ascii(libusb_device_handle *dev, size_t size,
-                                  u_int8_t id)
+                                  uint8_t id)
 {
 	char *buf = malloc(size);
 	int ret = libusb_get_string_descriptor_ascii(dev, id,
@@ -158,7 +158,7 @@ static char *get_dev_string_ascii(libusb_device_handle *dev, size_t size,
 }
 
 #if defined(HAVE_NL_LANGINFO) && defined(HAVE_ICONV)
-static u_int16_t get_any_langid(libusb_device_handle *dev)
+static uint16_t get_any_langid(libusb_device_handle *dev)
 {
 	unsigned char buf[4];
 	int ret = libusb_get_string_descriptor(dev, 0, 0, buf, sizeof buf);
@@ -196,12 +196,12 @@ static char *usb_string_to_native(char * str, size_t len)
 }
 #endif
 
-char *get_dev_string(libusb_device_handle *dev, u_int8_t id)
+char *get_dev_string(libusb_device_handle *dev, uint8_t id)
 {
 #if defined(HAVE_NL_LANGINFO) && defined(HAVE_ICONV)
 	int ret;
 	char *buf, unicode_buf[254];
-	u_int16_t langid;
+	uint16_t langid;
 #endif
 
 	if (!dev || !id) return strdup("");

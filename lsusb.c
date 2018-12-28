@@ -7,7 +7,7 @@
  */
 
 #include "config.h"
-#include <sys/types.h>
+#include <stdint.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <locale.h>
@@ -193,7 +193,7 @@ static inline int typesafe_control_msg(libusb_device_handle *dev,
 
 #define usb_control_msg		typesafe_control_msg
 
-static int get_protocol_string(char *buf, size_t size, u_int8_t cls, u_int8_t subcls, u_int8_t proto)
+static int get_protocol_string(char *buf, size_t size, uint8_t cls, uint8_t subcls, uint8_t proto)
 {
 	const char *cp;
 
@@ -205,7 +205,7 @@ static int get_protocol_string(char *buf, size_t size, u_int8_t cls, u_int8_t su
 	return snprintf(buf, size, "%s", cp);
 }
 
-static int get_videoterminal_string(char *buf, size_t size, u_int16_t termt)
+static int get_videoterminal_string(char *buf, size_t size, uint16_t termt)
 {
 	const char *cp;
 
@@ -510,7 +510,7 @@ static void dump_altsetting(libusb_device_handle *dev, const struct libusb_inter
 	if (interface->extra_length) {
 		size = interface->extra_length;
 		buf = interface->extra;
-		while (size >= 2 * sizeof(u_int8_t)) {
+		while (size >= 2 * sizeof(uint8_t)) {
 			if (buf[0] < 2) {
 				dump_junk(buf, "      ", size);
 				break;
@@ -736,7 +736,7 @@ static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interfa
 	if (endpoint->extra_length) {
 		size = endpoint->extra_length;
 		buf = endpoint->extra;
-		while (size >= 2 * sizeof(u_int8_t)) {
+		while (size >= 2 * sizeof(uint8_t)) {
 			if (buf[0] < 2) {
 				dump_junk(buf, "        ", size);
 				break;
@@ -3324,7 +3324,7 @@ static void dump_container_id_device_capability_desc(unsigned char *buf)
 			get_guid(&buf[4]));
 }
 
-static char *get_webusb_url(libusb_device_handle *fd, u_int8_t vendor_req, u_int8_t id)
+static char *get_webusb_url(libusb_device_handle *fd, uint8_t vendor_req, uint8_t id)
 {
 	unsigned char url_buf[255];
 	char *scheme;

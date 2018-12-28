@@ -10,7 +10,7 @@
 #include "config.h"
 #endif
 
-#include <sys/types.h>
+#include <stdint.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
@@ -72,12 +72,12 @@ static const char *names_genericstrtable(struct genericstrtable *t[HASHSZ],
 	return NULL;
 }
 
-const char *names_hid(u_int8_t hidd)
+const char *names_hid(uint8_t hidd)
 {
 	return names_genericstrtable(hiddescriptors_hash, hidd);
 }
 
-const char *names_reporttag(u_int8_t rt)
+const char *names_reporttag(uint8_t rt)
 {
 	return names_genericstrtable(reports_hash, rt);
 }
@@ -92,17 +92,17 @@ const char *names_hutus(unsigned int data)
 	return names_genericstrtable(hutus_hash, data);
 }
 
-const char *names_langid(u_int16_t langid)
+const char *names_langid(uint16_t langid)
 {
 	return names_genericstrtable(langids_hash, langid);
 }
 
-const char *names_physdes(u_int8_t ph)
+const char *names_physdes(uint8_t ph)
 {
 	return names_genericstrtable(physdess_hash, ph);
 }
 
-const char *names_bias(u_int8_t b)
+const char *names_bias(uint8_t b)
 {
 	return names_genericstrtable(biass_hash, b);
 }
@@ -123,7 +123,7 @@ static const char *hwdb_get(const char *modalias, const char *key)
 	return NULL;
 }
 
-const char *names_vendor(u_int16_t vendorid)
+const char *names_vendor(uint16_t vendorid)
 {
 	char modalias[64];
 
@@ -131,7 +131,7 @@ const char *names_vendor(u_int16_t vendorid)
 	return hwdb_get(modalias, "ID_VENDOR_FROM_DATABASE");
 }
 
-const char *names_product(u_int16_t vendorid, u_int16_t productid)
+const char *names_product(uint16_t vendorid, uint16_t productid)
 {
 	char modalias[64];
 
@@ -139,7 +139,7 @@ const char *names_product(u_int16_t vendorid, u_int16_t productid)
 	return hwdb_get(modalias, "ID_MODEL_FROM_DATABASE");
 }
 
-const char *names_class(u_int8_t classid)
+const char *names_class(uint8_t classid)
 {
 	char modalias[64];
 
@@ -147,7 +147,7 @@ const char *names_class(u_int8_t classid)
 	return hwdb_get(modalias, "ID_USB_CLASS_FROM_DATABASE");
 }
 
-const char *names_subclass(u_int8_t classid, u_int8_t subclassid)
+const char *names_subclass(uint8_t classid, uint8_t subclassid)
 {
 	char modalias[64];
 
@@ -155,7 +155,7 @@ const char *names_subclass(u_int8_t classid, u_int8_t subclassid)
 	return hwdb_get(modalias, "ID_USB_SUBCLASS_FROM_DATABASE");
 }
 
-const char *names_protocol(u_int8_t classid, u_int8_t subclassid, u_int8_t protocolid)
+const char *names_protocol(uint8_t classid, uint8_t subclassid, uint8_t protocolid)
 {
 	char modalias[64];
 
@@ -163,7 +163,7 @@ const char *names_protocol(u_int8_t classid, u_int8_t subclassid, u_int8_t proto
 	return hwdb_get(modalias, "ID_USB_PROTOCOL_FROM_DATABASE");
 }
 
-const char *names_audioterminal(u_int16_t termt)
+const char *names_audioterminal(uint16_t termt)
 {
 	struct audioterminal *at;
 
@@ -174,7 +174,7 @@ const char *names_audioterminal(u_int16_t termt)
 	return NULL;
 }
 
-const char *names_videoterminal(u_int16_t termt)
+const char *names_videoterminal(uint16_t termt)
 {
 	struct videoterminal *vt;
 
@@ -187,7 +187,7 @@ const char *names_videoterminal(u_int16_t termt)
 
 /* ---------------------------------------------------------------------- */
 
-int get_vendor_string(char *buf, size_t size, u_int16_t vid)
+int get_vendor_string(char *buf, size_t size, uint16_t vid)
 {
         const char *cp;
 
@@ -199,7 +199,7 @@ int get_vendor_string(char *buf, size_t size, u_int16_t vid)
         return snprintf(buf, size, "%s", cp);
 }
 
-int get_product_string(char *buf, size_t size, u_int16_t vid, u_int16_t pid)
+int get_product_string(char *buf, size_t size, uint16_t vid, uint16_t pid)
 {
         const char *cp;
 
@@ -211,7 +211,7 @@ int get_product_string(char *buf, size_t size, u_int16_t vid, u_int16_t pid)
         return snprintf(buf, size, "%s", cp);
 }
 
-int get_class_string(char *buf, size_t size, u_int8_t cls)
+int get_class_string(char *buf, size_t size, uint8_t cls)
 {
 	const char *cp;
 
@@ -223,7 +223,7 @@ int get_class_string(char *buf, size_t size, u_int8_t cls)
 	return snprintf(buf, size, "%s", cp);
 }
 
-int get_subclass_string(char *buf, size_t size, u_int8_t cls, u_int8_t subcls)
+int get_subclass_string(char *buf, size_t size, uint8_t cls, uint8_t subcls)
 {
 	const char *cp;
 
