@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 # SPDX-License-Identifier: GPL-2.0 OR GPL-3.0
 #
 # lsusb-VERSION.py
@@ -6,10 +6,12 @@
 # Displays your USB devices in reasonable form.
 #
 # Copyright (c) 2009 Kurt Garloff <garloff@suse.de>
-# Copyright (c) 2013 Kurt Garloff <kurt@garloff.de>
+# Copyright (c) 2013,2018 Kurt Garloff <kurt@garloff.de>
 #
 # Usage: See usage()
 
+# Py2 compat
+from __future__ import print_function
 import os, sys, re, getopt
 
 # Global options
@@ -21,7 +23,7 @@ warnsort = False
 showeps = False
 
 prefix = "/sys/bus/usb/devices/"
-usbids = "@usbids@"
+usbids = ("@usbids@", "/usr/share/usb.ids", "/usr/share/libosinfo/usb.ids", "/usr/share/kcmusb/usb.ids", )
 
 esc = chr(27)
 norm = esc + "[0;0m"
@@ -94,49 +96,67 @@ def ishexdigit(str):
 			return False
 	return True
 
+def open_read_ign(fn):
+	try:
+		return open(fn, 'r', errors='ignore')
+	except:
+		return open(fn, 'r')
+
+def myenum(*args):
+	enums = dict(zip(args, range(len(args))))
+	return type('MyEnum', (), enums)
+
 def parse_usb_ids():
 	"Parse /usr/share/usb.ids and fill usbvendors, usbproducts, usbclasses"
-	id = 0
-	sid = 0
-	mode = 0
+	vid = 0
+	did = 0
+	modes = myenum('Vendor', 'Class', 'Misc')
+	mode = modes.Vendor
 	strg = ""
 	cstrg = ""
-	for ln in open(usbids, "r", errors="ignore"):
+	for unm in usbids:
+		if os.path.exists(unm):
+			break
+	for ln in open_read_ign(unm).readlines():
 		if ln[0] == '#':
 			continue
 		ln = ln.rstrip('\n')
 		if len(ln) == 0:
 			continue
 		if ishexdigit(ln[0:4]):
-			mode = 0
-			id = int(ln[:4], 16)
-			usbvendors.append(UsbVendor(id, ln[6:]))
+			mode = modes.Vendor
+			vid = int(ln[:4], 16)
+			usbvendors.append(UsbVendor(vid, ln[6:]))
 			continue
 		if ln[0] == '\t' and ishexdigit(ln[1:3]):
-			sid = int(ln[1:5], 16)
+			# usb.ids has a device id of 01xy, sigh
+			if ln[3:5] == "xy":
+				did = int(ln[1:3], 16)*256
+			else:
+				did = int(ln[1:5], 16)
 			# USB devices
-			if mode == 0:
-				usbproducts.append(UsbProduct(id, sid, ln[7:]))
+			if mode == modes.Vendor:
+				usbproducts.append(UsbProduct(vid, did, ln[7:]))
 				continue
-			elif mode == 1:
+			elif mode == modes.Class:
 				nm = ln[5:]
 				if nm != "Unused":
 					strg = cstrg + ":" + nm
 				else:
 					strg = cstrg + ":"
-				usbclasses.append(UsbClass(id, sid, -1, strg))
+				usbclasses.append(UsbClass(vid, did, -1, strg))
 				continue
 		if ln[0] == 'C':
-			mode = 1
-			id = int(ln[2:4], 16)
+			mode = modes.Class
+			cid = int(ln[2:4], 16)
 			cstrg = ln[6:]
-			usbclasses.append(UsbClass(id, -1, -1, cstrg))
+			usbclasses.append(UsbClass(cid, -1, -1, cstrg))
 			continue
-		if mode == 1 and ln[0] == '\t' and ln[1] == '\t' and ishexdigit(ln[2:4]):
+		if mode == modes.Class and ln[0] == '\t' and ln[1] == '\t' and ishexdigit(ln[2:4]):
 			prid = int(ln[2:4], 16)
-			usbclasses.append(UsbClass(id, sid, prid, strg + ":" + ln[6:]))
+			usbclasses.append(UsbClass(cid, did, prid, strg + ":" + ln[6:]))
 			continue
-		mode = 2
+		mode = modes.Misc
 
 def bin_search(first, last, item, list):
 	"binary search on list, returns -1 on fail, match idx otherwise, recursive"
@@ -206,6 +226,7 @@ devlst = (	'host', 	# usb-storage
 		'usb:lp',	# usblp
 		#'usb/lp',	# usblp 
 		'usb/',		# hiddev, usblp
+		#'usbhid',	# hidraw
 	)
 
 def find_storage(hostno):
@@ -221,27 +242,58 @@ def find_storage(hostno):
 				pass
 	return res
 
+def add_drv(path, drvnm):
+	res = ""
+	try:
+		for e2 in os.listdir(path+"/"+drvnm):
+			if e2[0:len(drvnm)] == drvnm:
+				res += e2 + " "
+		try:
+			if res:
+				res += "(" + os.path.basename(os.readlink(path+"/driver")) + ") "
+		except:
+			pass
+	except:
+		pass
+	return res
+
 def find_dev(driver, usbname):
 	"Return pseudo devname that's driven by driver"
 	res = ""
+	#print("find_dev(%s, %s)" % (driver, usbname))
 	for nm in devlst:
-		dir = prefix + usbname
+		dirnm = prefix + usbname
 		prep = ""
 		#print(nm)
 		idx = nm.find('/')
 		if idx != -1:
 			prep = nm[:idx+1]
-			dir += "/" + nm[:idx]
+			dirnm += "/" + nm[:idx]
 			nm = nm[idx+1:]
 		ln = len(nm)
+		#print(" search %s for %s" % (dirnm, nm))
 		try:
-			for ent in os.listdir(dir):
+			for ent in os.listdir(dirnm):
 				if ent[:ln] == nm:
 					res += prep+ent+" "
 					if nm == "host":
 						res += "(" + find_storage(ent[ln:])[:-1] + ")"
 		except:
 			pass
+	if driver == "usbhid":
+		rg = re.compile(r'[0-9A-F]{4}:[0-9A-F]{4}:[0-9A-F]{4}\.[0-9A-F]{4}')
+		for ent in os.listdir(prefix + usbname):
+			m = rg.match(ent)
+			if m:
+				res += add_drv(prefix+usbname+"/"+ent, "hidraw")
+				add = add_drv(prefix+usbname+"/"+ent, "input")
+				if add:
+					res += add
+				else:
+					for ent2 in os.listdir(prefix+usbname+"/"+ent):
+						m = rg.match(ent2)
+						if m:
+							res += add_drv(prefix+usbname+"/"+ent+"/"+ent2, "input")
 	return res
 
 
@@ -526,13 +578,14 @@ def usage():
 def read_usb():
 	"Read toplevel USB entries and print"
 	for dirent in os.listdir(prefix):
-		#print(dirent)
+		#print(dirent,)
 		if not dirent[0:3] == "usb":
 			continue
 		usbdev = UsbDevice(None, 0)
 		usbdev.read(dirent)
 		usbdev.readchildren()
 		os.write(sys.stdout.fileno(), str.encode(usbdev.__str__()))
+		#print(usbdev.__str__())
 
 def main(argv):
 	"main entry point"
@@ -568,7 +621,8 @@ def main(argv):
 			warnsort = True
 			continue
 		if opt[0] == "-f":
-			usbids = opt[1]
+			#usbids = (opt[1], *usbids)
+			usbids = (opt[1],)
 			continue
 		if opt[0] == "-e":
 			showeps = True
@@ -577,14 +631,15 @@ def main(argv):
 		print("Error: excess args %s ..." % args[0])
 		sys.exit(usage())
 
-	try:
-		parse_usb_ids()
-		fix_usbvend()	
-		fix_usbprod()
-		fix_usbclass()
-	except:
-		print(" WARNING: Failure to read usb.ids", file=sys.stderr)
-		#print(sys.exc_info(), file=sys.stderr)
+	if usbids[0]:
+		try:
+			parse_usb_ids()
+			fix_usbvend()
+			fix_usbprod()
+			fix_usbclass()
+		except:
+			print(" WARNING: Failure to read usb.ids", file=sys.stderr)
+			#print(sys.exc_info(), file=sys.stderr)
 	read_usb()
 
 # Entry point
