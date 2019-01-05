@@ -25,13 +25,4 @@ cat > ChangeLog <<CUT
 # Dummy ChangeLog, replaced with git log when distribution is created.
 CUT
 
-aclocal -I m4
-if command -v libtoolize >/dev/null; then
-    libtoolize
-else
-    # Try glibtoolize, if libtoolize is not found - could happen on Darwin
-    glibtoolize
-fi
-autoheader
-automake --add-missing
-autoconf
+autoreconf -i -f
