@@ -3604,6 +3604,16 @@ out:
 	free(bos_desc);
 }
 
+/*
+ * Blacklist of buggy devices unable to handle debug descriptor
+ */
+static int no_debug(unsigned int idVendor, unsigned int idProduct)
+{
+	if (idVendor == 0x2717 && idProduct == 0x3801) return 1;
+	if (idVendor == 0x2717 && idProduct == 0x3802) return 1;
+	return 0;
+}
+
 static void dumpdev(libusb_device *dev)
 {
 	libusb_device_handle *udev;
@@ -3658,7 +3668,11 @@ static void dumpdev(libusb_device *dev)
 	if (desc.bcdUSB == 0x0200) {
 		do_dualspeed(udev);
 	}
-	do_debug(udev);
+	if (no_debug(desc.idVendor, desc.idProduct))
+		fprintf(stderr, "skip to request debug descriptor for "
+			"ID %04x:%04x\n", desc.idVendor, desc.idProduct);
+	else
+		do_debug(udev);
 	dump_device_status(udev, otg, wireless, desc.bcdUSB >= 0x0300);
 	libusb_close(udev);
 }
