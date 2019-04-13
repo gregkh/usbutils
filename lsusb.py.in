@@ -359,7 +359,7 @@ class UsbDevice:
 		except:
 			pass
 		if self.name and self.name[:5] == "Linux":
-			mch = re.match(r"Linux [^ ]* (.hci_hcd) .HCI Host Controller", self.name)
+			mch = re.match(r"Linux [^ ]* (.hci[_-]hcd) .HCI Host Controller", self.name)
 			if mch:
 				self.name = mch.group(1)
 		if not self.name:
