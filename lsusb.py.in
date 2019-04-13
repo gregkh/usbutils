@@ -46,15 +46,6 @@ usbvendors = {}
 usbproducts = {}
 usbclasses = {}
 
-def readattr(path, name):
-	"Read attribute from sysfs and return as string"
-	f = open(prefix + path + "/" + name);
-	return f.readline().rstrip("\n");
-
-def readlink(path, name):
-	"Read symlink and return basename"
-	return os.path.basename(os.readlink(prefix + path + "/" + name));
-
 def ishexdigit(str):
 	"return True if all digits are valid hex digits"
 	for dg in str:
@@ -231,7 +222,13 @@ def find_dev(driver, usbname):
 
 
 class UsbObject:
-	pass
+	def read_attr(self, name):
+		path = prefix + self.path + "/" + name
+		return open(path).readline().rstrip("\n")
+
+	def read_link(self, name):
+		path = prefix + self.path + "/" + name
+		return os.path.basename(os.readlink(path))
 
 class UsbEndpoint(UsbObject):
 	"Container for USB endpoint info"
@@ -252,14 +249,14 @@ class UsbEndpoint(UsbObject):
 	def read(self, fname):
 		self.fname = fname
 		self.path = self.parent.path + "/" + fname
-		self.epaddr = int(readattr(self.path, "bEndpointAddress"), 16)
-		ival = int(readattr(self.path, "bInterval"), 16)
+		self.epaddr = int(self.read_attr("bEndpointAddress"), 16)
+		ival = int(self.read_attr("bInterval"), 16)
 		if ival:
-			self.ival = "(%s)" % readattr(self.path, "interval")
-		self.len = int(readattr(self.path, "bLength"), 16)
-		self.type = readattr(self.path, "type")
-		self.attr = int(readattr(self.path, "bmAttributes"), 16)
-		self.max = int(readattr(self.path, "wMaxPacketSize"), 16)
+			self.ival = "(%s)" % self.read_attr("interval")
+		self.len = int(self.read_attr("bLength"), 16)
+		self.type = self.read_attr("type")
+		self.attr = int(self.read_attr("bmAttributes"), 16)
+		self.max = int(self.read_attr("wMaxPacketSize"), 16)
 
 	def __repr__(self):
 		return "<UsbEndpoint[%r]>" % self.fname
@@ -292,12 +289,12 @@ class UsbInterface(UsbObject):
 	def read(self, fname):
 		self.fname = fname
 		self.path = self.parent.path + "/" + fname
-		self.iclass = int(readattr(self.path, "bInterfaceClass"),16)
-		self.isclass = int(readattr(self.path, "bInterfaceSubClass"),16)
-		self.iproto = int(readattr(self.path, "bInterfaceProtocol"),16)
-		self.noep = int(readattr(self.path, "bNumEndpoints"))
+		self.iclass = int(self.read_attr("bInterfaceClass"),16)
+		self.isclass = int(self.read_attr("bInterfaceSubClass"),16)
+		self.iproto = int(self.read_attr("bInterfaceProtocol"),16)
+		self.noep = int(self.read_attr("bNumEndpoints"))
 		try:
-			self.driver = readlink(self.path, "driver")
+			self.driver = self.read_link("driver")
 			self.devname = find_dev(self.driver, self.path)
 		except:
 			pass
@@ -353,14 +350,14 @@ class UsbDevice(UsbObject):
 	def read(self, fname):
 		self.fname = fname
 		self.path = fname
-		self.iclass = int(readattr(self.path, "bDeviceClass"), 16)
-		self.isclass = int(readattr(self.path, "bDeviceSubClass"), 16)
-		self.iproto = int(readattr(self.path, "bDeviceProtocol"), 16)
-		self.vid = int(readattr(self.path, "idVendor"), 16)
-		self.pid = int(readattr(self.path, "idProduct"), 16)
+		self.iclass = int(self.read_attr("bDeviceClass"), 16)
+		self.isclass = int(self.read_attr("bDeviceSubClass"), 16)
+		self.iproto = int(self.read_attr("bDeviceProtocol"), 16)
+		self.vid = int(self.read_attr("idVendor"), 16)
+		self.pid = int(self.read_attr("idProduct"), 16)
 		try:
-			self.name = readattr(self.path, "manufacturer") + " " \
-				  + readattr(self.path, "product")
+			self.name = self.read_attr("manufacturer") + " " \
+				  + self.read_attr("product")
 		except:
 			pass
 		if self.name:
@@ -376,22 +373,22 @@ class UsbDevice(UsbObject):
 			if not self.name:
 				self.name = oldnm
 		try:
-			ser = readattr(self.path, "serial")
+			ser = self.read_attr("serial")
 			# Some USB devs report "serial" as serial no. suppress
 			if (ser and ser != "serial"):
 				self.name += " " + ser
 		except:
 			pass
-		self.usbver = readattr(self.path, "version")
-		self.speed = readattr(self.path, "speed")
-		self.maxpower = readattr(self.path, "bMaxPower")
-		self.noports = int(readattr(self.path, "maxchild"))
+		self.usbver = self.read_attr("version")
+		self.speed = self.read_attr("speed")
+		self.maxpower = self.read_attr("bMaxPower")
+		self.noports = int(self.read_attr("maxchild"))
 		try:
-			self.nointerfaces = int(readattr(self.path, "bNumInterfaces"))
+			self.nointerfaces = int(self.read_attr("bNumInterfaces"))
 		except:
 			self.nointerfaces = 0
 		try:
-			self.driver = readlink(self.path, "driver")
+			self.driver = self.read_link("driver")
 			self.devname = find_dev(self.driver, self.path)
 		except:
 			pass
