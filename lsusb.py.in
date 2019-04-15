@@ -580,6 +580,7 @@ def usage():
 
 def read_usb():
 	"Read toplevel USB entries and print"
+	root_hubs = []
 	for dirent in os.listdir(prefix):
 		#print(dirent,)
 		if not dirent[0:3] == "usb":
@@ -587,6 +588,9 @@ def read_usb():
 		usbdev = UsbDevice(None, 0)
 		usbdev.read(dirent)
 		usbdev.readchildren()
+		root_hubs.append(usbdev)
+	root_hubs.sort(key=lambda x: int(x.fname[3:]))
+	for usbdev in root_hubs:
 		os.write(sys.stdout.fileno(), str.encode(usbdev.__str__()))
 		#print(usbdev.__str__())
 
