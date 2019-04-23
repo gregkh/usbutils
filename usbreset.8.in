@@ -1,0 +1,39 @@
+.\"SPDX-License-Identifier: GPL-2.0
+.\"Copyright (c) 2019 Fabian Baumanis <fabian.baumanis@suse.com>
+.TH usbreset 8 "23 April 2019" "usbutils-VERSION" "Linux USB Utilities"
+.IX usbreset
+.SH NAME
+usbreset \- reset USB devices
+.SH SYNOPSIS
+.B usbreset
+[
+.I options
+]
+.SH DESCRIPTION
+.B usbreset
+is a utility for resetting USB devices via the USBDEVFS_RESET ioctl.
+
+.SH OPTIONS
+.TP
+.B PPPP:VVVV
+Tells
+.I usbreset
+to reset the USB device base on the given product and vendor ID (in hex).
+.TP
+.B BBB:DDD
+Tells
+.I usbreset
+to reset the USB device base on the given bus and device number.
+.TP
+.B "Product"
+Tells
+.I usbreset
+to reset the USB device base on the given product name.
+
+.SH RETURN VALUE
+If the specified device is not found, a non-zero exit code is returned.
+
+.SH AUTHOR
+Fabian Baumanis, <fabian.baumanis@suse.com>
+
+
