@@ -12,7 +12,10 @@
 
 # Py2 compat
 from __future__ import print_function
-import os, sys, re, getopt
+import getopt
+import os
+import re
+import sys
 
 # Global options
 showint = False
@@ -513,32 +516,24 @@ def main(argv):
 		if opt[0] in {"-h", "--help"}:
 			usage()
 			sys.exit(0)
-		if opt[0] in {"-i", "--interfaces"}:
+		elif opt[0] in {"-i", "--interfaces"}:
 			showint = True
-			continue
-		if opt[0] in {"-I", "--hub-interfaces"}:
+		elif opt[0] in {"-I", "--hub-interfaces"}:
 			showint = True
 			showhubint = True
-			continue
-		if opt[0] in {"-u", "--hide-empty-hubs"}:
+		elif opt[0] in {"-u", "--hide-empty-hubs"}:
 			noemptyhub = True
-			continue
-		if opt[0] in {"-U", "--hide-hubs"}:
+		elif opt[0] in {"-U", "--hide-hubs"}:
 			noemptyhub = True
 			nohub = True
-			continue
-		if opt[0] in {"-c", "--color"}:
+		elif opt[0] in {"-c", "--color"}:
 			cols = (norm, bold, red, green, amber, blue)
-			continue
-		if opt[0] == "-w":
+		elif opt[0] == "-w":
 			print("Warning: option -w is no longer supported", file=sys.stderr)
-			continue
-		if opt[0] in {"-f", "--usbids-path"}:
+		elif opt[0] in {"-f", "--usbids-path"}:
 			usbids = [opt[1]]
-			continue
-		if opt[0] in {"-e", "--endpoints"}:
+		elif opt[0] in {"-e", "--endpoints"}:
 			showeps = True
-			continue
 	if len(args) > 0:
 		print("Error: excess args %s ..." % args[0], file=sys.stderr)
 		sys.exit(2)
