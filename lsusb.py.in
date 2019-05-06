@@ -45,11 +45,11 @@ def readlink(path, name):
 
 class UsbClass:
 	"Container for USB Class/Subclass/Protocol"
-	def __init__(self, cl, sc, pr, str = ""):
+	def __init__(self, cl, sc, pr, strg = ""):
 		self.pclass = cl
 		self.subclass = sc
 		self.proto = pr
-		self.desc = str
+		self.desc = strg
 	def __repr__(self):
 		return self.desc
 	def __lt__(self, oth):
@@ -481,13 +481,13 @@ class UsbDevice:
 		self.children.sort(key=usbsortkey)
 
 	def __str__(self):
-		#str = " " * self.level + self.fname
+		#strg = " " * self.level + self.fname
 		if self.iclass == 9:
 			col = cols[2]
 			if noemptyhub and len(self.children) == 0:
 				return ""
 			if nohub:
-				str = ""
+				strg = ""
 		else:
 			col = cols[1]
 		if not nohub or self.iclass != 9:
@@ -495,27 +495,27 @@ class UsbDevice:
 				plural = " "
 			else:
 				plural = "s"
-			str = "%-16s %s%04x:%04x%s %02x %s%6sMbit/s %5s %iIF%s (%s%s%s)" % \
+			strg = "%-16s %s%04x:%04x%s %02x %s%6sMbit/s %5s %iIF%s (%s%s%s)" % \
 				(" " * self.level + self.fname, 
 				 cols[1], self.vid, self.pid, cols[0],
 				 self.iclass, self.usbver, self.speed, self.maxpower,
 				 self.nointerfaces, plural, col, self.name, cols[0])
 			#if self.driver != "usb":
-			#	str += " %s" % self.driver
+			#	strg += " %s" % self.driver
 			if self.iclass == 9 and not showhubint:
-				str += " %shub%s\n" % (cols[2], cols[0])
+				strg += " %shub%s\n" % (cols[2], cols[0])
 			else:
-				str += "\n"
+				strg += "\n"
 				if showeps:
 					ep = UsbEndpoint(self, self.level+len(self.fname))
 					ep.read("ep_00")
-					str += ep.__str__()
+					strg += ep.__str__()
 				if showint:	
 					for iface in self.interfaces:
-						str += iface.__str__()
+						strg += iface.__str__()
 		for child in self.children:
-			str += child.__str__()
-		return str
+			strg += child.__str__()
+		return strg
 
 
 def usage():
