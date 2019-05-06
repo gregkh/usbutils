@@ -548,8 +548,7 @@ def read_usb():
 		root_hubs.append(usbdev)
 	root_hubs.sort(key=lambda x: int(x.fname[3:]))
 	for usbdev in root_hubs:
-		os.write(sys.stdout.fileno(), str.encode(usbdev.__str__()))
-		#print(usbdev.__str__())
+		print(usbdev, end="")
 
 def main(argv):
 	"main entry point"
