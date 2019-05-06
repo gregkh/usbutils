@@ -156,6 +156,7 @@ def parse_usb_ids():
 			usbclasses[cid, did, prid] = UsbClass(cid, did, prid, strg + ":" + ln[6:])
 			continue
 		mode = modes.Misc
+	usbclasses[0xFF, 0xFF, 0xFF] = UsbClass(0xFF, 0xFF, 0xFF, "Vendor Specific")
 
 def find_usb_prod(vid, pid):
 	"Return device name from USB Vendor:Product list"
@@ -172,8 +173,6 @@ def find_usb_prod(vid, pid):
 
 def find_usb_class(cid, sid, pid):
 	"Return USB protocol from usbclasses list"
-	if cid == 0xff and sid == 0xff and pid == 0xff:
-		return "Vendor Specific"
 	lnlst = len(usbclasses)
 	cls = usbclasses.get((cid, sid, pid))
 	if cls:
