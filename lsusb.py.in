@@ -17,6 +17,8 @@ import os
 import re
 import sys
 
+HUB_ICLASS = 0x09
+
 # Global options
 showint = False
 showhubint = False
@@ -413,7 +415,7 @@ class UsbDevice:
 		self.children.sort(key=usbsortkey)
 
 	def __str__(self):
-		if self.iclass == 9:
+		if self.iclass == HUB_ICLASS:
 			col = cols[2]
 			if noemptyhub and len(self.children) == 0:
 				return ""
@@ -421,7 +423,7 @@ class UsbDevice:
 				strg = ""
 		else:
 			col = cols[1]
-		if not nohub or self.iclass != 9:
+		if not nohub or self.iclass != HUB_ICLASS:
 			if self.nointerfaces == 1:
 				plural = " "
 			else:
@@ -431,7 +433,7 @@ class UsbDevice:
 				 cols[1], self.vid, self.pid, cols[0],
 				 self.iclass, self.usbver, self.speed, self.maxpower,
 				 self.nointerfaces, plural, col, self.name, cols[0])
-			if self.iclass == 9 and not showhubint:
+			if self.iclass == HUB_ICLASS and not showhubint:
 				strg += " %shub%s\n" % (cols[2], cols[0])
 			else:
 				strg += "\n"
