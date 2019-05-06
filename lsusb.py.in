@@ -141,13 +141,9 @@ def find_usb_prod(vid, pid):
 def find_usb_class(cid, sid, pid):
 	"Return USB protocol from usbclasses list"
 	lnlst = len(usbclasses)
-	cls = usbclasses.get((cid, sid, pid))
-	if cls:
-		return str(cls)
-	cls = usbclasses.get((cid, sid, -1))
-	if cls:
-		return str(cls)
-	cls = usbclasses.get((cid, -1, -1))
+	cls = usbclasses.get((cid, sid, pid)) \
+		or usbclasses.get((cid, sid, -1)) \
+		or usbclasses.get((cid, -1, -1))
 	if cls:
 		return str(cls)
 	return ""
