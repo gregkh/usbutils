@@ -456,6 +456,7 @@ def usage():
 	print("  -u, --hide-empty-hubs suppress empty hubs")
 	print("  -U, --hide-hubs       suppress all hubs")
 	print("  -c, --color           use colors")
+	print("  -C, --no-color        disable colors")
 	print("  -e, --endpoints       display endpoint info")
 	print("  -f FILE, --usbids-path FILE")
 	print("                        override filename for /usr/share/usb.ids")
@@ -478,6 +479,7 @@ def main(argv):
 	"main entry point"
 	global showint, showhubint, noemptyhub, nohub
 	global cols, usbids, showeps
+	usecols = None
 
 	long_options = [
 		"help",
@@ -486,12 +488,13 @@ def main(argv):
 		"hide-empty-hubs",
 		"hide-hubs",
 		"color",
+		"no-color",
 		"usbids-path=",
 		"endpoints",
 	]
 
 	try:
-		(optlist, args) = getopt.gnu_getopt(argv[1:], "hiIuUwcef:", long_options)
+		(optlist, args) = getopt.gnu_getopt(argv[1:], "hiIuUwcCef:", long_options)
 	except getopt.GetoptError as exc:
 		print("Error:", exc, file=sys.stderr)
 		sys.exit(2)
@@ -510,7 +513,9 @@ def main(argv):
 			noemptyhub = True
 			nohub = True
 		elif opt[0] in {"-c", "--color"}:
-			cols = (norm, bold, red, green, amber, blue)
+			usecols = True
+		elif opt[0] in {"-C", "--no-color"}:
+			usecols = False
 		elif opt[0] == "-w":
 			print("Warning: option -w is no longer supported", file=sys.stderr)
 		elif opt[0] in {"-f", "--usbids-path"}:
@@ -520,6 +525,12 @@ def main(argv):
 	if len(args) > 0:
 		print("Error: excess args %s ..." % args[0], file=sys.stderr)
 		sys.exit(2)
+
+	if usecols is None:
+		usecols = sys.stdout.isatty() and os.environ.get("TERM", "dumb") != "dumb"
+
+	if usecols:
+		cols = (norm, bold, red, green, amber, blue)
 
 	if usbids[0]:
 		try:
