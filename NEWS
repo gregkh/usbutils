@@ -7,6 +7,108 @@
 # history (i.e. packaged versions of the software).
 #
 
+usbutils 011
+============
+
+Clemens Fruhwirth (1):
+      Add usbreset.c as noinst_PROGRAMS target.
+
+Daniel Schaefer (1):
+      lsusb: Read unkown names from sysfs device desc.
+
+Darsey Litzenberger (3):
+      Remove a small hack that no longer has any effect.
+      Cleanup grammar
+      lsusb-t: Emit USB IDs and other handy info when verbosity is increased
+
+Emmanuele Bassi (1):
+      Require newer version of libusb
+
+Georg Brandl (1):
+      lsusb.py: fix up Python 3 conversion
+
+Greg Kroah-Hartman (10):
+      SPDX bill-of-material is supposed to be project_name.spdx
+      usbutils.spdx: rerun report, it is properly sorted.
+      desc-dump.c: fix compiler warning about unused variable
+      add usbreset to .gitignore
+      usbreset: fix some build warnings
+      usbhid-dump: update to latest version
+      fix up standard int types
+      update usbhid-dump git id
+      usbhid-dump: update to a newer version of usbhid-dump again.
+      usbutils.spdx: update with latest information
+
+Kurt Garloff (4):
+      lsusb.py: Search multiple paths for usb.ids.
+      lsusb.py: Usb enum for parser state machine.
+      lsusb.py: Add driver names for usbhid.
+      lsusb.py: python2 compatibility
+
+Lukas Nykryn (1):
+      Makefile.am: add files with licenses to archive
+
+Mantas Mikulėnas (33):
+      lsusb.py: sort devices and interfaces numerically
+      lsusb.py: sort toplevel entries
+      lsusb.py: improve usage text
+      lsusb.py: replace fake deepcopy()
+      lsusb.py: remove -w (warn if usb.ids not sorted) option
+      lsusb.py: ensure all error messages are written to stderr
+      lsusb.py: support long options
+      lsusb.py: use regular print() instead of hand-rolling the same thing
+      lsusb.py: avoid shadowing Python's built-in 'str'
+      lsusb.py: replace usb.ids binary search with dict lookup
+      lsusb.py: remove now-unused bin_search()
+      lsusb.py: avoid manual calls to __foo__()
+      lsusb.py: replace __repr__() for USB IDs with __str__()
+      lsusb.py: insert class FF:FF:FF into usbclasses to avoid special casing
+      lsusb.py: entirely remove Usb* classes
+      lsusb.py: cosmetic - replace tuples-as-"immutable lists" with regular lists
+      lsusb.py: use 'elif' where suitable
+      lsusb.py: remove dead code
+      lsusb.py: move unrelated code out of try..except
+      lsusb.py: allow - as well as _ when matching hci module names
+      lsusb.py: use a constant for the magic class number 9
+      lsusb.py: Usb* classes: call read() automatically from constructor
+      lsusb.py: UsbEndpoint: indent is a class implementation detail
+      lsusb.py: a few cosmetic changes
+      lsusb.py: shorten find_usb_class()
+      lsusb.py: give all Usb* objects a .path attribute
+      lsusb.py: add an actual __repr__() to classes
+      lsusb.py: give all Usb* classes a superclass
+      lsusb.py: convert readattr() and readlink() to methods of the container
+      lsusb.py: use color by default
+      lsusb.py: rework output for more consistent indent of both columns
+      lsusb.py: fix endpoint interval spacing
+      lsusb.py: visually group USB-version-related fields
+
+Michael Drake (4):
+      lsusb: Split out routine that fetches value for given field.
+      lsusb: Split out field name rendering.
+      lsusb: Add support for descriptor extensions.
+      lsusb: Add support for audio processing unit type-specific fields.
+
+Philip Langdale (2):
+      lsusb: Added support for Billboard Alternate Mode Capability descriptor
+      lsusb.py: Fix formatting of 10Gbps speeds
+
+Ross Burton (1):
+      usb-devices: use /bin/sh hashbang
+
+Solomon Peachy (1):
+      lsusb:  Add support for decoding IPP printer descriptors
+
+Stefan Tauner (1):
+      Depend on libusb 1.0.14
+
+Valerii Zapodovnikov (1):
+      man pages: add information on verbosity levels of -t option
+
+junjie (1):
+      fix typo
+
+
 usbutils 010
 ============
 

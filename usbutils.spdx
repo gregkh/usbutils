@@ -2,11 +2,11 @@ SPDXVersion: SPDX-2.1
 DataLicense: CC0-1.0
 SPDXID: SPDXRef-DOCUMENT
 DocumentName: usbutils
-DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-9723d6f0-5cfe-4094-860e-a67803dcc99d
+DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-fe38378a-d2c5-4c04-91e3-ef4e5fc2c4ed
 Creator: Person: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Creator: Organization: Linux Foundation
 Creator: Tool: reuse-0.3.4
-Created: 2019-05-06T12:54:58Z
+Created: 2019-05-06T13:03:08Z
 CreatorComment: <text>This document was created automatically using available reuse information consistent with the REUSE Initiative.</text>
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-7445606fbf8f3683cd42bdc54b05d7a0bc2dfc44
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-dea01dd89a3b602828e630677fde5d77c06441c8
@@ -57,7 +57,6 @@ Relationship: SPDXRef-DOCUMENT describes SPDXRef-4cb440034519ea41c61d5a741cf167f
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-f0c5c70d49864d35245e4b1a630182e33fb993ca
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-acc196920bb7c53a8e1932c42e4ae88bdfbba913
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-306a1cc131ed293066f5657c413a396b70065483
-Relationship: SPDXRef-DOCUMENT describes SPDXRef-11f6ad8ec52a2984abaafd7c3b516503785c2072
 
 FileName: ./.gitmodules
 SPDXID: SPDXRef-7445606fbf8f3683cd42bdc54b05d7a0bc2dfc44
@@ -85,11 +84,10 @@ FileCopyrightText: <text>Copyright (c) 2009 Kay Sievers <kay.sievers@vrfy.org></
 
 FileName: ./NEWS
 SPDXID: SPDXRef-9f621eb5fd3bcb2fa5c7bd228c9b1ad42edc46c8
-FileChecksum: SHA1: 878a7a3162648dfa0c617248d2e95d889c22de49
+FileChecksum: SHA1: d2f49dbcfc9b6f0ae07e66586f69691ec0624210
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0
 FileCopyrightText: <text>Copyright (c) 2018 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
-FileCopyrightText: <text>Copyright strings</text>
 
 FileName: ./README.md
 SPDXID: SPDXRef-8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
@@ -107,7 +105,7 @@ FileCopyrightText: <text>Copyright (c) 2009,2010 Greg Kroah-Hartman <gregkh@suse
 
 FileName: ./configure.ac
 SPDXID: SPDXRef-87db583be5c13c1f7b3c958b10e03d67b6a2ca06
-FileChecksum: SHA1: 224a5ae15a9ebe1b58f34f755144155ec5933167
+FileChecksum: SHA1: d24d6d2c6794326c5cfeb86edc6a6c2504e31521
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0
 FileCopyrightText: <text>Copyright (c) 2009 Kay Sievers <kay.sievers@vrfy.org></text>
