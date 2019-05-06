@@ -157,25 +157,6 @@ def parse_usb_ids():
 			continue
 		mode = modes.Misc
 
-def bin_search(first, last, item, list):
-	"binary search on list, returns -1 on fail, match idx otherwise, recursive"
-	#print("bin_search(%i,%i)" % (first, last))
-	if first == last:
-		return -1
-	if first == last-1:
-		if item == list[first]:
-			return first
-		else:
-			return -1
-	mid = (first+last) // 2
-	if item == list[mid]:
-		return mid
-	elif item < list[mid]:
-		return bin_search(first, mid, item, list)
-	else:
-		return bin_search(mid, last, item, list)
-
-
 def find_usb_prod(vid, pid):
 	"Return device name from USB Vendor:Product list"
 	strg = ""
