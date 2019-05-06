@@ -200,18 +200,15 @@ def add_drv(path, drvnm):
 def find_dev(driver, usbname):
 	"Return pseudo devname that's driven by driver"
 	res = ""
-	#print("find_dev(%s, %s)" % (driver, usbname))
 	for nm in devlst:
 		dirnm = prefix + usbname
 		prep = ""
-		#print(nm)
 		idx = nm.find('/')
 		if idx != -1:
 			prep = nm[:idx+1]
 			dirnm += "/" + nm[:idx]
 			nm = nm[idx+1:]
 		ln = len(nm)
-		#print(" search %s for %s" % (dirnm, nm))
 		try:
 			for ent in os.listdir(dirnm):
 				if ent[:ln] == nm:
@@ -359,7 +356,6 @@ class UsbDevice:
 		try:
 			self.name = readattr(fname, "manufacturer") + " " \
 				  + readattr(fname, "product")
-			#self.name += " " + readattr(fname, "serial")
 			if self.name[:5] == "Linux":
 				rx = re.compile(r"Linux [^ ]* (.hci_hcd) .HCI Host Controller")
 				mch = rx.match(self.name)
@@ -390,8 +386,6 @@ class UsbDevice:
 		try:
 			self.nointerfaces = int(readattr(fname, "bNumInterfaces"))
 		except:
-			#print("ERROR: %s/bNumInterfaces = %s" % (fname,
-			#		readattr(fname, "bNumInterfaces")))
 			self.nointerfaces = 0
 		try:
 			self.driver = readlink(fname, "driver")
@@ -407,7 +401,6 @@ class UsbDevice:
 		for dirent in os.listdir(prefix + self.fname):
 			if not dirent[0:1].isdigit():
 				continue
-			#print(dirent)
 			if os.access(prefix + dirent + "/bInterfaceClass", os.R_OK):
 				iface = UsbInterface(self, self.level+1)
 				iface.read(dirent)
@@ -422,7 +415,6 @@ class UsbDevice:
 		self.children.sort(key=usbsortkey)
 
 	def __str__(self):
-		#strg = " " * self.level + self.fname
 		if self.iclass == 9:
 			col = cols[2]
 			if noemptyhub and len(self.children) == 0:
@@ -441,8 +433,6 @@ class UsbDevice:
 				 cols[1], self.vid, self.pid, cols[0],
 				 self.iclass, self.usbver, self.speed, self.maxpower,
 				 self.nointerfaces, plural, col, self.name, cols[0])
-			#if self.driver != "usb":
-			#	strg += " %s" % self.driver
 			if self.iclass == 9 and not showhubint:
 				strg += " %shub%s\n" % (cols[2], cols[0])
 			else:
@@ -480,7 +470,6 @@ def read_usb():
 	"Read toplevel USB entries and print"
 	root_hubs = []
 	for dirent in os.listdir(prefix):
-		#print(dirent,)
 		if not dirent[0:3] == "usb":
 			continue
 		usbdev = UsbDevice(None, 0)
