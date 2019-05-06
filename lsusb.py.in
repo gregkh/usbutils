@@ -33,16 +33,18 @@ usbids = [
 	"/usr/share/libosinfo/usb.ids",
 	"/usr/share/kcmusb/usb.ids",
 ]
-
-esc = chr(27)
-norm = esc + "[0;0m"
-bold = esc + "[0;1m"
-red =  esc + "[0;31m"
-green= esc + "[0;32m"
-amber= esc + "[0;33m"
-blue = esc + "[0;34m"
-
 cols = ("", "", "", "", "", "")
+
+norm	= "\033[0;0m"
+bold	= "\033[0;1m"
+red	= "\033[0;31m"
+green	= "\033[0;32m"
+amber	= "\033[0;33m"
+blue	= "\033[0;34m"
+
+usbvendors = {}
+usbproducts = {}
+usbclasses = {}
 
 def readattr(path, name):
 	"Read attribute from sysfs and return as string"
@@ -52,10 +54,6 @@ def readattr(path, name):
 def readlink(path, name):
 	"Read symlink and return basename"
 	return os.path.basename(os.readlink(prefix + path + "/" + name));
-
-usbvendors = {}
-usbproducts = {}
-usbclasses = {}
 
 def ishexdigit(str):
 	"return True if all digits are valid hex digits"
@@ -309,15 +307,12 @@ class UsbInterface:
 		self.protoname = find_usb_class(self.iclass, self.isclass, self.iproto)
 		if showeps:
 			for dirent in os.listdir(prefix + fullpath):
-				if dirent[:3] == "ep_":
+				if dirent.startswith("ep_"):
 					ep = UsbEndpoint(self, dirent, self.level+1)
 					self.eps.append(ep)
 
 	def __str__(self):
-		if self.noep == 1:
-			plural = " "
-		else:
-			plural = "s"
+		plural = (" " if self.noep == 1 else "s")
 		strg = "%-17s (IF) %02x:%02x:%02x %iEP%s (%s) %s%s %s%s%s\n" % \
 			(" " * self.level+self.fname, self.iclass,
 			 self.isclass, self.iproto, self.noep,
@@ -368,14 +363,14 @@ class UsbDevice:
 				  + readattr(fname, "product")
 		except:
 			pass
-		if self.name and self.name[:5] == "Linux":
+		if self.name:
 			mch = re.match(r"Linux [^ ]* (.hci[_-]hcd) .HCI Host Controller", self.name)
 			if mch:
 				self.name = mch.group(1)
 		if not self.name:
 			self.name = find_usb_prod(self.vid, self.pid)
 		# Some USB Card readers have a better name then Generic ...
-		if self.name[:7] == "Generic":
+		if self.name.startswith("Generic"):
 			oldnm = self.name
 			self.name = find_usb_prod(self.vid, self.pid)
 			if not self.name:
@@ -429,10 +424,7 @@ class UsbDevice:
 		else:
 			col = cols[1]
 		if not nohub or self.iclass != HUB_ICLASS:
-			if self.nointerfaces == 1:
-				plural = " "
-			else:
-				plural = "s"
+			plural = (" " if self.nointerfaces == 1 else "s")
 			strg = "%-16s %s%04x:%04x%s %02x %s%6sMbit/s %5s %iIF%s (%s%s%s)" % \
 				(" " * self.level + self.fname, 
 				 cols[1], self.vid, self.pid, cols[0],
