@@ -230,7 +230,10 @@ def find_dev(driver, usbname):
 	return res
 
 
-class UsbEndpoint:
+class UsbObject:
+	pass
+
+class UsbEndpoint(UsbObject):
 	"Container for USB endpoint info"
 	def __init__(self, parent, fname, level):
 		self.parent = parent
@@ -268,7 +271,7 @@ class UsbEndpoint:
 			 self.ival, self.attr, self.len, self.max, cols[0])
 
 
-class UsbInterface:
+class UsbInterface(UsbObject):
 	"Container for USB interface info"
 	def __init__(self, parent, fname, level=1):
 		self.parent = parent
@@ -321,7 +324,7 @@ class UsbInterface:
 				strg += str(ep)
 		return strg
 
-class UsbDevice:
+class UsbDevice(UsbObject):
 	"Container for USB device info"
 	def __init__(self, parent, fname, level=0):
 		self.parent = parent
