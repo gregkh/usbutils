@@ -610,9 +610,8 @@ def main(argv):
 	if usbids[0]:
 		try:
 			parse_usb_ids()
-		except:
-			print(" WARNING: Failure to read usb.ids", file=sys.stderr)
-			#print(sys.exc_info(), file=sys.stderr)
+		except IOError as e:
+			print("Warning: Failure to read usb.ids:", e, file=sys.stderr)
 	read_usb()
 
 # Entry point
