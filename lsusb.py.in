@@ -356,14 +356,12 @@ class UsbDevice:
 		try:
 			self.name = readattr(fname, "manufacturer") + " " \
 				  + readattr(fname, "product")
-			if self.name[:5] == "Linux":
-				rx = re.compile(r"Linux [^ ]* (.hci_hcd) .HCI Host Controller")
-				mch = rx.match(self.name)
-				if mch:
-					self.name = mch.group(1)
-
 		except:
 			pass
+		if self.name and self.name[:5] == "Linux":
+			mch = re.match(r"Linux [^ ]* (.hci_hcd) .HCI Host Controller", self.name)
+			if mch:
+				self.name = mch.group(1)
 		if not self.name:
 			self.name = find_usb_prod(self.vid, self.pid)
 		# Some USB Card readers have a better name then Generic ...
