@@ -258,6 +258,9 @@ class UsbEndpoint:
 		self.attr = int(readattr(self.path, "bmAttributes"), 16)
 		self.max = int(readattr(self.path, "wMaxPacketSize"), 16)
 
+	def __repr__(self):
+		return "<UsbEndpoint[%r]>" % self.fname
+
 	def __str__(self):
 		indent = self.level + len(self.parent.fname)
 		return "%-17s  %s(EP) %02x: %s %s attr %02x len %02x max %03x%s\n" % \
@@ -301,6 +304,9 @@ class UsbInterface:
 				if dirent.startswith("ep_"):
 					ep = UsbEndpoint(self, dirent, self.level+1)
 					self.eps.append(ep)
+
+	def __repr__(self):
+		return "<UsbInterface[%r]>" % self.fname
 
 	def __str__(self):
 		plural = (" " if self.noep == 1 else "s")
@@ -404,6 +410,9 @@ class UsbDevice:
 		usbsortkey = lambda obj: [int(x) for x in re.split(r"[-:.]", obj.fname)]
 		self.interfaces.sort(key=usbsortkey)
 		self.children.sort(key=usbsortkey)
+
+	def __repr__(self):
+		return "<UsbDevice[%r]>" % self.fname
 
 	def __str__(self):
 		if self.iclass == HUB_ICLASS:
