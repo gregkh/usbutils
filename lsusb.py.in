@@ -46,6 +46,9 @@ usbvendors = {}
 usbproducts = {}
 usbclasses = {}
 
+def colorize(num, text):
+	return cols[num] + str(text) + cols[0]
+
 def ishexdigit(str):
 	"return True if all digits are valid hex digits"
 	for dg in str:
@@ -262,10 +265,13 @@ class UsbEndpoint(UsbObject):
 		return "<UsbEndpoint[%r]>" % self.fname
 
 	def __str__(self):
-		indent = self.level + len(self.parent.fname)
-		return "%-17s  %s(EP) %02x: %s %s attr %02x len %02x max %03x%s\n" % \
-			(" " * indent, cols[5], self.epaddr, self.type,
-			 self.ival, self.attr, self.len, self.max, cols[0])
+		indent = "  " * self.level
+		#name = "%s/ep_%02X" % (self.parent.fname, self.epaddr)
+		name = ""
+		body = "(EP) %02x: %s %s attr %02x len %02x max %03x" % \
+			(self.epaddr, self.type, self.ival, self.attr, self.len, self.max)
+		body = colorize(5, body)
+		return "%-17s %s\n" % (indent + name, indent + body)
 
 
 class UsbInterface(UsbObject):
@@ -309,13 +315,13 @@ class UsbInterface(UsbObject):
 		return "<UsbInterface[%r]>" % self.fname
 
 	def __str__(self):
+		indent = "  " * self.level
+		name = self.fname
 		plural = (" " if self.noep == 1 else "s")
-		strg = "%-17s (IF) %02x:%02x:%02x %iEP%s (%s) %s%s %s%s%s\n" % \
-			(" " * self.level+self.fname, self.iclass,
-			 self.isclass, self.iproto, self.noep,
-			 plural, self.protoname, 
-			 cols[3], self.driver,
-			 cols[4], self.devname, cols[0])
+		body = "(IF) %02x:%02x:%02x %iEP%s (%s) %s %s" % \
+			(self.iclass, self.isclass, self.iproto, self.noep, plural,
+			 self.protoname, colorize(3, self.driver), colorize(4, self.devname))
+		strg = "%-17s %s\n" % (indent + name, indent + body)
 		if showeps and self.eps:
 			for ep in self.eps:
 				strg += str(ep)
@@ -415,25 +421,23 @@ class UsbDevice(UsbObject):
 		return "<UsbDevice[%r]>" % self.fname
 
 	def __str__(self):
-		if self.iclass == HUB_ICLASS:
-			col = cols[2]
+		is_hub = (self.iclass == HUB_ICLASS)
+		if is_hub:
 			if noemptyhub and len(self.children) == 0:
 				return ""
-			if nohub:
-				strg = ""
-		else:
-			col = cols[1]
-		if not nohub or self.iclass != HUB_ICLASS:
+		strg = ""
+		if not (nohub and is_hub):
+			indent = "  " * self.level
+			name = self.fname
 			plural = (" " if self.nointerfaces == 1 else "s")
-			strg = "%-16s %s%04x:%04x%s %02x %s%6sMbit/s %5s %iIF%s (%s%s%s)" % \
-				(" " * self.level + self.fname, 
-				 cols[1], self.vid, self.pid, cols[0],
+			body = "%s %02x %s%5sMBit/s %s %iIF%s (%s) %s" % \
+				(colorize(1, "%04x:%04x" % (self.vid, self.pid)),
 				 self.iclass, self.usbver, self.speed, self.maxpower,
-				 self.nointerfaces, plural, col, self.name, cols[0])
-			if self.iclass == HUB_ICLASS and not showhubint:
-				strg += " %shub%s\n" % (cols[2], cols[0])
-			else:
-				strg += "\n"
+				 self.nointerfaces, plural,
+				 colorize(2 if is_hub else 1, self.name),
+				 colorize(2, "hub") if is_hub else "")
+			strg = "%-17s %s\n" % (indent + name, indent + body)
+			if not (is_hub and not showhubint):
 				if showeps:
 					ep = UsbEndpoint(self, "ep_00", self.level+1)
 					strg += str(ep)
