@@ -84,9 +84,9 @@ class UsbProduct:
 	def __eq__(self, oth):
 		return (self.vid, self.pid) == (oth.vid, oth.pid)
 
-usbvendors = []
-usbproducts = []
-usbclasses = []
+usbvendors = {}
+usbproducts = {}
+usbclasses = {}
 
 def ishexdigit(str):
 	"return True if all digits are valid hex digits"
@@ -125,7 +125,7 @@ def parse_usb_ids():
 		if ishexdigit(ln[0:4]):
 			mode = modes.Vendor
 			vid = int(ln[:4], 16)
-			usbvendors.append(UsbVendor(vid, ln[6:]))
+			usbvendors[vid] = UsbVendor(vid, ln[6:])
 			continue
 		if ln[0] == '\t' and ishexdigit(ln[1:3]):
 			# usb.ids has a device id of 01xy, sigh
@@ -135,7 +135,7 @@ def parse_usb_ids():
 				did = int(ln[1:5], 16)
 			# USB devices
 			if mode == modes.Vendor:
-				usbproducts.append(UsbProduct(vid, did, ln[7:]))
+				usbproducts[vid, did] = UsbProduct(vid, did, ln[7:])
 				continue
 			elif mode == modes.Class:
 				nm = ln[5:]
@@ -143,17 +143,17 @@ def parse_usb_ids():
 					strg = cstrg + ":" + nm
 				else:
 					strg = cstrg + ":"
-				usbclasses.append(UsbClass(vid, did, -1, strg))
+				usbclasses[vid, did, -1] = UsbClass(vid, did, -1, strg)
 				continue
 		if ln[0] == 'C':
 			mode = modes.Class
 			cid = int(ln[2:4], 16)
 			cstrg = ln[6:]
-			usbclasses.append(UsbClass(cid, -1, -1, cstrg))
+			usbclasses[cid, -1, -1] = UsbClass(cid, -1, -1, cstrg)
 			continue
 		if mode == modes.Class and ln[0] == '\t' and ln[1] == '\t' and ishexdigit(ln[2:4]):
 			prid = int(ln[2:4], 16)
-			usbclasses.append(UsbClass(cid, did, prid, strg + ":" + ln[6:]))
+			usbclasses[cid, did, prid] = UsbClass(cid, did, prid, strg + ":" + ln[6:])
 			continue
 		mode = modes.Misc
 
@@ -179,18 +179,14 @@ def bin_search(first, last, item, list):
 def find_usb_prod(vid, pid):
 	"Return device name from USB Vendor:Product list"
 	strg = ""
-	dev = UsbVendor(vid, "")
-	lnvend = len(usbvendors)
-	ix = bin_search(0, lnvend, dev, usbvendors)
-	if ix != -1:
-		strg = usbvendors[ix].__repr__()
+	vendor = usbvendors.get(vid)
+	if vendor:
+		strg = vendor.__repr__()
 	else:
 		return ""
-	dev = UsbProduct(vid, pid, "")
-	lnprod = len(usbproducts)
-	ix = bin_search(0, lnprod, dev, usbproducts)
-	if ix != -1:
-		return strg + " " + usbproducts[ix].__repr__()
+	product = usbproducts.get((vid, pid))
+	if product:
+		return strg + " " + product.__repr__()
 	return strg
 
 def find_usb_class(cid, sid, pid):
@@ -198,18 +194,15 @@ def find_usb_class(cid, sid, pid):
 	if cid == 0xff and sid == 0xff and pid == 0xff:
 		return "Vendor Specific"
 	lnlst = len(usbclasses)
-	dev = UsbClass(cid, sid, pid, "")
-	ix = bin_search(0, lnlst, dev, usbclasses)
-	if ix != -1:
-		return usbclasses[ix].__repr__()
-	dev = UsbClass(cid, sid, -1, "")
-	ix = bin_search(0, lnlst, dev, usbclasses)
-	if ix != -1:
-		return usbclasses[ix].__repr__()
-	dev = UsbClass(cid, -1, -1, "")
-	ix = bin_search(0, lnlst, dev, usbclasses)
-	if ix != -1:
-		return usbclasses[ix].__repr__()
+	cls = usbclasses.get((cid, sid, pid))
+	if cls:
+		return cls.__repr__()
+	cls = usbclasses.get((cid, sid, -1))
+	if cls:
+		return cls.__repr__()
+	cls = usbclasses.get((cid, -1, -1))
+	if cls:
+		return cls.__repr__()
 	return ""
 
 
