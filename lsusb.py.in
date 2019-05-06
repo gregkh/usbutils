@@ -43,47 +43,6 @@ def readlink(path, name):
 	"Read symlink and return basename"
 	return os.path.basename(os.readlink(prefix + path + "/" + name));
 
-class UsbClass:
-	"Container for USB Class/Subclass/Protocol"
-	def __init__(self, cl, sc, pr, strg = ""):
-		self.pclass = cl
-		self.subclass = sc
-		self.proto = pr
-		self.desc = strg
-	def __str__(self):
-		return self.desc
-	def __lt__(self, oth):
-		return (self.pclass, self.subclass, self.proto) < \
-				(oth.pclass, oth.subclass, oth.proto)
-	def __eq__(self, oth):
-		return (self.pclass, self.subclass, self.proto) == \
-				(oth.pclass, oth.subclass, oth.proto)
-
-class UsbVendor:
-	"Container for USB Vendors"
-	def __init__(self, vid, vname = ""):
-		self.vid = vid
-		self.vname = vname
-	def __str__(self):
-		return self.vname
-	def __lt__(self, oth):
-		return self.vid < oth.vid
-	def __eq__(self, oth):
-		return self.vid == oth.vid
-
-class UsbProduct:
-	"Container for USB VID:PID devices"
-	def __init__(self, vid, pid, pname = ""):
-		self.vid = vid
-		self.pid = pid
-		self.pname = pname
-	def __str__(self):
-		return self.pname
-	def __lt__(self, oth):
-		return (self.vid, self.pid) < (oth.vid, oth.pid)
-	def __eq__(self, oth):
-		return (self.vid, self.pid) == (oth.vid, oth.pid)
-
 usbvendors = {}
 usbproducts = {}
 usbclasses = {}
@@ -125,7 +84,7 @@ def parse_usb_ids():
 		if ishexdigit(ln[0:4]):
 			mode = modes.Vendor
 			vid = int(ln[:4], 16)
-			usbvendors[vid] = UsbVendor(vid, ln[6:])
+			usbvendors[vid] = ln[6:]
 			continue
 		if ln[0] == '\t' and ishexdigit(ln[1:3]):
 			# usb.ids has a device id of 01xy, sigh
@@ -135,7 +94,7 @@ def parse_usb_ids():
 				did = int(ln[1:5], 16)
 			# USB devices
 			if mode == modes.Vendor:
-				usbproducts[vid, did] = UsbProduct(vid, did, ln[7:])
+				usbproducts[vid, did] = ln[7:]
 				continue
 			elif mode == modes.Class:
 				nm = ln[5:]
@@ -143,20 +102,20 @@ def parse_usb_ids():
 					strg = cstrg + ":" + nm
 				else:
 					strg = cstrg + ":"
-				usbclasses[vid, did, -1] = UsbClass(vid, did, -1, strg)
+				usbclasses[vid, did, -1] = strg
 				continue
 		if ln[0] == 'C':
 			mode = modes.Class
 			cid = int(ln[2:4], 16)
 			cstrg = ln[6:]
-			usbclasses[cid, -1, -1] = UsbClass(cid, -1, -1, cstrg)
+			usbclasses[cid, -1, -1] = cstrg
 			continue
 		if mode == modes.Class and ln[0] == '\t' and ln[1] == '\t' and ishexdigit(ln[2:4]):
 			prid = int(ln[2:4], 16)
-			usbclasses[cid, did, prid] = UsbClass(cid, did, prid, strg + ":" + ln[6:])
+			usbclasses[cid, did, prid] = ln[6:]
 			continue
 		mode = modes.Misc
-	usbclasses[0xFF, 0xFF, 0xFF] = UsbClass(0xFF, 0xFF, 0xFF, "Vendor Specific")
+	usbclasses[0xFF, 0xFF, 0xFF] = "Vendor Specific"
 
 def find_usb_prod(vid, pid):
 	"Return device name from USB Vendor:Product list"
