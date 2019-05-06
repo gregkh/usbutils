@@ -162,12 +162,12 @@ def find_usb_prod(vid, pid):
 	strg = ""
 	vendor = usbvendors.get(vid)
 	if vendor:
-		strg = vendor.__repr__()
+		strg = repr(vendor)
 	else:
 		return ""
 	product = usbproducts.get((vid, pid))
 	if product:
-		return strg + " " + product.__repr__()
+		return strg + " " + repr(product)
 	return strg
 
 def find_usb_class(cid, sid, pid):
@@ -177,13 +177,13 @@ def find_usb_class(cid, sid, pid):
 	lnlst = len(usbclasses)
 	cls = usbclasses.get((cid, sid, pid))
 	if cls:
-		return cls.__repr__()
+		return repr(cls)
 	cls = usbclasses.get((cid, sid, -1))
 	if cls:
-		return cls.__repr__()
+		return repr(cls)
 	cls = usbclasses.get((cid, -1, -1))
 	if cls:
-		return cls.__repr__()
+		return repr(cls)
 	return ""
 
 
@@ -355,7 +355,7 @@ class UsbInterface:
 			 cols[4], self.devname, cols[0])
 		if showeps and self.eps:
 			for ep in self.eps:
-				strg += ep.__str__()
+				strg += str(ep)
 		return strg
 
 class UsbDevice:
@@ -483,12 +483,12 @@ class UsbDevice:
 				if showeps:
 					ep = UsbEndpoint(self, self.level+len(self.fname))
 					ep.read("ep_00")
-					strg += ep.__str__()
+					strg += str(ep)
 				if showint:	
 					for iface in self.interfaces:
-						strg += iface.__str__()
+						strg += str(iface)
 		for child in self.children:
-			strg += child.__str__()
+			strg += str(child)
 		return strg
 
 
