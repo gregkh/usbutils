@@ -22,7 +22,12 @@ nohub = False
 showeps = False
 
 prefix = "/sys/bus/usb/devices/"
-usbids = ("@usbids@", "/usr/share/usb.ids", "/usr/share/libosinfo/usb.ids", "/usr/share/kcmusb/usb.ids", )
+usbids = [
+	"@usbids@",
+	"/usr/share/usb.ids",
+	"/usr/share/libosinfo/usb.ids",
+	"/usr/share/kcmusb/usb.ids",
+]
 
 esc = chr(27)
 norm = esc + "[0;0m"
@@ -145,20 +150,21 @@ def find_usb_class(cid, sid, pid):
 	return ""
 
 
-devlst = (	'host', 	# usb-storage
-		'video4linux/video', 	# uvcvideo et al.
-		'sound/card',	# snd-usb-audio 
-		'net/', 	# cdc_ether, ...
-		'input/input',	# usbhid
-		'usb:hiddev',	# usb hid
-		'bluetooth/hci',	# btusb
-		'ttyUSB',	# btusb
-		'tty/',		# cdc_acm
-		'usb:lp',	# usblp
-		#'usb/lp',	# usblp 
-		'usb/',		# hiddev, usblp
-		#'usbhid',	# hidraw
-	)
+devlst = [
+	'host',			# usb-storage
+	'video4linux/video',	# uvcvideo et al.
+	'sound/card',		# snd-usb-audio
+	'net/',			# cdc_ether, ...
+	'input/input',		# usbhid
+	'usb:hiddev',		# usb hid
+	'bluetooth/hci',	# btusb
+	'ttyUSB',		# btusb
+	'tty/',			# cdc_acm
+	'usb:lp',		# usblp
+	#'usb/lp',		# usblp
+	'usb/',			# hiddev, usblp
+	#'usbhid',		# hidraw
+]
 
 def find_storage(hostno):
 	"Return SCSI block dev names for host"
@@ -528,8 +534,7 @@ def main(argv):
 			print("Warning: option -w is no longer supported", file=sys.stderr)
 			continue
 		if opt[0] in {"-f", "--usbids-path"}:
-			#usbids = (opt[1], *usbids)
-			usbids = (opt[1],)
+			usbids = [opt[1]]
 			continue
 		if opt[0] in {"-e", "--endpoints"}:
 			showeps = True
