@@ -477,6 +477,9 @@ class UsbDevice:
 				usbdev.read(dirent)
 				usbdev.readchildren()
 				self.children.append(usbdev)
+		usbsortkey = lambda obj: [int(x) for x in re.split(r"[-:.]", obj.fname)]
+		self.interfaces.sort(key=usbsortkey)
+		self.children.sort(key=usbsortkey)
 
 	def __str__(self):
 		#str = " " * self.level + self.fname
