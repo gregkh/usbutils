@@ -7,6 +7,13 @@
 # history (i.e. packaged versions of the software).
 #
 
+usbutils 012
+============
+
+Greg Kroah-Hartman:
+	Merge usbhid-dump into main usbutils repository
+
+
 usbutils 011
 ============
 

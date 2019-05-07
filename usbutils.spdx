@@ -2,11 +2,11 @@ SPDXVersion: SPDX-2.1
 DataLicense: CC0-1.0
 SPDXID: SPDXRef-DOCUMENT
 DocumentName: usbutils
-DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-fe38378a-d2c5-4c04-91e3-ef4e5fc2c4ed
+DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-3dce0911-c062-4475-b4d3-6f01e4e74c63
 Creator: Person: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Creator: Organization: Linux Foundation
 Creator: Tool: reuse-0.3.4
-Created: 2019-05-06T13:03:08Z
+Created: 2019-05-07T14:34:06Z
 CreatorComment: <text>This document was created automatically using available reuse information consistent with the REUSE Initiative.</text>
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-7445606fbf8f3683cd42bdc54b05d7a0bc2dfc44
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-dea01dd89a3b602828e630677fde5d77c06441c8
@@ -84,7 +84,7 @@ FileCopyrightText: <text>Copyright (c) 2009 Kay Sievers <kay.sievers@vrfy.org></
 
 FileName: ./NEWS
 SPDXID: SPDXRef-9f621eb5fd3bcb2fa5c7bd228c9b1ad42edc46c8
-FileChecksum: SHA1: d2f49dbcfc9b6f0ae07e66586f69691ec0624210
+FileChecksum: SHA1: a923f5c8b36aaf5c10f370d9d3e1d7f943537f32
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0
 FileCopyrightText: <text>Copyright (c) 2018 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
@@ -105,7 +105,7 @@ FileCopyrightText: <text>Copyright (c) 2009,2010 Greg Kroah-Hartman <gregkh@suse
 
 FileName: ./configure.ac
 SPDXID: SPDXRef-87db583be5c13c1f7b3c958b10e03d67b6a2ca06
-FileChecksum: SHA1: d24d6d2c6794326c5cfeb86edc6a6c2504e31521
+FileChecksum: SHA1: 2c197c30cd709184f2206aef192b8396f1d821c0
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0
 FileCopyrightText: <text>Copyright (c) 2009 Kay Sievers <kay.sievers@vrfy.org></text>
