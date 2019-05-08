@@ -52,6 +52,7 @@ man_MANS = \
 
 EXTRA_DIST = \
 	lsusb.8.in \
+	usbhid-dump.8.in \
 	usb-devices.1.in \
 	usb-devices \
 	lsusb.py.in \
@@ -65,6 +66,9 @@ lsusb.py: $(srcdir)/lsusb.py.in
 
 lsusb.8: $(srcdir)/lsusb.8.in
 	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
+
+usbhid-dump.8: $(srcdir)/usbhid-dump.8.in
+	sed 's|VERSION|$(VERSION)|g' $< >$@
 
 usb-devices.1: $(srcdir)/usb-devices.1.in
 	sed 's|VERSION|$(VERSION)|g' $< >$@
