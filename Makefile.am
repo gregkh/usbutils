@@ -47,6 +47,7 @@ usbreset_SOURCES = \
 
 man_MANS = \
 	lsusb.8	\
+	usbhid-dump.8 \
 	usb-devices.1
 
 EXTRA_DIST = \
