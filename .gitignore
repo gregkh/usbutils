@@ -21,5 +21,6 @@ lsusb.8
 usbutils.pc
 usb-devices.1
 usbreset
+usbhid-dump.8
 *.gz
 *.bz2
