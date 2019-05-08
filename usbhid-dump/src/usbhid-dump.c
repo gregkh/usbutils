@@ -8,8 +8,8 @@
 #include "config.h"
 
 #include "uhd/iface_list.h"
-#include "uhd/libusb.h"
 #include "uhd/misc.h"
+#include <libusb.h>
 
 #include <assert.h>
 #include <stdbool.h>

@@ -10,5 +10,4 @@ libuhd_la_SOURCES = \
     dev.c           \
     dev_list.c      \
     iface.c         \
-    iface_list.c    \
-    libusb.c
+    iface_list.c

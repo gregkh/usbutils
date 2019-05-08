@@ -9,5 +9,4 @@ noinst_HEADERS = \
     dev_list.h      \
     iface.h         \
     iface_list.h    \
-    libusb.h        \
     misc.h

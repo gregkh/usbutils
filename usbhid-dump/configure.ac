@@ -73,7 +73,6 @@ fi
 #
 # Checks for library functions.
 #
-AC_CHECK_FUNCS([libusb_strerror libusb_set_option])
 
 #
 # Output

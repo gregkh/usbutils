@@ -9,7 +9,7 @@
 #define __UHD_DEV_H__
 
 #include <stdbool.h>
-#include "uhd/libusb.h"
+#include <libusb.h>
 
 #ifdef __cplusplus
 extern "C" {
