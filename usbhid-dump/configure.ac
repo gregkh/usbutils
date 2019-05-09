@@ -18,10 +18,7 @@ CFLAGS=$CFLAGS
 CFLAGS="-Os -Wall $CFLAGS"
 ABS_SRCDIR=`cd ${srcdir} ; pwd`
 ABS_BUILDDIR=`pwd`
-CPPFLAGS="-I${ABS_BUILDDIR} -I${ABS_BUILDDIR}/include -DNDEBUG $CPPFLAGS"
-if test "$ABS_SRCDIR" != "$ABS_BUILDDIR"; then
-    CPPFLAGS="-I${ABS_SRCDIR}/include $CPPFLAGS"
-fi
+CPPFLAGS="-I${ABS_BUILDDIR} -DNDEBUG $CPPFLAGS"
 
 
 #
@@ -78,7 +75,5 @@ fi
 # Output
 #
 AC_CONFIG_FILES([Makefile
-                 include/Makefile
-                 include/uhd/Makefile
                  src/Makefile])
 AC_OUTPUT

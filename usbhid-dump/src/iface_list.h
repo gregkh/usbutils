@@ -9,8 +9,8 @@
 #define __UHD_IFACE_LIST_H__
 
 #include <stdint.h>
-#include "uhd/dev_list.h"
-#include "uhd/iface.h"
+#include "dev_list.h"
+#include "iface.h"
 
 #ifdef __cplusplus
 extern "C" {

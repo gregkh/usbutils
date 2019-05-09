@@ -10,7 +10,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "uhd/dev.h"
+#include "dev.h"
 
 #ifdef __cplusplus
 extern "C" {

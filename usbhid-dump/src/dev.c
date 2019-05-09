@@ -7,7 +7,7 @@
 
 #include "config.h"
 
-#include "uhd/dev.h"
+#include "dev.h"
 #include <assert.h>
 #include <stdlib.h>
 

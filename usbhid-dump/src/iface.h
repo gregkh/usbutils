@@ -9,7 +9,7 @@
 #define __UHD_IFACE_H__
 
 #include <stdint.h>
-#include "uhd/dev.h"
+#include "dev.h"
 
 #ifdef __cplusplus
 extern "C" {

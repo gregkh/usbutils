@@ -2,6 +2,13 @@
 #
 # Copyright (C) 2010 Nikolai Kondrashov
 
+noinst_HEADERS =		\
+		dev.h		\
+		dev_list.h	\
+		iface.h		\
+		iface_list.h	\
+		misc.h
+
 bin_PROGRAMS = usbhid-dump
 
 usbhid_dump_SOURCES =	\

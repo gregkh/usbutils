@@ -7,8 +7,8 @@
 
 #include "config.h"
 
-#include "uhd/iface_list.h"
-#include "uhd/misc.h"
+#include "iface_list.h"
+#include "misc.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>

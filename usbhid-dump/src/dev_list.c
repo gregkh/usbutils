@@ -7,8 +7,8 @@
 
 #include "config.h"
 
-#include "uhd/misc.h"
-#include "uhd/dev_list.h"
+#include "misc.h"
+#include "dev_list.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
