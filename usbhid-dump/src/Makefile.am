@@ -4,5 +4,9 @@
 
 bin_PROGRAMS = usbhid-dump
 
-usbhid_dump_SOURCES = usbhid-dump.c
-usbhid_dump_LDADD = ../lib/libuhd.la
+usbhid_dump_SOURCES =	\
+		dev.c \
+		dev_list.c \
+		iface.c \
+		iface_list.c \
+		usbhid-dump.c

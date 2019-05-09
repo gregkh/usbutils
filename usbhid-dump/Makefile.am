@@ -4,7 +4,7 @@
 #
 # This file is part of usbhid-dump.
 
-SUBDIRS = include lib src
+SUBDIRS = include src
 
 dist_noinst_SCRIPTS = bootstrap
 

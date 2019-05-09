@@ -80,6 +80,5 @@ fi
 AC_CONFIG_FILES([Makefile
                  include/Makefile
                  include/uhd/Makefile
-                 lib/Makefile
                  src/Makefile])
 AC_OUTPUT
