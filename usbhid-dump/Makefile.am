@@ -8,8 +8,6 @@ SUBDIRS = src
 
 dist_noinst_SCRIPTS = bootstrap
 
-ACLOCAL_AMFLAGS = -I m4
-
 dist-hook:
 	@set -e; \
 	if test -d "$(srcdir)/.git"; then \

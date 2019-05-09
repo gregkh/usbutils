@@ -6,12 +6,13 @@
 
 AC_PREREQ(2.61)
 AC_INIT([usbhid-dump], [1.4])
-AC_CONFIG_AUX_DIR([auxdir])
 AM_INIT_AUTOMAKE([1.9 -Wall foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AM_MAINTAINER_MODE
-AC_CONFIG_HEADER([config.h])
-AC_CONFIG_MACRO_DIR([m4])
+
+AC_USE_SYSTEM_EXTENSIONS
+
+AC_CONFIG_HEADERS([config.h])
 
 # To have empty CFLAGS instead of undefined and '-g -O2' by default
 CFLAGS=$CFLAGS
@@ -24,10 +25,6 @@ CPPFLAGS="-I${ABS_BUILDDIR} -DNDEBUG $CPPFLAGS"
 #
 # Checks for programs.
 #
-AC_PROG_CC
-AC_PROG_INSTALL
-m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
-AC_PROG_LIBTOOL
 
 #
 # Checks for libraries.
