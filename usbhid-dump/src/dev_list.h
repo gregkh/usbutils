@@ -26,28 +26,6 @@ extern "C" {
 extern bool uhd_dev_list_valid(const uhd_dev *list);
 
 /**
- * Check if a device list is empty.
- *
- * @param list  Device list to check.
- *
- * @return True if the device list is empty, false otherwise.
- */
-static inline bool
-uhd_dev_list_empty(const uhd_dev *list)
-{
-    return list == NULL;
-}
-
-/**
- * Calculate length of a device list.
- *
- * @param list  The list to calculate length of.
- *
- * @return The list length.
- */
-extern size_t uhd_dev_list_len(const uhd_dev *list);
-
-/**
  * Close every device in a device list.
  *
  * @param list  The device list to close.

@@ -24,18 +24,6 @@ uhd_dev_list_valid(const uhd_dev *list)
 }
 
 
-size_t
-uhd_dev_list_len(const uhd_dev *list)
-{
-    size_t  len = 0;
-
-    UHD_DEV_LIST_FOR_EACH(list, list)
-        len++;
-
-    return len;
-}
-
-
 void
 uhd_dev_list_close(uhd_dev *list)
 {
