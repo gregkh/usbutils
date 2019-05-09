@@ -76,7 +76,8 @@ usb-devices.1: $(srcdir)/usb-devices.1.in
 DISTCLEANFILES = \
 	lsusb.py \
 	lsusb.8 \
-	usb-devices.1
+	usb-devices.1 \
+	usbhid-dump.8
 
 distclean-local:
 	rm -rf autom4te.cache
