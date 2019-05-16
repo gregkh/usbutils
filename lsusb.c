@@ -1073,7 +1073,6 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 		"IEC1937_MPEG-2_Layer1_LS", "IEC1937_MPEG-2_Layer2/3_LS" };
 	unsigned int i, j, fmttag;
 	const char *fmtptr = "undefined";
-	char *name = NULL;
 
 	if (buf[1] != USB_DT_CS_INTERFACE)
 		printf("      Warning: Invalid descriptor\n");
@@ -1341,8 +1340,6 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 		dump_bytes(buf+3, buf[0]-3);
 		break;
 	}
-
-	free(name);
 }
 
 static void dump_audiostreaming_endpoint(libusb_device_handle *dev, const unsigned char *buf, int protocol)
