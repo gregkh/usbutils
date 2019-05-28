@@ -11,7 +11,7 @@ usb-devices \- print USB device details
 
 .SH DESCRIPTION
 .B usb-devices
-is a (bash) shell script that can be used to display details of USB
+is a shell script that can be used to display details of USB
 buses in the system and the devices connected to them.
 
 The output of the script is similar to the \fIusb/devices\fP file
