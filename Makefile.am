@@ -65,7 +65,7 @@ lsusb.py: $(srcdir)/lsusb.py.in
 	chmod 755 $@
 
 lsusb.8: $(srcdir)/lsusb.8.in
-	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
+	sed 's|VERSION|$(VERSION)|g' $< >$@
 
 usbhid-dump.8: $(srcdir)/usbhid-dump.8.in
 	sed 's|VERSION|$(VERSION)|g' $< >$@
