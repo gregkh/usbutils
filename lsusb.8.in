@@ -1,6 +1,6 @@
 .\"SPDX-License-Identifier: GPL-2.0
 .\"Copyright (c) 1999 Thomas Sailer <sailer@ife.ee.ethz.ch>
-.TH lsusb 8 "11 February 2019" "usbutils-VERSION" "Linux USB Utilities"
+.TH lsusb 8 "15 November 2019" "usbutils-VERSION" "Linux USB Utilities"
 .IX lsusb
 .SH NAME
 lsusb \- list USB devices
@@ -36,6 +36,14 @@ Both ID's are given in decimal and may be omitted.
 Show only devices with the specified vendor and product ID.
 Both ID's are given in hexadecimal.
 .TP
+.B \-f \fIFORMAT\fP
+Change format of device list (not with \-D):
+%b = bus number, %d = device number,
+%v = vendor ID, %i = product ID,
+%m = vendor name, %p = produce name,
+%s = serial number, %x = serial as hex dump,
+%% = literal %, %t = tab, %n = newline.
+.TP
 .B \-D \fIdevice\fP
 Do not scan the /dev/bus/usb directory,
 instead display only information
@@ -56,6 +64,16 @@ then exit successfully.
 
 .SH RETURN VALUE
 If the specified device is not found, a non-zero exit code is returned.
+
+.SH EXAMPLE
+.TP
+.B lsusb -f 'Bus %b Device %d: ID %v:%i %m %p%n'
+is the same as standard output format.
+.TP
+.B lsusb -d 0483:3748 -f '%b:%d %x %p%n'
+List only this kind of device with bus and device number and hexadecimal dump of serial number.
+Some devices (e.g. ST-LINK/V2) has binary data in serial number string. Serial number string is in UTF-16 format.
+With ASCII encoding every second hex byte is 00.
 
 .SH SEE ALSO
 .BR lspci (8),

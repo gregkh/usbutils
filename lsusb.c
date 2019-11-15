@@ -4,6 +4,7 @@
  *
  * Copyright (C) 1999-2001, 2003 Thomas Sailer (t.sailer@alumni.ethz.ch)
  * Copyright (C) 2003-2005 David Brownell
+ * Modified 11/2019: Burkhard Arenfeld, New -f option
  */
 
 #include "config.h"
@@ -161,6 +162,7 @@ static void dump_hub(const char *prefix, const unsigned char *p, int tt_type);
 static void dump_ccid_device(const unsigned char *buf);
 static void dump_billboard_device_capability_desc(libusb_device_handle *dev, unsigned char *buf);
 static void dump_billboard_alt_mode_capability_desc(libusb_device_handle *dev, unsigned char *buf);
+static void dump_serial(libusb_device *dev, struct libusb_device_descriptor *desc, int mode);
 
 /* ---------------------------------------------------------------------- */
 
@@ -319,6 +321,59 @@ static void dump_device(
 	free(prod);
 	free(serial);
 }
+
+
+/* Dump only serial number as text (mode==0) or hexadecimal (mode!=0) */
+static void dump_serial(libusb_device *dev, struct libusb_device_descriptor *desc, int mode)
+{
+	libusb_device_handle *udev;
+	if(!desc->iSerialNumber) {
+		if(mode)	// In hexadecimal mode print a hint
+			printf("NONE");
+		else
+			if (verblevel > 0)
+				fprintf(stderr, "Device without serial number descriptor\n");
+		return;
+	}
+	if (libusb_open(dev, &udev)) {
+		fprintf(stderr, "Couldn't open device, some information will be missing\n");
+		return;
+	} 
+
+	if(mode) {
+		// For hexadecimal output
+		unsigned char buf[255];	// Ahhrrg! Took me several hours, that size > 256 not works correct :-(
+		unsigned char *ptr=buf;	// Seems to me, that there is a &255 somewhere, but length parameter is an int !
+		int cnt=libusb_get_descriptor(udev,LIBUSB_DT_STRING,desc->iSerialNumber,buf,sizeof buf); 	
+		// Read raw descriptor instead of string. String-Verison:
+		// #define LANG_NEUTRAL 0x0000	// from https://docs.microsoft.com/en-us/windows/win32/intl/language-identifier-constants-and-strings
+  		// cnt=libusb_get_string_descriptor(udev,desc->iSerialNumber,LANG_NEUTRAL,buf,sizeof buf);
+		if(cnt<=2) {			// First two bytes are header: length and type=LIBUSB_DT_STRING.
+			printf("NULL");
+			fprintf(stderr, "Serial number descriptor has zero length or error\n");
+			return;
+		}
+		if((unsigned int)cnt>sizeof buf ) {
+			fprintf(stderr, "Error while reading serial number descriptor (size=%d)\n",cnt);
+			return;
+		}
+		ptr+=2; cnt-=2;		// Skip header
+		while(cnt--) {
+			// printf("%c",*ptr>31?*ptr:'?');
+			printf("%02x",*ptr);
+			ptr++;
+		}
+
+	} else {
+		// For text output
+		char *serial = get_dev_string(udev, desc->iSerialNumber);
+		fputs(serial,stdout);
+		free(serial);
+	}
+	if (udev)
+		libusb_close(udev);
+}
+
 
 static void dump_wire_adapter(const unsigned char *buf)
 {
@@ -3684,7 +3739,7 @@ static int dump_one_device(libusb_context *ctx, const char *path)
 	return 0;
 }
 
-static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendorid, int productid)
+static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendorid, int productid, const char *format)
 {
 	libusb_device **list;
 	struct libusb_device_descriptor desc;
@@ -3726,7 +3781,55 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 
 		if (verblevel > 0)
 			printf("\n");
-		printf("Bus %03u Device %03u: ID %04x:%04x %s %s\n",
+		if (format != NULL) {
+			const char *ptr=format-1;
+			while(*++ptr) {
+				if(*ptr!='%') {
+					putchar(*ptr);
+					continue;
+				} 
+				switch(*++ptr) {
+				case '%':	// literal %
+					putchar('%');
+					break;
+				case 't':	// tab
+					putchar('\t');
+					break;
+				case 'n':	// newline
+					putchar('\n');
+					break;
+				case 'b':	// bus number
+					printf("%03u",bnum);
+					break;
+				case 'd':	// device number
+					printf("%03u",dnum);
+					break;
+				case 'v':	// vendor id (hex)
+					printf("%04x",desc.idVendor);
+					break;
+				case 'i':	// product id (hex)
+					printf("%04x",desc.idProduct);
+					break;
+				case 'm':	// vendor name
+					fputs(vendor,stdout);
+					break;
+				case 'p':	// product name
+					fputs(product,stdout);
+					break;
+				case 's':	// serial number
+					dump_serial(dev,&desc,0);
+					break;
+				case 'x':	// serial number as hex dump
+					dump_serial(dev,&desc,1);
+					break;
+				case 0:	// bad ... unfinished sequence :-(
+					ptr--;
+					break;
+				// default:	// ignoring unsupported sequence	
+				}
+			}
+		} else
+			printf("Bus %03u Device %03u: ID %04x:%04x %s %s\n",
 				bnum, dnum,
 				desc.idVendor,
 				desc.idProduct,
@@ -3757,13 +3860,14 @@ int main(int argc, char *argv[])
 	unsigned int treemode = 0;
 	int bus = -1, devnum = -1, vendor = -1, product = -1;
 	const char *devdump = NULL;
+	const char *listformat = NULL;
 	int help = 0;
 	char *cp;
 	int status;
 
 	setlocale(LC_CTYPE, "");
 
-	while ((c = getopt_long(argc, argv, "D:vtP:p:s:d:Vh",
+	while ((c = getopt_long(argc, argv, "D:vtP:p:s:d:Vhf:",
 			long_options, NULL)) != EOF) {
 		switch (c) {
 		case 'V':
@@ -3812,6 +3916,10 @@ int main(int argc, char *argv[])
 			devdump = optarg;
 			break;
 
+		case 'f':
+			listformat = optarg;
+			break;
+
 		case '?':
 		default:
 			err++;
@@ -3819,7 +3927,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	if (err || argc > optind || help) {
-		fprintf(stderr, "Usage: lsusb [options]...\n"
+		fputs("Usage: lsusb [options]...\n"
 			"List USB devices\n"
 			"  -v, --verbose\n"
 			"      Increase verbosity (show descriptors)\n"
@@ -3829,6 +3937,13 @@ int main(int argc, char *argv[])
 			"  -d vendor:[product]\n"
 			"      Show only devices with the specified vendor and\n"
 			"      product ID numbers (in hexadecimal)\n"
+			"  -f FORMAT\n"
+			"      Change format of device list (not with -D):\n"
+			"       %b = bus number, %d = device number,\n"
+			"       %v = vendor ID, %i = product ID,\n"
+			"       %m = vendor name, %p = produce name,\n"
+			"       %s = serial number, %x = serial as hex dump,\n"
+			"       %% = literal %, %t = tab, %n = newline\n"
 			"  -D device\n"
 			"      Selects which device lsusb will examine\n"
 			"  -t, --tree\n"
@@ -3837,7 +3952,7 @@ int main(int argc, char *argv[])
 			"      Show version of program\n"
 			"  -h, --help\n"
 			"      Show usage and help\n"
-			);
+			,stderr);
 		return EXIT_FAILURE;
 	}
 
@@ -3863,7 +3978,7 @@ int main(int argc, char *argv[])
 	if (devdump)
 		status = dump_one_device(ctx, devdump);
 	else
-		status = list_devices(ctx, bus, devnum, vendor, product);
+		status = list_devices(ctx, bus, devnum, vendor, product, listformat);
 
 	names_exit();
 	libusb_exit(ctx);
