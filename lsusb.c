@@ -4,7 +4,6 @@
  *
  * Copyright (C) 1999-2001, 2003 Thomas Sailer (t.sailer@alumni.ethz.ch)
  * Copyright (C) 2003-2005 David Brownell
- * Modified 11/2019: Burkhard Arenfeld, New -f option
  */
 
 #include "config.h"
