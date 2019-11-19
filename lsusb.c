@@ -341,10 +341,10 @@ static void dump_serial(libusb_device *dev, struct libusb_device_descriptor *des
 
 	if (mode) {
 		// For hexadecimal output
-		unsigned char buf[255];	// Ahhrrg! Took me several hours, that size > 256 not works correct :-(
-		unsigned char *ptr=buf;	// Seems to me, that there is a &255 somewhere, but length parameter is an int !
+		unsigned char buf[255];	// Warning: 256 doesn't work!
+		unsigned char *ptr=buf;
 		int cnt=libusb_get_descriptor(udev,LIBUSB_DT_STRING,desc->iSerialNumber,buf,sizeof buf); 	
-		// Read raw descriptor instead of string. String-Verison:
+		// Read raw descriptor instead of string. String-Version:
 		// #define LANG_NEUTRAL 0x0000	// from https://docs.microsoft.com/en-us/windows/win32/intl/language-identifier-constants-and-strings
   		// cnt=libusb_get_string_descriptor(udev,desc->iSerialNumber,LANG_NEUTRAL,buf,sizeof buf);
 		if (cnt<=2) {			// First two bytes are header: length and type=LIBUSB_DT_STRING.
