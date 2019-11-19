@@ -7,12 +7,6 @@
 # history (i.e. packaged versions of the software).
 #
 
-usbutils 013
-============
-
-Burkhard Arenfeld (1):
-	Add -f option to lsusb to make the output list format more flexible. Add hex dump of serial number.
-
 usbutils 012
 ============
 
