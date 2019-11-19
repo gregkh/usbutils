@@ -326,8 +326,8 @@ static void dump_device(
 static void dump_serial(libusb_device *dev, struct libusb_device_descriptor *desc, int mode)
 {
 	libusb_device_handle *udev;
-	if(!desc->iSerialNumber) {
-		if(mode)	// In hexadecimal mode print a hint
+	if (!desc->iSerialNumber) {
+		if (mode)	// In hexadecimal mode print a hint
 			printf("NONE");
 		else
 			if (verblevel > 0)
@@ -339,7 +339,7 @@ static void dump_serial(libusb_device *dev, struct libusb_device_descriptor *des
 		return;
 	} 
 
-	if(mode) {
+	if (mode) {
 		// For hexadecimal output
 		unsigned char buf[255];	// Ahhrrg! Took me several hours, that size > 256 not works correct :-(
 		unsigned char *ptr=buf;	// Seems to me, that there is a &255 somewhere, but length parameter is an int !
@@ -347,12 +347,12 @@ static void dump_serial(libusb_device *dev, struct libusb_device_descriptor *des
 		// Read raw descriptor instead of string. String-Verison:
 		// #define LANG_NEUTRAL 0x0000	// from https://docs.microsoft.com/en-us/windows/win32/intl/language-identifier-constants-and-strings
   		// cnt=libusb_get_string_descriptor(udev,desc->iSerialNumber,LANG_NEUTRAL,buf,sizeof buf);
-		if(cnt<=2) {			// First two bytes are header: length and type=LIBUSB_DT_STRING.
+		if (cnt<=2) {			// First two bytes are header: length and type=LIBUSB_DT_STRING.
 			printf("NULL");
 			fprintf(stderr, "Serial number descriptor has zero length or error\n");
 			return;
 		}
-		if((unsigned int)cnt>sizeof buf ) {
+		if ((unsigned int)cnt>sizeof buf ) {
 			fprintf(stderr, "Error while reading serial number descriptor (size=%d)\n",cnt);
 			return;
 		}
@@ -3783,7 +3783,7 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 		if (format != NULL) {
 			const char *ptr=format-1;
 			while(*++ptr) {
-				if(*ptr!='%') {
+				if (*ptr!='%') {
 					putchar(*ptr);
 					continue;
 				} 
