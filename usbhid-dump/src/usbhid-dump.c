@@ -917,7 +917,7 @@ main(int argc, char **argv)
     /*
      * Extract program invocation name
      */
-    name = rindex(argv[0], '/');
+    name = strrchr(argv[0], '/');
     if (name == NULL)
         name = argv[0];
     else
