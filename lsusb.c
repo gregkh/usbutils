@@ -1679,8 +1679,8 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 			printf("      Warning: Descriptor too short\n");
 		printf("        bUnitID             %5u\n"
 		       "        guidExtensionCode         %s\n"
-		       "        bNumControl         %5u\n"
-		       "        bNrPins             %5u\n",
+		       "        bNumControls        %5u\n"
+		       "        bNrInPins           %5u\n",
 		       buf[3], get_guid(&buf[4]), buf[20], buf[21]);
 		for (i = 0; i < p; i++)
 			printf("        baSourceID(%2u)      %5u\n", i, buf[22+i]);
