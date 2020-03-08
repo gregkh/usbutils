@@ -30,8 +30,6 @@ prefix = "/sys/bus/usb/devices/"
 usbids = [
 	"@usbids@",
 	"/usr/share/usb.ids",
-	"/usr/share/libosinfo/usb.ids",
-	"/usr/share/kcmusb/usb.ids",
 ]
 cols = ("", "", "", "", "", "")
 
