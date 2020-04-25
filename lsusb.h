@@ -4,6 +4,8 @@
 #define _LSUSB_H
 
 extern int lsusb_t(void);
+extern int lsusb_init_usb_tree(void);
+extern char *get_sysfs_name(uint8_t bnum, uint8_t dnum);
 extern unsigned int verblevel;
 
 #endif

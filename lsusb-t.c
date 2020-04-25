@@ -687,7 +687,34 @@ static void print_tree(void)
 	}
 }
 
-int lsusb_t(void)
+static char *find_dev_path(struct usbdevice *d, uint8_t bnum, uint8_t dnum)
+{
+	while (d) {
+		if (bnum == d->busnum && dnum == d->devnum)
+			return d->name;
+		char *p = find_dev_path(d->first_child, bnum, dnum);
+		if (p)
+			return p;
+		d = d->next;
+	}
+	return NULL;
+}
+
+char *get_sysfs_name(uint8_t bnum, uint8_t dnum)
+{
+	struct usbbusnode *b = usbbuslist;
+	while (b) {
+		if (bnum == b->busnum && dnum == b->devnum)
+			return b->name;
+		char *p = find_dev_path(b->first_child, bnum, dnum);
+		if (p)
+			return p;
+		b = b->next;
+	}
+	return NULL;
+}
+
+int lsusb_init_usb_tree(void)
 {
 	DIR *sbud = opendir(sys_bus_usb_devices);
 	if (sbud) {
@@ -696,8 +723,15 @@ int lsusb_t(void)
 		connect_devices();
 		sort_devices();
 		sort_busses();
-		print_tree();
 	} else
 		perror(sys_bus_usb_devices);
 	return sbud == NULL;
+}
+
+int lsusb_t(void)
+{
+	if (lsusb_init_usb_tree())
+		return 1;
+	print_tree();
+	return 0;
 }

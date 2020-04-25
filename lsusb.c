@@ -3694,6 +3694,8 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 
 	status = 1; /* 1 device not found, 0 device found */
 
+	lsusb_init_usb_tree();  /* sysfs will be ignored if this errors out */
+
 	num_devs = libusb_get_device_list(ctx, &list);
 	if (num_devs < 0)
 		goto error;
@@ -3702,7 +3704,6 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 		libusb_device *dev = list[i];
 		uint8_t bnum = libusb_get_bus_number(dev);
 		uint8_t dnum = libusb_get_device_address(dev);
-		uint8_t pnum = libusb_get_port_number(dev);
 
 		if ((busnum != -1 && busnum != bnum) ||
 		    (devnum != -1 && devnum != dnum))
@@ -3715,13 +3716,13 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 
 		vendor_len = get_vendor_string(vendor, sizeof(vendor), desc.idVendor);
 		if (vendor_len == 0)
-			read_sysfs_prop(vendor, sizeof(vendor), bnum, pnum,
+			read_sysfs_prop(vendor, sizeof(vendor), get_sysfs_name(bnum, dnum),
 					"manufacturer");
 
 		product_len = get_product_string(product, sizeof(product),
 				desc.idVendor, desc.idProduct);
 		if (product_len == 0)
-			read_sysfs_prop(product, sizeof(product), bnum, pnum,
+			read_sysfs_prop(product, sizeof(product), get_sysfs_name(bnum, dnum),
 					"product");
 
 		if (verblevel > 0)
