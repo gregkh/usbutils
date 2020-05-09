@@ -7,12 +7,14 @@
 #
 # Copyright (c) 2009 Kurt Garloff <garloff@suse.de>
 # Copyright (c) 2013,2018 Kurt Garloff <kurt@garloff.de>
+# Copyright (c) 2020 Michael Ensslin <michael@ensslin.cc>
 #
 # Usage: See usage()
 
 # Py2 compat
 from __future__ import print_function
 import getopt
+import locale
 import os
 import re
 import sys
@@ -42,12 +44,37 @@ green	= "\033[0;32m"
 amber	= "\033[0;33m"
 blue	= "\033[0;34m"
 
+COLORCODE_RE = re.compile(r'\x1b\[[0-9;]*m')
+
+# we use the same tree-drawing characters and decision mechanism as htop
+if locale.nl_langinfo(locale.CODESET) == 'UTF-8':
+	# pretty box-drawing characters
+	TREE_ART = ('\u251c\u2500 ', '\u2502  '), ('\u2514\u2500 ', '   ')
+else:
+	# fallback ASCII version
+	TREE_ART = ('`- ', '|  '), ('`- ', '   ')
+
 usbvendors = {}
 usbproducts = {}
 usbclasses = {}
 
 def colorize(num, text):
 	return cols[num] + str(text) + cols[0]
+
+def decolorize(text):
+	"""
+	removes all ANSI SGR codes from text
+	this allows measuring the length of the string
+	as-it-will-be-printed.
+	"""
+	return COLORCODE_RE.sub('', text)
+
+def color_ljust(text, width):
+	"""
+	right-pads text with spaces until its width,
+	excluding ANSI color codes, is at least the given value.
+	"""
+	return text + ' ' * (width - len(decolorize(text)))
 
 def ishexdigit(str):
 	"return True if all digits are valid hex digits"
@@ -264,14 +291,13 @@ class UsbEndpoint(UsbObject):
 	def __repr__(self):
 		return "<UsbEndpoint[%r]>" % self.fname
 
-	def __str__(self):
-		indent = "  " * self.level
+	def get_tree(self):
 		#name = "%s/ep_%02X" % (self.parent.fname, self.epaddr)
 		name = ""
-		body = "(EP) %02x: %s%s attr %02x len %02x max %03x" % \
-			(self.epaddr, self.type, self.ival, self.attr, self.len, self.max)
+		body = "(EP) %02x: %-18s attr %02x len %02x max %03x" % \
+			(self.epaddr, self.type + self.ival, self.attr, self.len, self.max)
 		body = colorize(5, body)
-		return "%-17s %s\n" % (indent + name, indent + body)
+		return TreeNode(name, "  " + body)
 
 
 class UsbInterface(UsbObject):
@@ -314,18 +340,18 @@ class UsbInterface(UsbObject):
 	def __repr__(self):
 		return "<UsbInterface[%r]>" % self.fname
 
-	def __str__(self):
-		indent = "  " * self.level
+	def get_tree(self):
 		name = self.fname
 		plural = (" " if self.noep == 1 else "s")
 		body = "(IF) %02x:%02x:%02x %iEP%s (%s) %s %s" % \
 			(self.iclass, self.isclass, self.iproto, self.noep, plural,
 			 self.protoname, colorize(3, self.driver), colorize(4, self.devname))
-		strg = "%-17s %s\n" % (indent + name, indent + body)
+		tree = TreeNode(name, "  " + body)
+
 		if showeps and self.eps:
 			for ep in self.eps:
-				strg += str(ep)
-		return strg
+				tree.add(ep.get_tree())
+		return tree
 
 class UsbDevice(UsbObject):
 	"Container for USB device info"
@@ -420,33 +446,36 @@ class UsbDevice(UsbObject):
 	def __repr__(self):
 		return "<UsbDevice[%r]>" % self.fname
 
-	def __str__(self):
+	def get_tree(self):
 		is_hub = (self.iclass == HUB_ICLASS)
 		if is_hub:
 			if noemptyhub and len(self.children) == 0:
-				return ""
-		strg = ""
+				return Forest()
+
 		if not (nohub and is_hub):
-			indent = "  " * self.level
 			name = self.fname
 			plural = (" " if self.nointerfaces == 1 else "s")
+
 			body = "%s %02x %iIF%s [USB %s, %5s Mbps, %5s] (%s) %s" % \
 				(colorize(1, "%04x:%04x" % (self.vid, self.pid)),
 				 self.iclass, self.nointerfaces, plural,
 				 self.usbver.strip(), self.speed, self.maxpower,
 				 colorize(2 if is_hub else 1, self.name),
 				 colorize(2, "hub") if is_hub else "")
-			strg = "%-17s %s\n" % (indent + name, indent + body)
+			tree = TreeNode(name, body)
 			if not (is_hub and not showhubint):
 				if showeps:
 					ep = UsbEndpoint(self, "ep_00", self.level+1)
-					strg += str(ep)
+					tree.add(ep.get_tree())
 				if showint:	
 					for iface in self.interfaces:
-						strg += str(iface)
+						tree.add(iface.get_tree())
+		else:
+			tree = Forest()
+
 		for child in self.children:
-			strg += str(child)
-		return strg
+			tree.add(child.get_tree())
+		return tree
 
 
 def usage():
@@ -467,6 +496,76 @@ def usage():
 	print()
 	print("Use lsusb.py -ciu to get a nice overview of your USB devices.")
 
+class TreeNode:
+	"""
+	Draws pretty trees that look just like the ones in htop.
+	"""
+	def __init__(self, name, text):
+		self.name = name
+		self.text = text
+		# here we cache the length of the name, for correct indentation
+		# of the text
+		self.name_width = len(decolorize(name))
+		# here we keep track of the last child that requires us to draw a
+		# tree branch.
+		self.last_named_child_id = -1
+		self.children = []
+
+	def add(self, child):
+		if child.name:
+			self.last_named_child_id = len(self.children)
+		self.children.append(child)
+
+	def get_required_ljust(self):
+		"""
+		Determines the maximum width of the tree and node name for this node
+		and all its children.
+		"""
+		required_ljust = self.name_width
+		for child in self.children:
+			required_ljust = max(required_ljust, child.get_required_ljust() + 3)
+		return required_ljust
+
+	def do_print(self, ljust, tree_art=('', '')):
+		"""
+		Prints this node and all its children.
+		The name is padded such that the lines are all aligned.
+
+		@param ljust:
+			the tree art and node name are ljusted to this value to
+			ensure that the text starts at this x coordinate.
+		@param tree_art:
+			a tuple of the tree art that must be drawn.
+			element 0 contains a drawn branch while element 1 contains
+			a vertical line. this method will use them as appropriate.
+		"""
+		# if the tree node has no name, just print the vertical line instead
+		# of a branch.
+		line = tree_art[0 if self.name else 1] + self.name
+		print(color_ljust(line, ljust), self.text)
+		for childid, child in enumerate(self.children):
+			art = TREE_ART[1 if childid >= self.last_named_child_id else 0]
+			# the children get their own tree art, which consists of our own
+			# vertical line version, plus the next indentation level art.
+			child.do_print(ljust, (tree_art[1] + art[0], tree_art[1] + art[1]))
+
+class Forest:
+	def __init__(self):
+		self.trees = []
+
+	def add(self, obj):
+		if isinstance(obj, Forest):
+			self.trees.extend(obj.trees)
+		else:
+			self.trees.append(obj)
+
+	def do_print(self):
+		if not self.trees:
+			return
+		ljust = max(tree.get_required_ljust() for tree in self.trees)
+		for tree in self.trees:
+			tree.do_print(ljust)
+
 def read_usb():
 	"Read toplevel USB entries and print"
 	root_hubs = []
@@ -476,8 +575,11 @@ def read_usb():
 		usbdev = UsbDevice(None, dirent, 0)
 		root_hubs.append(usbdev)
 	root_hubs.sort(key=lambda x: int(x.fname[3:]))
+
+	forest = Forest()
 	for usbdev in root_hubs:
-		print(usbdev, end="")
+		forest.add(usbdev.get_tree())
+	forest.do_print()
 
 def main(argv):
 	"main entry point"
