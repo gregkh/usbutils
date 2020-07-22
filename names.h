@@ -32,7 +32,7 @@ extern int get_product_string(char *buf, size_t size, uint16_t vid, uint16_t pid
 extern int get_class_string(char *buf, size_t size, uint8_t cls);
 extern int get_subclass_string(char *buf, size_t size, uint8_t cls, uint8_t subcls);
 
-extern int read_sysfs_prop(char *buf, size_t size, uint8_t bnum, uint8_t pnum, char *propname);
+extern int read_sysfs_prop(char *buf, size_t size, uint8_t bnum, const uint8_t* pnums, ssize_t pnum_len, char *propname);
 
 extern int names_init(void);
 extern void names_exit(void);

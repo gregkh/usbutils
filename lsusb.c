@@ -3689,8 +3689,9 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 	libusb_device **list;
 	struct libusb_device_descriptor desc;
 	char vendor[128], product[128];
+	uint8_t pnum_buf[128];
 	int status;
-	ssize_t num_devs, i, vendor_len, product_len;
+	ssize_t num_devs, i, vendor_len, product_len, pnum_len;
 
 	status = 1; /* 1 device not found, 0 device found */
 
@@ -3702,7 +3703,7 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 		libusb_device *dev = list[i];
 		uint8_t bnum = libusb_get_bus_number(dev);
 		uint8_t dnum = libusb_get_device_address(dev);
-		uint8_t pnum = libusb_get_port_number(dev);
+		pnum_len = libusb_get_port_numbers(dev, pnum_buf, sizeof(pnum_buf));
 
 		if ((busnum != -1 && busnum != bnum) ||
 		    (devnum != -1 && devnum != dnum))
@@ -3715,13 +3716,13 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 
 		vendor_len = get_vendor_string(vendor, sizeof(vendor), desc.idVendor);
 		if (vendor_len == 0)
-			read_sysfs_prop(vendor, sizeof(vendor), bnum, pnum,
+			read_sysfs_prop(vendor, sizeof(vendor), bnum, pnum_buf, pnum_len,
 					"manufacturer");
 
 		product_len = get_product_string(product, sizeof(product),
 				desc.idVendor, desc.idProduct);
 		if (product_len == 0)
-			read_sysfs_prop(product, sizeof(product), bnum, pnum,
+			read_sysfs_prop(product, sizeof(product), bnum, pnum_buf, pnum_len,
 					"product");
 
 		if (verblevel > 0)
