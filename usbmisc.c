@@ -218,6 +218,9 @@ char *get_dev_string(libusb_device_handle *dev, uint8_t id)
 	if ((unsigned char)unicode_buf[0] < 2 || unicode_buf[1] != LIBUSB_DT_STRING)
 		return strdup("(error)");
 
+	/* Allow padding after string, but don't let strings claim to be longer. */
+	if ((unsigned char)unicode_buf[0] > ret) return strdup("(error)");
+
 	buf = usb_string_to_native(unicode_buf + 2,
 	                           ((unsigned char) unicode_buf[0] - 2) / 2);
 
