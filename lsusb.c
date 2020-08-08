@@ -3663,6 +3663,38 @@ static void dumpdev(libusb_device *dev)
 
 /* ---------------------------------------------------------------------- */
 
+/*
+ * Attempt to get friendly vendor and product names from the udev hwdb. If
+ * either or both are not present, instead populate those from the device's
+ * own string descriptors.
+ */
+static void get_vendor_product_with_fallback(char *vendor, int vendor_len,
+					     char *product, int product_len,
+					     libusb_device *dev)
+{
+	struct libusb_device_descriptor desc;
+	char sysfs_name[PATH_MAX];
+	bool have_vendor, have_product;
+
+	libusb_get_device_descriptor(dev, &desc);
+
+	have_vendor = !!get_vendor_string(vendor, vendor_len, desc.idVendor);
+	have_product = !!get_product_string(product, product_len,
+			desc.idVendor, desc.idProduct);
+
+	if (have_vendor && have_product)
+		return;
+
+	if (get_sysfs_name(sysfs_name, sizeof(sysfs_name), dev) >= 0) {
+		if (!have_vendor)
+			read_sysfs_prop(vendor, vendor_len, sysfs_name,
+					"manufacturer");
+		if (!have_product)
+			read_sysfs_prop(product, product_len, sysfs_name,
+					"product");
+	}
+}
+
 static int dump_one_device(libusb_context *ctx, const char *path)
 {
 	libusb_device *dev;
@@ -3675,8 +3707,8 @@ static int dump_one_device(libusb_context *ctx, const char *path)
 		return 1;
 	}
 	libusb_get_device_descriptor(dev, &desc);
-	get_vendor_string(vendor, sizeof(vendor), desc.idVendor);
-	get_product_string(product, sizeof(product), desc.idVendor, desc.idProduct);
+	get_vendor_product_with_fallback(vendor, sizeof(vendor),
+			product, sizeof(product), dev);
 	printf("Device: ID %04x:%04x %s %s\n", desc.idVendor,
 					       desc.idProduct,
 					       vendor,
@@ -3691,7 +3723,7 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 	struct libusb_device_descriptor desc;
 	char vendor[128], product[128];
 	int status;
-	ssize_t num_devs, i, vendor_len, product_len;
+	ssize_t num_devs, i;
 
 	status = 1; /* 1 device not found, 0 device found */
 
@@ -3703,8 +3735,6 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 		libusb_device *dev = list[i];
 		uint8_t bnum = libusb_get_bus_number(dev);
 		uint8_t dnum = libusb_get_device_address(dev);
-		char sysfs_name[PATH_MAX];
-		get_sysfs_name(sysfs_name, sizeof(sysfs_name), dev);
 
 		if ((busnum != -1 && busnum != bnum) ||
 		    (devnum != -1 && devnum != dnum))
@@ -3715,16 +3745,8 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 			continue;
 		status = 0;
 
-		vendor_len = get_vendor_string(vendor, sizeof(vendor), desc.idVendor);
-		if (vendor_len == 0)
-			read_sysfs_prop(vendor, sizeof(vendor), sysfs_name,
-					"manufacturer");
-
-		product_len = get_product_string(product, sizeof(product),
-				desc.idVendor, desc.idProduct);
-		if (product_len == 0)
-			read_sysfs_prop(product, sizeof(product), sysfs_name,
-					"product");
+		get_vendor_product_with_fallback(vendor, sizeof(vendor),
+				product, sizeof(product), dev);
 
 		if (verblevel > 0)
 			printf("\n");
