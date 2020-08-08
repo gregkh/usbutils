@@ -267,13 +267,14 @@ static void dump_junk(const unsigned char *buf, const char *indent, unsigned int
  */
 
 static void dump_device(
-	libusb_device_handle *dev,
+	libusb_device *dev,
 	struct libusb_device_descriptor *descriptor
 )
 {
 	char vendor[128], product[128];
 	char cls[128], subcls[128], proto[128];
-	char *mfg, *prod, *serial;
+	char mfg[128] = {0}, prod[128] = {0}, serial[128] = {0};
+	char sysfs_name[PATH_MAX];
 
 	get_vendor_string(vendor, sizeof(vendor), descriptor->idVendor);
 	get_product_string(product, sizeof(product),
@@ -284,9 +285,11 @@ static void dump_device(
 	get_protocol_string(proto, sizeof(proto), descriptor->bDeviceClass,
 			descriptor->bDeviceSubClass, descriptor->bDeviceProtocol);
 
-	mfg = get_dev_string(dev, descriptor->iManufacturer);
-	prod = get_dev_string(dev, descriptor->iProduct);
-	serial = get_dev_string(dev, descriptor->iSerialNumber);
+	if (get_sysfs_name(sysfs_name, sizeof(sysfs_name), dev) >= 0) {
+		read_sysfs_prop(mfg, sizeof(vendor), sysfs_name, "manufacturer");
+		read_sysfs_prop(prod, sizeof(vendor), sysfs_name, "product");
+		read_sysfs_prop(serial, sizeof(vendor), sysfs_name, "serial");
+	}
 
 	printf("Device Descriptor:\n"
 	       "  bLength             %5u\n"
@@ -315,10 +318,6 @@ static void dump_device(
 	       descriptor->iProduct, prod,
 	       descriptor->iSerialNumber, serial,
 	       descriptor->bNumConfigurations);
-
-	free(mfg);
-	free(prod);
-	free(serial);
 }
 
 static void dump_wire_adapter(const unsigned char *buf)
@@ -3618,7 +3617,7 @@ static void dumpdev(libusb_device *dev)
 	}
 
 	libusb_get_device_descriptor(dev, &desc);
-	dump_device(udev, &desc);
+	dump_device(dev, &desc);
 	if (desc.bcdUSB == 0x0250)
 		wireless = do_wireless(udev);
 	if (desc.bNumConfigurations) {
