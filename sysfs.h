@@ -7,7 +7,8 @@
 #define _SYSFS_H
 /* ---------------------------------------------------------------------- */
 
-extern int read_sysfs_prop(char *buf, size_t size, uint8_t bnum, uint8_t pnum, char *propname);
+int get_sysfs_name(char *buf, size_t size, libusb_device *dev);
+extern int read_sysfs_prop(char *buf, size_t size, char *sysfs_name, char *propname);
 
 /* ---------------------------------------------------------------------- */
 #endif /* _SYSFS_H */

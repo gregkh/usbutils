@@ -3703,7 +3703,8 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 		libusb_device *dev = list[i];
 		uint8_t bnum = libusb_get_bus_number(dev);
 		uint8_t dnum = libusb_get_device_address(dev);
-		uint8_t pnum = libusb_get_port_number(dev);
+		char sysfs_name[PATH_MAX];
+		get_sysfs_name(sysfs_name, sizeof(sysfs_name), dev);
 
 		if ((busnum != -1 && busnum != bnum) ||
 		    (devnum != -1 && devnum != dnum))
@@ -3716,13 +3717,13 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 
 		vendor_len = get_vendor_string(vendor, sizeof(vendor), desc.idVendor);
 		if (vendor_len == 0)
-			read_sysfs_prop(vendor, sizeof(vendor), bnum, pnum,
+			read_sysfs_prop(vendor, sizeof(vendor), sysfs_name,
 					"manufacturer");
 
 		product_len = get_product_string(product, sizeof(product),
 				desc.idVendor, desc.idProduct);
 		if (product_len == 0)
-			read_sysfs_prop(product, sizeof(product), bnum, pnum,
+			read_sysfs_prop(product, sizeof(product), sysfs_name,
 					"product");
 
 		if (verblevel > 0)
