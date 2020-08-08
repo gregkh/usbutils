@@ -27,6 +27,7 @@
 
 #include "lsusb.h"
 #include "names.h"
+#include "sysfs.h"
 #include "usbmisc.h"
 #include "desc-defs.h"
 #include "desc-dump.h"
