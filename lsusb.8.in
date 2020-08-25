@@ -16,7 +16,7 @@ the devices connected to them.
 
 .SH OPTIONS
 .TP
-.B \-v, \-\-verbose
+.BR \-v ", " \-\-verbose
 Tells
 .I lsusb
 to be verbose and display detailed information about the devices shown.
@@ -29,7 +29,7 @@ including hub, audio, HID, communications, and chipcard. Can be used with the
 Show only devices in specified
 .I bus
 and/or
-.I devnum.
+.IR devnum .
 Both ID's are given in decimal and may be omitted.
 .TP
 \fB\-d\fP [\fIvendor\fP]\fB:\fP[\fIproduct\fP]
@@ -50,7 +50,7 @@ Tells
 to dump the physical USB device hierarchy as a tree. Verbosity can be increased twice with
 \fBv\fP option.
 .TP
-.B \-V, \-\-version
+.BR \-V ", " \-\-version
 Print version information on standard output,
 then exit successfully.
 
