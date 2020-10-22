@@ -225,7 +225,7 @@ def find_dev(driver, usbname):
 class UsbObject:
 	def read_attr(self, name):
 		path = prefix + self.path + "/" + name
-		return open(path).readline().rstrip("\n")
+		return open(path).readline().strip()
 
 	def read_link(self, name):
 		path = prefix + self.path + "/" + name
