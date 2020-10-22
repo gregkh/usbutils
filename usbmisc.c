@@ -210,6 +210,12 @@ char *get_dev_string(libusb_device_handle *dev, uint8_t id)
 	langid = get_any_langid(dev);
 	if (!langid) return strdup("(error)");
 
+	/*
+	 * Some devices lie about their string size, so initialize
+	 * the buffer with all 0 to account for that.
+	 */
+	memset(unicode_buf, 0x00, sizeof(unicode_buf));
+
 	ret = libusb_get_string_descriptor(dev, id, langid,
 	                                   (unsigned char *) unicode_buf,
 	                                   sizeof unicode_buf);
