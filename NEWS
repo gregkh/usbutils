@@ -7,6 +7,61 @@
 # history (i.e. packaged versions of the software).
 #
 
+usbutils 013
+============
+
+Aurelien Jarno (1):
+      lsusb.8.in: do not mention usb.ids
+
+Baruch Siach (1):
+      usb-devices.1: don't mention bash
+
+Greg Kroah-Hartman (15):
+      usbhid-dump: move manpage to main directory out of subdir
+      usbhid-dump.8: add SPDX header
+      usbhid-dump.8: autogenerate it with the usbutils version number
+      .gitignore: add usbhid-dump.8
+      usbhid-dump: add SPDX identifiers to all files.
+      usbhid-dump: remove libusb.h libusb_strerror() implementation
+      usbhid-dump: remove lib directory
+      usbhid-dump: move .h files into src/ directory
+      Makefile.am: add usbhid-dump.8 to distclean list
+      usbhid-dump: some autoconf cleanup
+      usbhid-dump: remove some dev_list functions that were never used
+      dump_audiostreaming_interface(): remove unused variable
+      usbmisc: initialize string buffer before reading from device.
+      lsusb.py: drop trailing space on non-hub devices
+      lsusb.py: strip whitespace from device strings
+
+Jakub Wilk (2):
+      lsusb(8): fix formatting
+      lsusb(8): document --tree
+
+Pino Toscano (1):
+      lsusb.py: remove private paths for usb.ids
+
+Rob Gill (1):
+      Additional device classes for usb-devices script
+
+Rosen Penev (1):
+      usbhid-dump: Do not use rindex
+
+Thomas Hebb (4):
+      Move read_sysfs_prop() from names.c to its own file
+      sysfs: Don't return bogus data for devices under a hub
+      lsusb: Use vendor and product name fallback logic in -D mode too
+      lsusb: Get manufacturer, product, and serial from sysfs
+
+Timothy Robert Bednarzyk (1):
+      bootstrap: change /bin/bash to /bin/sh
+
+Torleiv Sundre (1):
+      lsusb: fix two typos in UVC Extension Unit descriptor
+
+Tormod Volden (1):
+      usbhid-dump: Put back autoconf check for libusb_set_option()
+
+
 usbutils 012
 ============
 
