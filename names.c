@@ -20,7 +20,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <linux/limits.h>
 
 #include <libudev.h>
 
@@ -31,8 +30,6 @@
 #define HASH1  0x10
 #define HASH2  0x02
 #define HASHSZ 512
-
-#define SYSFS_DEV_ATTR_PATH "/sys/bus/usb/devices/%d-%d/%s"
 
 static unsigned int hashnum(unsigned int num)
 {
@@ -405,27 +402,6 @@ static void print_tables(void)
 	printf("--------------------------------------------\n");
 }
 */
-
-int read_sysfs_prop(char *buf, size_t size, uint8_t bnum, uint8_t pnum, char *propname)
-{
-	int n, fd;
-	char path[PATH_MAX];
-
-	buf[0] = '\0';
-	snprintf(path, sizeof(path), SYSFS_DEV_ATTR_PATH, bnum, pnum, propname);
-	fd = open(path, O_RDONLY);
-
-	if (fd == -1)
-		return 0;
-
-	n = read(fd, buf, size);
-
-	if (n > 0)
-		buf[n-1] = '\0';  // Turn newline into null terminator
-
-	close(fd);
-	return n;
-}
 
 int names_init(void)
 {
