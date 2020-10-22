@@ -44,7 +44,7 @@ The device file should be something like /dev/bus/usb/001/001.
 This option displays detailed information like the \fBv\fP option;
 you must be root to do this.
 .TP
-.B \-t
+.BR \-t ", " \-\-tree
 Tells
 .I lsusb
 to dump the physical USB device hierarchy as a tree. Verbosity can be increased twice with
