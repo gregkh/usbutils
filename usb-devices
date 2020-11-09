@@ -82,7 +82,7 @@ print_interface() {
 
 	for endpoint in $ifpath/ep_??
 	do
-		if [ -L $endpoint ]; then	# v4: verify endpoint exists
+		if [ -L $endpoint ] || [ -d $endpoint ]; then	# v4: verify endpoint exists
 			print_endpoint $endpoint
 		fi
 	done
