@@ -64,11 +64,11 @@ print_endpoint() {
     fi
 	maxps_hex="0x`cat $eppath/wMaxPacketSize`"
 	# Extract MaxPS size (bits 0-10) and multiplicity values (bits 11-12)
-	maxps=`printf "%4i*%s\n" $(($maxps_hex & 0x7ff)) \
-				$((1 + (($maxps_hex >> 11) & 0x3)))`
+	maxps=$((`printf "%4i*%s\n" $(($maxps_hex & 0x7ff)) \
+                $((1 + (($maxps_hex >> 11) & 0x3)))`))
 	interval=`cat $eppath/interval`
 
-	printf "E:  Ad=%s(%s) Atr=%s(%s) MxPS=%s Ivl=%s\n" \
+	printf "E:  Ad=%s(%s) Atr=%s(%s) MxPS=%4s Ivl=%s\n" \
 		$addr $dir $attr $eptype "$maxps" $interval
 }
 
