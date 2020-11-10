@@ -49,6 +49,13 @@ print_endpoint() {
 	addr=`cat $eppath/bEndpointAddress`
 	attr=`cat $eppath/bmAttributes`
 	dir=`cat $eppath/direction`
+    if [ "$dir" = in ]; then
+        dir=I
+    elif [ "$dir" = out ]; then
+        dir=O
+    elif [ "$dir" = both ]; then
+        dir=B
+    fi
 	eptype=`cat $eppath/type`
 	maxps_hex="0x`cat $eppath/wMaxPacketSize`"
 	# Extract MaxPS size (bits 0-10) and multiplicity values (bits 11-12)
