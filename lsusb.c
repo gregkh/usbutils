@@ -1756,7 +1756,7 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 			printf("      Warning: Descriptor too short\n");
 		printf("        bNumFormats                     %5u\n"
 		       "        wTotalLength                   0x%04x\n"
-		       "        bEndPointAddress                %5u\n"
+		       "        bEndpointAddress                %5u\n"
 		       "        bmInfo                          %5u\n"
 		       "        bTerminalLink                   %5u\n"
 		       "        bStillCaptureMethod             %5u\n"
