@@ -67,6 +67,8 @@ struct usbdevice {
 	char serial[MY_PARAM_MAX];
 	char version[MY_PARAM_MAX];
 	char speed[MY_PARAM_MAX];	/* '1.5','12','480','5000' + '\n' */
+	unsigned int rx_lanes;
+	unsigned int tx_lanes;
 
 	char name[MY_SYSFS_FILENAME_LEN];
 	char driver[MY_SYSFS_FILENAME_LEN];
@@ -84,6 +86,8 @@ struct usbbusnode {
 	unsigned int idVendor;
 	unsigned int maxchild;
 	char speed[5 + 1];	/* '1.5','12','480','5000' + '\n' */
+	unsigned int rx_lanes;
+	unsigned int tx_lanes;
 
 	char name[MY_SYSFS_FILENAME_LEN];
 	char driver[MY_SYSFS_FILENAME_LEN];
@@ -136,11 +140,28 @@ static const char *bDeviceClass_to_str(unsigned int dc)
 	}
 	return s;
 }
+
+static void lanes_to_str(char *lanes, unsigned int tx, unsigned int rx) {
+	if (tx == rx) {
+		if (tx < 2) {
+			*lanes = '\0';
+			return;
+		}
+		sprintf(lanes, "/x%u", tx);
+	} else {
+		sprintf(lanes, "/Tx%u+Rx%u", tx, rx);
+	}
+}
+
 static void print_usbbusnode(struct usbbusnode *b)
 {
 	char vendor[128], product[128];
-	printf("/:  Bus %02u.Port %u: Dev %u, Class=%s, Driver=%s/%up, %sM\n", b->busnum, 1,
-	       b->devnum, bDeviceClass_to_str(b->bDeviceClass), b->driver, b->maxchild, b->speed);
+	char lanes[32];
+
+	lanes_to_str(lanes, b->tx_lanes, b->rx_lanes);
+
+	printf("/:  Bus %02u.Port %u: Dev %u, Class=%s, Driver=%s/%up, %sM%s\n", b->busnum, 1,
+	       b->devnum, bDeviceClass_to_str(b->bDeviceClass), b->driver, b->maxchild, b->speed, lanes);
 	if (verblevel >= 1) {
 		get_vendor_string(vendor, sizeof(vendor), b->idVendor);
 		get_product_string(product, sizeof(product), b->idVendor, b->idProduct);
@@ -155,15 +176,17 @@ static void print_usbdevice(struct usbdevice *d, struct usbinterface *i)
 {
 	char subcls[128];
 	char vendor[128], product[128];
+	char lanes[32];
 
+	lanes_to_str(lanes, d->tx_lanes, d->rx_lanes);
 	get_class_string(subcls, sizeof(subcls), i->bInterfaceClass);
 
 	if (i->bInterfaceClass == 9)
-		printf("Port %u: Dev %u, If %u, Class=%s, Driver=%s/%up, %sM\n", d->portnum, d->devnum, i->ifnum, subcls,
-		       i->driver, d->maxchild, d->speed);
+		printf("Port %u: Dev %u, If %u, Class=%s, Driver=%s/%up, %sM%s\n", d->portnum, d->devnum, i->ifnum, subcls,
+		       i->driver, d->maxchild, d->speed, lanes);
 	else
-		printf("Port %u: Dev %u, If %u, Class=%s, Driver=%s, %sM\n", d->portnum, d->devnum, i->ifnum, subcls, i->driver,
-		       d->speed);
+		printf("Port %u: Dev %u, If %u, Class=%s, Driver=%s, %sM%s\n", d->portnum, d->devnum, i->ifnum, subcls, i->driver,
+		       d->speed, lanes);
 	if (verblevel >= 1) {
 		printf(" %*s", indent, "    ");
 		get_vendor_string(vendor, sizeof(vendor), d->idVendor);
@@ -383,6 +406,8 @@ static void add_usb_device(const char *d_name)
 	SYSFS_STR(d_name, d, serial);
 	SYSFS_STR(d_name, d, version);
 	SYSFS_STR(d_name, d, speed);
+	SYSFS_INTu(d_name, d, rx_lanes);
+	SYSFS_INTu(d_name, d, tx_lanes);
 	l = snprintf(link, MY_PATH_MAX, "%s/%s/driver", sys_bus_usb_devices, d_name);
 	if (l > 0 && l < MY_PATH_MAX) {
 		l = readlink(link, driver, MY_PATH_MAX);
@@ -435,6 +460,8 @@ static void add_usb_bus(const char *d_name)
 		SYSFS_INTx(d_name, bus, idVendor);
 		SYSFS_INTu(d_name, bus, maxchild);
 		SYSFS_STR(d_name, bus, speed);
+		SYSFS_INTu(d_name, bus, rx_lanes);
+		SYSFS_INTu(d_name, bus, tx_lanes);
 		append_busnode(bus);
 		get_roothub_driver(bus, d_name);
 	}
