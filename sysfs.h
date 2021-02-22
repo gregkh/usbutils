@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0+
 /*
  * Helpers for querying USB properties from sysfs
+ *
+ * Copyright (C) 1999, 2000 Thomas Sailer (sailer@ife.ee.ethz.ch)
  */
 
 #ifndef _SYSFS_H

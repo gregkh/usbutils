@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0+
 /*
  * Helpers for querying USB properties from sysfs
+ *
+ * Copied from name.c which is:
+ * Copyright (C) 1999, 2000 Thomas Sailer (sailer@ife.ee.ethz.ch)
+ * Copyright (C) 2013 Tom Gundersen (teg@jklm.no)
  */
 
 #include <stdint.h>
