@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0-only
+# Copyright (c) 2014-2021 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+# Copyright (c) 2009 Greg Kroah-Hartman <gregkh@suse.de>
 *.o
 *.swp
 .deps/
