@@ -57,7 +57,7 @@ EXTRA_DIST = \
 	usb-devices \
 	lsusb.py.in \
 	usbreset.c \
-	LICENSES/GPL-2.0.txt \
+	LICENSES/GPL-2.0-only.txt \
 	LICENSES/GPL-3.0-only.txt
 
 lsusb.py: $(srcdir)/lsusb.py.in
