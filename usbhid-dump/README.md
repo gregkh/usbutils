@@ -1,3 +1,8 @@
+<!---
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (c) 2010 Nikolai Kondrashov
+-->
+
 Usbhid-dump
 ===========
 
