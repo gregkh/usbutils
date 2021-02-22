@@ -1,4 +1,4 @@
-.\"SPDX-License-Identifier: GPL-2.0+
+.\"SPDX-License-Identifier: GPL-2.0-or-later
 .TH usbhid-dump "8" "February 2012" "usbutils-VERSION" "Linux USB Utilities"
 .IX usbhid-dump
 .SH NAME

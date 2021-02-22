@@ -1,5 +1,5 @@
 #!/bin/sh
-# SPDX-License-Identifier: GPL-2.0+
+# SPDX-License-Identifier: GPL-2.0-or-later
 #
 # Copyright (c) 2009 Greg Kroah-Hartman <greg@kroah.com>
 # Copyright (c) 2009 Randy Dunlap <rdunlap@xenotime.net>

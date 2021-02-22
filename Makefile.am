@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0+
+# SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) 2004 Thomas Sailer <sailer@ife.ee.ethz.ch>
 # Copyright (c) 2005-2006 David Brownell <dbrownell@users.sourceforge.net>
 # Copyright (c) 2009 Kay Sievers <kay.sievers@vrfy.org>

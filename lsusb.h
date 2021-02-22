@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0+
+// SPDX-License-Identifier: GPL-2.0-or-later
 /* Copyright 2011 (c) Greg Kroah-Hartman <gregkh@suse.de> */
 #ifndef _LSUSB_H
 #define _LSUSB_H
