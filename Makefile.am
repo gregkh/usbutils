@@ -58,7 +58,7 @@ EXTRA_DIST = \
 	lsusb.py.in \
 	usbreset.c \
 	LICENSES/GPL-2.0.txt \
-	LICENSES/GPL-3.0.txt
+	LICENSES/GPL-3.0-only.txt
 
 lsusb.py: $(srcdir)/lsusb.py.in
 	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
