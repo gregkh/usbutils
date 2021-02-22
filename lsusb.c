@@ -1756,15 +1756,16 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 			printf("      Warning: Descriptor too short\n");
 		printf("        bNumFormats                     %5u\n"
 		       "        wTotalLength                   0x%04x\n"
-		       "        bEndPointAddress                %5u\n"
+		       "        bEndpointAddress                 0x%02x  EP %u %s\n"
 		       "        bmInfo                          %5u\n"
 		       "        bTerminalLink                   %5u\n"
 		       "        bStillCaptureMethod             %5u\n"
 		       "        bTriggerSupport                 %5u\n"
 		       "        bTriggerUsage                   %5u\n"
 		       "        bControlSize                    %5u\n",
-		       p, buf[4] | (buf[5] << 8), buf[6], buf[7], buf[8],
-		       buf[9], buf[10], buf[11], n);
+		       p, buf[4] | (buf[5] << 8),
+		       buf[6], buf[6] & 0x0f, (buf[6] & 0x80) ? "IN" : "OUT",
+		       buf[7], buf[8], buf[9], buf[10], buf[11], n);
 		for (i = 0; i < p; i++)
 			printf(
 			"        bmaControls(%2u)                 %5u\n",
@@ -1780,10 +1781,12 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 			printf("      Warning: Descriptor too short\n");
 		printf("        bNumFormats                 %5u\n"
 		       "        wTotalLength               0x%04x\n"
-		       "        bEndpointAddress            %5u\n"
+		       "        bEndpointAddress             0x%02x  EP %u %s\n"
 		       "        bTerminalLink               %5u\n"
 		       "        bControlSize                %5u\n",
-		       p, buf[4] | (buf[5] << 8), buf[6], buf[7], n);
+		       p, buf[4] | (buf[5] << 8),
+		       buf[6], buf[6] & 0x0f, (buf[6] & 0x80) ? "IN" : "OUT",
+		       buf[7], n);
 		for (i = 0; i < p; i++)
 			printf(
 			"        bmaControls(%2u)             %5u\n",
@@ -1797,9 +1800,9 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 		m = buf[5+4*n];
 		if (buf[0] < 6+4*n+m)
 			printf("      Warning: Descriptor too short\n");
-		printf("        bEndpointAddress                %5u\n"
+		printf("        bEndpointAddress                 0x%02x  EP %u %s\n"
 		       "        bNumImageSizePatterns             %3u\n",
-		       buf[3], n);
+		       buf[3], buf[3] & 0x0f, (buf[3] & 0x80) ? "IN" : "OUT", n);
 		for (i = 0; i < n; i++)
 			printf("        wWidth(%2u)                      %5u\n"
 			       "        wHeight(%2u)                     %5u\n",
