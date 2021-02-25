@@ -49,14 +49,26 @@ print_endpoint() {
 	addr=`cat $eppath/bEndpointAddress`
 	attr=`cat $eppath/bmAttributes`
 	dir=`cat $eppath/direction`
+    if [ "$dir" = in ]; then
+        dir=I
+    elif [ "$dir" = out ]; then
+        dir=O
+    elif [ "$dir" = both ]; then
+        dir=B
+    fi
 	eptype=`cat $eppath/type`
+    if [ "$eptype" = Control ]; then
+        eptype="Ctrl"
+    elif [ "$eptype" = Interrupt ]; then
+        eptype="Int."
+    fi
 	maxps_hex="0x`cat $eppath/wMaxPacketSize`"
 	# Extract MaxPS size (bits 0-10) and multiplicity values (bits 11-12)
-	maxps=`printf "%4i*%s\n" $(($maxps_hex & 0x7ff)) \
-				$((1 + (($maxps_hex >> 11) & 0x3)))`
+	maxps=$((`printf "%4i*%s\n" $(($maxps_hex & 0x7ff)) \
+                $((1 + (($maxps_hex >> 11) & 0x3)))`))
 	interval=`cat $eppath/interval`
 
-	printf "E:  Ad=%s(%s) Atr=%s(%s) MxPS=%s Ivl=%s\n" \
+	printf "E:  Ad=%s(%s) Atr=%s(%s) MxPS=%4s Ivl=%s\n" \
 		$addr $dir $attr $eptype "$maxps" $interval
 }
 
@@ -76,13 +88,13 @@ print_interface() {
 		driver="(none)"
 	fi
 	classname=`class_decode $class`
-	printf "I:  If#=%2s Alt=%2i #EPs=%2i Cls=%s(%s) Sub=%s Prot=%s Driver=%s\n" \
-		0x${ifnum#0} ${altset#0} ${numeps#0} $class "$classname" $subclass \
+	printf "I:  If#=%2i Alt=%2i #EPs=%2i Cls=%s(%s) Sub=%s Prot=%s Driver=%s\n" \
+		0x${ifnum#0} ${altset#0} 0x${numeps#0} $class "$classname" $subclass \
 		$protocol $driver
 
 	for endpoint in $ifpath/ep_??
 	do
-		if [ -L $endpoint ]; then	# v4: verify endpoint exists
+		if [ -L $endpoint ] || [ -d $endpoint ]; then	# v4: verify endpoint exists
 			print_endpoint $endpoint
 		fi
 	done
