@@ -241,11 +241,11 @@ static void read_sysfs_file_string(const char *d_name, const char *file, char *b
 	if (r > 0 && r < len) {
 		buf[r] = '\0';
 		r--;
-		while (buf[r] == '\n') {
+		while (r >= 0 && buf[r] == '\n') {
 			buf[r] = '\0';
 			r--;
 		}
-		while (r) {
+		while (r >= 0) {
 			if (buf[r] == '\n')
 				buf[r] = ' ';
 			r--;
