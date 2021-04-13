@@ -286,9 +286,9 @@ static void dump_device(
 			descriptor->bDeviceSubClass, descriptor->bDeviceProtocol);
 
 	if (get_sysfs_name(sysfs_name, sizeof(sysfs_name), dev) >= 0) {
-		read_sysfs_prop(mfg, sizeof(vendor), sysfs_name, "manufacturer");
-		read_sysfs_prop(prod, sizeof(vendor), sysfs_name, "product");
-		read_sysfs_prop(serial, sizeof(vendor), sysfs_name, "serial");
+		read_sysfs_prop(mfg, sizeof(mfg), sysfs_name, "manufacturer");
+		read_sysfs_prop(prod, sizeof(prod), sysfs_name, "product");
+		read_sysfs_prop(serial, sizeof(serial), sysfs_name, "serial");
 	}
 
 	printf("Device Descriptor:\n"
