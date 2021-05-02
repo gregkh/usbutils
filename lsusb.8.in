@@ -31,11 +31,11 @@ Show only devices in specified
 .I bus
 and/or
 .IR devnum .
-Both ID's are given in decimal and may be omitted.
+Both IDs are given in decimal and may be omitted.
 .TP
 \fB\-d\fP [\fIvendor\fP]\fB:\fP[\fIproduct\fP]
 Show only devices with the specified vendor and product ID.
-Both ID's are given in hexadecimal.
+Both IDs are given in hexadecimal.
 .TP
 .B \-D \fIdevice\fP
 Do not scan the /dev/bus/usb directory,
@@ -48,7 +48,7 @@ you must be root to do this.
 .BR \-t ", " \-\-tree
 Tells
 .I lsusb
-to dump the physical USB device hierarchy as a tree. Verbosity can be increased twice with
+to dump the physical USB device hierarchy as a tree. Verbosity can be increased twice with the
 \fBv\fP option.
 .TP
 .BR \-V ", " \-\-version
