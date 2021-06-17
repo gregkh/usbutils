@@ -3440,7 +3440,7 @@ static void dump_billboard_device_capability_desc(libusb_device_handle *dev, uns
 			"    bLength                 %5u\n"
 			"    bDescriptorType         %5u\n"
 			"    bDevCapabilityType      %5u\n"
-			"    iAddtionalInfoURL       %5u %s\n"
+			"    iAdditionalInfoURL      %5u %s\n"
 			"    bNumberOfAlternateModes %5u\n"
 			"    bPreferredAlternateMode %5u\n"
 			"    VCONN Power             %5u %s\n",
