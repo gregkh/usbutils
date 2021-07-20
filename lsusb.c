@@ -2423,6 +2423,7 @@ static void dump_printer_device(libusb_device_handle *dev,
 			else if ((caps & 0x60) == 0x60)
 				printf(" Negotiable-Auth");
 			printf("\n");
+			free(uuid);
 			break;
 		}
 		default:
