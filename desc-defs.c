@@ -966,7 +966,7 @@ static void desc_snowflake_dump_uac1_as_interface_wformattag(
 
 	/* Format codes are 0xTNNN, where T=Type prefix, NNN = format code. */
 
-	if (value <= ((UAC_FORMAT_TYPE_I << 12) +
+	if (value < ((UAC_FORMAT_TYPE_I << 12) +
 	              ARRAY_LEN(audio_data_format_type_i))) {
 		format_string = audio_data_format_type_i[value];
 
