@@ -14,7 +14,7 @@ print_string() {
 }
 
 class_decode() {
-	local class=$1		# v4: in hex
+	class=$1		# v4: in hex
 
 	case $class in
 	"00") echo ">ifc " ;;
@@ -44,7 +44,7 @@ class_decode() {
 }
 
 print_endpoint() {
-	local eppath=$1
+	eppath=$1
 
 	addr=`cat $eppath/bEndpointAddress`
 	attr=`cat $eppath/bmAttributes`
@@ -73,7 +73,7 @@ print_endpoint() {
 }
 
 print_interface() {
-	local ifpath=$1
+	ifpath=$1
 
 	ifnum=`cat $ifpath/bInterfaceNumber`
 	altset=`cat $ifpath/bAlternateSetting`
@@ -101,16 +101,16 @@ print_interface() {
 }
 
 print_device() {
-	local devpath=$1
-	local parent=$2
-	local level=$3
-	local count=$4
+	devpath=$1
+	parent=$2
+	level=$3
+	count=$4
 
 	[ -d $devpath ] || return
 	cd $devpath
 
-	local busnum=`cat busnum`
-	local devnum=`cat devnum`
+	busnum=`cat busnum`
+	devnum=`cat devnum`
 
 	if [ $level -gt 0 ]; then
 		port=$((${devpath##*[-.]} - 1))
@@ -159,7 +159,7 @@ print_device() {
 		print_interface $devpath/$interface
 	done
 
-	local devcount=0
+	devcount=0
 	for subdev in $busnum-*
 	do
 		echo "$subdev" | grep -Eq "^$busnum-[0-9]+(\.[0-9]+)*$" \
