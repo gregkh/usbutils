@@ -105,7 +105,6 @@
 
 #define VERBLEVEL_DEFAULT 0	/* 0 gives lspci behaviour; 1, lsusb-0.9 */
 
-#define CTRL_RETRIES	 2
 #define CTRL_TIMEOUT	(5*1000)	/* milliseconds */
 
 #define	HUB_STATUS_BYTELEN	3	/* max 3 bytes status = hub + 23 ports */
