@@ -105,7 +105,6 @@
 
 #define VERBLEVEL_DEFAULT 0	/* 0 gives lspci behaviour; 1, lsusb-0.9 */
 
-#define CTRL_RETRIES	 2
 #define CTRL_TIMEOUT	(5*1000)	/* milliseconds */
 
 #define	HUB_STATUS_BYTELEN	3	/* max 3 bytes status = hub + 23 ports */
@@ -2928,8 +2927,14 @@ static void do_dualspeed(libusb_device_handle *fd)
 			LIBUSB_REQUEST_GET_DESCRIPTOR,
 			USB_DT_DEVICE_QUALIFIER << 8, 0,
 			buf, sizeof buf, CTRL_TIMEOUT);
-	if (ret < 0 && errno != EPIPE)
-		perror("can't get device qualifier");
+
+	/* We don't need to complain to the user if the device is claimed
+	 * and we aren't allowed to access the device qualifier.
+	 */
+	if (ret < 0 && errno != EPIPE) {
+		if (verblevel > 1 || errno != EAGAIN)
+			perror("can't get device qualifier");
+	}
 
 	/* all dual-speed devices have a qualifier */
 	if (ret != sizeof buf
@@ -2972,8 +2977,14 @@ static void do_debug(libusb_device_handle *fd)
 			LIBUSB_REQUEST_GET_DESCRIPTOR,
 			USB_DT_DEBUG << 8, 0,
 			buf, sizeof buf, CTRL_TIMEOUT);
-	if (ret < 0 && errno != EPIPE)
-		perror("can't get debug descriptor");
+
+	/* We don't need to complain to the user if the device is claimed
+	 * and we aren't allowed to access the debug descriptor.
+	 */
+	if (ret < 0 && errno != EPIPE) {
+		if (verblevel > 1 || errno != EAGAIN)
+			perror("can't get debug descriptor");
+	}
 
 	/* some high speed devices are also "USB2 debug devices", meaning
 	 * you can use them with some EHCI implementations as another kind
