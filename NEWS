@@ -7,6 +7,63 @@
 # history (i.e. packaged versions of the software).
 #
 
+usbutils 014
+============
+
+Adrian Kalazi (1):
+      Add Tx+Rx lanes to tree mode
+
+Aurelien Jarno (1):
+      lsusb(8): mention the udev's hardware database
+
+Benson Leung (1):
+      lsusb: Fix typo in string output for iAdditionalInfoURL
+
+Bui Quang Minh (1):
+      lsusb-t: Add lower bound checks in read_sysfs_file_string
+
+Grant Grundler (2):
+      lsusb: remove unused RETRIES constant
+      lsusb: don't complain on EAGAIN
+
+Greg Kroah-Hartman (10):
+      sysfs: add copyright notice taken from name.*
+      LICENSES: add symlink to handle "or-later" issue for GPL-2.0
+      LICENSES: put spdx headers on the license files
+      rename "GPL-2.0+" to "GPL-2.0-or-later"
+      LICENSE: rename GPL-3.0.txt -> GPL-3.0-only.txt
+      usbhid-dump.8.in: add copyright information
+      .gitignore: add copyright and SPDX info
+      usbhid-dump: add copyright and SPDX info
+      SPDX header cleanups from GPL-2.0 -> GPL-2.0-only
+      usbutils.spdx: update with output of latest reuse tool
+
+Jonathan Neuschäfer (2):
+      lsusb: Fix spelling of bEndpointAddress in UVC
+      lsusb: Decode endpoint addresses in UVC
+
+Lukas Zaoral (3):
+      lsusb.c: fix leak in dump_printer_device
+      usb-devices: do not use `local` in a POSIX shell script
+      desc-defs.c: fix possible out-of-bound read
+
+Matthias Braun (1):
+      Fix typos in lsusb.8.in
+
+Ruslan Kabatsayev (5):
+      Fix locating endpoint when it's a directory rather than a symlink
+      Fix formatting of interface descriptors to match /sys/kernel/debug/usb/devices
+      Fix formatting of endpoint direction to match /sys/kernel/debug/usb/devices
+      Fix formatting of endpoint type to match /sys/kernel/debug/usb/devices
+      Fix formatting of max endpoint packet size to match /sys/kernel/debug/usb/devices
+
+Thomas Hebb (1):
+      lsusb: Fix buffer size copy/paste error
+
+Tormod Volden (1):
+      Makefile.am: Remove unused DATADIR
+
+
 usbutils 013
 ============
 
