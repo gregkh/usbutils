@@ -18,4 +18,3 @@ dist-hook:
 	else \
 		echo Skipping ChangeLog generation: no .git directory >&2; \
 	fi
-

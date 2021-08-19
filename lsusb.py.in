@@ -439,7 +439,7 @@ class UsbDevice(UsbObject):
 				if showeps:
 					ep = UsbEndpoint(self, "ep_00", self.level+1)
 					strg += str(ep)
-				if showint:	
+				if showint:
 					for iface in self.interfaces:
 						strg += str(iface)
 		for child in self.children:

@@ -21,7 +21,6 @@ ABS_SRCDIR=`cd ${srcdir} ; pwd`
 ABS_BUILDDIR=`pwd`
 CPPFLAGS="-I${ABS_BUILDDIR} -DNDEBUG $CPPFLAGS"
 
-
 #
 # Checks for programs.
 #
