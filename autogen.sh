@@ -3,7 +3,7 @@
 # Copyright (c) 2009,2010 Greg Kroah-Hartman <gregkh@suse.de>
 
 if test ! -f usbhid-dump/bootstrap; then
-git submodule update --init --recursive
+	git submodule update --init --recursive
 fi
 
 cd usbhid-dump
@@ -29,7 +29,7 @@ case "$CFLAGS" in
 esac
 
 libdir() {
-	echo $(cd $1/$(gcc -print-multi-os-directory); pwd)
+	echo "$(cd "$1/$(gcc -print-multi-os-directory)"; pwd)"
 }
 
 args="--prefix=/usr \
@@ -42,4 +42,4 @@ args="--prefix=/usr \
 --enable-gtk-doc"
 
 export CFLAGS="$CFLAGS $MYCFLAGS"
-./configure $args $@
+./configure $args "$@"
