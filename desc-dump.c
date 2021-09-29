@@ -322,7 +322,7 @@ static void value_renderer(
 		const struct desc *ext_desc;
 		const struct desc_ext *ext;
 
-		/* Lookup the extention descriptor definitions to use, */
+		/* Lookup the extension descriptor definitions to use, */
 		for (ext = current->extension.d; ext->desc != NULL; ext++) {
 			if (ext->type == type) {
 				ext_desc = ext->desc;
