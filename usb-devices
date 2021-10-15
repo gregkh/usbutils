@@ -178,7 +178,7 @@ if [ ! -d /sys/bus ]; then
 	exit 1
 fi
 
-for device in /sys/bus/usb/devices/usb*
+for device in $(ls /sys/bus/usb/devices/ | grep ^usb | sort -V)
 do
-	print_device $device 0 0 0
+	print_device /sys/bus/usb/devices/$device 0 0 0
 done
