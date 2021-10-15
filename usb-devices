@@ -101,10 +101,10 @@ print_interface() {
 }
 
 print_device() {
-	devpath=$1
-	parent=$2
-	level=$3
-	count=$4
+	local devpath=$1
+	local parent=$2
+	local level=$3
+	local count=$4
 
 	[ -d $devpath ] || return
 	cd $devpath
