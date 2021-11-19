@@ -17,7 +17,9 @@ AC_CHECK_FUNCS([nl_langinfo iconv])
 
 PKG_CHECK_MODULES(LIBUSB, libusb-1.0 >= 1.0.14)
 
-PKG_CHECK_MODULES(UDEV, libudev >= 196)
+PKG_CHECK_MODULES(UDEV, libudev >= 196,
+		  [AC_DEFINE([HAVE_UDEV], [1], [Use UDEV])],
+		  [true])
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([

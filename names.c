@@ -21,7 +21,9 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#include <libudev.h>
+#ifdef HAVE_UDEV
+# include <libudev.h>
+#endif
 
 #include "usb-spec.h"
 #include "names.h"
@@ -43,8 +45,10 @@ static unsigned int hashnum(unsigned int num)
 
 /* ---------------------------------------------------------------------- */
 
+#ifdef HAVE_UDEV
 static struct udev *udev = NULL;
 static struct udev_hwdb *hwdb = NULL;
+#endif
 static struct audioterminal *audioterminals_hash[HASHSZ] = { NULL, };
 static struct videoterminal *videoterminals_hash[HASHSZ] = { NULL, };
 static struct genericstrtable *hiddescriptors_hash[HASHSZ] = { NULL, };
@@ -113,9 +117,11 @@ static const char *hwdb_get(const char *modalias, const char *key)
 {
 	struct udev_list_entry *entry;
 
+#ifdef HAVE_UDEV
 	udev_list_entry_foreach(entry, udev_hwdb_get_properties_list_entry(hwdb, modalias, 0))
 		if (strcmp(udev_list_entry_get_name(entry), key) == 0)
 			return udev_list_entry_get_value(entry);
+#endif
 
 	return NULL;
 }
@@ -407,6 +413,7 @@ int names_init(void)
 {
 	int r;
 
+#ifdef HAVE_UDEV
 	udev = udev_new();
 	if (!udev)
 		r = -1;
@@ -415,6 +422,7 @@ int names_init(void)
 		if (!hwdb)
 			r = -1;
 	}
+#endif
 
 	r = hash_tables();
 
@@ -423,6 +431,8 @@ int names_init(void)
 
 void names_exit(void)
 {
+#ifdef HAVE_UDEV
 	hwdb = udev_hwdb_unref(hwdb);
 	udev = udev_unref(udev);
+#endif
 }
