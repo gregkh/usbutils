@@ -14,6 +14,9 @@
 #include <ctype.h>
 #include <limits.h>
 #include <dirent.h>
+
+#ifdef __linux__
+
 #include <sys/ioctl.h>
 
 #include <linux/usbdevice_fs.h>
@@ -189,3 +192,11 @@ int main(int argc, char **argv)
 	reset_device(dev);
 	return 0;
 }
+
+#else
+int main(int argc, char **argv)
+{
+	fprintf(stderr, "Only supported on Linux\n");
+	exit(1);
+}
+#endif /* __linux__ */
