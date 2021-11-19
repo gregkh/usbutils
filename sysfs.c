@@ -12,10 +12,11 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <linux/limits.h>
-
 #include <libusb.h>
 
+#ifdef __linux__
+
+#include <linux/limits.h>
 #include "sysfs.h"
 
 /*
@@ -70,3 +71,15 @@ int read_sysfs_prop(char *buf, size_t size, char *sysfs_name, char *propname)
 	close(fd);
 	return n;
 }
+
+#else
+int get_sysfs_name(char *buf, size_t size, libusb_device *dev)
+{
+	return -1;
+}
+
+int read_sysfs_prop(char *buf, size_t size, char *sysfs_name, char *propname)
+{
+	return -1;
+}
+#endif /* __linux__ */
