@@ -19,6 +19,8 @@
 #define MY_PATH_MAX 4096
 #define MY_PARAM_MAX 64
 
+#ifdef __linux__
+
 struct usbinterface {
 	struct list_head list;
 	struct usbinterface *next;
@@ -728,3 +730,11 @@ int lsusb_t(void)
 		perror(sys_bus_usb_devices);
 	return sbud == NULL;
 }
+
+#else
+int lsusb_t(void)
+{
+	fprintf(stderr, "lsusb -t is only supported on Linux\n");
+	return 1;
+}
+#endif /* __linux__ */
