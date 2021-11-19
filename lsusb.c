@@ -3711,6 +3711,7 @@ static void get_vendor_product_with_fallback(char *vendor, int vendor_len,
 
 static int dump_one_device(libusb_context *ctx, const char *path)
 {
+#if __linux__
 	libusb_device *dev;
 	struct libusb_device_descriptor desc;
 	char vendor[128], product[128];
@@ -3729,6 +3730,10 @@ static int dump_one_device(libusb_context *ctx, const char *path)
 					       product);
 	dumpdev(dev);
 	return 0;
+#else
+	fprintf(stderr, "Only supported on Linux\n");
+	return 1;
+#endif /* __linux__ */
 }
 
 static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendorid, int productid)
