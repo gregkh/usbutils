@@ -912,7 +912,9 @@ main(int argc, char **argv)
     bool                dump_stream     = false;
     unsigned int        stream_timeout  = 60000;
 
+#ifdef HAVE_SIGACTION
     struct sigaction    sa;
+#endif
 
     /*
      * Extract program invocation name
@@ -1003,6 +1005,7 @@ main(int argc, char **argv)
     if (optind < argc)
         USAGE_ERROR("Positional arguments are not accepted");
 
+#ifdef HAVE_SIGACTION
     /*
      * Setup signal handlers
      */
@@ -1035,6 +1038,7 @@ main(int argc, char **argv)
     sigaction(SIGUSR1, &sa, NULL);
     sa.sa_handler = stream_resume_sighandler;
     sigaction(SIGUSR2, &sa, NULL);
+#endif /* HAVE_SIGACTION */
 
     /* Make stdout buffered - we will flush it explicitly */
     setbuf(stdout, NULL);
@@ -1043,6 +1047,7 @@ main(int argc, char **argv)
     result = run(dump_descriptor, dump_stream, stream_timeout,
                  bus_num, dev_addr, vid, pid, iface_num);
 
+#ifdef HAVE_SIGACTION
     /*
      * Restore signal handlers
      */
@@ -1061,6 +1066,7 @@ main(int argc, char **argv)
     if (exit_signum != 0)
         raise(exit_signum);
 
+#endif /* HAVE_SIGACTION */
     return result;
 }
 

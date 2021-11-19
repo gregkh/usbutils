@@ -67,7 +67,7 @@ fi
 #
 # Checks for library functions.
 #
-AC_CHECK_FUNCS(libusb_set_option)
+AC_CHECK_FUNCS(libusb_set_option sigaction)
 
 #
 # Output
