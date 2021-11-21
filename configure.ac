@@ -21,6 +21,20 @@ PKG_CHECK_MODULES(UDEV, libudev >= 196,
 		  [AC_DEFINE([HAVE_UDEV], [1], [Use UDEV])],
 		  [true])
 
+AC_MSG_CHECKING(for GNU ld)
+ac_prog=ld
+if test "$GCC" = yes; then
+       ac_prog=`$CC -print-prog-name=ld`
+fi
+case `"$ac_prog" -V 2>&1 < /dev/null` in
+      *GNU*)
+          GNULD=yes;;
+      *)
+          GNULD=no;;
+esac
+AC_MSG_RESULT($GNULD)
+AM_CONDITIONAL([HAVE_GNULD], [test "$GNULD" = yes])
+
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
 	Makefile

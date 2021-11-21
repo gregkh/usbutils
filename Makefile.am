@@ -7,8 +7,10 @@
 SUBDIRS = \
 	usbhid-dump
 
+if HAVE_GNULD
 AM_LDFLAGS = \
 	-Wl,--as-needed
+endif
 
 data_DATA =
 
