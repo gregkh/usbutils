@@ -623,14 +623,14 @@ static void sort_dev_siblings(struct usbdevice **d)
 	int swapped;
 	p = *d;
 	pp = d;
-	if (p->first_child)
-		sort_dev_siblings(&p->first_child);
 	if (p->first_interface)
 		sort_dev_interfaces(&p->first_interface);
 	do {
 		p = *d;
 		pp = d;
 		swapped = 0;
+		if (p->first_child)
+			sort_dev_siblings(&p->first_child);
 		while (p->next) {
 			if (p->portnum > p->next->portnum) {
 				t = p->next;
