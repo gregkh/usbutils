@@ -3196,14 +3196,6 @@ dump_device_status(libusb_device_handle *fd, int otg, int wireless, int super_sp
 	printf(" TxBeacon:     :     0x%02x\n", status[1]);
 }
 
-static int do_wireless(libusb_device_handle *fd)
-{
-	/* FIXME fetch and dump BOS etc */
-	if (fd)
-		return 0;
-	return 0;
-}
-
 static void dump_usb2_device_capability_desc(unsigned char *buf)
 {
 	unsigned int wide;
@@ -3633,8 +3625,6 @@ static void dumpdev(libusb_device *dev)
 
 	libusb_get_device_descriptor(dev, &desc);
 	dump_device(dev, &desc);
-	if (desc.bcdUSB == 0x0250)
-		wireless = do_wireless(udev);
 	if (desc.bNumConfigurations) {
 		struct libusb_config_descriptor *config;
 
