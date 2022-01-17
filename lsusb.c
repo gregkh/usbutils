@@ -3061,7 +3061,7 @@ static int do_otg(struct libusb_config_descriptor *config)
 }
 
 static void
-dump_device_status(libusb_device_handle *fd, int otg, int wireless, int super_speed)
+dump_device_status(libusb_device_handle *fd, int otg, int super_speed)
 {
 	unsigned char status[8];
 	int ret;
@@ -3087,14 +3087,6 @@ dump_device_status(libusb_device_handle *fd, int otg, int wireless, int super_sp
 		printf("  (Bus Powered)\n");
 	if (status[0] & (1 << 1))
 		printf("  Remote Wakeup Enabled\n");
-	if (status[0] & (1 << 2) && !super_speed) {
-		/* for high speed devices */
-		if (!wireless)
-			printf("  Test Mode\n");
-		/* for devices with Wireless USB support */
-		else
-			printf("  Battery Powered\n");
-	}
 	if (super_speed) {
 		if (status[0] & (1 << 2))
 			printf("  U1 Enabled\n");
@@ -3115,85 +3107,6 @@ dump_device_status(libusb_device_handle *fd, int otg, int wireless, int super_sp
 	/* for high speed devices with debug descriptors */
 	if (status[0] & (1 << 6))
 		printf("  Debug Mode\n");
-
-	if (!wireless)
-		return;
-
-	/* Wireless USB exposes FIVE different types of device status,
-	 * accessed by distinct wIndex values.
-	 */
-	ret = usb_control_msg(fd, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD
-				| LIBUSB_RECIPIENT_DEVICE,
-			LIBUSB_REQUEST_GET_STATUS,
-			0, 1 /* wireless status */,
-			status, 1,
-			CTRL_TIMEOUT);
-	if (ret < 0) {
-		fprintf(stderr,
-			"cannot read wireless %s, %s (%d)\n",
-			"status",
-			strerror(errno), errno);
-		return;
-	}
-	printf("Wireless Status:     0x%02x\n", status[0]);
-	if (status[0] & (1 << 0))
-		printf("  TX Drp IE\n");
-	if (status[0] & (1 << 1))
-		printf("  Transmit Packet\n");
-	if (status[0] & (1 << 2))
-		printf("  Count Packets\n");
-	if (status[0] & (1 << 3))
-		printf("  Capture Packet\n");
-
-	ret = usb_control_msg(fd, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD
-				| LIBUSB_RECIPIENT_DEVICE,
-			LIBUSB_REQUEST_GET_STATUS,
-			0, 2 /* Channel Info */,
-			status, 1,
-			CTRL_TIMEOUT);
-	if (ret < 0) {
-		fprintf(stderr,
-			"cannot read wireless %s, %s (%d)\n",
-			"channel info",
-			strerror(errno), errno);
-		return;
-	}
-	printf("Channel Info:        0x%02x\n", status[0]);
-
-	/* 3=Received data: many bytes, for count packets or capture packet */
-
-	ret = usb_control_msg(fd, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD
-				| LIBUSB_RECIPIENT_DEVICE,
-			LIBUSB_REQUEST_GET_STATUS,
-			0, 3 /* MAS Availability */,
-			status, 8,
-			CTRL_TIMEOUT);
-	if (ret < 0) {
-		fprintf(stderr,
-			"cannot read wireless %s, %s (%d)\n",
-			"MAS info",
-			strerror(errno), errno);
-		return;
-	}
-	printf("MAS Availability:    ");
-	dump_bytes(status, 8);
-
-	ret = usb_control_msg(fd, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD
-				| LIBUSB_RECIPIENT_DEVICE,
-			LIBUSB_REQUEST_GET_STATUS,
-			0, 5 /* Current Transmit Power */,
-			status, 2,
-			CTRL_TIMEOUT);
-	if (ret < 0) {
-		fprintf(stderr,
-			"cannot read wireless %s, %s (%d)\n",
-			"transmit power",
-			strerror(errno), errno);
-		return;
-	}
-	printf("Transmit Power:\n");
-	printf(" TxNotification:     0x%02x\n", status[0]);
-	printf(" TxBeacon:     :     0x%02x\n", status[1]);
 }
 
 static void dump_usb2_device_capability_desc(unsigned char *buf)
@@ -3613,9 +3526,9 @@ static void dumpdev(libusb_device *dev)
 	libusb_device_handle *udev;
 	struct libusb_device_descriptor desc;
 	int i, ret;
-	int otg, wireless;
+	int otg;
 
-	otg = wireless = 0;
+	otg = 0;
 	ret = libusb_open(dev, &udev);
 	if (ret) {
 		fprintf(stderr, "Couldn't open device, some information "
@@ -3661,7 +3574,7 @@ static void dumpdev(libusb_device *dev)
 		do_dualspeed(udev);
 	}
 	do_debug(udev);
-	dump_device_status(udev, otg, wireless, desc.bcdUSB >= 0x0300);
+	dump_device_status(udev, otg, desc.bcdUSB >= 0x0300);
 	libusb_close(udev);
 }
 
