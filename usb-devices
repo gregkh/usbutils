@@ -119,7 +119,7 @@ print_device() {
 	fi
 	speed=`cat speed`
 	maxchild=`cat maxchild`
-	printf "\nT:  Bus=%02i Lev=%02i Prnt=%02i Port=%02i Cnt=%02i Dev#=%3i Spd=%-3s MxCh=%2i\n" \
+	printf "\nT:  Bus=%02i Lev=%02i Prnt=%02i Port=%02i Cnt=%02i Dev#=%3i Spd=%-4s MxCh=%2i\n" \
 		$busnum $level $parent $port $count $devnum $speed $maxchild
 
 	ver=`cat version`
