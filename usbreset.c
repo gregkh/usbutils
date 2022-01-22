@@ -173,7 +173,7 @@ int main(int argc, char **argv)
 		dev = find_device(NULL, NULL, NULL, NULL, argv[1]);
 	else {
 		printf("Usage:\n"
-		       "  usbreset PPPP:VVVV - reset by product and vendor id\n"
+		       "  usbreset VVVV:PPPP - reset by vendor and product id\n"
 		       "  usbreset BBB/DDD   - reset by bus and device number\n"
 		       "  usbreset \"Product\" - reset by product name\n\n"
 		       "Devices:\n");
