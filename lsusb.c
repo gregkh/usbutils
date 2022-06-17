@@ -3634,6 +3634,35 @@ static int dump_one_device(libusb_context *ctx, const char *path)
 	return 0;
 }
 
+void sort_device_list(libusb_device **list, ssize_t num_devs)
+{
+	struct libusb_device *dev, *dev_next;
+	uint8_t bnum, bnum_next, dnum, dnum_next;
+	ssize_t i;
+	int sorted;
+	sorted = 0;
+	do {
+		sorted = 1;
+		for (i = 0; i < num_devs; ++i) {
+			dev = list[i];
+			bnum = libusb_get_bus_number(dev);
+			dnum = libusb_get_device_address(dev);
+			bnum_next = -1;
+			dnum_next = -1;
+			if (i + 1 < num_devs) {
+				dev_next = list[i + 1];
+				bnum_next = libusb_get_bus_number(dev_next);
+				dnum_next = libusb_get_device_address(dev_next);
+			}
+			if (bnum == bnum_next && dnum > dnum_next) {
+				list[i] = dev_next;
+				list[i + 1] = dev;
+				sorted = 0;
+			}
+		}
+	} while(!sorted);
+}
+
 static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendorid, int productid)
 {
 	libusb_device **list;
@@ -3648,6 +3677,7 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 	if (num_devs < 0)
 		goto error;
 
+	sort_device_list(list, num_devs);
 	for (i = 0; i < num_devs; ++i) {
 		libusb_device *dev = list[i];
 		uint8_t bnum = libusb_get_bus_number(dev);
