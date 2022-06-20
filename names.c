@@ -33,7 +33,7 @@
 
 static unsigned int hashnum(unsigned int num)
 {
-	unsigned int mask1 = HASH1 << 27, mask2 = HASH2 << 27;
+	unsigned int mask1 = (unsigned int)HASH1 << 27, mask2 = (unsigned int)HASH2 << 27;
 
 	for (; mask1 >= HASH1; mask1 >>= 1, mask2 >>= 1)
 		if (num & mask1)
