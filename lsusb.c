@@ -1482,6 +1482,13 @@ static void dump_midistreaming_interface(libusb_device_handle *dev, const unsign
 	free(jackstr);
 }
 
+/*
+ * The endpoint desciptor fields have a different name and purpose for MIDI 1.0 and MIDI 2,0 interface descriptors
+ */
+
+#define USB_MIDI1_EP_DESCRIPTOR_TYPE 1
+#define USB_MIDI2_EP_DESCRIPTOR_TYPE 2
+
 static void dump_midistreaming_endpoint(const unsigned char *buf)
 {
 	unsigned int j;
@@ -1490,14 +1497,29 @@ static void dump_midistreaming_endpoint(const unsigned char *buf)
 		printf("      Warning: Invalid descriptor\n");
 	else if (buf[0] < 5)
 		printf("      Warning: Descriptor too short\n");
-	printf("        MIDIStreaming Endpoint Descriptor:\n"
-	       "          bLength             %5u\n"
-	       "          bDescriptorType     %5u\n"
-	       "          bDescriptorSubtype  %5u (%s)\n"
-	       "          bNumEmbMIDIJack     %5u\n",
-	       buf[0], buf[1], buf[2], buf[2] == 2 ? "GENERAL" : "Invalid", buf[3]);
-	for (j = 0; j < buf[3]; j++)
-		printf("          baAssocJackID(%2u)   %5u\n", j, buf[4+j]);
+	
+	if (buf[2] == USB_MIDI1_EP_DESCRIPTOR_TYPE)    
+	{
+		printf("        MIDIStreaming Endpoint Descriptor:\n"
+			"          bLength             %5u\n"
+			"          bDescriptorType     %5u\n"
+			"          bDescriptorSubtype  %5u (%s)\n"
+			"          bNumEmbMIDIJack     %5u\n",
+			buf[0], buf[1], buf[2], "GENERAL", buf[3]);
+		for (j = 0; j < buf[3]; j++)
+			printf("          baAssocJackID(%2u)   %5u\n", j, buf[4+j]);
+	}
+	else
+	{
+		printf("        MIDIStreaming Endpoint Descriptor:\n"
+			"          bLength             %5u\n"
+			"          bDescriptorType     %5u\n"
+			"          bDescriptorSubtype  %5u (%s)\n"
+			"          bNumGrpTrmBlock     %5u\n",
+			buf[0], buf[1], buf[2], buf[2] > 2 ? "GENERAL" : "Invalid", buf[3]);
+		for (j = 0; j < buf[3]; j++)
+			printf("          baAssoGrpTrmBlkID(%2u)   %5u\n", j, buf[4+j]);
+	}
 	dump_junk(buf, "          ", 4+buf[3]);
 }
 
