@@ -1486,6 +1486,7 @@ static void dump_midistreaming_interface(libusb_device_handle *dev, const unsign
 #define USB_MIDI1_EP_DESCRIPTOR_TYPE 1
 #define USB_MIDI2_EP_DESCRIPTOR_TYPE 2
 
+
 static void dump_midistreaming_endpoint(const unsigned char *buf)
 {
 	unsigned int j;
