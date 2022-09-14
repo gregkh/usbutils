@@ -3634,10 +3634,10 @@ static int dump_one_device(libusb_context *ctx, const char *path)
 	return 0;
 }
 
-void sort_device_list(libusb_device **list, ssize_t num_devs)
+static void sort_device_list(libusb_device **list, ssize_t num_devs)
 {
 	struct libusb_device *dev, *dev_next;
-	uint8_t bnum, bnum_next, dnum, dnum_next;
+	int bnum, bnum_next, dnum, dnum_next;
 	ssize_t i;
 	int sorted;
 	sorted = 0;
@@ -3653,8 +3653,10 @@ void sort_device_list(libusb_device **list, ssize_t num_devs)
 				dev_next = list[i + 1];
 				bnum_next = libusb_get_bus_number(dev_next);
 				dnum_next = libusb_get_device_address(dev_next);
+			} else {
+				break;
 			}
-			if (bnum == bnum_next && dnum > dnum_next) {
+			if ((bnum == bnum_next && dnum > dnum_next) || bnum > bnum_next) {
 				list[i] = dev_next;
 				list[i + 1] = dev;
 				sorted = 0;
