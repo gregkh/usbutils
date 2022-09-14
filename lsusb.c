@@ -3643,19 +3643,13 @@ static void sort_device_list(libusb_device **list, ssize_t num_devs)
 	sorted = 0;
 	do {
 		sorted = 1;
-		for (i = 0; i < num_devs; ++i) {
+		for (i = 0; i < num_devs - 1; ++i) {
 			dev = list[i];
+			dev_next = list[i + 1];
 			bnum = libusb_get_bus_number(dev);
 			dnum = libusb_get_device_address(dev);
-			bnum_next = -1;
-			dnum_next = -1;
-			if (i + 1 < num_devs) {
-				dev_next = list[i + 1];
-				bnum_next = libusb_get_bus_number(dev_next);
-				dnum_next = libusb_get_device_address(dev_next);
-			} else {
-				break;
-			}
+			bnum_next = libusb_get_bus_number(dev_next);
+			dnum_next = libusb_get_device_address(dev_next);
 			if ((bnum == bnum_next && dnum > dnum_next) || bnum > bnum_next) {
 				list[i] = dev_next;
 				list[i + 1] = dev;
