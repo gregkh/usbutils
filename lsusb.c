@@ -2802,7 +2802,8 @@ bad:
 
 /* ---------------------------------------------------------------------- */
 
-static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed)
+static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed,
+		   bool has_ssp)
 {
 	unsigned char buf[7 /* base descriptor */
 			+ 2 /* bitmasks */ * HUB_STATUS_BYTELEN];
@@ -2822,6 +2823,7 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed)
 		"Compliance",
 		"Loopback",
 	};
+	bool is_ext_status = tt_type == 3 && speed >= 0x0310 && has_ssp;
 
 	/* USB 3.x hubs have a slightly different descriptor */
 	if (speed >= 0x0300)
@@ -2851,14 +2853,16 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed)
 
 	printf(" Hub Port Status:\n");
 	for (i = 0; i < buf[2]; i++) {
-		unsigned char status[4];
+		unsigned char status[8];
 
+		/* Request EXT_PORT_STATUS for USB 3.1 SuperSpeedPlus hubs,
+		   PORT_STATUS otherwise */
 		ret = usb_control_msg(fd,
 				LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_CLASS
 					| LIBUSB_RECIPIENT_OTHER,
 				LIBUSB_REQUEST_GET_STATUS,
-				0, i + 1,
-				status, sizeof status,
+				is_ext_status ? 2 : 0, i + 1,
+				status, is_ext_status ? 8 : 4,
 				CTRL_TIMEOUT);
 		if (ret < 0) {
 			fprintf(stderr,
@@ -2871,7 +2875,7 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed)
 			status[3], status[2],
 			status[1], status[0]);
 		/* CAPS are used to highlight "transient" states */
-		if (speed != 0x0300) {
+		if (speed < 0x0300) {
 			printf("%s%s%s%s%s",
 					(status[2] & 0x10) ? " C_RESET" : "",
 					(status[2] & 0x08) ? " C_OC" : "",
@@ -2912,6 +2916,16 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed)
 					(status[0] & 0x08) ? " oc" : "",
 					(status[0] & 0x02) ? " enable" : "",
 					(status[0] & 0x01) ? " connect" : "");
+		}
+
+		if (is_ext_status && (status[0] & 0x01)) {
+			printf("     Ext Status: %02x%02x.%02x%02x\n",
+				status[7], status[6],
+				status[5], status[4]);
+			printf("       RX Speed Attribute ID: %d Lanes: %d\n",
+				status[4] & 0x0f, (status[5] & 0x0f)+1);
+			printf("       TX Speed Attribute ID: %d Lanes: %d\n",
+				(status[4] >> 4) & 0x0f, ((status[5] >> 4) & 0x0f)+1);
 		}
 	}
 }
@@ -3208,9 +3222,12 @@ static void dump_ssp_device_capability_desc(unsigned char *buf)
 			"    bmAttributes         0x%08x\n",
 			buf[0], buf[1], buf[2], bm_attr);
 
-	printf("      Sublink Speed Attribute count %u\n", buf[4] & 0x1f);
-	printf("      Sublink Speed ID count %u\n", (bm_attr >> 5) & 0xf);
+	printf("      Sublink Speed Attribute count %u\n", (buf[4] & 0x1f)+1);
+	printf("      Sublink Speed ID count %u\n", ((bm_attr >> 5) & 0xf)+1);
 	printf("    wFunctionalitySupport   0x%02x%02x\n", buf[9], buf[8]);
+	printf("      Min functional Speed Attribute ID: %u\n", buf[8] & 0x0f);
+	printf("      Min functional RX lanes: %u\n", buf[9] & 0x0f);
+	printf("      Min functional TX lanes: %u\n", (buf[9] >> 4) & 0x0f);
 
 	for (i = 0; i <= (buf[4] & 0x1f); i++) {
 		ss_attr = convert_le_u32(buf + 12 + (i * 4));
@@ -3417,7 +3434,7 @@ static void dump_billboard_alt_mode_capability_desc(libusb_device_handle *dev, u
 			buf[4], buf[5], buf[6], buf[7]);
 }
 
-static void dump_bos_descriptor(libusb_device_handle *fd)
+static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp)
 {
 	/* Total length of BOS descriptors varies.
 	 * Read first static 5 bytes which include the total length before
@@ -3491,6 +3508,7 @@ static void dump_bos_descriptor(libusb_device_handle *fd)
 			break;
 		case USB_DC_SUPERSPEEDPLUS:
 			dump_ssp_device_capability_desc(buf);
+			*has_ssp = true;
 			break;
 		case USB_DC_CONTAINER_ID:
 			dump_container_id_device_capability_desc(buf);
@@ -3527,6 +3545,7 @@ static void dumpdev(libusb_device *dev)
 	struct libusb_device_descriptor desc;
 	int i, ret;
 	int otg;
+	bool has_ssp = false;
 
 	otg = 0;
 	ret = libusb_open(dev, &udev);
@@ -3565,11 +3584,10 @@ static void dumpdev(libusb_device *dev)
 	if (!udev)
 		return;
 
+	if (desc.bcdUSB >= 0x0201)
+		dump_bos_descriptor(udev, &has_ssp);
 	if (desc.bDeviceClass == LIBUSB_CLASS_HUB)
-		do_hub(udev, desc.bDeviceProtocol, desc.bcdUSB);
-	if (desc.bcdUSB >= 0x0201) {
-		dump_bos_descriptor(udev);
-	}
+		do_hub(udev, desc.bDeviceProtocol, desc.bcdUSB, has_ssp);
 	if (desc.bcdUSB == 0x0200) {
 		do_dualspeed(udev);
 	}
