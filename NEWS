@@ -7,6 +7,27 @@
 # history (i.e. packaged versions of the software).
 #
 
+usbutils 015
+============
+
+Greg Kroah-Hartman (6):
+      usb-devices: list the root devices in numerical order
+      usb-devices: use 'local' variable type to handle recursion
+      lsusb: remove unused wireless check
+      lsusb: remove wireless descriptor information
+      usb-devices: fix field width on device speed field
+      lsusb: fix up Midi Device specification devices
+
+Han Han (1):
+      Fix an runtime error reported by undefind sanitizer
+
+Robert Hancock (1):
+      lsusb: Improve status display for SuperSpeedPlus hubs
+
+Tan Li Boon (1):
+      lsusb-t: Fix recursive sorting on child devices.
+
+
 usbutils 014
 ============
 
