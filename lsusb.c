@@ -150,6 +150,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsigned char *buf, int protocol);
 static void dump_midistreaming_interface(libusb_device_handle *dev, const unsigned char *buf);
 static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigned char *buf, int protocol);
+static void dump_videocontrol_interrupt_endpoint(const unsigned char *buf);
 static void dump_videostreaming_interface(const unsigned char *buf);
 static void dump_dfu_interface(const unsigned char *buf);
 static char *dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, char *indent);
@@ -746,6 +747,8 @@ static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interfa
 					dump_audiostreaming_endpoint(dev, buf, interface->bInterfaceProtocol);
 				else if (interface->bInterfaceClass == 1 && interface->bInterfaceSubClass == 3)
 					dump_midistreaming_endpoint(buf);
+				else if (interface->bInterfaceClass == 14 && interface->bInterfaceSubClass == 1)
+					dump_videocontrol_interrupt_endpoint(buf);
 				break;
 			case USB_DT_CS_INTERFACE:
 				/* MISPLACED DESCRIPTOR ... less indent */
@@ -1724,6 +1727,29 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 	}
 
 	free(term);
+}
+
+static void dump_videocontrol_interrupt_endpoint(const unsigned char *buf)
+{
+	unsigned int j, wMaxTransferSize;
+
+	if (buf[0] < 5) {
+		printf("      Warning: Descriptor too short\n");
+		return;
+	}
+	if (buf[1] != USB_DT_CS_ENDPOINT) {
+		printf("      Warning: Invalid descriptor\n");
+		return;
+	}
+	wMaxTransferSize = buf[3] | (buf[4] << 8);
+	printf("        VideoControl Endpoint Descriptor:\n"
+	       "          bLength             %5u\n"
+	       "          bDescriptorType     %5u\n"
+	       "          bDescriptorSubtype  %5u (%s)\n"
+	       "          wMaxTransferSize    %5u\n",
+	       buf[0], buf[1], buf[2], buf[2] == 3 ? "EP_INTERRUPT" : "Invalid",
+	       wMaxTransferSize);
+	dump_junk(buf, "          ", 5);
 }
 
 static void dump_videostreaming_interface(const unsigned char *buf)
