@@ -65,6 +65,8 @@ static struct usbentry *parse_devlist(DIR *d)
 	} while (!isdigit(e->d_name[0]) || strchr(e->d_name, ':'));
 
 	memset(&dev, 0, sizeof(dev));
+	dev.vendor_id = -1;
+	dev.product_id = -1;
 
 	attr = sysfs_attr(e->d_name, "busnum");
 	if (attr)
@@ -90,7 +92,7 @@ static struct usbentry *parse_devlist(DIR *d)
 	if (attr)
 		strcpy(dev.product_name, attr);
 
-	if (dev.bus_num && dev.dev_num && dev.vendor_id && dev.product_id)
+	if (dev.bus_num && dev.dev_num && dev.vendor_id >= 0 && dev.product_id >= 0)
 		return &dev;
 
 	return NULL;
