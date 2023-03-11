@@ -2463,8 +2463,8 @@ static void dump_hid_device(libusb_device_handle *dev,
 		return;
 
 	if (!dev) {
-		printf("         Report Descriptors: \n"
-		       "           ** UNAVAILABLE **\n");
+		printf("          Report Descriptors: \n"
+		       "            ** UNAVAILABLE **\n");
 		return;
 	}
 
@@ -2503,8 +2503,8 @@ static void dump_hid_device(libusb_device_handle *dev,
 			/* recent Linuxes require claim() for RECIP_INTERFACE,
 			 * so "rmmod hid" will often make these available.
 			 */
-			printf("         Report Descriptors: \n"
-			       "           ** UNAVAILABLE **\n");
+			printf("          Report Descriptors: \n"
+			       "            ** UNAVAILABLE **\n");
 		}
 	}
 }
