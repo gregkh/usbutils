@@ -590,7 +590,7 @@ static struct genericstrtable hutus[] =
 	{ NULL, (0x07 << 16) + 0x0e3, "GUI Left" },
 	{ NULL, (0x07 << 16) + 0x0e4, "Control Right" },
 	{ NULL, (0x07 << 16) + 0x0e5, "Shift Right" },
-	{ NULL, (0x07 << 16) + 0x0e6, "Alt Rigth" },
+	{ NULL, (0x07 << 16) + 0x0e6, "Alt Right" },
 	{ NULL, (0x07 << 16) + 0x0e7, "GUI Right" },
 	{ NULL, (0x08 << 16) + 0x000, "Undefined" },
 	{ NULL, (0x08 << 16) + 0x001, "NumLock" },
