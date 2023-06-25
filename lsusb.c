@@ -3799,7 +3799,10 @@ int main(int argc, char *argv[])
 			"  -h, --help\n"
 			"      Show usage and help\n"
 			);
-		return 0;
+		if (help && !err)
+			return 0;
+		else
+			return EXIT_FAILURE;
 	}
 
 
