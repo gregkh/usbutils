@@ -3797,7 +3797,7 @@ int main(int argc, char *argv[])
 			"  -h, --help\n"
 			"      Show usage and help\n"
 			);
-		return EXIT_FAILURE;
+		return 0;
 	}
 
 
