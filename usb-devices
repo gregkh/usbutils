@@ -4,12 +4,17 @@
 # Copyright (c) 2009 Greg Kroah-Hartman <greg@kroah.com>
 # Copyright (c) 2009 Randy Dunlap <rdunlap@xenotime.net>
 # Copyright (c) 2009 Frans Pop <elendil@planet.nl>
+#
+# When checking with shellcheck ignore
+# "In POSIX sh, local is undefined."
+# every modern shell supports it.
+# shellcheck disable=SC3043
 
 print_string() {
 	file=$1
 	name=$2
-	if [ -f $file ]; then
-		echo "S:  $name=`cat $file`"
+	if [ -f "$file" ]; then
+		echo "S:  $name=$(cat "$file")"
 	fi
 }
 
@@ -46,56 +51,63 @@ class_decode() {
 print_endpoint() {
 	eppath=$1
 
-	addr=`cat $eppath/bEndpointAddress`
-	attr=`cat $eppath/bmAttributes`
-	dir=`cat $eppath/direction`
-    if [ "$dir" = in ]; then
-        dir=I
-    elif [ "$dir" = out ]; then
-        dir=O
-    elif [ "$dir" = both ]; then
-        dir=B
-    fi
-	eptype=`cat $eppath/type`
-    if [ "$eptype" = Control ]; then
-        eptype="Ctrl"
-    elif [ "$eptype" = Interrupt ]; then
-        eptype="Int."
-    fi
-	maxps_hex="0x`cat $eppath/wMaxPacketSize`"
+	read -r addr < "$eppath/bEndpointAddress"
+	read -r attr < "$eppath/bmAttributes"
+	read -r dir < "$eppath/direction"
+
+	if [ "$dir" = "in" ]; then
+		dir="I"
+	elif [ "$dir" = "out" ]; then
+		dir="O"
+	elif [ "$dir" = "both" ]; then
+		dir="B"
+	fi
+
+	read -r eptype < "$eppath/type"
+	if [ "$eptype" = Control ]; then
+		eptype="Ctrl"
+	elif [ "$eptype" = Interrupt ]; then
+		eptype="Int."
+	fi
+
+	read -r maxps_hex < "$eppath/wMaxPacketSize"
+	maxps_hex="0x$maxps_hex"
 	# Extract MaxPS size (bits 0-10) and multiplicity values (bits 11-12)
-	maxps=$((`printf "%4i*%s\n" $(($maxps_hex & 0x7ff)) \
-                $((1 + (($maxps_hex >> 11) & 0x3)))`))
-	interval=`cat $eppath/interval`
+
+	maxps=$(($(printf "%4i*%s\n" $((maxps_hex & 0x7ff)) \
+                $((1 + ((maxps_hex >> 11) & 0x3))))))
+
+	read -r interval < "$eppath/interval"
 
 	printf "E:  Ad=%s(%s) Atr=%s(%s) MxPS=%4s Ivl=%s\n" \
-		$addr $dir $attr $eptype "$maxps" $interval
+		"$addr" "$dir" "$attr" "$eptype" "$maxps" "$interval"
 }
 
 print_interface() {
 	ifpath=$1
 
-	ifnum=`cat $ifpath/bInterfaceNumber`
-	altset=`cat $ifpath/bAlternateSetting`
-	numeps=`cat $ifpath/bNumEndpoints`
-	class=`cat $ifpath/bInterfaceClass`
-	subclass=`cat $ifpath/bInterfaceSubClass`
-	protocol=`cat $ifpath/bInterfaceProtocol`
-	if [ -L $ifpath/driver ]; then		# v4: allow for no driver
-		driver=`readlink $ifpath/driver`
-		driver=`basename "$driver"`
+	read -r ifnum < "$ifpath/bInterfaceNumber"
+	read -r altset < "$ifpath/bAlternateSetting"
+	read -r numeps < "$ifpath/bNumEndpoints"
+	read -r class < "$ifpath/bInterfaceClass"
+	read -r subclass < "$ifpath/bInterfaceSubClass"
+	read -r protocol < "$ifpath/bInterfaceProtocol"
+
+	if [ -L "$ifpath/driver" ]; then		# v4: allow for no driver
+		driver=$(readlink "$ifpath/driver")
+		driver=${driver##*/}
 	else
 		driver="(none)"
 	fi
-	classname=`class_decode $class`
+	classname=$(class_decode "$class")
 	printf "I:  If#=%2i Alt=%2i #EPs=%2i Cls=%s(%s) Sub=%s Prot=%s Driver=%s\n" \
-		0x${ifnum#0} ${altset#0} 0x${numeps#0} $class "$classname" $subclass \
-		$protocol $driver
+		"0x${ifnum#0}" "${altset#0}" "0x${numeps#0}" "$class" "$classname" "$subclass" \
+		"$protocol" "$driver"
 
-	for endpoint in $ifpath/ep_??
+	for endpoint in "$ifpath"/ep_??
 	do
-		if [ -L $endpoint ] || [ -d $endpoint ]; then	# v4: verify endpoint exists
-			print_endpoint $endpoint
+		if [ -L "$endpoint" ] || [ -d "$endpoint" ]; then	# v4: verify endpoint exists
+			print_endpoint "$endpoint"
 		fi
 	done
 }
@@ -106,69 +118,71 @@ print_device() {
 	local level=$3
 	local count=$4
 
-	[ -d $devpath ] || return
-	cd $devpath
+	[ -d "$devpath" ] || return
+	cd "$devpath" || return
 
-	busnum=`cat busnum`
-	devnum=`cat devnum`
+	read -r busnum < "busnum"
+	read -r devnum < "devnum"
 
-	if [ $level -gt 0 ]; then
+	if [ "$level" -gt 0 ]; then
 		port=$((${devpath##*[-.]} - 1))
 	else
 		port=0
 	fi
-	speed=`cat speed`
-	maxchild=`cat maxchild`
+
+	read -r speed < "speed"
+	read -r maxchild < "maxchild"
 	printf "\nT:  Bus=%02i Lev=%02i Prnt=%02i Port=%02i Cnt=%02i Dev#=%3i Spd=%-4s MxCh=%2i\n" \
-		$busnum $level $parent $port $count $devnum $speed $maxchild
+		"$busnum" "$level" "$parent" "$port" "$count" "$devnum" "$speed" "$maxchild"
 
-	ver=`cat version`
-	devclass=`cat bDeviceClass`
-	devsubclass=`cat bDeviceSubClass`
-	devprotocol=`cat bDeviceProtocol`
-	maxps0=`cat bMaxPacketSize0`
-	numconfigs=`cat bNumConfigurations`
-	classname=`class_decode $devclass`
+	read -r ver < "version"
+	read -r devclass < "bDeviceClass"
+	read -r devsubclass < "bDeviceSubClass"
+	read -r devprotocol < "bDeviceProtocol"
+	read -r maxps0 < "bMaxPacketSize0"
+	read -r numconfigs < "bNumConfigurations"
+	classname="$(class_decode "$devclass")"
 	printf "D:  Ver=%5s Cls=%s(%s) Sub=%s Prot=%s MxPS=%2i #Cfgs=%3i\n" \
-		$ver $devclass "$classname" $devsubclass $devprotocol \
-		$maxps0 $numconfigs
+		"$ver" "$devclass" "$classname" "$devsubclass" "$devprotocol" \
+		"$maxps0" "$numconfigs"
 
-	vendid=`cat idVendor`
-	prodid=`cat idProduct`
-	revmajor=`cat bcdDevice | cut -c 1-2`
-	revminor=`cat bcdDevice | cut -c 3-4`
+	read -r vendid < "idVendor"
+	read -r prodid < "idProduct"
+	read -r bcddevice < "bcdDevice"
+	revmajor="${bcddevice%%??}"
+	revminor="${bcddevice##??}"
 	printf "P:  Vendor=%s ProdID=%s Rev=%s.%s\n" \
-		$vendid $prodid $revmajor $revminor
+		"$vendid" "$prodid" "$revmajor" "$revminor"
 
 	print_string manufacturer "Manufacturer"
 	print_string product Product
 	print_string serial SerialNumber
 
-	numifs=`cat bNumInterfaces`
-	cfgnum=`cat bConfigurationValue`
-	attr=`cat bmAttributes`
-	maxpower=`cat bMaxPower`
+	read -r numifs < "bNumInterfaces"
+	read -r cfgnum < "bConfigurationValue"
+	read -r attr < "bmAttributes"
+	read -r maxpower < "bMaxPower"
 	printf "C:  #Ifs=%2i Cfg#=%2i Atr=%s MxPwr=%s\n" \
-		$numifs $cfgnum $attr $maxpower
+		"$numifs" "$cfgnum" "$attr" "$maxpower"
 
 	# There's not really any useful info in endpoint 00
 	#print_endpoint $devpath/ep_00
 
-	for interface in $busnum-*:?.*
+	for interface in "$busnum"-*:?.*
 	do
-		print_interface $devpath/$interface
+		print_interface "$devpath/$interface"
 	done
 
 	devcount=0
-	for subdev in $busnum-*
+	for subdev in "$busnum"-*
 	do
 		echo "$subdev" | grep -Eq "^$busnum-[0-9]+(\.[0-9]+)*$" \
 			|| continue
 
-		devcount=$(($devcount + 1))
-		if [ -d $devpath/$subdev ]; then
-			print_device $devpath/$subdev \
-				$devnum $(($level +1)) $devcount
+		devcount=$((devcount + 1))
+		if [ -d "$devpath/$subdev" ]; then
+			print_device "$devpath/$subdev" \
+				"$devnum" "$((level +1))" "$devcount"
 		fi
 	done
 }
@@ -178,7 +192,7 @@ if [ ! -d /sys/bus ]; then
 	exit 1
 fi
 
-for device in $(ls /sys/bus/usb/devices/ | grep ^usb | sort -V)
+for device in $(find /sys/bus/usb/devices -name 'usb*' -printf '%f\n' | sort -V)
 do
-	print_device /sys/bus/usb/devices/$device 0 0 0
+	print_device "/sys/bus/usb/devices/$device" 0 0 0
 done
