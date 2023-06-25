@@ -2438,8 +2438,7 @@ static void dump_hid_device(libusb_device_handle *dev,
 			    const struct libusb_interface_descriptor *interface,
 			    const unsigned char *buf)
 {
-	unsigned int i, len;
-	unsigned int n;
+	int i, len;
 	unsigned char dbuf[8192];
 
 	if (buf[1] != LIBUSB_DT_HID)
@@ -2464,8 +2463,8 @@ static void dump_hid_device(libusb_device_handle *dev,
 		return;
 
 	if (!dev) {
-		printf("         Report Descriptors: \n"
-		       "           ** UNAVAILABLE **\n");
+		printf("          Report Descriptors: \n"
+		       "            ** UNAVAILABLE **\n");
 		return;
 	}
 
@@ -2474,13 +2473,13 @@ static void dump_hid_device(libusb_device_handle *dev,
 		if (buf[6+3*i] != LIBUSB_DT_REPORT)
 			continue;
 		len = buf[7+3*i] | (buf[8+3*i] << 8);
-		if (len > (unsigned int)sizeof(dbuf)) {
+		if (len > (int)sizeof(dbuf)) {
 			printf("report descriptor too long\n");
 			continue;
 		}
 		if (libusb_claim_interface(dev, interface->bInterfaceNumber) == 0) {
 			int retries = 4;
-			n = 0;
+			int n = 0;
 			while (n < len && retries--)
 				n = usb_control_msg(dev,
 					 LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD
@@ -2495,14 +2494,17 @@ static void dump_hid_device(libusb_device_handle *dev,
 				if (n < len)
 					printf("          Warning: incomplete report descriptor\n");
 				dump_report_desc(dbuf, n);
+			} else {
+				printf("          Warning: can't get report descriptor, %s\n",
+						  libusb_error_name(n));
 			}
 			libusb_release_interface(dev, interface->bInterfaceNumber);
 		} else {
 			/* recent Linuxes require claim() for RECIP_INTERFACE,
 			 * so "rmmod hid" will often make these available.
 			 */
-			printf("         Report Descriptors: \n"
-			       "           ** UNAVAILABLE **\n");
+			printf("          Report Descriptors: \n"
+			       "            ** UNAVAILABLE **\n");
 		}
 	}
 }
