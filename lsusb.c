@@ -3431,9 +3431,9 @@ static void dump_billboard_alt_mode_capability_desc(libusb_device_handle *dev, u
 			"    bDescriptorType         %5u\n"
 			"    bDevCapabilityType      %5u\n"
 			"    bIndex                  %5u\n"
-			"    dwAlternateModeVdo          0x%02X%02X%02X%02X\n",
+			"    dwAlternateModeVdo      0x%08X\n",
 			buf[0], buf[1], buf[2], buf[3],
-			buf[4], buf[5], buf[6], buf[7]);
+			convert_le_u32(buf+4));
 }
 
 static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp)
@@ -3460,7 +3460,7 @@ static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp)
 	else if (bos_desc_static[0] != 5 || bos_desc_static[1] != USB_DT_BOS)
 		return;
 
-	bos_desc_size = bos_desc_static[2] + (bos_desc_static[3] << 8);
+	bos_desc_size = convert_le_u16(&bos_desc_static[2]);
 	printf("Binary Object Store Descriptor:\n"
 	       "  bLength             %5u\n"
 	       "  bDescriptorType     %5u\n"
