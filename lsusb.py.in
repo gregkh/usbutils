@@ -25,6 +25,7 @@ showhubint = False
 noemptyhub = False
 nohub = False
 showeps = False
+showwakeup = False
 
 prefix = "/sys/bus/usb/devices/"
 usbids = [
@@ -341,6 +342,7 @@ class UsbDevice(UsbObject):
 		self.usbver = ""
 		self.speed = ""
 		self.maxpower = ""
+		self.wakeup = ""
 		self.noports = 0
 		self.nointerfaces = 0
 		self.driver = ""
@@ -396,6 +398,8 @@ class UsbDevice(UsbObject):
 			self.devname = find_dev(self.driver, self.path)
 		except:
 			pass
+		if showwakeup:
+			self.wakeup = self.read_attr('power/wakeup')
 
 	def readchildren(self):
 		if self.fname[0:3] == "usb":
@@ -428,10 +432,11 @@ class UsbDevice(UsbObject):
 			indent = "  " * self.level
 			name = self.fname
 			plural = (" " if self.nointerfaces == 1 else "s")
-			body = "%s %02x %iIF%s [USB %s, %5s Mbps, %5s] (%s)%s" % \
+			body = "%s %02x %iIF%s [USB %s, %5s Mbps, %5s%s] (%s)%s" % \
 				(colorize(1, "%04x:%04x" % (self.vid, self.pid)),
 				 self.iclass, self.nointerfaces, plural,
 				 self.usbver.strip(), self.speed, self.maxpower,
+				 ("" if self.wakeup == "" else (",  power wakeup: %s" % self.wakeup)),
 				 colorize(2 if is_hub else 1, self.name),
 				 colorize(2, " hub") if is_hub else "")
 			strg = "%-17s %s\n" % (indent + name, indent + body)
@@ -462,6 +467,7 @@ def usage():
 	print("  -e, --endpoints       display endpoint info")
 	print("  -f FILE, --usbids-path FILE")
 	print("                        override filename for /usr/share/usb.ids")
+	print("  -w, --wakeup          display power wakeup setting")
 	print()
 	print("Use lsusb.py -ciu to get a nice overview of your USB devices.")
 
@@ -480,7 +486,7 @@ def read_usb():
 def main(argv):
 	"main entry point"
 	global showint, showhubint, noemptyhub, nohub
-	global cols, usbids, showeps
+	global cols, usbids, showeps, showwakeup
 	usecols = None
 
 	long_options = [
@@ -493,6 +499,7 @@ def main(argv):
 		"no-color",
 		"usbids-path=",
 		"endpoints",
+		"wakeup",
 	]
 
 	try:
@@ -518,12 +525,12 @@ def main(argv):
 			usecols = True
 		elif opt[0] in {"-C", "--no-color"}:
 			usecols = False
-		elif opt[0] == "-w":
-			print("Warning: option -w is no longer supported", file=sys.stderr)
 		elif opt[0] in {"-f", "--usbids-path"}:
 			usbids = [opt[1]]
 		elif opt[0] in {"-e", "--endpoints"}:
 			showeps = True
+		elif opt[0] in {"-w", "--wakeup"}:
+			showwakeup = True
 	if len(args) > 0:
 		print("Error: excess args %s ..." % args[0], file=sys.stderr)
 		sys.exit(2)
