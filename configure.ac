@@ -15,12 +15,15 @@ AC_SYS_LARGEFILE
 AC_CHECK_HEADERS([byteswap.h])
 AC_CHECK_FUNCS([nl_langinfo iconv])
 
+PKG_INSTALLDIR
+
 PKG_CHECK_MODULES(LIBUSB, libusb-1.0 >= 1.0.14)
 
 PKG_CHECK_MODULES(UDEV, libudev >= 196)
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
+	usbutils.pc
 	Makefile
 ])
 AC_CONFIG_SUBDIRS([usbhid-dump])
@@ -33,6 +36,7 @@ AC_MSG_RESULT([
 	prefix:                 ${prefix}
 	datarootdir:            ${datarootdir}
 	datadir:                ${datadir}
+	pkgconfigdir:		${pkgconfigdir}
 	mandir:                 ${mandir}
 
 	usb.ids:                ${datadir}/usb.ids

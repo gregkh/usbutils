@@ -60,6 +60,8 @@ EXTRA_DIST = \
 	LICENSES/GPL-2.0-only.txt \
 	LICENSES/GPL-3.0-only.txt
 
+pkgconfig_DATA = usbutils.pc
+
 lsusb.py: $(srcdir)/lsusb.py.in
 	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
 	chmod 755 $@
