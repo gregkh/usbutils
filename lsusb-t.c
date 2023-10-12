@@ -659,7 +659,7 @@ static void sort_devices(void)
 
 static void sort_busses(void)
 {
-	/* need to reverse sort bus numbers */
+	/* sort in numerical order to match 'lsusb' output */
 	struct usbbusnode *t, *p, **pp;
 	int swapped;
 	do {
@@ -669,7 +669,7 @@ static void sort_busses(void)
 		pp = &usbbuslist;
 		swapped = 0;
 		while (p && p->next) {
-			if (p->busnum < p->next->busnum) {
+			if (p->busnum > p->next->busnum) {
 				t = p->next;
 				p->next = t->next;
 				t->next = p;
