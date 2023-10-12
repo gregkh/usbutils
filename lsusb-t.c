@@ -160,7 +160,7 @@ static void print_usbbusnode(struct usbbusnode *b)
 
 	lanes_to_str(lanes, b->tx_lanes, b->rx_lanes);
 
-	printf("/:  Bus %02u.Port %u: Dev %u, Class=%s, Driver=%s/%up, %sM%s\n", b->busnum, 1,
+	printf("/:  Bus %03u.Port %03u: Dev %03u, Class=%s, Driver=%s/%up, %sM%s\n", b->busnum, 1,
 	       b->devnum, bDeviceClass_to_str(b->bDeviceClass), b->driver, b->maxchild, b->speed, lanes);
 	if (verblevel >= 1) {
 		get_vendor_string(vendor, sizeof(vendor), b->idVendor);
@@ -182,10 +182,10 @@ static void print_usbdevice(struct usbdevice *d, struct usbinterface *i)
 	get_class_string(subcls, sizeof(subcls), i->bInterfaceClass);
 
 	if (i->bInterfaceClass == 9)
-		printf("Port %u: Dev %u, If %u, Class=%s, Driver=%s/%up, %sM%s\n", d->portnum, d->devnum, i->ifnum, subcls,
+		printf("Port %03u: Dev %03u, If %u, Class=%s, Driver=%s/%up, %sM%s\n", d->portnum, d->devnum, i->ifnum, subcls,
 		       i->driver, d->maxchild, d->speed, lanes);
 	else
-		printf("Port %u: Dev %u, If %u, Class=%s, Driver=%s, %sM%s\n", d->portnum, d->devnum, i->ifnum, subcls, i->driver,
+		printf("Port %03u: Dev %03u, If %u, Class=%s, Driver=%s, %sM%s\n", d->portnum, d->devnum, i->ifnum, subcls, i->driver,
 		       d->speed, lanes);
 	if (verblevel >= 1) {
 		printf(" %*s", indent, "    ");
