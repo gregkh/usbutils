@@ -555,7 +555,7 @@ static void assign_interface_to_parent(struct usbdevice *d, struct usbinterface 
 		} else {
 			busnum = strtoul(name, &pn, 10);
 			if (pn && pn != name) {
-				if (p[1] == '0')
+				if (pn[1] == '0')
 					append_businterface(busnum, i);
 			}
 		}
