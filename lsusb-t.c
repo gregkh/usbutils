@@ -66,7 +66,7 @@ struct usbdevice {
 	char product[MY_PARAM_MAX];
 	char serial[MY_PARAM_MAX];
 	char version[MY_PARAM_MAX];
-	char speed[MY_PARAM_MAX];	/* '1.5','12','480','5000' + '\n' */
+	char speed[MY_PARAM_MAX];	/* '1.5','12','480','5000','10000','20000' + '\n' */
 	unsigned int rx_lanes;
 	unsigned int tx_lanes;
 
@@ -85,7 +85,7 @@ struct usbbusnode {
 	unsigned int idProduct;
 	unsigned int idVendor;
 	unsigned int maxchild;
-	char speed[5 + 1];	/* '1.5','12','480','5000' + '\n' */
+	char speed[MY_PARAM_MAX];	/* '1.5','12','480','5000','10000','20000' + '\n' */
 	unsigned int rx_lanes;
 	unsigned int tx_lanes;
 
