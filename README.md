@@ -40,3 +40,13 @@ Build everything with:
 Install it, if you really want to, with:
 
 	make install
+
+## Source location
+
+The source for usbutils can be found in many places, depending on the git
+hosting site you prefer.  Here are the primary locations, in order of
+preference by the maintainer:
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usbutils.git/
+    https://git.sr.ht/~gregkh/usbutils
+    https://github.com/gregkh/usbutils
