@@ -179,9 +179,12 @@ static void print_usbdevice(struct usbdevice *d, struct usbinterface *i)
 	char lanes[32];
 
 	lanes_to_str(lanes, d->tx_lanes, d->rx_lanes);
-	get_class_string(subcls, sizeof(subcls), i->bInterfaceClass);
+	if (i)
+		get_class_string(subcls, sizeof(subcls), i->bInterfaceClass);
 
-	if (i->bInterfaceClass == 9)
+	if (!i)
+		printf("Port %03u: Dev %03u, %sM%s\n", d->portnum, d->devnum, d->speed, lanes);
+	else if (i->bInterfaceClass == 9)
 		printf("Port %03u: Dev %03u, If %u, Class=%s, Driver=%s/%up, %sM%s\n", d->portnum, d->devnum, i->ifnum, subcls,
 		       i->driver, d->maxchild, d->speed, lanes);
 	else
@@ -686,11 +689,12 @@ static void sort_busses(void)
 static void print_tree_dev_interface(struct usbdevice *d, struct usbinterface *i)
 {
 	indent += 3;
-	while (i) {
+	do {
 		printf(" %*s", indent, "|__ ");
 		print_usbdevice(d, i);
-		i = i->next;
-	}
+		if (i)
+			i = i->next;
+	} while (i);
 	indent -= 3;
 }
 static void print_tree_dev_children(struct usbdevice *d)
