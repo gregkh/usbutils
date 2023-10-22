@@ -7,6 +7,50 @@
 # history (i.e. packaged versions of the software).
 #
 
+usbutils 016
+============
+
+Alan Stern (1):
+      usbutils: lsusb-t: print entries for devices with no interfaces
+
+Aurelien Jarno (1):
+      Fix a typo in usb-spec.h
+
+Bob Hyman (1):
+      lsusb.py.in: Display (device) power/wakeup via -w option.
+
+Dingyan Li (3):
+      Fix an incorrect length value in hid descriptor.
+      Fix misalignments in hid device descripptor.
+      Use bigger buffer to place speed value string
+
+Greg Kroah-Hartman (19):
+      lsusb -h returns an error
+      lsusb -h fixups
+      lsusb -t: sort in bus order, not reverse order
+      lsusb -t: print ports and busses and devices with same width
+      lsusb -t: assign_interface_to_parent() fixups
+      lsusb.8.in: fix up missing '-' in text
+      README.md: add source location
+      lsusb.py: fix up wakeup logic for devices that do not support it
+      lsusb.py.in: add another default path for usb.ids
+      names.c: if a string can not be found in the usb.ids file, return [unknown]
+      lsusb-t: if a driver is not bound to an interface, report "[none]"
+
+Hannes Weisbach (1):
+      Generate usbutils.pc pkgconfig file
+
+Kristoffer Ellersgaard Koch (1):
+      usbreset: Allow idProduct and idVendor to be 0
+
+Lukas Nykryn (1):
+      usb-devices: make shellcheck happy
+
+Tan Li Boon (3):
+      lsusb: Add function that sorts the output by device ID.
+      lsusb: Additional sorting by bus number.
+      lsusb: This is a more compact implementation of the device list sort implemented within this pull request. The output remains the same as the one demonstrated in the previous commit.
+
 usbutils 015
 ============
 
