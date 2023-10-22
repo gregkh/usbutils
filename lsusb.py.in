@@ -30,6 +30,7 @@ showwakeup = False
 prefix = "/sys/bus/usb/devices/"
 usbids = [
 	"@usbids@",
+	"/usr/share/hwdata/usb.ids",
 	"/usr/share/usb.ids",
 ]
 cols = ("", "", "", "", "", "")
