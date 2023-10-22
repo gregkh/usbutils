@@ -357,6 +357,8 @@ static void add_usb_interface(const char *d_name)
 			p = strrchr(driver, '/');
 			if (p)
 				snprintf(e->driver, sizeof(e->driver), "%s", p + 1);
+		} else {
+			snprintf(e->driver, sizeof(e->driver), "[none]");
 		}
 	} else
 		printf("Can not read driver link for '%s': %d\n", d_name, l);
