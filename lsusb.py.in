@@ -399,7 +399,10 @@ class UsbDevice(UsbObject):
 		except:
 			pass
 		if showwakeup:
-			self.wakeup = self.read_attr('power/wakeup')
+			try:
+				self.wakeup = self.read_attr('power/wakeup')
+			except:
+				self.wakeup = "unsupported"
 
 	def readchildren(self):
 		if self.fname[0:3] == "usb":
