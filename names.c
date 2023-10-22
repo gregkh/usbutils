@@ -192,7 +192,7 @@ int get_vendor_string(char *buf, size_t size, uint16_t vid)
                 return 0;
         *buf = 0;
         if (!(cp = names_vendor(vid)))
-                return 0;
+		return snprintf(buf, size, "[unknown]");
         return snprintf(buf, size, "%s", cp);
 }
 
@@ -204,7 +204,7 @@ int get_product_string(char *buf, size_t size, uint16_t vid, uint16_t pid)
                 return 0;
         *buf = 0;
         if (!(cp = names_product(vid, pid)))
-                return 0;
+		return snprintf(buf, size, "[unknown]");
         return snprintf(buf, size, "%s", cp);
 }
 
@@ -216,7 +216,7 @@ int get_class_string(char *buf, size_t size, uint8_t cls)
 		return 0;
 	*buf = 0;
 	if (!(cp = names_class(cls)))
-		return 0;
+		return snprintf(buf, size, "[unknown]");
 	return snprintf(buf, size, "%s", cp);
 }
 
@@ -228,7 +228,7 @@ int get_subclass_string(char *buf, size_t size, uint8_t cls, uint8_t subcls)
 		return 0;
 	*buf = 0;
 	if (!(cp = names_subclass(cls, subcls)))
-		return 0;
+		return snprintf(buf, size, "[unknown]");
 	return snprintf(buf, size, "%s", cp);
 }
 
