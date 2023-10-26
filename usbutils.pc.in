@@ -1,7 +1,7 @@
 prefix=@prefix@
 exec_prefix=@prefix@
-libdir=@prefix@/lib64
-includedir=@prefix@/include
+libdir=@libdir@
+includedir=@includedir@
 usbids=@datadir@/usb.ids
 
 Name: @PACKAGE_NAME@
@@ -13,6 +13,6 @@ Version: @VERSION@
 URL: https://github.com/gregkh/usbutils
 Requires: libusb-1.0 >= 1.0.14  libudev >= 196
 Conflicts:
-Libs: -L@prefix@/lib64
+Libs: -L${libdir}
 Libs.private: @LIBUSB_LIBS@ @UDEV_LIBS@
 Cflags: @CFLAGS@ @LIBUSB_CFLAGS@ @UDEV_CFLAGS@
