@@ -160,7 +160,6 @@ static void dump_midistreaming_endpoint(const unsigned char *buf);
 static void dump_hub(const char *prefix, const unsigned char *p, int tt_type);
 static void dump_ccid_device(const unsigned char *buf);
 static void dump_billboard_device_capability_desc(libusb_device_handle *dev, unsigned char *buf);
-static void dump_billboard_alt_mode_capability_desc(libusb_device_handle *dev, unsigned char *buf);
 
 /* ---------------------------------------------------------------------- */
 
@@ -3419,7 +3418,7 @@ static void dump_billboard_device_capability_desc(libusb_device_handle *dev, uns
 	free (url);
 }
 
-static void dump_billboard_alt_mode_capability_desc(libusb_device_handle *dev, unsigned char *buf)
+static void dump_billboard_alt_mode_capability_desc(unsigned char *buf)
 {
 	if (buf[0] != 8) {
 		fprintf(stderr, "  Bad Billboard Alternate Mode Capability descriptor.\n");
@@ -3522,7 +3521,7 @@ static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp)
 			dump_billboard_device_capability_desc(fd, buf);
 			break;
 		case USB_DC_BILLBOARD_ALT_MODE:
-			dump_billboard_alt_mode_capability_desc(fd, buf);
+			dump_billboard_alt_mode_capability_desc(buf);
 			break;
 		case USB_DC_CONFIGURATION_SUMMARY:
 			printf("  Configuration Summary Device Capability:\n");
