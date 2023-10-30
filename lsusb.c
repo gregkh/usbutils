@@ -274,9 +274,8 @@ static void dump_device(
 	char mfg[128] = {0}, prod[128] = {0}, serial[128] = {0};
 	char sysfs_name[PATH_MAX];
 
-	get_vendor_string(vendor, sizeof(vendor), descriptor->idVendor);
-	get_product_string(product, sizeof(product),
-			descriptor->idVendor, descriptor->idProduct);
+	get_vendor_product_with_fallback(vendor, sizeof(vendor),
+			product, sizeof(product), dev);
 	get_class_string(cls, sizeof(cls), descriptor->bDeviceClass);
 	get_subclass_string(subcls, sizeof(subcls),
 			descriptor->bDeviceClass, descriptor->bDeviceSubClass);
@@ -3598,38 +3597,6 @@ static void dumpdev(libusb_device *dev)
 }
 
 /* ---------------------------------------------------------------------- */
-
-/*
- * Attempt to get friendly vendor and product names from the udev hwdb. If
- * either or both are not present, instead populate those from the device's
- * own string descriptors.
- */
-static void get_vendor_product_with_fallback(char *vendor, int vendor_len,
-					     char *product, int product_len,
-					     libusb_device *dev)
-{
-	struct libusb_device_descriptor desc;
-	char sysfs_name[PATH_MAX];
-	bool have_vendor, have_product;
-
-	libusb_get_device_descriptor(dev, &desc);
-
-	have_vendor = !!get_vendor_string(vendor, vendor_len, desc.idVendor);
-	have_product = !!get_product_string(product, product_len,
-			desc.idVendor, desc.idProduct);
-
-	if (have_vendor && have_product)
-		return;
-
-	if (get_sysfs_name(sysfs_name, sizeof(sysfs_name), dev) >= 0) {
-		if (!have_vendor)
-			if (!read_sysfs_prop(vendor, vendor_len, sysfs_name, "manufacturer"))
-				strncpy(vendor, "[unknown]", vendor_len);
-		if (!have_product)
-			if (!read_sysfs_prop(product, product_len, sysfs_name, "product"))
-				strncpy(product, "[unknown]", product_len);
-	}
-}
 
 static int dump_one_device(libusb_context *ctx, const char *path)
 {

@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <stddef.h>
 
+#include <libusb.h>
 #include "list.h"
 #include "lsusb.h"
 #include "names.h"

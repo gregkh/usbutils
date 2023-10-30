@@ -31,6 +31,9 @@ extern int get_vendor_string(char *buf, size_t size, uint16_t vid);
 extern int get_product_string(char *buf, size_t size, uint16_t vid, uint16_t pid);
 extern int get_class_string(char *buf, size_t size, uint8_t cls);
 extern int get_subclass_string(char *buf, size_t size, uint8_t cls, uint8_t subcls);
+extern void get_vendor_product_with_fallback(char *vendor, int vendor_len,
+					     char *product, int product_len,
+					     libusb_device *dev);
 
 extern int names_init(void);
 extern void names_exit(void);
