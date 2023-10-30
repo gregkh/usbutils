@@ -250,6 +250,10 @@ void get_vendor_product_with_fallback(char *vendor, int vendor_len,
 
 	libusb_get_device_descriptor(dev, &desc);
 
+	/* set to "[unknown]" by default unless something below finds a string */
+	strncpy(vendor, "[unknown]", vendor_len);
+	strncpy(product, "[unknown]", product_len);
+
 	have_vendor = !!get_vendor_string(vendor, vendor_len, desc.idVendor);
 	have_product = !!get_product_string(product, product_len,
 			desc.idVendor, desc.idProduct);
@@ -259,11 +263,9 @@ void get_vendor_product_with_fallback(char *vendor, int vendor_len,
 
 	if (get_sysfs_name(sysfs_name, sizeof(sysfs_name), dev) >= 0) {
 		if (!have_vendor)
-			if (!read_sysfs_prop(vendor, vendor_len, sysfs_name, "manufacturer"))
-				strncpy(vendor, "[unknown]", vendor_len);
+			read_sysfs_prop(vendor, vendor_len, sysfs_name, "manufacturer");
 		if (!have_product)
-			if (!read_sysfs_prop(product, product_len, sysfs_name, "product"))
-				strncpy(product, "[unknown]", product_len);
+			read_sysfs_prop(product, product_len, sysfs_name, "product");
 	}
 }
 
