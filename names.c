@@ -192,7 +192,7 @@ int get_vendor_string(char *buf, size_t size, uint16_t vid)
                 return 0;
         *buf = 0;
         if (!(cp = names_vendor(vid)))
-		return snprintf(buf, size, "[unknown]");
+		return 0;
         return snprintf(buf, size, "%s", cp);
 }
 
@@ -204,7 +204,7 @@ int get_product_string(char *buf, size_t size, uint16_t vid, uint16_t pid)
                 return 0;
         *buf = 0;
         if (!(cp = names_product(vid, pid)))
-		return snprintf(buf, size, "[unknown]");
+		return 0;
         return snprintf(buf, size, "%s", cp);
 }
 

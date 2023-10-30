@@ -3624,11 +3624,11 @@ static void get_vendor_product_with_fallback(char *vendor, int vendor_len,
 
 	if (get_sysfs_name(sysfs_name, sizeof(sysfs_name), dev) >= 0) {
 		if (!have_vendor)
-			read_sysfs_prop(vendor, vendor_len, sysfs_name,
-					"manufacturer");
+			if (!read_sysfs_prop(vendor, vendor_len, sysfs_name, "manufacturer"))
+				strncpy(vendor, "[unknown]", vendor_len);
 		if (!have_product)
-			read_sysfs_prop(product, product_len, sysfs_name,
-					"product");
+			if (!read_sysfs_prop(product, product_len, sysfs_name, "product"))
+				strncpy(product, "[unknown]", product_len);
 	}
 }
 
