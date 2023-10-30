@@ -1,11 +1,23 @@
 # usbutils old-style "NEWS" file
 # SPDX-License-Identifier: GPL-2.0-only
 #
-# Copyright (c) 2018 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+# Copyright (c) 2018-2023 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 #
 # This file is here for people who do not have access to the git commit
 # history (i.e. packaged versions of the software).
 #
+
+usbutils 017
+============
+
+Greg Kroah-Hartman (4):
+      lsusb: fix up [unknown] vendor and product strings.
+      lsusb: fix build warning for dump_billboard_alt_mode_capability_desc()
+      lsusb: add fallback names for 'lsusb -v' output
+      names: simplify get_vendor_product_with_fallback() a bit
+
+rezso (1):
+      Honor system libdir and includedir
 
 usbutils 016
 ============

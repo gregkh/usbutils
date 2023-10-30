@@ -2,32 +2,32 @@ SPDXVersion: SPDX-2.1
 DataLicense: CC0-1.0
 SPDXID: SPDXRef-DOCUMENT
 DocumentName: usbutils
-DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-1708ff51-73e7-4a72-a6e1-b4024c422473
+DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-180c3828-889f-4269-91b3-bf08aedbc33c
 Creator: Person: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Creator: Organization: The Linux Foundation
 Creator: Tool: reuse-2.1.0
-Created: 2023-10-22T11:31:12Z
+Created: 2023-10-30T15:35:53Z
 CreatorComment: <text>This document was created automatically using available reuse information consistent with REUSE.</text>
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-44fef52516e3ec95e23861ed9bc93576
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-b9e7ea83de81ba654694a0319825abbe
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-831cc3819fced8b798fe4684a2933daa
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-027350df57fa54e44503f82db624015a
-Relationship: SPDXRef-DOCUMENT describes SPDXRef-5602bc59d91feeaf375715cd8af86273
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-ec3cc73a5d3d3ea702a40c2f89743135
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-cdf12ab6221e55b28f4b98838e547040
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-7b9b783f899cf4f05868604980c50078
-Relationship: SPDXRef-DOCUMENT describes SPDXRef-7819bbe378f7feb4fca2da6f53326b2e
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-f313b5a66c8b9f8221d0771e0fb93aa7
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-44aa7eeb8f141c45166d3a28b29c0331
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-3a918af2dcb3d9c3fe74c1cd434e6d64
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-acf90d5598ecaa661a993479612e9821
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-df32fd71045b9bb4a88d11b9d0f003c3
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-f56d25913264a0fc3cee01ea132b3d18
-Relationship: SPDXRef-DOCUMENT describes SPDXRef-105034126620b0d45b37df8df322a861
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-d2ec82f49fdccbaeaac65bf13352e106
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-c9b1b4558626a8a19e67fd4ee191f9cd
-Relationship: SPDXRef-DOCUMENT describes SPDXRef-c60fb97c070350eafb0f1250e03e2575
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-ffc7d7968d46b9e436710ff6e54a3858
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-03c4f6abffb242d6d0dccde1eff96a71
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-6d90792facd5023d8dcb11df2965cd8f
-Relationship: SPDXRef-DOCUMENT describes SPDXRef-a562421e56fbd69de9121209bed31f63
-Relationship: SPDXRef-DOCUMENT describes SPDXRef-e3f03069dfd1f375fe8fd787c72fc344
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-65a335b0688b2d6333490007be251e0b
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-e86a1beac9018216b303111be6b03e4e
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-4e9201cdcb9178949be7bb314194119b
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-56938bb7cbdeeed5f71144539de59c1b
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-a85fa05ec16314a1b736ccc31885d93b
@@ -56,7 +56,7 @@ Relationship: SPDXRef-DOCUMENT describes SPDXRef-d078b0ac4c491a839714bb5dfc6a5f7
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-399b22703e40ffcc7b6067c56232486a
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-e99e2d061caabfd49e2c6a1967bed2c5
 Relationship: SPDXRef-DOCUMENT describes SPDXRef-9fc5dcda517ad47c8685870bcc2690b9
-Relationship: SPDXRef-DOCUMENT describes SPDXRef-9eb91235521f081b75c32f5d09c1155b
+Relationship: SPDXRef-DOCUMENT describes SPDXRef-1699ddfde48c6f7856c169c534a6a1fb
 
 FileName: ./.gitignore
 SPDXID: SPDXRef-44fef52516e3ec95e23861ed9bc93576
@@ -91,11 +91,11 @@ Copyright (c) 2009 Greg Kroah-Hartman <gregkh@suse.de>
 Copyright (c) 2009 Kay Sievers <kay.sievers@vrfy.org></text>
 
 FileName: ./NEWS
-SPDXID: SPDXRef-5602bc59d91feeaf375715cd8af86273
-FileChecksum: SHA1: 03afdaf222f3d39b573b66cfc2fc770284ab1770
+SPDXID: SPDXRef-ec3cc73a5d3d3ea702a40c2f89743135
+FileChecksum: SHA1: ff4fa081730373c0f67c1f5e7c8e423518b25834
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-only
-FileCopyrightText: <text>Copyright (c) 2018 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+FileCopyrightText: <text>Copyright (c) 2018-2023 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
 
 FileName: ./README.md
 SPDXID: SPDXRef-cdf12ab6221e55b28f4b98838e547040
@@ -112,8 +112,8 @@ LicenseInfoInFile: GPL-2.0-only
 FileCopyrightText: <text>Copyright (c) 2009,2010 Greg Kroah-Hartman <gregkh@suse.de></text>
 
 FileName: ./configure.ac
-SPDXID: SPDXRef-7819bbe378f7feb4fca2da6f53326b2e
-FileChecksum: SHA1: f90201cdf008d8084ddd2fdc269affb87f60a722
+SPDXID: SPDXRef-f313b5a66c8b9f8221d0771e0fb93aa7
+FileChecksum: SHA1: 85902c20e5bc8b63de8d60e9d4b01dc5750927e8
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-only
 FileCopyrightText: <text>Copyright (c) 2009 Kay Sievers <kay.sievers@vrfy.org></text>
@@ -154,8 +154,8 @@ LicenseInfoInFile: GPL-2.0-only
 FileCopyrightText: <text>Copyright (c) 2004 Thomas Sailer <sailer@ife.ee.ethz.ch></text>
 
 FileName: ./lsusb-t.c
-SPDXID: SPDXRef-105034126620b0d45b37df8df322a861
-FileChecksum: SHA1: 4b31fea5e494dffb02f9175594601fb71c495fac
+SPDXID: SPDXRef-d2ec82f49fdccbaeaac65bf13352e106
+FileChecksum: SHA1: 85a1d50c7be77e55ca2fb16b533eae7e472a12ca
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-only
 FileCopyrightText: <text>Copyright (c) 2009 Greg Kroah-Hartman <gregkh@suse.de></text>
@@ -168,8 +168,8 @@ LicenseInfoInFile: GPL-2.0-only
 FileCopyrightText: <text>Copyright (c) 1999 Thomas Sailer <sailer@ife.ee.ethz.ch></text>
 
 FileName: ./lsusb.c
-SPDXID: SPDXRef-c60fb97c070350eafb0f1250e03e2575
-FileChecksum: SHA1: 5bbb6d5280869f4fd1debff2e3f6da5e6c25e4a2
+SPDXID: SPDXRef-ffc7d7968d46b9e436710ff6e54a3858
+FileChecksum: SHA1: c5da04a693dea3d5897b5d509edff2fbaa313533
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 1999-2001, 2003 Thomas Sailer (t.sailer@alumni.ethz.ch)
@@ -192,16 +192,16 @@ FileCopyrightText: <text>Copyright (c) 2009 Kurt Garloff <garloff@suse.de>
 Copyright (c) 2013,2018 Kurt Garloff <kurt@garloff.de></text>
 
 FileName: ./names.c
-SPDXID: SPDXRef-a562421e56fbd69de9121209bed31f63
-FileChecksum: SHA1: bcc1e3b696023265632acca0f21e8d545af8f42f
+SPDXID: SPDXRef-65a335b0688b2d6333490007be251e0b
+FileChecksum: SHA1: ae632ef0eeb0aebe1eb1816a1558eb1c00e6ae9c
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 1999, 2000 Thomas Sailer (sailer@ife.ee.ethz.ch)
 Copyright (C) 2013 Tom Gundersen (teg@jklm.no)</text>
 
 FileName: ./names.h
-SPDXID: SPDXRef-e3f03069dfd1f375fe8fd787c72fc344
-FileChecksum: SHA1: 906c923784239a7c3ac0e13079c5d6e0af994f15
+SPDXID: SPDXRef-e86a1beac9018216b303111be6b03e4e
+FileChecksum: SHA1: f629ff1a58f36f9a4f911ae9b1b2a893f0fe742a
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 1999, 2000 Thomas Sailer (sailer@ife.ee.ethz.ch)</text>
@@ -408,7 +408,7 @@ LicenseInfoInFile: GPL-2.0-only
 FileCopyrightText: <text>Copyright (c) 2009-2016 Alan Stern</text>
 
 FileName: ./usbutils.pc.in
-SPDXID: SPDXRef-9eb91235521f081b75c32f5d09c1155b
-FileChecksum: SHA1: 275b6ac01216c241d3f85fc0abba72c44374655f
+SPDXID: SPDXRef-1699ddfde48c6f7856c169c534a6a1fb
+FileChecksum: SHA1: 58a46590943a49a0ff95149ac79f1c3e90db8783
 LicenseConcluded: NOASSERTION
 FileCopyrightText: NONE
