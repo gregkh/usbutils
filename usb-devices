@@ -75,7 +75,7 @@ print_endpoint() {
 	# Extract MaxPS size (bits 0-10) and multiplicity values (bits 11-12)
 
 	maxps=$(($(printf "%4i*%s\n" $((maxps_hex & 0x7ff)) \
-                $((1 + ((maxps_hex >> 11) & 0x3))))))
+                $((1 + ($((maxps_hex >> 11)) & 0x3))))))
 
 	read -r interval < "$eppath/interval"
 
