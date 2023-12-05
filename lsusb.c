@@ -268,6 +268,7 @@ static void dump_device(
 	char cls[128], subcls[128], proto[128];
 	char mfg[128] = {0}, prod[128] = {0}, serial[128] = {0};
 	char sysfs_name[PATH_MAX];
+	const char *negotiated_speed;
 
 	get_vendor_product_with_fallback(vendor, sizeof(vendor),
 			product, sizeof(product), dev);
@@ -282,6 +283,28 @@ static void dump_device(
 		read_sysfs_prop(prod, sizeof(prod), sysfs_name, "product");
 		read_sysfs_prop(serial, sizeof(serial), sysfs_name, "serial");
 	}
+
+	switch (libusb_get_device_speed(dev)) {
+		case LIBUSB_SPEED_LOW:
+			negotiated_speed = "Low Speed (1Mbps)";
+			break;
+		case LIBUSB_SPEED_FULL:
+			negotiated_speed = "Full Speed (12Mbps)";
+			break;
+		case LIBUSB_SPEED_HIGH:
+			negotiated_speed = "High Speed (480Mbps)";
+			break;
+		case LIBUSB_SPEED_SUPER:
+			negotiated_speed = "SuperSpeed (5Gbps)";
+			break;
+		case LIBUSB_SPEED_SUPER_PLUS:
+			negotiated_speed = "SuperSpeed+ (10Gbps)";
+			break;
+		default:
+			negotiated_speed = "Unknown";
+			break;
+	}
+	printf("Negotiated speed :        %s\n", negotiated_speed);
 
 	printf("Device Descriptor:\n"
 	       "  bLength             %5u\n"
