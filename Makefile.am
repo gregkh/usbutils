@@ -49,7 +49,8 @@ man_MANS = \
 	lsusb.8	\
 	lsusb.py.1	\
 	usbhid-dump.8 \
-	usb-devices.1
+	usb-devices.1 \
+	usbreset.1
 
 EXTRA_DIST = \
 	lsusb.8.in \
@@ -58,6 +59,7 @@ EXTRA_DIST = \
 	usb-devices.1.in \
 	usb-devices \
 	lsusb.py.in \
+	usbreset.1.in \
 	usbreset.c \
 	LICENSES/GPL-2.0-only.txt \
 	LICENSES/GPL-3.0-only.txt
@@ -80,10 +82,14 @@ usbhid-dump.8: $(srcdir)/usbhid-dump.8.in
 usb-devices.1: $(srcdir)/usb-devices.1.in
 	sed 's|VERSION|$(VERSION)|g' $< >$@
 
+usbreset.1: $(srcdir)/usbreset.1.in
+	sed 's|VERSION|$(VERSION)|g' $< >$@
+
 DISTCLEANFILES = \
 	lsusb.py \
 	lsusb.8 \
 	usb-devices.1 \
+	usbreset.1 \
 	usbhid-dump.8
 
 distclean-local:
