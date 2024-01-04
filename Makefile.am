@@ -82,6 +82,7 @@ usb-devices.1: $(srcdir)/usb-devices.1.in
 
 DISTCLEANFILES = \
 	lsusb.py \
+	lsusb.py.1 \
 	lsusb.8 \
 	usb-devices.1 \
 	usbhid-dump.8
