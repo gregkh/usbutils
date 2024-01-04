@@ -15,4 +15,4 @@ Requires: libusb-1.0 >= 1.0.14  libudev >= 196
 Conflicts:
 Libs: -L${libdir}
 Libs.private: @LIBUSB_LIBS@ @UDEV_LIBS@
-Cflags: @CFLAGS@ @LIBUSB_CFLAGS@ @UDEV_CFLAGS@
+Cflags: -I${includedir}
