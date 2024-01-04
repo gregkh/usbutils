@@ -87,6 +87,7 @@ usbreset.1: $(srcdir)/usbreset.1.in
 
 DISTCLEANFILES = \
 	lsusb.py \
+	lsusb.py.1 \
 	lsusb.8 \
 	usb-devices.1 \
 	usbreset.1 \
