@@ -1,6 +1,6 @@
 .\" SPDX-License-Identifier: GPL-2.0-only
 .\" Copyright (c) 2023 Aurelien Jarno <aurelien@aurel32.net>
-.TH usbreset 1 "04 January 2024" "usbutils-VERSION" "Linux USB Utilities"
+.TH usbreset 1 "04 January 2024" "usbutils-@VERSION@" "Linux USB Utilities"
 .IX usbreset
 .SH NAME
 usbreset \- send a USB port reset to a USB device

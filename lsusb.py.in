@@ -29,7 +29,7 @@ showwakeup = False
 
 prefix = "/sys/bus/usb/devices/"
 usbids = [
-	"@usbids@",
+	"@DATADIR@/usb.ids",
 	"/usr/share/hwdata/usb.ids",
 	"/usr/share/usb.ids",
 ]

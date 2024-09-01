@@ -3715,7 +3715,7 @@ int main(int argc, char *argv[])
 			long_options, NULL)) != EOF) {
 		switch (c) {
 		case 'V':
-			printf("lsusb (" PACKAGE ") " VERSION "\n");
+			printf("lsusb (" PACKAGE_NAME ") " VERSION "\n");
 			return EXIT_SUCCESS;
 		case 'v':
 			verblevel++;

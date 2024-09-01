@@ -509,11 +509,7 @@ run(bool            dump_descriptor,
     LIBUSB_GUARD(libusb_init(&ctx), "create libusb context");
 
     /* Set libusb debug level to informational only */
-#if HAVE_LIBUSB_SET_OPTION
-    libusb_set_option(ctx, LIBUSB_OPTION_LOG_LEVEL, LIBUSB_LOG_LEVEL_INFO);
-#else
     libusb_set_debug(ctx, LIBUSB_LOG_LEVEL_INFO);
-#endif
 
     /* Open device list */
     LIBUSB_GUARD(uhd_dev_list_open(ctx, bus_num, dev_addr,
@@ -777,7 +773,7 @@ version(FILE *stream)
     return
         fprintf(
             stream,
-PACKAGE_STRING "\n"
+"usbhid-dump (" PACKAGE_NAME ") " VERSION "\n"
 "Copyright (C) 2010 Nikolai Kondrashov\n"
 "License GPLv2+: GNU GPL version 2 or later <http://gnu.org/licenses/gpl.html>.\n"
 "\n"
