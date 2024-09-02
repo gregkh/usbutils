@@ -17,11 +17,6 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdbool.h>
-
-#ifdef HAVE_BYTESWAP_H
-#include <byteswap.h>
-#endif
-
 #include <libusb.h>
 #include <unistd.h>
 
