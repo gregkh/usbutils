@@ -2130,7 +2130,7 @@ static void dump_ccid_device(const unsigned char *buf)
 	       "        bDescriptorType     %5u\n"
 	       "        bcdCCID             %2x.%02x",
 	       buf[0], buf[1], buf[3], buf[2]);
-	if (buf[3] != 1 || ( buf[2] != 0 && buf[2] != 0x10))
+	if (buf[3] != 1 || (buf[2] != 0 && buf[2] != 0x10))
 		fputs("  (Warning: Only accurate for version 1.0/1.1)", stdout);
 	putchar('\n');
 
