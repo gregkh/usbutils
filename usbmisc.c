@@ -14,14 +14,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <limits.h>
-
-#ifdef HAVE_ICONV
 #include <iconv.h>
-#endif
-
-#ifdef HAVE_NL_LANGINFO
 #include <langinfo.h>
-#endif
 
 #include "usbmisc.h"
 
@@ -157,12 +151,13 @@ static char *get_dev_string_ascii(libusb_device_handle *dev, size_t size,
 	return buf;
 }
 
-#if defined(HAVE_NL_LANGINFO) && defined(HAVE_ICONV)
 static uint16_t get_any_langid(libusb_device_handle *dev)
 {
 	unsigned char buf[4];
 	int ret = libusb_get_string_descriptor(dev, 0, 0, buf, sizeof buf);
-	if (ret != sizeof buf) return 0;
+
+	if (ret != sizeof buf)
+		return 0;
 	return buf[2] | (buf[3] << 8);
 }
 
@@ -194,21 +189,19 @@ static char *usb_string_to_native(char * str, size_t len)
 	*result_end = 0;
 	return result;
 }
-#endif
 
 char *get_dev_string(libusb_device_handle *dev, uint8_t id)
 {
-#if defined(HAVE_NL_LANGINFO) && defined(HAVE_ICONV)
 	int ret;
 	char *buf, unicode_buf[254];
 	uint16_t langid;
-#endif
 
-	if (!dev || !id) return strdup("");
+	if (!dev || !id)
+		return strdup("");
 
-#if defined(HAVE_NL_LANGINFO) && defined(HAVE_ICONV)
 	langid = get_any_langid(dev);
-	if (!langid) return strdup("(error)");
+	if (!langid)
+		return strdup("(error)");
 
 	/*
 	 * Some devices lie about their string size, so initialize
@@ -226,11 +219,8 @@ char *get_dev_string(libusb_device_handle *dev, uint8_t id)
 
 	buf = usb_string_to_native(unicode_buf + 2,
 	                           ((unsigned char) unicode_buf[0] - 2) / 2);
-
-	if (!buf) return get_dev_string_ascii(dev, 127, id);
+	if (!buf)
+		return get_dev_string_ascii(dev, 127, id);
 
 	return buf;
-#else
-	return get_dev_string_ascii(dev, 127, id);
-#endif
 }
