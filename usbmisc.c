@@ -43,6 +43,7 @@ static int readlink_recursive(const char *path, char *buf, size_t bufsize)
 		return readlink_recursive(temp, buf, bufsize);
 	} else {
 		strncpy(buf, path, bufsize);
+		buf[bufsize - 1] = 0;
 		return strlen(buf);
 	}
 }
