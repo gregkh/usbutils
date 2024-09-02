@@ -5,11 +5,6 @@
  * Copyright (C) 1999, 2000 Thomas Sailer (sailer@ife.ee.ethz.ch)
  * Copyright (C) 2013 Tom Gundersen (teg@jklm.no)
  */
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <stdint.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -25,6 +20,7 @@
 #include <libusb.h>
 #include <libudev.h>
 
+#include "config.h"
 #include "usb-spec.h"
 #include "names.h"
 #include "sysfs.h"

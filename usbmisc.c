@@ -4,11 +4,6 @@
  *
  * Copyright (C) 2003 Aurelien Jarno (aurelien@aurel32.net)
  */
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,6 +12,7 @@
 #include <iconv.h>
 #include <langinfo.h>
 
+#include "config.h"
 #include "usbmisc.h"
 
 /* ---------------------------------------------------------------------- */
