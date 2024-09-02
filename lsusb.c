@@ -3118,7 +3118,7 @@ dump_device_status(libusb_device_handle *fd, int otg, int super_speed)
 		printf("  Debug Mode\n");
 }
 
-static void dump_usb2_device_capability_desc(unsigned char *buf)
+static void dump_usb2_device_capability_desc(unsigned char *buf, bool lpm_required)
 {
 	unsigned int wide;
 
@@ -3130,8 +3130,10 @@ static void dump_usb2_device_capability_desc(unsigned char *buf)
 			"    bDevCapabilityType  %5u\n"
 			"    bmAttributes   0x%08x\n",
 			buf[0], buf[1], buf[2], wide);
-	if (!(wide & 0x02))
+	if ((lpm_required || (wide & 0x04)) && !(wide & 0x02))
 		printf("      (Missing must-be-set LPM bit!)\n");
+	else if (!lpm_required && !(wide & 0x02))
+		printf("      Link Power Management (LPM) not supported\n");
 	else if (!(wide & 0x04))
 		printf("      HIRD Link Power Management (LPM)"
 				" Supported\n");
@@ -3429,7 +3431,7 @@ static void dump_billboard_alt_mode_capability_desc(unsigned char *buf)
 			buf[4], buf[5], buf[6], buf[7]);
 }
 
-static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp)
+static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp, bool lpm_required)
 {
 	/* Total length of BOS descriptors varies.
 	 * Read first static 5 bytes which include the total length before
@@ -3496,7 +3498,7 @@ static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp)
 			/* FIXME */
 			break;
 		case USB_DC_20_EXTENSION:
-			dump_usb2_device_capability_desc(buf);
+			dump_usb2_device_capability_desc(buf, lpm_required);
 			break;
 		case USB_DC_SUPERSPEED:
 			dump_ss_device_capability_desc(buf);
@@ -3580,7 +3582,7 @@ static void dumpdev(libusb_device *dev)
 		return;
 
 	if (desc.bcdUSB >= 0x0201)
-		dump_bos_descriptor(udev, &has_ssp);
+		dump_bos_descriptor(udev, &has_ssp, desc.bcdUSB >= 0x0210);
 	if (desc.bDeviceClass == LIBUSB_CLASS_HUB)
 		do_hub(udev, desc.bDeviceProtocol, desc.bcdUSB, has_ssp);
 	if (desc.bcdUSB == 0x0200) {
