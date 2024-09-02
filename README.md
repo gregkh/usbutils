@@ -18,28 +18,14 @@ To work with the "raw" repo, after cloning it just do:
 
 	./autogen.sh
 
-Or if you like doing things "by hand" you can try the following:
+which will build everything and place the binaries into the `build/`
+subdirectory.
 
-Get the usbhid-dump git submodule:
+usbutils uses meson to build, so if you wish to just build by hand you can do:
 
-	git submodule init
-	git submodule update
-
-Initialize autobuild with:
-
-	autoreconf --install --symlink
-
-Configure the project with:
-
-	./configure
-
-Build everything with:
-
-	make
-
-Install it, if you really want to, with:
-
-	make install
+	meson setup build
+	cd build/
+	meson compile
 
 ## Source location
 
