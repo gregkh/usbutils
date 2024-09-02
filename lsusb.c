@@ -3426,9 +3426,9 @@ static void dump_billboard_alt_mode_capability_desc(unsigned char *buf)
 			"    bDescriptorType         %5u\n"
 			"    bDevCapabilityType      %5u\n"
 			"    bIndex                  %5u\n"
-			"    dwAlternateModeVdo          0x%02X%02X%02X%02X\n",
+			"    dwAlternateModeVdo          0x%08X\n",
 			buf[0], buf[1], buf[2], buf[3],
-			buf[4], buf[5], buf[6], buf[7]);
+			convert_le_u32(&buf[4]));
 }
 
 static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp, bool lpm_required)
