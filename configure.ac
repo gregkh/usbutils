@@ -20,7 +20,6 @@ PKG_CHECK_MODULES(UDEV, libudev >= 196)
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
-	usbutils.pc
 	Makefile
 ])
 AC_CONFIG_SUBDIRS([usbhid-dump])

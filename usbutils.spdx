@@ -406,9 +406,3 @@ FileChecksum: SHA1: 4c5fc8c46de68241ca99b1e16fc13f832d2739c7
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-only
 FileCopyrightText: <text>Copyright (c) 2009-2016 Alan Stern</text>
-
-FileName: ./usbutils.pc.in
-SPDXID: SPDXRef-1699ddfde48c6f7856c169c534a6a1fb
-FileChecksum: SHA1: 58a46590943a49a0ff95149ac79f1c3e90db8783
-LicenseConcluded: NOASSERTION
-FileCopyrightText: NONE
