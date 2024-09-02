@@ -3685,7 +3685,7 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 			dumpdev(dev);
 	}
 
-	libusb_free_device_list(list, 0);
+	libusb_free_device_list(list, 1);
 error:
 	return status;
 }
