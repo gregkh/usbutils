@@ -2125,8 +2125,8 @@ static void dump_ccid_device(const unsigned char *buf)
 	       "        bDescriptorType     %5u\n"
 	       "        bcdCCID             %2x.%02x",
 	       buf[0], buf[1], buf[3], buf[2]);
-	if (buf[3] != 1 || buf[2] != 0)
-		fputs("  (Warning: Only accurate for version 1.0)", stdout);
+	if (buf[3] != 1 || (buf[2] != 0 && buf[2] != 0x10))
+		fputs("  (Warning: Only accurate for version 1.0/1.1)", stdout);
 	putchar('\n');
 
 	printf("        nMaxSlotIndex       %5u\n"
@@ -2195,9 +2195,9 @@ static void dump_ccid_device(const unsigned char *buf)
 		fputs("          Auto clock change\n", stdout);
 	if ((us & 0x0020))
 		fputs("          Auto baud rate change\n", stdout);
-	if ((us & 0x0040))
+	if ((us & (0x0040 | 0x0080)) == 0x0040)
 		fputs("          Auto parameter negotiation made by CCID\n", stdout);
-	else if ((us & 0x0080))
+	else if ((us & (0x0040 | 0x0080)) == 0x0080)
 		fputs("          Auto PPS made by CCID\n", stdout);
 	else if ((us & (0x0040 | 0x0080)))
 		fputs("        WARNING: conflicting negotiation features\n", stdout);
@@ -2205,18 +2205,23 @@ static void dump_ccid_device(const unsigned char *buf)
 	if ((us & 0x0100))
 		fputs("          CCID can set ICC in clock stop mode\n", stdout);
 	if ((us & 0x0200))
-		fputs("          NAD value other than 0x00 accepted\n", stdout);
+		fputs("          NAD value other than 0x00 accepted (T=1)\n", stdout);
 	if ((us & 0x0400))
-		fputs("          Auto IFSD exchange\n", stdout);
+		fputs("          Auto IFSD exchange (T=1)\n", stdout);
 
-	if ((us & 0x00010000))
+	if ((us & 0x00070000) == 0)
+		fputs("          Character level exchange\n", stdout);
+	else if ((us & 0x00070000) == 0x00010000)
 		fputs("          TPDU level exchange\n", stdout);
-	else if ((us & 0x00020000))
+	else if ((us & 0x00070000) == 0x00020000)
 		fputs("          Short APDU level exchange\n", stdout);
-	else if ((us & 0x00040000))
+	else if ((us & 0x00070000) == 0x00040000)
 		fputs("          Short and extended APDU level exchange\n", stdout);
 	else if ((us & 0x00070000))
 		fputs("        WARNING: conflicting exchange levels\n", stdout);
+
+	if ((us & 0x00100000))
+		fputs("          USB wakeup on ICC insertion and removal\n", stdout);
 
 	us = convert_le_u32(buf+44);
 	printf("        dwMaxCCIDMsgLen     %5u\n", us);
