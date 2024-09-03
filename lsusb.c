@@ -111,6 +111,11 @@
 #define WEBUSB_GET_URL		0x02
 #define USB_DT_WEBUSB_URL	0x03
 
+/* New speeds are only in newer versions of libusb */
+#ifndef LIBUSB_SPEED_SUPER_PLUS_X2
+#define LIBUSB_SPEED_SUPER_PLUS_X2	6
+#endif
+
 unsigned int verblevel = VERBLEVEL_DEFAULT;
 static int do_report_desc = 1;
 static const char * const encryption_type[] = {
@@ -300,11 +305,15 @@ static void dump_device(
 		case LIBUSB_SPEED_SUPER_PLUS:
 			negotiated_speed = "SuperSpeed+ (10Gbps)";
 			break;
+		case LIBUSB_SPEED_SUPER_PLUS_X2:
+			negotiated_speed = "SuperSpeed++ (20Gbps)";
+			break;
+		case LIBUSB_SPEED_UNKNOWN:
 		default:
 			negotiated_speed = "Unknown";
 			break;
 	}
-	printf("Negotiated speed :        %s\n", negotiated_speed);
+	printf("Negotiated speed: %s\n", negotiated_speed);
 
 	printf("Device Descriptor:\n"
 	       "  bLength             %5u\n"
