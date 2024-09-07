@@ -1,13 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # Copyright (c) 2024 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-pkg = import('pkgconfig')
-
-cc = meson.get_compiler('c')
-
-config = configuration_data()
-config.set_quoted('PACKAGE_NAME', meson.project_name())
-config.set_quoted('VERSION', meson.project_version())
 configure_file(output: 'config.h', configuration: config)
 
 sources = [
