@@ -36,3 +36,11 @@ preference by the maintainer:
     https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usbutils.git/
     https://git.sr.ht/~gregkh/usbutils
     https://github.com/gregkh/usbutils
+
+## Contributing
+
+If you have patches or suggestions, you can submit them either via email
+[to the maintainer] or via a [pull request].
+
+[to the maintainer]: mailto:gregkh@linuxfoundation.org
+[pull request](https://github.com/gregkh/usbutils/pulls)
