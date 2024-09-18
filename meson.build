@@ -15,15 +15,21 @@ pkg = import('pkgconfig')
 # Compiler stuff
 cc = meson.get_compiler('c')
 
-# Note, when building with autotools, the default autogen.sh script had these C
-# flags set, we should probably also enable them, if not more, here as well in
-# the future.
-  #MYCFLAGS="-g -Wall \
-  # -Wmissing-declarations -Wmissing-prototypes \
-  #-Wnested-externs -Wpointer-arith \
-  #-Wpointer-arith -Wsign-compare -Wchar-subscripts \
-  #-Wstrict-prototypes -Wshadow \
-  #-Wformat=2 -Wtype-limits"
+add_project_arguments(
+  cc.get_supported_arguments([
+    '-Wchar-subscripts',
+    '-Wformat=2',
+    '-Wmissing-declarations',
+    '-Wmissing-prototypes',
+    '-Wnested-externs',
+    '-Wpointer-arith',
+    '-Wshadow',
+    '-Wsign-compare',
+    '-Wstrict-prototypes',
+    '-Wtype-limits',
+  ]),
+  language: 'c',
+)
 
 # Configuration information
 config = configuration_data()
