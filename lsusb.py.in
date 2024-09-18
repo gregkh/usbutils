@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 # SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only
 #
-# lsusb-VERSION.py
-#
 # Displays your USB devices in reasonable form.
 #
 # Copyright (c) 2009 Kurt Garloff <garloff@suse.de>
