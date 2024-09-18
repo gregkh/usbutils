@@ -1,6 +1,6 @@
 .\"SPDX-License-Identifier: GPL-2.0-or-later
 .\" Copyright Nikolai Kondrashov <spbnick@gmail.com>
-.TH usbhid-dump "8" "February 2012" "usbutils-@VERSION@" "Linux USB Utilities"
+.TH usbhid-dump "8" "February 2012" "usbutils" "Linux USB Utilities"
 .IX usbhid-dump
 .SH NAME
 usbhid-dump \- dump USB HID device report descriptors and streams

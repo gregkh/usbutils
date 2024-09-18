@@ -1,7 +1,7 @@
 .\"SPDX-License-Identifier: GPL-2.0-only
 .\"Copyright (c) 1999 Thomas Sailer <sailer@ife.ee.ethz.ch>
 .\"Copyright (c) 2020 Sam Morris <sam@robots.org.uk>
-.TH lsusb.py 1 "03 January 2024" "usbutils-@VERSION@" "Linux USB Utilities"
+.TH lsusb.py 1 "03 January 2024" "usbutils" "Linux USB Utilities"
 .IX lsusb.py
 .SH NAME
 lsusb.py \- list USB devices
