@@ -20,7 +20,6 @@
 #include <libusb.h>
 #include <libudev.h>
 
-#include "config.h"
 #include "usb-spec.h"
 #include "names.h"
 #include "sysfs.h"

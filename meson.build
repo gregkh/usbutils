@@ -29,7 +29,9 @@ cc = meson.get_compiler('c')
 config = configuration_data()
 config.set_quoted('PACKAGE_NAME', meson.project_name())
 config.set_quoted('VERSION', meson.project_version())
-configure_file(output: 'config.h', configuration: config)
+config_h = configure_file(output: 'config.h', configuration: config)
+
+add_project_arguments('-include', 'config.h', language : 'c')
 
 # Build usbhid-dump in a subdir
 subdir('usbhid-dump')

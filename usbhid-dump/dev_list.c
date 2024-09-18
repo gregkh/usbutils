@@ -5,8 +5,6 @@
  * Copyright (C) 2010 Nikolai Kondrashov <spbnick@gmail.com>
  */
 
-#include "config.h"
-
 #include "misc.h"
 #include "dev_list.h"
 #include <assert.h>

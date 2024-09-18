@@ -12,7 +12,6 @@
 #include <iconv.h>
 #include <langinfo.h>
 
-#include "config.h"
 #include "usbmisc.h"
 
 /* ---------------------------------------------------------------------- */
