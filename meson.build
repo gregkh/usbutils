@@ -142,11 +142,7 @@ install_data(usb_devices_sources, install_dir: get_option('bindir'), install_mod
 #############################
 # lsusb.py build instructions
 #############################
-lsusb_py_conf = configuration_data()
-lsusb_py_conf.set('VERSION', meson.project_version())
-lsusb_py_conf.set('DATADIR', get_option('datadir'))
-
-lsusb_py = configure_file(input: files('lsusb.py.in'), output: 'lsusb.py', configuration: lsusb_py_conf)
+lsusb_py = configure_file(input: files('lsusb.py.in'), output: 'lsusb.py', configuration: config)
 # Also a hack, like was done for usb-devices, as this is "just" a script and
 # doesn't need to be compiled.
 install_data(lsusb_py, install_dir: get_option('bindir'), install_mode: 'rwxr-xr-x')
