@@ -11,8 +11,8 @@ a USB device (i.e. a device you plug into a USB host.)
 
 ## Building and installing
 
-Note, usbutils depends on libusb, be sure that library is properly
-installed first.
+Note, usbutils depends on libusb and libudev, be sure that libraries are
+properly installed first.
 
 To work with the "raw" repo, after cloning it just do:
 
