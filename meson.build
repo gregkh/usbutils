@@ -1,7 +1,14 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # Copyright (c) 2024 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-project('usbutils', 'c', version: '018')
+project(
+  'usbutils',
+  'c',
+  version: '018',
+  license: ['GPL-2.0-only', 'GPL-2.0-or-later','GPL-2.0-or-later'],
+  meson_version : '>=0.60.0',
+  default_options : ['c_std=gnu99', 'warning_level=2', 'prefix=/usr']
+)
 
 pkg = import('pkgconfig')
 
