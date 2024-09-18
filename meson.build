@@ -51,6 +51,7 @@ add_project_arguments(
     '-Wno-unused-function',
     '-Wno-deprecated-declarations',
     # should be removed and the code fixed
+    '-Wno-discarded-qualifiers',
     '-Wno-incompatible-pointer-types-discards-qualifiers',
     '-Wno-missing-field-initializers',
   ]),
