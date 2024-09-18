@@ -68,7 +68,7 @@ lsusb_sources = [
 ]
 
 libudev = dependency('libudev', version: '>= 196')
-libusb = dependency('libusb-1.0', version: '>= 1.0.12')
+libusb = dependency('libusb-1.0', version: '>= 1.0.22')
 
 executable('lsusb', lsusb_sources, dependencies: [libusb, libudev], install: true)
 
