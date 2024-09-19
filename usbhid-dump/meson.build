@@ -1,8 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # Copyright (c) 2024 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-configure_file(output: 'config.h', configuration: config)
-
 sources = [
   'dev.c',
   'dev.h',

@@ -5,8 +5,6 @@
  * Copyright (C) 2017-2018 Michael Drake <michael.drake@codethink.co.uk>
  */
 
-#include "config.h"
-
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>

@@ -1,28 +1,70 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # Copyright (c) 2024 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-project('usbutils', 'c', version: '018')
+project(
+  'usbutils',
+  'c',
+  version: '018',
+  license: ['GPL-2.0-only', 'GPL-2.0-or-later','GPL-2.0-or-later'],
+  meson_version : '>=0.60.0',
+  default_options : ['c_std=gnu99', 'warning_level=2', 'prefix=/usr']
+)
 
 pkg = import('pkgconfig')
 
 # Compiler stuff
 cc = meson.get_compiler('c')
 
-# Note, when building with autotools, the default autogen.sh script had these C
-# flags set, we should probably also enable them, if not more, here as well in
-# the future.
-  #MYCFLAGS="-g -Wall \
-  # -Wmissing-declarations -Wmissing-prototypes \
-  #-Wnested-externs -Wpointer-arith \
-  #-Wpointer-arith -Wsign-compare -Wchar-subscripts \
-  #-Wstrict-prototypes -Wshadow \
-  #-Wformat=2 -Wtype-limits"
+add_project_arguments(
+  cc.get_supported_arguments([
+    '-Wbad-function-cast',
+  #  '-Wcast-align',
+    '-Wchar-subscripts',
+  #  '-Wempty-body',
+    '-Wformat=2',
+  #  '-Wformat',
+  #  '-Wformat-nonliteral',
+  #  '-Wformat-security',
+  #  '-Wformat-y2k',
+    '-Winit-self',
+    '-Winline',
+    '-Wmissing-declarations',
+    '-Wmissing-include-dirs',
+    '-Wmissing-prototypes',
+    '-Wnested-externs',
+    '-Wold-style-definition',
+    '-Wpointer-arith',
+    '-Wredundant-decls',
+    '-Wshadow',
+    '-Wsign-compare',
+    '-Wstrict-prototypes',
+    '-Wswitch-enum',
+    '-Wtype-limits',
+    '-Wundef',
+    '-Wuninitialized',
+    '-Wunused',
+    '-Wunused-variable',
+    '-Wwrite-strings',
+    '-fdiagnostics-color=auto',
+    # warnings disabled on purpose
+    '-Wno-unused-parameter',
+    '-Wno-unused-function',
+    '-Wno-deprecated-declarations',
+    # should be removed and the code fixed
+    '-Wno-discarded-qualifiers',
+    '-Wno-incompatible-pointer-types-discards-qualifiers',
+    '-Wno-missing-field-initializers',
+  ]),
+  language: 'c',
+)
 
 # Configuration information
 config = configuration_data()
 config.set_quoted('PACKAGE_NAME', meson.project_name())
 config.set_quoted('VERSION', meson.project_version())
-configure_file(output: 'config.h', configuration: config)
+config_h = configure_file(output: 'config.h', configuration: config)
+
+add_project_arguments('-include', 'config.h', language : 'c')
 
 # Build usbhid-dump in a subdir
 subdir('usbhid-dump')
@@ -68,7 +110,7 @@ lsusb_sources = [
 ]
 
 libudev = dependency('libudev', version: '>= 196')
-libusb = dependency('libusb-1.0', version: '>= 1.0.12')
+libusb = dependency('libusb-1.0', version: '>= 1.0.22')
 
 executable('lsusb', lsusb_sources, dependencies: [libusb, libudev], install: true)
 
@@ -100,11 +142,7 @@ install_data(usb_devices_sources, install_dir: get_option('bindir'), install_mod
 #############################
 # lsusb.py build instructions
 #############################
-lsusb_py_conf = configuration_data()
-lsusb_py_conf.set('VERSION', meson.project_version())
-lsusb_py_conf.set('DATADIR', get_option('datadir'))
-
-lsusb_py = configure_file(input: files('lsusb.py.in'), output: 'lsusb.py', configuration: lsusb_py_conf)
+lsusb_py = configure_file(input: files('lsusb.py.in'), output: 'lsusb.py', configuration: config)
 # Also a hack, like was done for usb-devices, as this is "just" a script and
 # doesn't need to be compiled.
 install_data(lsusb_py, install_dir: get_option('bindir'), install_mode: 'rwxr-xr-x')

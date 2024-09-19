@@ -6,7 +6,6 @@
  * Copyright (C) 2003-2005 David Brownell
  */
 
-#include "config.h"
 #include <stdint.h>
 #include <sys/stat.h>
 #include <fcntl.h>

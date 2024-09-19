@@ -5,8 +5,6 @@
  * Copyright (C) 2010 Nikolai Kondrashov <spbnick@gmail.com>
  */
 
-#include "config.h"
-
 #include "iface.h"
 #include <assert.h>
 #include <stdlib.h>

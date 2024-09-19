@@ -1,6 +1,6 @@
 .\"SPDX-License-Identifier: GPL-2.0-only
 .\"Copyright (c) 1999 Thomas Sailer <sailer@ife.ee.ethz.ch>
-.TH lsusb 8 "11 February 2019" "usbutils-@VERSION@" "Linux USB Utilities"
+.TH lsusb 8 "11 February 2019" "usbutils" "Linux USB Utilities"
 .IX lsusb
 .SH NAME
 lsusb \- list USB devices

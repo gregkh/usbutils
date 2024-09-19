@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 # SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only
 #
-# lsusb-VERSION.py
-#
 # Displays your USB devices in reasonable form.
 #
 # Copyright (c) 2009 Kurt Garloff <garloff@suse.de>
@@ -29,7 +27,6 @@ showwakeup = False
 
 prefix = "/sys/bus/usb/devices/"
 usbids = [
-	"@DATADIR@/usb.ids",
 	"/usr/share/hwdata/usb.ids",
 	"/usr/share/usb.ids",
 ]
