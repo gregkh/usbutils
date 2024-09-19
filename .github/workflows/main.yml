@@ -19,6 +19,8 @@ jobs:
       matrix:
         include:
           - container: 'alpine:latest'
+          - container: 'archlinux:base-devel'
+            crossfile: 'arch-cross.ini'
 
     container:
       image: ${{ matrix.container }}
@@ -31,6 +33,8 @@ jobs:
 
       - uses: ./.github/actions/setup-alpine
         if: ${{ startsWith(matrix.container, 'alpine') }}
+      - uses: ./.github/actions/setup-archlinux
+        if: ${{ startsWith(matrix.container, 'archlinux') }}
 
       - name: Checkout the whole project
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -54,3 +58,14 @@ jobs:
 
       - name: distcheck
         run: meson dist -C build
+
+      - name: configure (32bit)
+        if: ${{ matrix.crossfile != '' }}
+        run: |
+          cp .github/cross-files/${{ matrix.crossfile }} cross.ini
+          mkdir build32 && cd build32
+          meson setup --native-file ../build-dev.ini --cross-file ../cross.ini . ..
+
+      - name: build (32bit)
+        if: ${{ matrix.crossfile != '' }}
+        run: meson compile -C build32
