@@ -77,15 +77,8 @@ mandir = join_paths(get_option('prefix'), get_option('mandir'))
 man1dir = join_paths(mandir, 'man1')
 man8dir = join_paths(mandir, 'man8')
 
-# This can probably be cleaned up a lot to work on a list
-# instead of doing it by hand.
-usb_devices_man = configure_file(input: files('usb-devices.1.in'), output: 'usb-devices.1', configuration: config)
-lsusb_py_man    = configure_file(input: files('lsusb.py.1.in'),    output: 'lsusb.py.1',    configuration: config)
-install_man([usb_devices_man, lsusb_py_man], install_dir: man1dir)
-
-lsusb_man       = configure_file(input: files('lsusb.8.in'),       output: 'lsusb.8',       configuration: config)
-usbhid_dump_man = configure_file(input: files('usbhid-dump.8.in'), output: 'usbhid-dump.8', configuration: config)
-install_man([lsusb_man, usbhid_dump_man], install_dir: man8dir)
+install_man(files('usb-devices.1', 'lsusb.py.1'), install_dir: man1dir)
+install_man(files('lsusb.8', 'usbhid-dump.8'), install_dir: man8dir)
 
 
 ##########################
@@ -122,8 +115,6 @@ usbreset_sources = [
   'usbreset.c'
 ]
 
-usbreset_man = configure_file(input: files('usbreset.1.in'), output: 'usbreset.1', configuration: config)
-
 # By default, usbreset does not get installed as it could cause problems, it's
 # in the repo for those that wish to try it out.
 executable('usbreset', usbreset_sources, install: false)
@@ -142,7 +133,6 @@ install_data(usb_devices_sources, install_dir: get_option('bindir'), install_mod
 #############################
 # lsusb.py build instructions
 #############################
-lsusb_py = configure_file(input: files('lsusb.py.in'), output: 'lsusb.py', configuration: config)
 # Also a hack, like was done for usb-devices, as this is "just" a script and
 # doesn't need to be compiled.
-install_data(lsusb_py, install_dir: get_option('bindir'), install_mode: 'rwxr-xr-x')
+install_data(files('lsusb.py'), install_dir: get_option('bindir'), install_mode: 'rwxr-xr-x')
