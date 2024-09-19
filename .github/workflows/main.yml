@@ -21,6 +21,8 @@ jobs:
           - container: 'alpine:latest'
           - container: 'archlinux:base-devel'
             crossfile: 'arch-cross.ini'
+          - container: 'debian:unstable'
+            crossfile: 'debian-cross.ini'
 
     container:
       image: ${{ matrix.container }}
@@ -35,6 +37,8 @@ jobs:
         if: ${{ startsWith(matrix.container, 'alpine') }}
       - uses: ./.github/actions/setup-archlinux
         if: ${{ startsWith(matrix.container, 'archlinux') }}
+      - uses: ./.github/actions/setup-debian
+        if: ${{ startsWith(matrix.container, 'debian') }}
 
       - name: Checkout the whole project
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
