@@ -23,6 +23,7 @@ jobs:
             crossfile: 'arch-cross.ini'
           - container: 'debian:unstable'
             crossfile: 'debian-cross.ini'
+          - container: 'fedora:latest'
 
     container:
       image: ${{ matrix.container }}
@@ -39,6 +40,8 @@ jobs:
         if: ${{ startsWith(matrix.container, 'archlinux') }}
       - uses: ./.github/actions/setup-debian
         if: ${{ startsWith(matrix.container, 'debian') }}
+      - uses: ./.github/actions/setup-fedora
+        if: ${{ startsWith(matrix.container, 'fedora') }}
 
       - name: Checkout the whole project
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
