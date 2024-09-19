@@ -151,7 +151,7 @@ static void dump_midistreaming_interface(libusb_device_handle *dev, const unsign
 static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigned char *buf, int protocol);
 static void dump_videostreaming_interface(const unsigned char *buf);
 static void dump_dfu_interface(const unsigned char *buf);
-static char *dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, char *indent);
+static void dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, const char *indent);
 static void dump_hid_device(libusb_device_handle *dev, const struct libusb_interface_descriptor *interface, const unsigned char *buf);
 static void dump_printer_device(libusb_device_handle *dev, const struct libusb_interface_descriptor *interface, const unsigned char *buf);
 static void dump_audiostreaming_endpoint(libusb_device_handle *dev, const unsigned char *buf, int protocol);
@@ -2538,8 +2538,8 @@ static void dump_hid_device(libusb_device_handle *dev,
 	}
 }
 
-static char *
-dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, char *indent)
+static void
+dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, const char *indent)
 {
 	int		tmp;
 	char		*str = NULL;
@@ -2818,17 +2818,16 @@ dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, char *
 		/* FIXME there are about a dozen more descriptor types */
 		printf("%sUNRECOGNIZED CDC: ", indent);
 		dump_bytes(buf, buf[0]);
-		return "unrecognized comm descriptor";
+		return;
 	}
 
 	free(str);
 
-	return 0;
+	return;
 
 bad:
 	printf("%sINVALID CDC (%s): ", indent, type);
 	dump_bytes(buf, buf[0]);
-	return "corrupt comm descriptor";
 }
 
 /* ---------------------------------------------------------------------- */
