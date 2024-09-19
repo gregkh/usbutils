@@ -38,7 +38,7 @@ add_project_arguments(
     '-Wshadow',
     '-Wsign-compare',
     '-Wstrict-prototypes',
- #  '-Wswitch-enum',
+    '-Wswitch',
     '-Wtype-limits',
     '-Wundef',
     '-Wuninitialized',
