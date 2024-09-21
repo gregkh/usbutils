@@ -1,0 +1,82 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [master, ci-test]
+  pull_request:
+    branches: [master]
+  schedule:
+    - cron: "30 2 * * 0"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - container: 'alpine:latest'
+          - container: 'archlinux:base-devel'
+            crossfile: 'arch-cross.ini'
+          - container: 'debian:unstable'
+            crossfile: 'debian-cross.ini'
+          - container: 'fedora:latest'
+          - container: 'ubuntu:24.04'
+            crossfile: 'ubuntu-cross.ini'
+
+    container:
+      image: ${{ matrix.container }}
+
+    steps:
+      - name: Sparse checkout the local actions
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          sparse-checkout: .github
+
+      - uses: ./.github/actions/setup-alpine
+        if: ${{ startsWith(matrix.container, 'alpine') }}
+      - uses: ./.github/actions/setup-archlinux
+        if: ${{ startsWith(matrix.container, 'archlinux') }}
+      - uses: ./.github/actions/setup-debian
+        if: ${{ startsWith(matrix.container, 'debian') }}
+      - uses: ./.github/actions/setup-fedora
+        if: ${{ startsWith(matrix.container, 'fedora') }}
+      - uses: ./.github/actions/setup-ubuntu
+        if: ${{ startsWith(matrix.container, 'ubuntu') }}
+
+      - name: Checkout the whole project
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Set the environment
+        run: |
+          # The second checkout above claims to set safe.directory, yet it
+          # doesn't quite work. Perhaps our double/sparse checkout is to blame?
+          git config --global --add safe.directory '*'
+
+      - name: configure
+        run: |
+          mkdir build && cd build
+          meson setup --native-file ../build-dev.ini . ..
+
+      - name: build
+        run: meson compile -C build
+
+      - name: install
+        run: meson install -C build --destdir $PWD/inst
+
+      - name: distcheck
+        run: meson dist -C build
+
+      - name: configure (32bit)
+        if: ${{ matrix.crossfile != '' }}
+        run: |
+          cp .github/cross-files/${{ matrix.crossfile }} cross.ini
+          mkdir build32 && cd build32
+          meson setup --native-file ../build-dev.ini --cross-file ../cross.ini . ..
+
+      - name: build (32bit)
+        if: ${{ matrix.crossfile != '' }}
+        run: meson compile -C build32

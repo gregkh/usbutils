@@ -1,0 +1,16 @@
+name: 'setup Fedora'
+description: 'Setup a Fedora container for running CI'
+runs:
+  using: 'composite'
+  steps:
+    - name: Install dependencies
+      shell: bash
+      run: |
+        dnf update -y
+        dnf install -y \
+          gcc \
+          git \
+          kernel-devel \
+          libudev-devel \
+          libusb1-devel \
+          meson

@@ -1,0 +1,64 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [master, ci-test]
+  pull_request:
+    branches: [master]
+  schedule:
+    - cron: "30 2 * * 0"
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - container: 'ubuntu:24.04'
+
+    container:
+      image: ${{ matrix.container }}
+
+    steps:
+      - name: Sparse checkout the local actions
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          sparse-checkout: .github
+
+      - uses: ./.github/actions/setup-ubuntu
+        if: ${{ startsWith(matrix.container, 'ubuntu') }}
+
+      - name: Checkout the whole project
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Set the environment
+        run: |
+          # The second checkout above claims to set safe.directory, yet it
+          # doesn't quite work. Perhaps our double/sparse checkout is to blame?
+          git config --global --add safe.directory '*'
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@8214744c546c1e5c8f03dde8fab3a7353211988d # v3.26.7
+        with:
+          languages: cpp
+          queries: +security-and-quality
+
+      - name: Build
+        run: |
+          mkdir build && cd build
+          meson setup --native-file ../build-dev.ini . ..
+          meson compile
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@8214744c546c1e5c8f03dde8fab3a7353211988d # v3.26.7
+        with:
+          category: "/language:cpp"

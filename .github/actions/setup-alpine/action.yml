@@ -1,0 +1,16 @@
+name: 'setup Alpine'
+description: 'Setup an Alpine container for running CI'
+runs:
+  using: 'composite'
+  steps:
+    - name: Install dependencies
+      shell: sh
+      run: |
+        apk update
+        apk add \
+          build-base \
+          eudev-dev \
+          git \
+          libusb-dev \
+          linux-headers \
+          meson
