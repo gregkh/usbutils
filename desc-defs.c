@@ -541,7 +541,7 @@ static const struct desc desc_audio_3_ac_proc_unit_stereo_extender[] = {
 };
 
 /** UAC3: 4.5.2.10.3 Multi Func Proc Unit Descriptor; Algorithms; Table 4-41. */
-static const char *uac3_proc_unit_multi_func_algorithms[] = {
+static const char * const uac3_proc_unit_multi_func_algorithms[] = {
 	[0] = "Algorithm Undefined.",
 	[1] = "Beam Forming.",
 	[2] = "Acoustic Echo Cancellation.",

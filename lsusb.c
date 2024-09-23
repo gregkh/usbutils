@@ -684,7 +684,7 @@ static void dump_interface(libusb_device_handle *dev, const struct libusb_interf
 
 static void dump_pipe_desc(const unsigned char *buf)
 {
-	static const char *pipe_name[] = {
+	static const char * const pipe_name[] = {
 		"Reserved",
 		"Command pipe",
 		"Status pipe",
@@ -830,10 +830,15 @@ static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interfa
 
 static void dump_unit(unsigned int data, unsigned int len)
 {
-	char *systems[5] = { "None", "SI Linear", "SI Rotation",
-			"English Linear", "English Rotation" };
+	static const char * const systems[5] = {
+		"None",
+		"SI Linear",
+		"SI Rotation",
+		"English Linear",
+		"English Rotation",
+	};
 
-	char *units[5][8] = {
+	static const char * const units[5][8] = {
 		{ "None", "None", "None", "None", "None",
 				"None", "None", "None" },
 		{ "None", "Centimeter", "Gram", "Seconds", "Kelvin",
@@ -2300,8 +2305,8 @@ static void dump_report_desc(unsigned char *b, int l)
 {
 	unsigned int j, bsize, btag, btype, data = 0xffff, hut = 0xffff;
 	int i;
-	char *types[4] = { "Main", "Global", "Local", "reserved" };
-	char indent[] = "                            ";
+	static const char * const types[4] = { "Main", "Global", "Local", "reserved" };
+	static const char indent[] = "                            ";
 
 	printf("          Report Descriptor: (length is %d)\n", l);
 	for (i = 0; i < l; ) {
@@ -2543,7 +2548,7 @@ dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, const 
 {
 	int		tmp;
 	char		*str = NULL;
-	char		*type;
+	const char	*type;
 
 	switch (buf[2]) {
 	case 0:
@@ -2839,7 +2844,7 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed,
 			+ 2 /* bitmasks */ * HUB_STATUS_BYTELEN];
 	int i, ret, value;
 	unsigned int link_state;
-	const char * const link_state_descriptions[] = {
+	static const char * const link_state_descriptions[] = {
 		"U0",
 		"U1",
 		"U2",
@@ -3239,7 +3244,7 @@ static void dump_ssp_device_capability_desc(unsigned char *buf)
 {
 	int i;
 	unsigned int bm_attr, ss_attr;
-	char bitrate_prefix[] = " KMG";
+	static const char bitrate_prefix[] = " KMG";
 
 	if (buf[0] < 12) {
 		fprintf(stderr, "  Bad SuperSpeedPlus USB Device Capability descriptor.\n");
@@ -3293,7 +3298,7 @@ static void dump_container_id_device_capability_desc(unsigned char *buf)
 static char *get_webusb_url(libusb_device_handle *fd, uint8_t vendor_req, uint8_t id)
 {
 	unsigned char url_buf[255];
-	char *scheme;
+	const char *scheme;
 	char *url, *chr;
 	unsigned char i;
 	int ret;
