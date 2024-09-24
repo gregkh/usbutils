@@ -45,9 +45,10 @@ If you have patches or suggestions, you can submit them either via email
 Please note that commits must include a `Signed-off-by` trailer, indicating that
 you comply with the [Developer Certificate of Origin v1.1].
 
-In addition, when adding new files or contributing to existing ones, ensure that
-`SPDX SPDX-FileCopyrightText` and `SPDX-License-Identifier` are available and
-are kept up-to date. You can learn more and do that via [reuse-tool].
+In addition, when adding new files or contributing to existing ones, ensure
+that the SPDX tags `SPDX-FileCopyrightText` and `SPDX-License-Identifier` are
+available and are kept up-to date.  You can learn more and do that via
+[reuse-tool].
 
 [to the maintainer]: mailto:gregkh@linuxfoundation.org
 [pull request]: https://github.com/gregkh/usbutils/pulls
