@@ -1,6 +1,0 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (c) 2010 Nikolai Kondrashov <spbnick@gmail.com>
-
-[submodule "usbhid-dump"]
-	path = usbhid-dump
-	url = https://github.com/DIGImend/usbhid-dump.git
