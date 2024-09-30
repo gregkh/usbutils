@@ -74,9 +74,6 @@ config_h = configure_file(output: 'config.h', configuration: config)
 
 add_project_arguments('-include', 'config.h', language : 'c')
 
-# Build usbhid-dump in a subdir
-subdir('usbhid-dump')
-
 
 #####################
 # man page generation
@@ -115,6 +112,23 @@ libusb = dependency('libusb-1.0', version: '>= 1.0.22')
 
 executable('lsusb', lsusb_sources, dependencies: [libusb, libudev], install: true)
 
+################################
+# usbhid-dump build instructions
+################################
+usbhid_sources = [
+  'usbhid-dump/dev.c',
+  'usbhid-dump/dev.h',
+  'usbhid-dump/dev_list.c',
+  'usbhid-dump/dev_list.h',
+  'usbhid-dump/iface.c',
+  'usbhid-dump/iface.h',
+  'usbhid-dump/iface_list.c',
+  'usbhid-dump/iface_list.h',
+  'usbhid-dump/misc.h',
+  'usbhid-dump/usbhid-dump.c',
+]
+
+executable('usbhid-dump', usbhid_sources, dependencies: libusb, install: true)
 
 ##############################
 # usbreset build instructions
