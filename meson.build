@@ -81,12 +81,7 @@ subdir('usbhid-dump')
 #####################
 # man page generation
 #####################
-mandir = join_paths(get_option('prefix'), get_option('mandir'))
-man1dir = join_paths(mandir, 'man1')
-man8dir = join_paths(mandir, 'man8')
-
-install_man(files('usb-devices.1', 'lsusb.py.1'), install_dir: man1dir)
-install_man(files('lsusb.8', 'usbhid-dump.8'), install_dir: man8dir)
+install_man(['man/lsusb.8', 'man/lsusb.py.1', 'man/usb-devices.1', 'man/usbhid-dump.8'])
 
 
 ##########################
