@@ -88,21 +88,21 @@ install_man(['man/lsusb.8', 'man/lsusb.py.1', 'man/usb-devices.1', 'man/usbhid-d
 # lsusb build instructions
 ##########################
 lsusb_sources = [
-  'desc-defs.c',
-  'desc-defs.h',
-  'desc-dump.c',
-  'desc-dump.h',
-  'list.h',
-  'lsusb-t.c',
-  'lsusb.c',
-  'lsusb.h',
-  'names.c',
-  'names.h',
-  'sysfs.c',
-  'sysfs.h',
-  'usb-spec.h',
-  'usbmisc.c',
-  'usbmisc.h',
+  'lsusb/desc-defs.c',
+  'lsusb/desc-defs.h',
+  'lsusb/desc-dump.c',
+  'lsusb/desc-dump.h',
+  'lsusb/list.h',
+  'lsusb/lsusb-t.c',
+  'lsusb/lsusb.c',
+  'lsusb/lsusb.h',
+  'lsusb/names.c',
+  'lsusb/names.h',
+  'lsusb/sysfs.c',
+  'lsusb/sysfs.h',
+  'lsusb/usb-spec.h',
+  'lsusb/usbmisc.c',
+  'lsusb/usbmisc.h',
 ]
 
 libudev = dependency('libudev', version: '>= 196')
