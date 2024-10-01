@@ -1,10 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0
+# SPDX-FileCopyrightText: Miguel Ojeda <ojeda@kernel.org>
 #
 # clang-format configuration file. Intended for clang-format >= 11.
 #
 # For more information, see:
-#
-#   Documentation/dev-tools/clang-format.rst
 #   https://clang.llvm.org/docs/ClangFormat.html
 #   https://clang.llvm.org/docs/ClangFormatStyleOptions.html
 #
