@@ -16,9 +16,8 @@ struct audioterminal {
 };
 
 struct videoterminal {
-       struct videoterminal *next;
-       const uint16_t termt;
-       const char *name;
+	const uint16_t termt;
+	const char *name;
 };
 
 struct genericstrtable {
@@ -90,21 +89,21 @@ static const struct audioterminal audioterminals[] =
 	{ 0x0000, NULL },
 };
 
-static struct videoterminal videoterminals[] =
+static const struct videoterminal videoterminals[] =
 {
-        { NULL, 0x0100, "USB Vendor Specific" },
-        { NULL, 0x0101, "USB Streaming" },
-        { NULL, 0x0200, "Input Vendor Specific" },
-        { NULL, 0x0201, "Camera Sensor" },
-        { NULL, 0x0202, "Sequential Media" },
-        { NULL, 0x0300, "Output Vendor Specific" },
-        { NULL, 0x0301, "Generic Display" },
-        { NULL, 0x0302, "Sequential Media" },
-        { NULL, 0x0400, "External Vendor Specific" },
-        { NULL, 0x0401, "Composite Video" },
-        { NULL, 0x0402, "S-Video" },
-        { NULL, 0x0403, "Component Video" },
-	{ NULL },
+	{ 0x0100, "USB Vendor Specific" },
+	{ 0x0101, "USB Streaming" },
+	{ 0x0200, "Input Vendor Specific" },
+	{ 0x0201, "Camera Sensor" },
+	{ 0x0202, "Sequential Media" },
+	{ 0x0300, "Output Vendor Specific" },
+	{ 0x0301, "Generic Display" },
+	{ 0x0302, "Sequential Media" },
+	{ 0x0400, "External Vendor Specific" },
+	{ 0x0401, "Composite Video" },
+	{ 0x0402, "S-Video" },
+	{ 0x0403, "Component Video" },
+	{ 0x0000, NULL },
 };
 
 static struct genericstrtable hiddescriptors[] =
