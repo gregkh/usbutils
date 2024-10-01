@@ -12,7 +12,7 @@
 #include <stddef.h>
 
 #include <libusb.h>
-#include "list.h"
+#include "ccan/list/list.h"
 #include "lsusb.h"
 #include "names.h"
 
@@ -21,7 +21,7 @@
 #define MY_PARAM_MAX 64
 
 struct usbinterface {
-	struct list_head list;
+	struct list_node list;
 	struct usbinterface *next;
 	struct usbdevice *parent;
 	unsigned int configuration;
@@ -39,7 +39,7 @@ struct usbinterface {
 };
 
 struct usbdevice {
-	struct list_head list;	/* connect devices independent of the bus */
+	struct list_node list;	/* connect devices independent of the bus */
 	struct usbdevice *next;	/* next port on this hub */
 	struct usbinterface *first_interface;	/* list of interfaces */
 	struct usbdevice *first_child;	/* connect devices on this port */
@@ -98,8 +98,8 @@ struct usbbusnode {
 #define SYSFS_INTx(de,tgt, name) do { tgt->name = read_sysfs_file_int(de,#name,16); } while(0)
 #define SYSFS_STR(de,tgt, name) do { read_sysfs_file_string(de, #name, tgt->name, MY_PARAM_MAX); } while(0)
 
-LIST_HEAD(interfacelist);
-LIST_HEAD(usbdevlist);
+static LIST_HEAD(interfacelist);
+static LIST_HEAD(usbdevlist);
 static struct usbbusnode *usbbuslist;
 
 static const char sys_bus_usb_devices[] = "/sys/bus/usb/devices";
@@ -363,7 +363,7 @@ static void add_usb_interface(const char *d_name)
 		}
 	} else
 		printf("Can not read driver link for '%s': %d\n", d_name, l);
-	list_add_tail(&e->list, &interfacelist);
+	list_add_tail(&interfacelist, &e->list);
 }
 
 static void add_usb_device(const char *d_name)
@@ -428,7 +428,7 @@ static void add_usb_device(const char *d_name)
 		}
 	} else
 		printf("Can not read driver link for '%s': %d\n", d_name, l);
-	list_add_tail(&d->list, &usbdevlist);
+	list_add_tail(&usbdevlist, &d->list);
 }
 
 static void get_roothub_driver(struct usbbusnode *b, const char *d_name)
@@ -511,11 +511,10 @@ static void assign_dev_to_bus(struct usbdevice *d)
 
 static void assign_dev_to_parent(struct usbdevice *d)
 {
-	struct list_head *l;
 	struct usbdevice *pd;
 	char n[MY_SYSFS_FILENAME_LEN], *p;
-	for (l = usbdevlist.next; l != &usbdevlist; l = l->next) {
-		pd = list_entry(l, struct usbdevice, list);
+
+	list_for_each(&usbdevlist, pd, list) {
 		if (pd == d)
 			continue;
 		if (pd->busnum == d->busnum && pd->portnum == d->parent_portnum) {
@@ -570,23 +569,19 @@ static void assign_interface_to_parent(struct usbdevice *d, struct usbinterface 
 
 static void connect_devices(void)
 {
-	struct list_head *ld, *li;
 	struct usbdevice *d;
 	struct usbinterface *e;
-	for (ld = usbdevlist.next; ld != &usbdevlist; ld = ld->next) {
-		d = list_entry(ld, struct usbdevice, list);
+
+	list_for_each(&usbdevlist, d, list) {
 		if (d->parent_portnum)
 			assign_dev_to_parent(d);
 		else
 			assign_dev_to_bus(d);
-		for (li = interfacelist.next; li != &interfacelist; li = li->next) {
-			e = list_entry(li, struct usbinterface, list);
+
+		list_for_each(&interfacelist, e, list) {
 			if (!e->parent)
 				assign_interface_to_parent(d, e);
 		}
-	}
-	for (li = interfacelist.next; li != &interfacelist; li = li->next) {
-		e = list_entry(li, struct usbinterface, list);
 	}
 }
 

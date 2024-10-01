@@ -86,7 +86,6 @@ lsusb_sources = [
   'desc-defs.h',
   'desc-dump.c',
   'desc-dump.h',
-  'list.h',
   'lsusb-t.c',
   'lsusb.c',
   'lsusb.h',
@@ -97,6 +96,12 @@ lsusb_sources = [
   'usb-spec.h',
   'usbmisc.c',
   'usbmisc.h',
+  'ccan/check_type/check_type.h',
+  'ccan/config.h',
+  'ccan/container_of/container_of.h',
+  'ccan/str/str_debug.h',
+  'ccan/str/str.h',
+  'ccan/list/list.h',
 ]
 
 libudev = dependency('libudev', version: '>= 196')
