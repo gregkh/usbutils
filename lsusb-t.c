@@ -717,6 +717,28 @@ static void print_tree(void)
 	}
 }
 
+static void cleanup(void)
+{
+	struct usbdevice *device, *tempd;
+	struct usbinterface *interface, *templ;
+	struct usbbusnode *bus, *tempb;
+
+	list_for_each_safe(&usbdevlist, device, tempd, list) {
+		free(device);
+	}
+
+	list_for_each_safe(&interfacelist, interface, templ, list) {
+		free(interface);
+	}
+
+	bus = usbbuslist;
+	while (bus) {
+		tempb = bus->next;
+		free(bus);
+		bus = tempb;
+	}
+}
+
 int lsusb_t(void)
 {
 	DIR *sbud = opendir(sys_bus_usb_devices);
@@ -727,6 +749,7 @@ int lsusb_t(void)
 		sort_devices();
 		sort_busses();
 		print_tree();
+		cleanup();
 	} else
 		perror(sys_bus_usb_devices);
 	return sbud == NULL;
