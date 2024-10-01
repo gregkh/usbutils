@@ -43,7 +43,6 @@ static unsigned int hashnum(unsigned int num)
 
 static struct udev *udev = NULL;
 static struct udev_hwdb *hwdb = NULL;
-static struct audioterminal *audioterminals_hash[HASHSZ] = { NULL, };
 static struct videoterminal *videoterminals_hash[HASHSZ] = { NULL, };
 static struct genericstrtable *hiddescriptors_hash[HASHSZ] = { NULL, };
 static struct genericstrtable *reports_hash[HASHSZ] = { NULL, };
@@ -160,10 +159,9 @@ const char *names_protocol(uint8_t classid, uint8_t subclassid, uint8_t protocol
 
 const char *names_audioterminal(uint16_t termt)
 {
-	struct audioterminal *at;
+	const struct audioterminal *at;
 
-	at = audioterminals_hash[hashnum(termt)];
-	for (; at; at = at->next)
+	for (at = audioterminals; at->name; at++)
 		if (at->termt == termt)
 			return at->name;
 	return NULL;
@@ -266,33 +264,6 @@ void get_vendor_product_with_fallback(char *vendor, int vendor_len,
 
 /* ---------------------------------------------------------------------- */
 
-static int hash_audioterminal(struct audioterminal *at)
-{
-	struct audioterminal *at_old;
-	unsigned int h = hashnum(at->termt);
-
-	for (at_old = audioterminals_hash[h]; at_old; at_old = at_old->next)
-		if (at_old->termt == at->termt)
-			return -1;
-	at->next = audioterminals_hash[h];
-	audioterminals_hash[h] = at;
-	return 0;
-}
-
-static int hash_audioterminals(void)
-{
-	int r = 0, i, k;
-
-	for (i = 0; audioterminals[i].name; i++)
-	{
-		k = hash_audioterminal(&audioterminals[i]);
-		if (k < 0)
-			r = k;
-	}
-
-	return r;
-}
-
 static int hash_videoterminal(struct videoterminal *vt)
 {
 	struct videoterminal *vt_old;
@@ -345,10 +316,6 @@ static int hash_genericstrtable(struct genericstrtable *t[HASHSZ],
 static int hash_tables(void)
 {
 	int r = 0, k, i;
-
-	k = hash_audioterminals();
-	if (k < 0)
-		r = k;
 
 	k = hash_videoterminals();
 	if (k < 0)
