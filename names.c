@@ -25,43 +25,19 @@
 #include "sysfs.h"
 
 
-#define HASH1  0x10
-#define HASH2  0x02
-#define HASHSZ 512
-
-static unsigned int hashnum(unsigned int num)
-{
-	unsigned int mask1 = (unsigned int)HASH1 << 27, mask2 = (unsigned int)HASH2 << 27;
-
-	for (; mask1 >= HASH1; mask1 >>= 1, mask2 >>= 1)
-		if (num & mask1)
-			num ^= mask2;
-	return num & (HASHSZ-1);
-}
-
 /* ---------------------------------------------------------------------- */
 
 static struct udev *udev = NULL;
 static struct udev_hwdb *hwdb = NULL;
-static struct audioterminal *audioterminals_hash[HASHSZ] = { NULL, };
-static struct videoterminal *videoterminals_hash[HASHSZ] = { NULL, };
-static struct genericstrtable *hiddescriptors_hash[HASHSZ] = { NULL, };
-static struct genericstrtable *reports_hash[HASHSZ] = { NULL, };
-static struct genericstrtable *huts_hash[HASHSZ] = { NULL, };
-static struct genericstrtable *biass_hash[HASHSZ] = { NULL, };
-static struct genericstrtable *physdess_hash[HASHSZ] = { NULL, };
-static struct genericstrtable *hutus_hash[HASHSZ] = { NULL, };
-static struct genericstrtable *langids_hash[HASHSZ] = { NULL, };
-static struct genericstrtable *countrycodes_hash[HASHSZ] = { NULL, };
 
 /* ---------------------------------------------------------------------- */
 
-static const char *names_genericstrtable(struct genericstrtable *t[HASHSZ],
+static const char *names_genericstrtable(const struct genericstrtable *t,
 					 unsigned int idx)
 {
-	struct genericstrtable *h;
+	const struct genericstrtable *h;
 
-	for (h = t[hashnum(idx)]; h; h = h->next)
+	for (h = t; t->name; t++)
 		if (h->num == idx)
 			return h->name;
 	return NULL;
@@ -69,42 +45,42 @@ static const char *names_genericstrtable(struct genericstrtable *t[HASHSZ],
 
 const char *names_hid(uint8_t hidd)
 {
-	return names_genericstrtable(hiddescriptors_hash, hidd);
+	return names_genericstrtable(hiddescriptors, hidd);
 }
 
 const char *names_reporttag(uint8_t rt)
 {
-	return names_genericstrtable(reports_hash, rt);
+	return names_genericstrtable(reports, rt);
 }
 
 const char *names_huts(unsigned int data)
 {
-	return names_genericstrtable(huts_hash, data);
+	return names_genericstrtable(huts, data);
 }
 
 const char *names_hutus(unsigned int data)
 {
-	return names_genericstrtable(hutus_hash, data);
+	return names_genericstrtable(hutus, data);
 }
 
 const char *names_langid(uint16_t langid)
 {
-	return names_genericstrtable(langids_hash, langid);
+	return names_genericstrtable(langids, langid);
 }
 
 const char *names_physdes(uint8_t ph)
 {
-	return names_genericstrtable(physdess_hash, ph);
+	return names_genericstrtable(physdess, ph);
 }
 
 const char *names_bias(uint8_t b)
 {
-	return names_genericstrtable(biass_hash, b);
+	return names_genericstrtable(biass, b);
 }
 
 const char *names_countrycode(unsigned int countrycode)
 {
-	return names_genericstrtable(countrycodes_hash, countrycode);
+	return names_genericstrtable(countrycodes, countrycode);
 }
 
 static const char *hwdb_get(const char *modalias, const char *key)
@@ -160,10 +136,9 @@ const char *names_protocol(uint8_t classid, uint8_t subclassid, uint8_t protocol
 
 const char *names_audioterminal(uint16_t termt)
 {
-	struct audioterminal *at;
+	const struct audioterminal *at;
 
-	at = audioterminals_hash[hashnum(termt)];
-	for (; at; at = at->next)
+	for (at = audioterminals; at->name; at++)
 		if (at->termt == termt)
 			return at->name;
 	return NULL;
@@ -171,10 +146,9 @@ const char *names_audioterminal(uint16_t termt)
 
 const char *names_videoterminal(uint16_t termt)
 {
-	struct videoterminal *vt;
+	const struct videoterminal *vt;
 
-	vt = videoterminals_hash[hashnum(termt)];
-	for (; vt; vt = vt->next)
+	for (vt = videoterminals; vt->name; vt++)
 		if (vt->termt == termt)
 			return vt->name;
 	return NULL;
@@ -264,193 +238,14 @@ void get_vendor_product_with_fallback(char *vendor, int vendor_len,
 	}
 }
 
-/* ---------------------------------------------------------------------- */
-
-static int hash_audioterminal(struct audioterminal *at)
-{
-	struct audioterminal *at_old;
-	unsigned int h = hashnum(at->termt);
-
-	for (at_old = audioterminals_hash[h]; at_old; at_old = at_old->next)
-		if (at_old->termt == at->termt)
-			return -1;
-	at->next = audioterminals_hash[h];
-	audioterminals_hash[h] = at;
-	return 0;
-}
-
-static int hash_audioterminals(void)
-{
-	int r = 0, i, k;
-
-	for (i = 0; audioterminals[i].name; i++)
-	{
-		k = hash_audioterminal(&audioterminals[i]);
-		if (k < 0)
-			r = k;
-	}
-
-	return r;
-}
-
-static int hash_videoterminal(struct videoterminal *vt)
-{
-	struct videoterminal *vt_old;
-	unsigned int h = hashnum(vt->termt);
-
-	for (vt_old = videoterminals_hash[h]; vt_old; vt_old = vt_old->next)
-		if (vt_old->termt == vt->termt)
-			return -1;
-	vt->next = videoterminals_hash[h];
-	videoterminals_hash[h] = vt;
-	return 0;
-}
-
-static int hash_videoterminals(void)
-{
-	int r = 0, i, k;
-
-	for (i = 0; videoterminals[i].name; i++)
-	{
-		k = hash_videoterminal(&videoterminals[i]);
-		if (k < 0)
-			r = k;
-	}
-
-	return r;
-}
-
-static int hash_genericstrtable(struct genericstrtable *t[HASHSZ],
-			       struct genericstrtable *g)
-{
-	struct genericstrtable *g_old;
-	unsigned int h = hashnum(g->num);
-
-	for (g_old = t[h]; g_old; g_old = g_old->next)
-		if (g_old->num == g->num)
-			return -1;
-	g->next = t[h];
-	t[h] = g;
-	return 0;
-}
-
-#define HASH_EACH(array, hash) \
-	for (i = 0; array[i].name; i++) { \
-		k = hash_genericstrtable(hash, &array[i]); \
-		if (k < 0) { \
-			r = k; \
-		}\
-	}
-
-static int hash_tables(void)
-{
-	int r = 0, k, i;
-
-	k = hash_audioterminals();
-	if (k < 0)
-		r = k;
-
-	k = hash_videoterminals();
-	if (k < 0)
-		r = k;
-
-	HASH_EACH(hiddescriptors, hiddescriptors_hash);
-
-	HASH_EACH(reports, reports_hash);
-
-	HASH_EACH(huts, huts_hash);
-
-	HASH_EACH(hutus, hutus_hash);
-
-	HASH_EACH(langids, langids_hash);
-
-	HASH_EACH(physdess, physdess_hash);
-
-	HASH_EACH(biass, biass_hash);
-
-	HASH_EACH(countrycodes, countrycodes_hash);
-
-	return r;
-}
-
-/* ---------------------------------------------------------------------- */
-
-/*
-static void print_tables(void)
-{
-	int i;
-	struct audioterminal *at;
-	struct videoterminal *vt;
-	struct genericstrtable *li;
-	struct genericstrtable *hu;
-
-
-	printf("--------------------------------------------\n");
-	printf("\t\t Audio Terminals\n");
-	printf("--------------------------------------------\n");
-
-	for (i = 0; i < HASHSZ; i++) {
-		printf("hash: %d\n", i);
-		at = audioterminals_hash[i];
-		for (; at; at = at->next)
-			printf("\tentry: %s\n", at->name);
-	}
-
-	printf("--------------------------------------------\n");
-	printf("\t\t Video Terminals\n");
-	printf("--------------------------------------------\n");
-
-	for (i = 0; i < HASHSZ; i++) {
-		printf("hash: %d\n", i);
-		vt = videoterminals_hash[i];
-		for (; vt; vt = vt->next)
-			printf("\tentry: %s\n", vt->name);
-	}
-
-	printf("--------------------------------------------\n");
-	printf("\t\t Languages\n");
-	printf("--------------------------------------------\n");
-
-	for (i = 0; i < HASHSZ; i++) {
-		li = langids_hash[i];
-		if (li)
-			printf("hash: %d\n", i);
-		for (; li; li = li->next)
-			printf("\tid: %x, entry: %s\n", li->num, li->name);
-	}
-
-	printf("--------------------------------------------\n");
-	printf("\t\t Conutry Codes\n");
-	printf("--------------------------------------------\n");
-
-	for (i = 0; i < HASHSZ; i++) {
-		hu = countrycodes_hash[i];
-		if (hu)
-			printf("hash: %d\n", i);
-		for (; hu; hu = hu->next)
-			printf("\tid: %x, entry: %s\n", hu->num, hu->name);
-	}
-
-	printf("--------------------------------------------\n");
-}
-*/
-
 int names_init(void)
 {
-	int r;
-
 	udev = udev_new();
 	if (!udev)
-		r = -1;
-	else {
-		hwdb = udev_hwdb_new(udev);
-		if (!hwdb)
-			r = -1;
-	}
+		return -1;
 
-	r = hash_tables();
-
-	return r;
+	hwdb = udev_hwdb_new(udev);
+	return hwdb ? 0 : -1;
 }
 
 void names_exit(void)
