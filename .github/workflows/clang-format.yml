@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: 2024 Emil Velikov <emil.l.velikov@gmail.com>
+#
+# SPDX-License-Identifier: LGPL-2.1-or-later
+
+name: Check code style with clang-format
+
+on:
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  stylecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - run: git fetch --depth=1 origin ${{ github.event.pull_request.base.sha }}
+      - uses: yshui/git-clang-format-lint@a65b466f5903524aef27552f63c3906c0f73f184 # v1.16
+        with:
+          base: ${{ github.event.pull_request.base.sha }}
