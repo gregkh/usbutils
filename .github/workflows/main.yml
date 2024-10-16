@@ -24,7 +24,7 @@ jobs:
       matrix:
         include:
           - container: 'alpine:latest'
-          - container: 'archlinux:base-devel'
+          - container: 'archlinux:multilib-devel'
             crossfile: 'arch-cross.ini'
           - container: 'debian:unstable'
             crossfile: 'debian-cross.ini'
