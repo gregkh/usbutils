@@ -27,8 +27,7 @@ struct genericstrtable {
 
 /* ---------------------------------------------------------------------- */
 
-static const struct audioterminal audioterminals[] =
-{
+static const struct audioterminal audioterminals[] = {
 	{ 0x0100, "USB Undefined" },
 	{ 0x0101, "USB Streaming" },
 	{ 0x01ff, "USB Vendor Specific" },
@@ -88,8 +87,7 @@ static const struct audioterminal audioterminals[] =
 	{ 0x0000, NULL },
 };
 
-static const struct videoterminal videoterminals[] =
-{
+static const struct videoterminal videoterminals[] = {
 	{ 0x0100, "USB Vendor Specific" },
 	{ 0x0101, "USB Streaming" },
 	{ 0x0200, "Input Vendor Specific" },
@@ -105,16 +103,14 @@ static const struct videoterminal videoterminals[] =
 	{ 0x0000, NULL },
 };
 
-static const struct genericstrtable hiddescriptors[] =
-{
+static const struct genericstrtable hiddescriptors[] = {
 	{ 0x21, "HID" },
 	{ 0x22, "Report" },
 	{ 0x23, "Physical" },
 	{ 0x00, NULL },
 };
 
-static const struct genericstrtable reports[] =
-{
+static const struct genericstrtable reports[] = {
 	{ 0x04, "Usage Page" },
 	{ 0x08, "Usage" },
 	{ 0x14, "Logical Minimum" },
@@ -145,8 +141,7 @@ static const struct genericstrtable reports[] =
 	{ 0x00, NULL },
 };
 
-static const struct genericstrtable huts[] =
-{
+static const struct genericstrtable huts[] = {
 	{ 0x00, "Undefined" },
 	{ 0x01, "Generic Desktop Controls" },
 	{ 0x02, "Simulation Controls" },
@@ -179,18 +174,19 @@ static const struct genericstrtable huts[] =
 	{ 0x00, NULL },
 };
 
-static const struct genericstrtable biass[] =
-{
+static const struct genericstrtable biass[] = {
+	// clang-format off
 	{ 0x0, "Not Applicable" },
 	{ 0x1, "Right Hand" },
 	{ 0x2, "Left Hand" },
 	{ 0x3, "Both Hands" },
 	{ 0x4, "Either Hand" },
 	{ 0x0, NULL },
+	// clang-format on
 };
 
-static const struct genericstrtable physdess[] =
-{
+static const struct genericstrtable physdess[] = {
+	// clang-format off
 	{ 0x00, "None" },
 	{ 0x01, "Hand" },
 	{ 0x02, "Eyeball" },
@@ -232,13 +228,13 @@ static const struct genericstrtable physdess[] =
 	{ 0x26, "Brow" },
 	{ 0x27, "Cheek" },
 	{ 0x00, NULL },
+	// clang-format on
 };
 
 /* HUT usage specs are represented as:
  *	(huttype << 16) + hutus
  */
-static const struct genericstrtable hutus[] =
-{
+static const struct genericstrtable hutus[] = {
 	{ (0x01 << 16) + 0x000, "Undefined" },
 	{ (0x01 << 16) + 0x001, "Pointer" },
 	{ (0x01 << 16) + 0x002, "Mouse" },
@@ -296,7 +292,7 @@ static const struct genericstrtable hutus[] =
 	{ (0x02 << 16) + 0x006, "Sailing Simulation Device" },
 	{ (0x02 << 16) + 0x007, "Motorcycle Simulation Device" },
 	{ (0x02 << 16) + 0x008, "Sports Simulation Device" },
-	{ (0x02 << 16) + 0x009, "Airplane Simualtion Device" },
+	{ (0x02 << 16) + 0x009, "Airplane Simulation Device" },
 	{ (0x02 << 16) + 0x00a, "Helicopter Simulation Device" },
 	{ (0x02 << 16) + 0x00b, "Magic Carpet Simulation Device" },
 	{ (0x02 << 16) + 0x00c, "Bicycle Simulation Device" },
@@ -900,7 +896,7 @@ static const struct genericstrtable hutus[] =
 	{ (0x0c << 16) + 0x18d, "AL Contacts/Address Book" },
 	{ (0x0c << 16) + 0x18e, "AL Calendar/Schedule" },
 	{ (0x0c << 16) + 0x18f, "AL Task/Project Manager" },
-	{ (0x0c << 16) + 0x190, "AL Log/Jounal/Timecard" },
+	{ (0x0c << 16) + 0x190, "AL Log/Journal/Timecard" },
 	{ (0x0c << 16) + 0x191, "AL Checkbook/Finance" },
 	{ (0x0c << 16) + 0x192, "AL Calculator" },
 	{ (0x0c << 16) + 0x193, "AL A/V Capture/Playback" },
@@ -1196,7 +1192,7 @@ static const struct genericstrtable hutus[] =
 	{ (0x82 << 16) + 0x06e, "Green Video Black Level" },
 	{ (0x82 << 16) + 0x070, "Blue Video Black Level" },
 	{ (0x82 << 16) + 0x0a2, "Auto Size Center" },
-	{ (0x82 << 16) + 0x0a4, "Polarity Horizontal Sychronization" },
+	{ (0x82 << 16) + 0x0a4, "Polarity Horizontal Synchronization" },
 	{ (0x82 << 16) + 0x0a6, "Polarity Vertical Synchronization" },
 	{ (0x82 << 16) + 0x0aa, "Screen Orientation" },
 	{ (0x82 << 16) + 0x0ac, "Horizontal Frequency in Hz" },
@@ -1385,8 +1381,7 @@ static const struct genericstrtable hutus[] =
 /* dialects are represented as:
  *	langid + (dialectid << 10)
  */
-static const struct genericstrtable langids[] =
-{
+static const struct genericstrtable langids[] = {
 	{ 0x0001 + (0x01 << 10), "Saudi Arabia" },
 	{ 0x0001 + (0x02 << 10), "Iraq" },
 	{ 0x0001 + (0x03 << 10), "Egypt" },
@@ -1429,7 +1424,7 @@ static const struct genericstrtable langids[] =
 	{ 0x0009 + (0x06 << 10), "Ireland" },
 	{ 0x0009 + (0x07 << 10), "South Africa" },
 	{ 0x0009 + (0x08 << 10), "Jamaica" },
-	{ 0x0009 + (0x09 << 10), "Carribean" },
+	{ 0x0009 + (0x09 << 10), "Caribbean" },
 	{ 0x0009 + (0x0a << 10), "Belize" },
 	{ 0x0009 + (0x0b << 10), "Trinidad" },
 	{ 0x0009 + (0x0c << 10), "Zimbabwe" },
@@ -1552,8 +1547,7 @@ static const struct genericstrtable langids[] =
 	{ 0x0000, NULL },
 };
 
-static const struct genericstrtable countrycodes[] =
-{
+static const struct genericstrtable countrycodes[] = {
 	{ 0, "Not supported" },
 	{ 1, "Arabic" },
 	{ 2, "Belgian" },
