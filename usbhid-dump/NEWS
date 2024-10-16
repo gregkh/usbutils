@@ -24,7 +24,7 @@
     * Added interface number limiting option -i, --interface=NUMBER.
     * Added stream interrupt transfer timeout option -t,
       --stream-timeout=NUMBER, which is set to 1 minute by default to
-      allow recovery of accidentially captured terminal input device.
+      allow recovery of accidentally captured terminal input device.
       This timeout is printed on the start of stream dumping.
 
 2010-08-24: 1.1

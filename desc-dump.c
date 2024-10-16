@@ -205,7 +205,7 @@ static void number_renderer(
 /**
  * Render a field's value to stdout.
  *
- * The manner of rendering the value is dependant on the value type.
+ * The manner of rendering the value is dependent on the value type.
  *
  * \param[in] dev           LibUSB device handle.
  * \param[in] current       Descriptor definition field to render.
@@ -320,7 +320,7 @@ static void value_renderer(
 		const struct desc *ext_desc;
 		const struct desc_ext *ext;
 
-		/* Lookup the extention descriptor definitions to use, */
+		/* Lookup the extension descriptor definitions to use, */
 		for (ext = current->extension.d; ext->desc != NULL; ext++) {
 			if (ext->type == type) {
 				ext_desc = ext->desc;
