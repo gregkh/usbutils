@@ -63,8 +63,7 @@ jobs:
 
       - name: configure
         run: |
-          mkdir build && cd build
-          meson setup --native-file ../build-dev.ini . ..
+          meson setup --native-file build-dev.ini build
 
       - name: build
         run: meson compile -C build
@@ -79,8 +78,7 @@ jobs:
         if: ${{ matrix.crossfile != '' }}
         run: |
           cp .github/cross-files/${{ matrix.crossfile }} cross.ini
-          mkdir build32 && cd build32
-          meson setup --native-file ../build-dev.ini --cross-file ../cross.ini . ..
+          meson setup --native-file build-dev.ini --cross-file cross.ini build32
 
       - name: build (32bit)
         if: ${{ matrix.crossfile != '' }}
