@@ -16,6 +16,7 @@ runs:
         pacman --noconfirm -Sy archlinux-keyring
 
         pacman --noconfirm -Su \
+          clang \
           git \
           lib32-libusb \
           lib32-systemd \

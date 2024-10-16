@@ -15,6 +15,7 @@ runs:
         apt-get update
         apt-get install --yes \
           build-essential \
+          clang \
           crossbuild-essential-i386 \
           gcc \
           git \

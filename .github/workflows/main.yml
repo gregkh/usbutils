@@ -18,17 +18,24 @@ permissions:
 
 jobs:
   build:
+    env:
+      CC: ${{ matrix.compiler }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
+        compiler: ['clang', 'gcc']
+        container:
+          - 'alpine:latest'
+          - 'archlinux:multilib-devel'
+          - 'debian:unstable'
+          - 'fedora:latest'
+          - 'ubuntu:24.04'
         include:
-          - container: 'alpine:latest'
           - container: 'archlinux:multilib-devel'
             crossfile: 'arch-cross.ini'
           - container: 'debian:unstable'
             crossfile: 'debian-cross.ini'
-          - container: 'fedora:latest'
           - container: 'ubuntu:24.04'
             crossfile: 'ubuntu-cross.ini'
 
@@ -75,11 +82,12 @@ jobs:
         run: meson dist -C build
 
       - name: configure (32bit)
-        if: ${{ matrix.crossfile != '' }}
+        if: ${{ matrix.crossfile != '' && matrix.compiler != 'clang' }}
         run: |
           cp .github/cross-files/${{ matrix.crossfile }} cross.ini
+          unset CC
           meson setup --native-file build-dev.ini --cross-file cross.ini build32
 
       - name: build (32bit)
-        if: ${{ matrix.crossfile != '' }}
-        run: meson compile -C build32
+        if: ${{ matrix.crossfile != '' && matrix.compiler != 'clang' }}
+        run: unset CC && meson compile -C build32

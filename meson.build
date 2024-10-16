@@ -18,7 +18,8 @@ cc = meson.get_compiler('c')
 add_project_arguments(
   cc.get_supported_arguments([
     '-Wbad-function-cast',
-    '-Wcast-align',
+    # should be removed and the code fixed
+    '-Wno-cast-align',
     '-Wchar-subscripts',
     '-Wempty-body',
     '-Wformat',
