@@ -2,11 +2,11 @@ SPDXVersion: SPDX-2.1
 DataLicense: CC0-1.0
 SPDXID: SPDXRef-DOCUMENT
 DocumentName: usbutils
-DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-bdc20f29-b45b-452a-b090-5ac0ea8d70d7
+DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-477bc6c8-f744-438e-9ea4-3552c74a0d8a
 Creator: Person: Greg Kroah-Hartman <gregkh@linuxfoundation.org> ()
 Creator: Organization: The Linux Foundation ()
 Creator: Tool: reuse-4.0.3
-Created: 2024-10-22T09:00:18Z
+Created: 2024-10-22T09:30:37Z
 CreatorComment: <text>This document was created automatically using available reuse information consistent with REUSE.</text>
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-68c02f636b8e3879dac8154f74e11a07
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-55ac808bfba4c56ce907af138af72acf
@@ -53,7 +53,7 @@ Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-e38f878d92a1acfc7f028a82fccf83a
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-55ab2a28154ae54d03e8851633212eab
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-39cda2fc214ee9684ac11abbef3cc612
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-e86a1beac9018216b303111be6b03e4e
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-cf2c1ba8dc9202ec5f278c7db355a74e
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-69bd878b1773bc5d2cecfdede4b81d57
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-049709f1770711ea4558413c0af49689
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-2d19fe5fb8b4f7ab28eb8a45aeeee263
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-9929adf54a5cafd69cf282f0e62272ef
@@ -71,7 +71,7 @@ Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-fec14677e17d08b48398f4f72075559
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-bb1c9a232ce0b433ce3c314df4329477
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-04eadb4435b47c57bfa272f81be4f815
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-e99e2d061caabfd49e2c6a1967bed2c5
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-9fc5dcda517ad47c8685870bcc2690b9
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-be9d24b98784bd29b232c30b9eb2e68a
 
 FileName: ./.clang-format
 SPDXID: SPDXRef-68c02f636b8e3879dac8154f74e11a07
@@ -405,8 +405,8 @@ LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 1999, 2000 Thomas Sailer (sailer@ife.ee.ethz.ch)</text>
 
 FileName: ./sysfs.c
-SPDXID: SPDXRef-cf2c1ba8dc9202ec5f278c7db355a74e
-FileChecksum: SHA1: f4934d1afb3eb0e018218a8320b4ed39236adfc5
+SPDXID: SPDXRef-69bd878b1773bc5d2cecfdede4b81d57
+FileChecksum: SHA1: 04a962bc414e6f4b6811e5f03138964f424978d7
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 1999, 2000 Thomas Sailer (sailer@ife.ee.ethz.ch)
@@ -534,8 +534,8 @@ LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 2003 Aurelien Jarno (aurelien@aurel32.net)</text>
 
 FileName: ./usbreset.c
-SPDXID: SPDXRef-9fc5dcda517ad47c8685870bcc2690b9
-FileChecksum: SHA1: 4c5fc8c46de68241ca99b1e16fc13f832d2739c7
+SPDXID: SPDXRef-be9d24b98784bd29b232c30b9eb2e68a
+FileChecksum: SHA1: 9dc944bc60ec8298e857dcbc968756961b3c63f5
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-only
 FileCopyrightText: <text>Copyright (c) 2009-2016 Alan Stern</text>
