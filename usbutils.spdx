@@ -2,11 +2,11 @@ SPDXVersion: SPDX-2.1
 DataLicense: CC0-1.0
 SPDXID: SPDXRef-DOCUMENT
 DocumentName: usbutils
-DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-477bc6c8-f744-438e-9ea4-3552c74a0d8a
+DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-27f6aa30-7432-4e93-9eb4-0b42decd5fbd
 Creator: Person: Greg Kroah-Hartman <gregkh@linuxfoundation.org> ()
 Creator: Organization: The Linux Foundation ()
 Creator: Tool: reuse-4.0.3
-Created: 2024-10-22T09:30:37Z
+Created: 2024-10-22T09:33:13Z
 CreatorComment: <text>This document was created automatically using available reuse information consistent with REUSE.</text>
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-68c02f636b8e3879dac8154f74e11a07
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-55ac808bfba4c56ce907af138af72acf
@@ -26,7 +26,7 @@ Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a0dca448bcc96880587f0e9ddb53cb1
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-d6a26648562bd7a9782acf0ec87b8d02
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-ddd0854171f331d4da3d8e3e1824aa29
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-60c5f0772761312cad5b32c0fc824a3d
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-ec3cc73a5d3d3ea702a40c2f89743135
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a9bd5f415bcf395d45744e20a813a05a
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-0d55599d39c57a6ef592993f38cb38ee
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a9cd23771d5dd91bb7547c2bf9b6d61d
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-75b5d80d5b8e458a555bf9942bf7ed10
@@ -208,11 +208,11 @@ FileCopyrightText: <text>Copyright (c) 2009 Greg Kroah-Hartman <gregkh@suse.de>
 Copyright (c) 2014-2021 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
 
 FileName: ./NEWS
-SPDXID: SPDXRef-ec3cc73a5d3d3ea702a40c2f89743135
-FileChecksum: SHA1: ff4fa081730373c0f67c1f5e7c8e423518b25834
+SPDXID: SPDXRef-a9bd5f415bcf395d45744e20a813a05a
+FileChecksum: SHA1: 289991915e6c690eeabd34d8521b0f40554d77cb
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-only
-FileCopyrightText: <text>Copyright (c) 2018-2023 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+FileCopyrightText: <text>Copyright (c) 2018-2024 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
 
 FileName: ./README.md
 SPDXID: SPDXRef-0d55599d39c57a6ef592993f38cb38ee
