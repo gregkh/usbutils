@@ -28,6 +28,7 @@ showwakeup = False
 prefix = "/sys/bus/usb/devices/"
 usbids = [
 	"/usr/share/hwdata/usb.ids",
+	"/usr/share/misc/usb.ids",
 	"/usr/share/usb.ids",
 ]
 cols = ("", "", "", "", "", "")
@@ -64,7 +65,7 @@ def myenum(*args):
 	return type('MyEnum', (), enums)
 
 def parse_usb_ids():
-	"Parse /usr/share/{hwdata/,}usb.ids and fill usbvendors, usbproducts, usbclasses"
+	"Parse /usr/share/{hwdata/,misc/}usb.ids and fill usbvendors, usbproducts, usbclasses"
 	vid = 0
 	did = 0
 	modes = myenum('Vendor', 'Class', 'Misc')
