@@ -3217,7 +3217,10 @@ dump_device_status(libusb_device_handle *fd, int otg, int super_speed)
 
 static void dump_usb2_device_capability_desc(unsigned char *buf, bool lpm_required)
 {
+	static const uint16_t besl_us[16] = { 125,  150,  200,	300,  400,  500,  1000, 2000,
+					      3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000 };
 	unsigned int wide;
+	unsigned int besl;
 
 	wide = buf[3] + (buf[4] << 8) +
 		(buf[5] << 16) + (buf[6] << 24);
@@ -3232,16 +3235,17 @@ static void dump_usb2_device_capability_desc(unsigned char *buf, bool lpm_requir
 	else if (!lpm_required && !(wide & 0x02))
 		printf("      Link Power Management (LPM) not supported\n");
 	else if (!(wide & 0x04))
-		printf("      HIRD Link Power Management (LPM)"
-				" Supported\n");
+		printf("      HIRD Link Power Management (LPM) Supported\n");
 	else {
-		printf("      BESL Link Power Management (LPM)"
-				" Supported\n");
-		if (wide & 0x08)
-			printf("    BESL value    %5u us \n", wide & 0xf00);
-		if (wide & 0x10)
-			printf("    Deep BESL value    %5u us \n",
-					wide & 0xf000);
+		printf("      BESL Link Power Management (LPM) Supported\n");
+		if (wide & 0x08) {
+			besl = (wide & 0xf00) >> 8;
+			printf("      Baseline BESL value  %5hu us \n", besl_us[besl]);
+		}
+		if (wide & 0x10) {
+			besl = (wide & 0xf000) >> 12;
+			printf("      Deep BESL value      %5hu us \n", besl_us[besl]);
+		}
 	}
 }
 
