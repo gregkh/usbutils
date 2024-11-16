@@ -3108,7 +3108,7 @@ static void do_dualspeed(libusb_device_handle *fd)
 	       buf[6], proto,
 	       buf[7], buf[8]);
 
-	/* FIXME also show the OTHER_SPEED_CONFIG descriptors */
+	/* TODO also show the OTHER_SPEED_CONFIG descriptors */
 }
 
 static void do_debug(libusb_device_handle *fd)
