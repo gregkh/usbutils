@@ -2736,7 +2736,41 @@ dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, const 
 		       indent,
 		       indent, buf[3], (buf[3] && *str) ? str : "(?\?)",
 		       indent, tmp);
-		/* FIXME dissect ALL 28 bits */
+		/* TODO
+		 * Translate all 28 bits of bmEthernetStatistics into something "real"  Here's the bitfields if someone
+		 * wants to do this in the future.  As specified in the USB CDC ECM Subclass document, version 1.2,
+		 * table 4:
+		 * D00	XMIT_OK			Frames transmitted without errors
+		 * D01	RVC_OK			Frames received without errors
+		 * D02	XMIT_ERROR		Frames not transmitted, or transmitted with errors
+		 * D03	RCV_ERROR		Frames received with errors that are not delivered to the USB host.
+		 * D04	RCV_NO_BUFFER		Frame missed, no buffers
+		 * D05	DIRECTED_BYTES_XMIT	Directed bytes transmitted without errors
+		 * D06	DIRECTED_FRAMES_XMIT	Directed frames transmitted without errors
+		 * D07	MULTICAST_BYTES_XMIT	Multicast bytes transmitted without errors
+		 * D08	MULTICAST_FRAMES_XMIT	Multicast frames transmitted without errors
+		 * D09	BROADCAST_BYTES_XMIT	Broadcast bytes transmitted without errors
+		 * D10	BROADCAST_FRAMES_XMIT	Broadcast frames transmitted without errors
+		 * D11	DIRECTED_BYTES_RCV	Directed bytes received without errors
+		 * D12	DIRECTED_FRAMES_RCV	Directed frames received without errors
+		 * D13	MULTICAST_BYTES_RCV	Multicast bytes received without errors
+		 * D14	MULTICAST_FRAMES_RCV	Multicast frames received without errors
+		 * D15	BROADCAST_BYTES_RCV	Broadcast bytes received without errors
+		 * D16	BROADCAST_FRAMES_RCV	Broadcast frames received without errors
+		 * D17	RCV_CRC_ERROR		Frames received with circular redundancy check (CRC) or frame check sequence (FCS) error
+		 * D18	TRANSMIT_QUEUE_LENGTH	Length of transmit queue
+		 * D19	RCV_ERROR_ALIGNMENT	Frames received with alignment error
+		 * D20	XMIT_ONE_COLLISION	Frames transmitted with one collision
+		 * D21	XMIT_MORE_COLLISIONS	Frames transmitted with more than one collision
+		 * D22	XMIT_DEFERRED		Frames transmitted after deferral
+		 * D23	XMIT_MAX_COLLISIONS	Frames not transmitted due to collisions
+		 * D24	RCV_OVERRUN		Frames not received due to overrun
+		 * D25	XMIT_UNDERRUN		Frames not transmitted due to underrun
+		 * D26	XMIT_HEARTBEAT_FAILURE	Frames transmitted with heartbeat failure
+		 * D27	XMIT_TIMES_CRS_LOST	Times carrier sense signal lost during transmission
+		 * D28	XMIT_LATE_COLLISIONS	Late collisions detected
+		 * D29-D31 Reserved		Must be set to 0
+		 */
 		printf("%s  wMaxSegmentSize         %10d\n"
 		       "%s  wNumberMCFilters            0x%04x\n"
 		       "%s  bNumberPowerFilters     %10d\n",
