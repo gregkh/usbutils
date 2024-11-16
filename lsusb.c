@@ -3600,7 +3600,7 @@ static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp, bool lp
 		}
 		switch (buf[2]) {
 		case USB_DC_WIRELESS_USB:
-			/* FIXME */
+			/* It's dead!  Luckily no one has these devices so we can ignore it. */
 			break;
 		case USB_DC_20_EXTENSION:
 			dump_usb2_device_capability_desc(buf, lpm_required);
