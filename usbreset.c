@@ -18,9 +18,6 @@
 
 #include <linux/usbdevice_fs.h>
 
-
-/* static char *usbfs = NULL; */
-
 struct usbentry {
 	int bus_num;
 	int dev_num;

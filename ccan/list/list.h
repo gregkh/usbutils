@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: MIT
 // SPDX-FileCopyrightText: Rusty Russell <rusty@rustcorp.com.au>
 /* Licensed under BSD-MIT - see LICENSE file for details */
+
+/* define CCAN_LIST_DEBUG to be 1 if you want to have some debugging in here */
+
 #ifndef CCAN_LIST_H
 #define CCAN_LIST_H
-//#define CCAN_LIST_DEBUG 1
 #include <stdbool.h>
 #include <assert.h>
-//#include <ccan/str/str.h>
-//#include <ccan/container_of/container_of.h>
-//#include <ccan/check_type/check_type.h>
 #include "../str/str.h"
 #include "../container_of/container_of.h"
 #include "../check_type/check_type.h"
