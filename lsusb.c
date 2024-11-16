@@ -2877,7 +2877,11 @@ dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, const 
 		       indent, buf[6] | (buf[7] << 8));
 		break;
 	default:
-		/* FIXME there are about a dozen more descriptor types */
+		/*
+		 * There are about a dozen more descriptor types, if anyone has
+		 * a device with them in it, we'll add them here in the future
+		 * if * really needed.
+		 */
 		printf("%sUNRECOGNIZED CDC: ", indent);
 		dump_bytes(buf, buf[0]);
 		return;
