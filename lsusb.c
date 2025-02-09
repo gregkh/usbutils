@@ -809,6 +809,10 @@ static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interfa
 						(buf[3] & 0x3))
 					printf("        Mult %20u\n",
 							buf[3] & 0x3);
+				if ((endpoint->bmAttributes & 3) == 1 ||
+				    (endpoint->bmAttributes & 3) == 3)
+					printf("        wBytesPerInterval %7u\n",
+							buf[4] | buf[5] << 8);
 				break;
 			default:
 				/* often a misplaced class descriptor */
