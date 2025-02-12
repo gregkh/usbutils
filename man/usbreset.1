@@ -22,6 +22,9 @@ Reset by product and vendor IDs
 .BR BBB/DDD
 Reset by bus and device number
 .TP
+.BR "SN:SERIAL"
+Reset by serial number
+.TP
 .BR "Product"
 Reset by product name
 .PP
@@ -41,6 +44,10 @@ Reset device with vendor ID 1234 and product ID 5678:
 .TP
 Reset device 002 on bus 001:
 .B usbreset 001:002
+
+.TP
+Reset device with serial number ABCDEF0
+.B usbreset SN:ABCDEF0
 
 .TP
 Reset device named USB2.0 Hub:
