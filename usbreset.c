@@ -104,16 +104,13 @@ static void list_devices(void)
 		return;
 
 	while ((dev = parse_devlist(devs)) != NULL)
-		printf("  Number %03d/%03d  ID %04x:%04x  %s\n",
-			   dev->bus_num, dev->dev_num,
-			   dev->vendor_id, dev->product_id,
-			   dev->product_name);
+		printf("  Number %03d/%03d  ID %04x:%04x  %s\n", dev->bus_num, dev->dev_num, dev->vendor_id,
+		       dev->product_id, dev->product_name);
 
 	closedir(devs);
 }
 
-static struct usbentry *find_device(int *bus, int *dev, int *vid, int *pid,
-				    const char *product)
+static struct usbentry *find_device(int *bus, int *dev, int *vid, int *pid, const char *product)
 {
 	DIR *devs = opendir("/sys/bus/usb/devices");
 
@@ -124,8 +121,8 @@ static struct usbentry *find_device(int *bus, int *dev, int *vid, int *pid,
 
 	while ((e = parse_devlist(devs)) != NULL)
 		if ((bus && (e->bus_num == *bus) && (e->dev_num == *dev)) ||
-			(vid && (e->vendor_id == *vid) && (e->product_id == *pid)) ||
-			(product && !strcasecmp(e->product_name, product))) {
+		    (vid && (e->vendor_id == *vid) && (e->product_id == *pid)) ||
+		    (product && !strcasecmp(e->product_name, product))) {
 			match = e;
 			break;
 		}
@@ -140,13 +137,12 @@ static void reset_device(struct usbentry *dev)
 	int fd;
 	char path[PATH_MAX];
 
-	snprintf(path, sizeof(path) - 1, "/dev/bus/usb/%03d/%03d",
-		dev->bus_num, dev->dev_num);
+	snprintf(path, sizeof(path) - 1, "/dev/bus/usb/%03d/%03d", dev->bus_num, dev->dev_num);
 
 	printf("Resetting %s ... ", dev->product_name);
 
 	fd = open(path, O_WRONLY);
-	if (fd  > -1) {
+	if (fd > -1) {
 		if (ioctl(fd, USBDEVFS_RESET, 0) < 0)
 			printf("failed [%s]\n", strerror(errno));
 		else
@@ -157,7 +153,6 @@ static void reset_device(struct usbentry *dev)
 		printf("can't open [%s]\n", strerror(errno));
 	}
 }
-
 
 int main(int argc, char **argv)
 {
