@@ -104,17 +104,31 @@ static void list_devices(void)
 {
 	DIR *devs = opendir("/sys/bus/usb/devices");
 	struct usbentry *dev;
+	int max_serial_length = 0;
 
 	if (!devs)
 		return;
 
+	/* Calculate the largest size of the serial numbers if present */
 	while ((dev = parse_devlist(devs)) != NULL) {
-		printf("  Number %03d/%03d  ID %04x:%04x  %s", dev->bus_num, dev->dev_num, dev->vendor_id,
-		       dev->product_id, dev->product_name);
-		if (strlen(dev->serial) > 0) {
-			printf("  SN:%s", dev->serial);
-		}
-		printf("\n");
+		int serial_length = strlen(dev->serial);
+		if (serial_length > max_serial_length)
+			max_serial_length = serial_length;
+	}
+	closedir(devs);
+
+	devs = opendir("/sys/bus/usb/devices");
+	if (!devs)
+		return;
+
+	while ((dev = parse_devlist(devs)) != NULL) {
+		printf("  Number %03d/%03d  ID %04x:%04x  ", dev->bus_num, dev->dev_num, dev->vendor_id,
+		       dev->product_id);
+		if (strlen(dev->serial) > 0)
+			printf("SN:%-*s", max_serial_length, dev->serial);
+		else
+			printf("   %*s", max_serial_length, "");
+		printf("  %s\n", dev->product_name);
 	}
 
 	closedir(devs);
