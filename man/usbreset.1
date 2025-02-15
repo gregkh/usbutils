@@ -16,8 +16,8 @@ is a utility that performs resets on USB devices. It is particularly useful
 situations where a USB device is unresponsive or exhibits erratic behavior.
 The USB \fIdevice\fP to be reset can be specified in one of three formats:
 .TP
-.BR PPPP:VVVV
-Reset by product and vendor IDs
+.BR VVVV:PPPP
+Reset by vendor and product IDs
 .TP
 .BR BBB/DDD
 Reset by bus and device number
@@ -31,7 +31,7 @@ Reset by product name
 When run without any arguments,
 .B usbreset
 provides usage information and a list of connected USB devices, including their
-product and vendor IDs, bus and device numbers, and product names.
+vendor and product IDs, bus and device numbers, and product names.
 
 .SH RETURN VALUE
 If the specified device is not found, a non-zero exit code is returned.
