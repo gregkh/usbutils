@@ -1,6 +1,6 @@
 .\" SPDX-License-Identifier: GPL-2.0-only
 .\" Copyright (c) 2023 Aurelien Jarno <aurelien@aurel32.net>
-.TH usbreset 1 "04 January 2024" "usbutils" "Linux USB Utilities"
+.TH usbreset 1 "04 January 2024" usbutils "Linux USB Utilities"
 .IX usbreset
 .SH NAME
 usbreset \- send a USB port reset to a USB device
@@ -12,26 +12,27 @@ usbreset \- send a USB port reset to a USB device
 
 .SH DESCRIPTION
 .B usbreset
-is a utility that performs resets on USB devices. It is particularly useful
+is a utility that performs resets on USB devices.
+It is particularly useful for
 situations where a USB device is unresponsive or exhibits erratic behavior.
 The USB \fIdevice\fP to be reset can be specified in one of three formats:
 .TP
-.BR PPPP:VVVV
-Reset by product and vendor IDs
+.B VVVV:PPPP
+Reset by vendor and product IDs
 .TP
-.BR BBB/DDD
+.B BBB/DDD
 Reset by bus and device number
 .TP
-.BR "SN:SERIAL"
+.B SN:SERIAL
 Reset by serial number
 .TP
-.BR "Product"
+.B Product
 Reset by product name
 .PP
 When run without any arguments,
 .B usbreset
 provides usage information and a list of connected USB devices, including their
-product and vendor IDs, bus and device numbers, and product names.
+vendor and product IDs, bus and device numbers, and product names.
 
 .SH RETURN VALUE
 If the specified device is not found, a non-zero exit code is returned.
