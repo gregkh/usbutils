@@ -120,6 +120,8 @@ print_device() {
 
 	[ -d "$devpath" ] || return
 	cd "$devpath" || return
+	printf "\nB:  busid=%s\n" \
+		"$(basename ${devpath})"
 
 	read -r busnum < "busnum"
 	read -r devnum < "devnum"
@@ -132,7 +134,7 @@ print_device() {
 
 	read -r speed < "speed"
 	read -r maxchild < "maxchild"
-	printf "\nT:  Bus=%02i Lev=%02i Prnt=%02i Port=%02i Cnt=%02i Dev#=%3i Spd=%-4s MxCh=%2i\n" \
+	printf "T:  Bus=%02i Lev=%02i Prnt=%02i Port=%02i Cnt=%02i Dev#=%3i Spd=%-4s MxCh=%2i\n" \
 		"$busnum" "$level" "$parent" "$port" "$count" "$devnum" "$speed" "$maxchild"
 
 	read -r ver < "version"
