@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /* Copyright (c) 2009 Greg Kroah-Hartman <gregkh@suse.de> */
+#include <stdbool.h>
 #include <stdint.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -200,6 +201,21 @@ static void print_usbdevice(struct usbdevice *d, struct usbinterface *i)
 	if (verblevel >= 2) {
 		printf(" %*s", indent, "    ");
 		printf("%s/%s  /dev/bus/usb/%03d/%03d\n", sys_bus_usb_devices, d->name, d->busnum, d->devnum);
+	}
+	if (verblevel >= 3) {
+		bool hasManufacturer = strlen(d->manufacturer) > 0;
+		bool hasProduct = strlen(d->product) > 0;
+		bool hasSerial = strlen(d->serial) > 0;
+		if (hasManufacturer || hasProduct || hasSerial) {
+			printf(" %*s", indent, "    ");
+			if (hasManufacturer)
+				printf("Manufacturer=%s ", d->manufacturer);
+			if (hasProduct)
+				printf("Product=%s ", d->product);
+			if (hasSerial)
+				printf("Serial=%s", d->serial);
+			printf("\n");
+		}
 	}
 }
 
