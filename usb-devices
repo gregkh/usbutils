@@ -173,7 +173,7 @@ print_device() {
 		print_interface "$devpath/$interface"
 	done
 
-	devcount=0
+	local devcount=0
 	for subdev in "$busnum"-*
 	do
 		echo "$subdev" | grep -Eq "^$busnum-[0-9]+(\.[0-9]+)*$" \
