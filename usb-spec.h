@@ -170,7 +170,6 @@ static const struct genericstrtable huts[] = {
 	{ 0x90, "Camera Control Page" },
 	{ 0x91, "Arcade Control Page" },
 	{ 0xf0, "Cash Device" },
-	{ 0xff, "Vendor Specific" },
 	{ 0x00, NULL },
 };
 
