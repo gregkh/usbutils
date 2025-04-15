@@ -35,11 +35,9 @@ static struct udev_hwdb *hwdb = NULL;
 static const char *names_genericstrtable(const struct genericstrtable *t,
 					 unsigned int idx)
 {
-	const struct genericstrtable *h;
-
-	for (h = t; t->name; t++)
-		if (h->num == idx)
-			return h->name;
+	for (; t->name; t++)
+		if (t->num == idx)
+			return t->name;
 	return NULL;
 }
 
