@@ -117,6 +117,7 @@ print_device() {
 	local parent=$2
 	local level=$3
 	local count=$4
+	local devnum
 
 	[ -d "$devpath" ] || return
 	cd "$devpath" || return
