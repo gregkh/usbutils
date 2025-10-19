@@ -113,10 +113,10 @@ print_interface() {
 }
 
 print_device() {
-	local devpath=$1
-	local parent=$2
-	local level=$3
-	local count=$4
+	local devpath="$1"
+	local parent="$2"
+	local level="$3"
+	local count="$4"
 	local devnum
 
 	[ -d "$devpath" ] || return
