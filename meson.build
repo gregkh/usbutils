@@ -4,7 +4,7 @@
 project(
   'usbutils',
   'c',
-  version: '018',
+  version: '019',
   license: ['GPL-2.0-only', 'GPL-2.0-or-later','GPL-2.0-or-later'],
   meson_version : '>=0.60.0',
   default_options : ['c_std=gnu99', 'warning_level=2', 'prefix=/usr']

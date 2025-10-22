@@ -1,11 +1,77 @@
 # usbutils old-style "NEWS" file
 # SPDX-License-Identifier: GPL-2.0-only
 #
-# Copyright (c) 2018-2024 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+# Copyright (c) 2018-2025 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 #
 # This file is here for people who do not have access to the git commit
 # history (i.e. packaged versions of the software).
 #
+
+usbutils 019
+============
+
+Alban Browaeys (1):
+      usbreset.1: fix typo in the busnum/devicenum example
+
+Aurelien Jarno (2):
+      lsusb.py: add usb.ids path for Debian
+      usbreset: fix swapped vendor and product ID in help/manpage
+
+Bjarni Ingi Gislason (1):
+      usbreset.1: fix groff warnings and small fixes
+
+Emil Velikov (1):
+      ci: stop manually creating build/
+
+Enrico Joerns (1):
+      ci/codeql: use filter-sarif to filter meson-private
+
+Greg Kroah-Hartman (8):
+      Remove commented out code in usbreset.c and list.h and container_of.h
+      lsusb: turn a FIXME comment for dump_comm_descriptor() into something real
+      lsusb: remove FIXME about wireless usb device
+      lsusb: change FIXME for bmEthernetStatistics into a TODO
+      lsusb.c: change TODO into a fixme in do_dualspeed()
+      usbreset: move the serial number forward in the output
+      usb-devices: fix up bash warning for $altset
+      usb-devices: fix up some minor shellcheck warning messages
+
+Guillaume G. (1):
+      usb-spec: remove vendor specific entry
+
+Jörg Hofrichter (2):
+      usbreset: apply clang-format
+      usbreset: support resetting device by serial number
+
+Lucas De Marchi (1):
+      ci: Fix debian/ubuntu installation
+
+Michal Pecio (1):
+      lsusb: Show wBytesPerInterval field of the SS EP companion descriptor
+
+Sahil Siddiq (2):
+      usb-devices: Make devcount 'local' to handle recursion
+      usb-devices: Make devnum 'local' to handle recursion
+
+Stefan Becker (1):
+      lsusb-t: add verblevel 3 to print_usbdevice()
+
+Torleiv Sundre (1):
+      lsusb: improve usb2 device capability descriptor
+
+Waffle Lapkin (1):
+      Fix display of HID descriptors
+
+dependabot[bot] (9):
+      ci: bump the all-actions group with 4 updates
+      ci: bump github/codeql-action in the all-actions group
+      ci: bump github/codeql-action in the all-actions group
+      ci: bump the all-actions group with 2 updates
+      ci: bump github/codeql-action in the all-actions group
+      ci: bump the all-actions group with 2 updates
+      ci: bump the all-actions group with 2 updates
+      ci: bump github/codeql-action in the all-actions group
+      ci: bump the all-actions group across 1 directory with 3 updates
 
 usbutils 018
 ============
