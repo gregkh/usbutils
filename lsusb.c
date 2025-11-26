@@ -2247,7 +2247,7 @@ static void dump_ccid_device(const unsigned char *buf)
 	us = convert_le_u32(buf+10);
 	printf("        dwDefaultClock      %5u\n", us);
 	us = convert_le_u32(buf+14);
-	printf("        dwMaxiumumClock     %5u\n", us);
+	printf("        dwMaximumClock      %5u\n", us);
 	printf("        bNumClockSupported  %5u\n", buf[18]);
 	us = convert_le_u32(buf+19);
 	printf("        dwDataRate        %7u bps\n", us);
