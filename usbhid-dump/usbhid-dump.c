@@ -27,6 +27,9 @@
 #define LIBUSB_CALL
 #endif
 
+#define UHD_MAX_STREAM_TRANSFERS 1024
+#define UHD_MAX_STREAM_BUFFER_SIZE 4096
+
 #define GENERIC_ERROR(_fmt, _args...) \
     fprintf(stderr, _fmt "\n", ##_args)
 
@@ -313,6 +316,14 @@ dump_iface_list_stream(libusb_context  *ctx,
     /* Calculate number of interfaces and thus transfers */
     transfer_num = uhd_iface_list_len(list);
 
+    if (transfer_num == 0)
+        ERROR_CLEANUP("No interfaces to dump");
+    if (transfer_num > UHD_MAX_STREAM_TRANSFERS)
+        ERROR_CLEANUP("Too many interfaces to dump (%zu > %u)",
+                      transfer_num, UHD_MAX_STREAM_TRANSFERS);
+    if (transfer_num > SIZE_MAX / sizeof(*transfer_list))
+        FAILURE_CLEANUP("allocate transfer list");
+
     /* Allocate transfer list */
     transfer_list = malloc(sizeof(*transfer_list) * transfer_num);
     if (transfer_list == NULL)
@@ -345,7 +356,10 @@ dump_iface_list_stream(libusb_context  *ctx,
          ptransfer++, iface = iface->next)
     {
         void           *buf;
-        const size_t    len = iface->int_in_ep_maxp;
+        size_t          len = iface->int_in_ep_maxp;
+
+        if (len > UHD_MAX_STREAM_BUFFER_SIZE)
+            len = UHD_MAX_STREAM_BUFFER_SIZE;
 
         /* Allocate the transfer buffer */
         buf = malloc(len);
@@ -1057,5 +1071,3 @@ main(int argc, char **argv)
 
     return result;
 }
-
-

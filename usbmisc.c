@@ -22,29 +22,44 @@ static const char *devbususb = "/dev/bus/usb";
 
 static int readlink_recursive(const char *path, char *buf, size_t bufsize)
 {
-	char temp[PATH_MAX + 1];
-	char *ptemp;
-	int ret;
+	char current[PATH_MAX + 1];
+	char target[PATH_MAX + 1];
+	char joined[PATH_MAX + 1];
+	unsigned int depth;
 
-	ret = readlink(path, buf, bufsize-1);
+	if (bufsize == 0)
+		return 0;
 
-	if (ret > 0) {
-		buf[ret] = 0;
-		if (*buf != '/') {
-			strncpy(temp, path, sizeof(temp) - 1);
-			ptemp = temp + strlen(temp);
-			while (*ptemp != '/' && ptemp != temp)
-				ptemp--;
-			ptemp++;
-			strncpy(ptemp, buf, bufsize + temp - ptemp - 1);
-		} else
-			strncpy(temp, buf, sizeof(temp) - 1);
-		return readlink_recursive(temp, buf, bufsize);
-	} else {
-		strncpy(buf, path, bufsize);
-		buf[bufsize - 1] = 0;
-		return strlen(buf);
+	snprintf(current, sizeof(current), "%s", path ? path : "");
+
+	for (depth = 0; depth < 32; depth++) {
+		size_t dir_len;
+		ssize_t ret;
+		char *slash;
+
+		ret = readlink(current, target, sizeof(target) - 1);
+		if (ret <= 0)
+			break;
+		target[ret] = '\0';
+
+		if (target[0] == '/') {
+			snprintf(current, sizeof(current), "%s", target);
+			continue;
+		}
+
+		slash = strrchr(current, '/');
+		dir_len = slash ? (size_t)(slash - current + 1) : 0;
+		if (dir_len >= sizeof(joined))
+			break;
+		if (dir_len + strlen(target) >= sizeof(joined))
+			break;
+
+		snprintf(joined, sizeof(joined), "%.*s%s", (int)dir_len, current, target);
+		snprintf(current, sizeof(current), "%s", joined);
 	}
+
+	snprintf(buf, bufsize, "%s", current);
+	return strlen(buf);
 }
 
 static char *get_absolute_path(const char *path, char *result,
@@ -52,18 +67,24 @@ static char *get_absolute_path(const char *path, char *result,
 {
 	const char *ppath;	/* pointer on the input string */
 	char *presult;		/* pointer on the output string */
+	char *result_start;
 
 	ppath = path;
 	presult = result;
+	result_start = result;
 	result[0] = 0;
 
 	if (path == NULL)
 		return result;
 
 	if (*ppath != '/') {
-		result = getcwd(result, result_size);
-		presult += strlen(result);
-		result_size -= strlen(result);
+		char *cwd = getcwd(result, result_size);
+		if (cwd == NULL) {
+			result_start[0] = 0;
+			return result_start;
+		}
+		presult += strlen(result_start);
+		result_size -= strlen(result_start);
 
 		*presult++ = '/';
 		result_size--;
@@ -98,7 +119,7 @@ static char *get_absolute_path(const char *path, char *result,
 	/* Don't forget to mark the end of the string! */
 	*presult = 0;
 
-	return result;
+	return result_start;
 }
 
 libusb_device *get_usb_device(libusb_context *ctx, const char *path)
@@ -114,6 +135,8 @@ libusb_device *get_usb_device(libusb_context *ctx, const char *path)
 
 	dev = NULL;
 	num_devs = libusb_get_device_list(ctx, &list);
+	if (num_devs < 0)
+		return NULL;
 
 	for (i = 0; i < num_devs; ++i) {
 		uint8_t bnum = libusb_get_bus_number(list[i]);
@@ -123,6 +146,7 @@ libusb_device *get_usb_device(libusb_context *ctx, const char *path)
 			 devbususb, bnum, dnum);
 		if (!strcmp(device_path, absolute_path)) {
 			dev = list[i];
+			libusb_ref_device(dev);
 			break;
 		}
 	}

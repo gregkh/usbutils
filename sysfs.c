@@ -33,6 +33,9 @@ int get_sysfs_name(char *buf, size_t size, libusb_device *dev)
 	uint8_t pnums[USB_MAX_DEPTH];
 	int num_pnums;
 
+	if (size == 0)
+		return 0;
+
 	buf[0] = '\0';
 
 	num_pnums = libusb_get_port_numbers(dev, pnums, sizeof(pnums));
@@ -56,8 +59,12 @@ int get_sysfs_name(char *buf, size_t size, libusb_device *dev)
 
 int read_sysfs_prop(char *buf, size_t size, const char *sysfs_name, const char *propname)
 {
-	int n, fd;
+	ssize_t n;
+	int fd;
 	char path[PATH_MAX];
+
+	if (size == 0)
+		return 0;
 
 	buf[0] = '\0';
 	snprintf(path, sizeof(path), SYSFS_DEV_ATTR_PATH, sysfs_name, propname);
@@ -66,11 +73,16 @@ int read_sysfs_prop(char *buf, size_t size, const char *sysfs_name, const char *
 	if (fd == -1)
 		return 0;
 
-	n = read(fd, buf, size);
-
-	if (n > 0)
-		buf[n-1] = '\0';  // Turn newline into null terminator
+	n = read(fd, buf, size - 1);
+	if (n > 0) {
+		buf[n] = '\0';
+		if (buf[n - 1] == '\n')
+			buf[n - 1] = '\0';
+	} else {
+		buf[0] = '\0';
+		n = 0;
+	}
 
 	close(fd);
-	return n;
+	return n >= 0 ? (int)n : 0;
 }

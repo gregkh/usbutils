@@ -3584,6 +3584,7 @@ static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp, bool lp
 	unsigned char bos_desc_static[5];
 	unsigned char *bos_desc;
 	unsigned int bos_desc_size;
+	unsigned int bos_total_len;
 	int size, ret;
 	unsigned char *buf;
 
@@ -3599,13 +3600,17 @@ static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp, bool lp
 		return;
 
 	bos_desc_size = bos_desc_static[2] + (bos_desc_static[3] << 8);
+	bos_total_len = bos_desc_size;
 	printf("Binary Object Store Descriptor:\n"
 	       "  bLength             %5u\n"
 	       "  bDescriptorType     %5u\n"
 	       "  wTotalLength       0x%04x\n"
 	       "  bNumDeviceCaps      %5u\n",
 	       bos_desc_static[0], bos_desc_static[1],
-	       bos_desc_size, bos_desc_static[4]);
+	       bos_total_len, bos_desc_static[4]);
+
+	if (bos_desc_size > 4096)
+		bos_desc_size = 4096;
 
 	if (bos_desc_size <= 5) {
 		if (bos_desc_static[4] > 0)
@@ -3627,15 +3632,17 @@ static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp, bool lp
 		fprintf(stderr, "Couldn't get device capability descriptors\n");
 		goto out;
 	}
+	if (ret < 5)
+		goto out;
+	if ((unsigned int)ret < bos_desc_size)
+		bos_desc_size = ret;
 
 	size = bos_desc_size - 5;
 	buf = &bos_desc[5];
 
 	while (size >= 3) {
-		if (buf[0] < 3) {
-			printf("buf[0] = %u\n", buf[0]);
+		if (buf[0] < 3 || buf[0] > size)
 			goto out;
-		}
 		switch (buf[2]) {
 		case USB_DC_WIRELESS_USB:
 			/* It's dead!  Luckily no one has these devices so we can ignore it. */
@@ -3669,7 +3676,7 @@ static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp, bool lp
 			break;
 		default:
 			printf("  ** UNRECOGNIZED: ");
-			dump_bytes(buf, buf[0]);
+			dump_bytes(buf, buf[0] > size ? size : buf[0]);
 			break;
 		}
 		size -= buf[0];
@@ -3757,32 +3764,29 @@ static int dump_one_device(libusb_context *ctx, const char *path)
 					       vendor,
 					       product);
 	dumpdev(dev);
+	libusb_unref_device(dev);
 	return 0;
+}
+
+static int compare_devs(const void *a, const void *b)
+{
+	libusb_device *dev_a = *(libusb_device * const *)a;
+	libusb_device *dev_b = *(libusb_device * const *)b;
+	int bnum_a = libusb_get_bus_number(dev_a);
+	int bnum_b = libusb_get_bus_number(dev_b);
+	int dnum_a = libusb_get_device_address(dev_a);
+	int dnum_b = libusb_get_device_address(dev_b);
+
+	if (bnum_a != bnum_b)
+		return bnum_a - bnum_b;
+	return dnum_a - dnum_b;
 }
 
 static void sort_device_list(libusb_device **list, ssize_t num_devs)
 {
-	struct libusb_device *dev, *dev_next;
-	int bnum, bnum_next, dnum, dnum_next;
-	ssize_t i;
-	int sorted;
-	sorted = 0;
-	do {
-		sorted = 1;
-		for (i = 0; i < num_devs - 1; ++i) {
-			dev = list[i];
-			dev_next = list[i + 1];
-			bnum = libusb_get_bus_number(dev);
-			dnum = libusb_get_device_address(dev);
-			bnum_next = libusb_get_bus_number(dev_next);
-			dnum_next = libusb_get_device_address(dev_next);
-			if ((bnum == bnum_next && dnum > dnum_next) || bnum > bnum_next) {
-				list[i] = dev_next;
-				list[i + 1] = dev;
-				sorted = 0;
-			}
-		}
-	} while(!sorted);
+	if (num_devs <= 1)
+		return;
+	qsort(list, (size_t)num_devs, sizeof(*list), compare_devs);
 }
 
 static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendorid, int productid)

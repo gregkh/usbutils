@@ -249,6 +249,10 @@ static void read_sysfs_file_string(const char *d_name, const char *file, char *b
 	char path[MY_PATH_MAX];
 	int fd;
 	ssize_t r;
+	if (len <= 0) {
+		buf[0] = '\0';
+		return;
+	}
 	fd = snprintf(path, MY_PATH_MAX, "%s/%s/%s", sys_bus_usb_devices, d_name, file);
 	if (fd < 0 || fd >= MY_PATH_MAX)
 		goto error;
@@ -256,7 +260,7 @@ static void read_sysfs_file_string(const char *d_name, const char *file, char *b
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
 		goto error;
-	r = read(fd, buf, len);
+	r = read(fd, buf, len - 1);
 	close(fd);
 	if (r > 0 && r < len) {
 		buf[r] = '\0';
