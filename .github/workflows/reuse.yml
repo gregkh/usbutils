@@ -2,9 +2,10 @@
 #
 # SPDX-License-Identifier: LGPL-2.1-or-later
 
+---
 name: Reuse Lint
 
-on:
+'on':
   push:
     branches: [master, ci-test]
   pull_request:
@@ -20,17 +21,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the project
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        # v5.0.0
 
       - name: Setup Python
-        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
+        # v6.0.0
         with:
           python-version: '3.10'
 
       - name: Install dependencies
         run: |
           _version=$(grep -o "reuse-.*" usbutils.spdx | cut -f2 -d'-')
-          pip install reuse~=$_version
+          pip install "reuse~=${_version}"
 
       - name: Check SPDX identifiers
         run: reuse lint

@@ -1,0 +1,3 @@
+[codespell]
+ignore-words = .codespellignore
+skip = NEWS,*/NEWS,.git,build*,LICENSES,ccan,usbutils.spdx

@@ -3,9 +3,10 @@
 #
 # SPDX-License-Identifier: LGPL-2.1-or-later
 
+---
 name: Build and Test
 
-on:
+'on':
   push:
     branches: [master, ci-test]
   pull_request:
@@ -44,7 +45,8 @@ jobs:
 
     steps:
       - name: Sparse checkout the local actions
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        # v5.0.0
         with:
           sparse-checkout: .github
 
@@ -60,7 +62,8 @@ jobs:
         if: ${{ startsWith(matrix.container, 'ubuntu') }}
 
       - name: Checkout the whole project
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        # v5.0.0
 
       - name: Set the environment
         run: |
@@ -76,7 +79,7 @@ jobs:
         run: meson compile -C build
 
       - name: install
-        run: meson install -C build --destdir $PWD/inst
+        run: meson install -C build --destdir "$PWD/inst"
 
       - name: distcheck
         run: meson dist -C build
