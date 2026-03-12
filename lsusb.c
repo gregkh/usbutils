@@ -264,8 +264,7 @@ static void dump_device(
 	char sysfs_name[PATH_MAX];
 	const char *negotiated_speed;
 
-	get_vendor_product_with_fallback(vendor, sizeof(vendor),
-			product, sizeof(product), dev);
+	get_vendor_product_with_fallback(vendor, sizeof(vendor), product, sizeof(product), dev, descriptor);
 	get_class_string(cls, sizeof(cls), descriptor->bDeviceClass);
 	get_subclass_string(subcls, sizeof(subcls),
 			descriptor->bDeviceClass, descriptor->bDeviceSubClass);
@@ -3750,8 +3749,7 @@ static int dump_one_device(libusb_context *ctx, const char *path)
 		return 1;
 	}
 	libusb_get_device_descriptor(dev, &desc);
-	get_vendor_product_with_fallback(vendor, sizeof(vendor),
-			product, sizeof(product), dev);
+	get_vendor_product_with_fallback(vendor, sizeof(vendor), product, sizeof(product), dev, &desc);
 	printf("Device: ID %04x:%04x %s %s\n", desc.idVendor,
 					       desc.idProduct,
 					       vendor,
@@ -3814,8 +3812,7 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 			continue;
 		status = 0;
 
-		get_vendor_product_with_fallback(vendor, sizeof(vendor),
-				product, sizeof(product), dev);
+		get_vendor_product_with_fallback(vendor, sizeof(vendor), product, sizeof(product), dev, &desc);
 
 		if (verblevel > 0)
 			printf("\n");
