@@ -25,6 +25,7 @@
 #include "usbmisc.h"
 #include "desc-defs.h"
 #include "desc-dump.h"
+#include "desc-file.h"
 
 #include <getopt.h>
 
@@ -249,6 +250,41 @@ static void dump_junk(const unsigned char *buf, const char *indent, unsigned int
 	printf("\n");
 }
 
+static void dump_device_speed(libusb_device *dev)
+{
+	const char *negotiated_speed;
+
+	if (!dev)
+		return;
+
+	switch (libusb_get_device_speed(dev)) {
+	case LIBUSB_SPEED_LOW:
+		negotiated_speed = "Low Speed (1Mbps)";
+		break;
+	case LIBUSB_SPEED_FULL:
+		negotiated_speed = "Full Speed (12Mbps)";
+		break;
+	case LIBUSB_SPEED_HIGH:
+		negotiated_speed = "High Speed (480Mbps)";
+		break;
+	case LIBUSB_SPEED_SUPER:
+		negotiated_speed = "SuperSpeed (5Gbps)";
+		break;
+	case LIBUSB_SPEED_SUPER_PLUS:
+		negotiated_speed = "SuperSpeed+ (10Gbps)";
+		break;
+	case LIBUSB_SPEED_SUPER_PLUS_X2:
+		negotiated_speed = "SuperSpeed++ (20Gbps)";
+		break;
+	case LIBUSB_SPEED_UNKNOWN:
+	default:
+		negotiated_speed = "Unknown";
+		break;
+	}
+
+	printf("Negotiated speed: %s\n", negotiated_speed);
+}
+
 /*
  * General config descriptor dump
  */
@@ -262,7 +298,6 @@ static void dump_device(
 	char cls[128], subcls[128], proto[128];
 	char mfg[128] = {0}, prod[128] = {0}, serial[128] = {0};
 	char sysfs_name[PATH_MAX];
-	const char *negotiated_speed;
 
 	get_vendor_product_with_fallback(vendor, sizeof(vendor), product, sizeof(product), dev, descriptor);
 	get_class_string(cls, sizeof(cls), descriptor->bDeviceClass);
@@ -271,37 +306,13 @@ static void dump_device(
 	get_protocol_string(proto, sizeof(proto), descriptor->bDeviceClass,
 			descriptor->bDeviceSubClass, descriptor->bDeviceProtocol);
 
-	if (get_sysfs_name(sysfs_name, sizeof(sysfs_name), dev) >= 0) {
+	if (dev && get_sysfs_name(sysfs_name, sizeof(sysfs_name), dev) >= 0) {
 		read_sysfs_prop(mfg, sizeof(mfg), sysfs_name, "manufacturer");
 		read_sysfs_prop(prod, sizeof(prod), sysfs_name, "product");
 		read_sysfs_prop(serial, sizeof(serial), sysfs_name, "serial");
 	}
 
-	switch (libusb_get_device_speed(dev)) {
-		case LIBUSB_SPEED_LOW:
-			negotiated_speed = "Low Speed (1Mbps)";
-			break;
-		case LIBUSB_SPEED_FULL:
-			negotiated_speed = "Full Speed (12Mbps)";
-			break;
-		case LIBUSB_SPEED_HIGH:
-			negotiated_speed = "High Speed (480Mbps)";
-			break;
-		case LIBUSB_SPEED_SUPER:
-			negotiated_speed = "SuperSpeed (5Gbps)";
-			break;
-		case LIBUSB_SPEED_SUPER_PLUS:
-			negotiated_speed = "SuperSpeed+ (10Gbps)";
-			break;
-		case LIBUSB_SPEED_SUPER_PLUS_X2:
-			negotiated_speed = "SuperSpeed++ (20Gbps)";
-			break;
-		case LIBUSB_SPEED_UNKNOWN:
-		default:
-			negotiated_speed = "Unknown";
-			break;
-	}
-	printf("Negotiated speed: %s\n", negotiated_speed);
+	dump_device_speed(dev);
 
 	printf("Device Descriptor:\n"
 	       "  bLength             %5u\n"
@@ -3830,6 +3841,44 @@ error:
 	return status;
 }
 
+/* ---------------------------------------------------------------------- */
+
+static int dump_descriptors_file(const char *path)
+{
+	int fd;
+	struct libusb_device_descriptor desc;
+	char vendor[128], product[128];
+
+	fd = open(path, O_RDONLY);
+	if (fd == -1) {
+		perror("open");
+		return 1;
+	}
+
+	if (desc_file_get_device_descriptor(fd, &desc) < 0) {
+		close(fd);
+		return 1;
+	}
+
+	get_vendor_product_with_fallback(vendor, sizeof(vendor), product, sizeof(product), NULL, &desc);
+
+	printf("Device: ID %04x:%04x %s %s\n", desc.idVendor, desc.idProduct, vendor, product);
+
+	dump_device(NULL, &desc);
+
+	for (int i = 0; i < desc.bNumConfigurations; i++) {
+		struct libusb_config_descriptor *config;
+
+		config = desc_file_get_next_config_descriptor(fd);
+		if (!config)
+			break;
+		dump_config(NULL, config, desc.bcdUSB);
+		desc_file_free_config_descriptor(config);
+	}
+
+	close(fd);
+	return 0;
+}
 
 /* ---------------------------------------------------------------------- */
 
@@ -3846,15 +3895,14 @@ int main(int argc, char *argv[])
 	int c, err = 0;
 	unsigned int treemode = 0;
 	int bus = -1, devnum = -1, vendor = -1, product = -1;
-	const char *devdump = NULL;
+	const char *devdump = NULL, *descfile = NULL;
 	int help = 0;
 	char *cp;
 	int status;
 
 	setlocale(LC_CTYPE, "");
 
-	while ((c = getopt_long(argc, argv, "D:vtP:p:s:d:Vh",
-			long_options, NULL)) != EOF) {
+	while ((c = getopt_long(argc, argv, "D:vtP:p:s:d:VhF:", long_options, NULL)) != EOF) {
 		switch (c) {
 		case 'V':
 			printf("lsusb (" PACKAGE_NAME ") " VERSION "\n");
@@ -3864,7 +3912,7 @@ int main(int argc, char *argv[])
 			break;
 
 		case 'h':
-			help=1;
+			help = 1;
 			break;
 
 		case 't':
@@ -3902,6 +3950,10 @@ int main(int argc, char *argv[])
 			devdump = optarg;
 			break;
 
+		case 'F':
+			descfile = optarg;
+			break;
+
 		case '?':
 		default:
 			err++;
@@ -3910,24 +3962,25 @@ int main(int argc, char *argv[])
 	}
 	if (err || argc > optind || help) {
 		fprintf(stderr, "Usage: lsusb [options]...\n"
-			"List USB devices\n"
-			"  -v, --verbose\n"
-			"      Increase verbosity (show descriptors)\n"
-			"  -s [[bus]:][devnum]\n"
-			"      Show only devices with specified device and/or\n"
-			"      bus numbers (in decimal)\n"
-			"  -d vendor:[product]\n"
-			"      Show only devices with the specified vendor and\n"
-			"      product ID numbers (in hexadecimal)\n"
-			"  -D device\n"
-			"      Selects which device lsusb will examine\n"
-			"  -t, --tree\n"
-			"      Dump the physical USB device hierarchy as a tree\n"
-			"  -V, --version\n"
-			"      Show version of program\n"
-			"  -h, --help\n"
-			"      Show usage and help\n"
-			);
+				"List USB devices\n"
+				"  -v, --verbose\n"
+				"      Increase verbosity (show descriptors)\n"
+				"  -s [[bus]:][devnum]\n"
+				"      Show only devices with specified device and/or\n"
+				"      bus numbers (in decimal)\n"
+				"  -d vendor:[product]\n"
+				"      Show only devices with the specified vendor and\n"
+				"      product ID numbers (in hexadecimal)\n"
+				"  -D device\n"
+				"      Selects which device lsusb will examine\n"
+				"  -F file\n"
+				"      Read descriptors from a file\n"
+				"  -t, --tree\n"
+				"      Dump the physical USB device hierarchy as a tree\n"
+				"  -V, --version\n"
+				"      Show version of program\n"
+				"  -h, --help\n"
+				"      Show usage and help\n");
 		if (help && !err)
 			return 0;
 		else
@@ -3953,7 +4006,9 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	if (devdump)
+	if (descfile)
+		status = dump_descriptors_file(descfile);
+	else if (devdump)
 		status = dump_one_device(ctx, devdump);
 	else
 		status = list_devices(ctx, bus, devnum, vendor, product);
