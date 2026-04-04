@@ -2554,6 +2554,11 @@ static void dump_printer_device(libusb_device_handle *dev,
 	if (interface->bInterfaceProtocol != 0x04)  /* IPP-over-USB */
 		return;
 
+	if (buf[0] < 4) {
+		printf("        Warning: IPP Printer Descriptor too short\n");
+		return;
+	}
+
 	printf("        IPP Printer Descriptor:\n"
 	       "          bLength             %5u\n"
 	       "          bDescriptorType     %5u\n"
@@ -2563,10 +2568,19 @@ static void dump_printer_device(libusb_device_handle *dev,
 
 	n = 4;
 	for (i = 0 ; i < buf[3] ; i++) {
+		if (n + 2 > buf[0])
+			break;
 		switch (buf[n]) {
 		case 0x00: {  /* Basic capabilities */
-			uint16_t caps = le16_to_cpu(buf[n+2] | (buf[n+3] << 8));
-			char *uuid = get_dev_string(dev, buf[n+5]);
+			uint16_t caps;
+			char *uuid;
+
+			if (n + 6 > buf[0]) {
+				printf("          Warning: Descriptor too short\n");
+				return;
+			}
+			caps = le16_to_cpu(buf[n+2] | (buf[n+3] << 8));
+			uuid = get_dev_string(dev, buf[n+5]);
 
 			printf("            iIPPVersionsSupported %5u\n", buf[n+4]);
 			printf("            iIPPPrinterUUID       %5u %s\n", buf[n+5], uuid);
