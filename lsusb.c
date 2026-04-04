@@ -412,6 +412,11 @@ static void dump_association(libusb_device_handle *dev, const unsigned char *buf
 	char cls[128], subcls[128], proto[128];
 	char *func;
 
+	if (buf[0] < 8) {
+		printf("    Warning: Interface Association descriptor too short\n");
+		return;
+	}
+
 	get_class_string(cls, sizeof(cls), buf[4]);
 	get_subclass_string(subcls, sizeof(subcls), buf[4], buf[5]);
 	get_protocol_string(proto, sizeof(proto), buf[4], buf[5], buf[6]);
