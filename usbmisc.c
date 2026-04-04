@@ -62,6 +62,8 @@ static char *get_absolute_path(const char *path, char *result,
 
 	if (*ppath != '/') {
 		result = getcwd(result, result_size);
+		if (!result)
+			return NULL;
 		presult += strlen(result);
 		result_size -= strlen(result);
 
