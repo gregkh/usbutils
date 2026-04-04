@@ -1147,7 +1147,7 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 
 			case 0x02: /* FORMAT_TYPE_II */
 				printf("(FORMAT_TYPE_II)\n");
-				j = buf[8] ? (buf[7]*3+9) : 15;
+				j = buf[8] ? (buf[8]*3+9) : 15;
 				if (buf[0] < j)
 					printf("      Warning: Descriptor too short\n");
 				printf("        wMaxBitRate         %5u\n"
