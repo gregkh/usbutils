@@ -409,7 +409,7 @@ static unsigned int get_array_entry_count(
 		/* If the bits flag is set, then the entry count so far
 		 * was a bit count, and we need to get a byte count. */
 		if (array_entry->array.bits) {
-			entries = (entries / 8) + (entries & 0x7) ? 1 : 0;
+			entries = (entries / 8) + ((entries & 0x7) ? 1 : 0);
 		}
 	} else {
 		/* Inferred array length.  We haven't been given a field to get
