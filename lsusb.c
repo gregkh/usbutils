@@ -2507,7 +2507,7 @@ static void dump_printer_device(libusb_device_handle *dev,
 	for (i = 0 ; i < buf[3] ; i++) {
 		switch (buf[n]) {
 		case 0x00: {  /* Basic capabilities */
-			uint16_t caps = le16_to_cpu(*((uint16_t*)&buf[n+2]));
+			uint16_t caps = le16_to_cpu(buf[n+2] | (buf[n+3] << 8));
 			char *uuid = get_dev_string(dev, buf[n+5]);
 
 			printf("            iIPPVersionsSupported %5u\n", buf[n+4]);
