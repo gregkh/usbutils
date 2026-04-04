@@ -1744,11 +1744,21 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 
 	case 0x06:  /* EXTENSION_UNIT */
 		printf("(EXTENSION_UNIT)\n");
-		p = buf[21];
-		n = buf[22+p];
-		term = get_dev_string(dev, buf[23+p+n]);
-		if (buf[0] < 24+p+n)
+		if (buf[0] < 22) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
+		p = buf[21];
+		if (buf[0] < 23+p) {
+			printf("      Warning: Descriptor too short\n");
+			break;
+		}
+		n = buf[22+p];
+		if (buf[0] < 24+p+n) {
+			printf("      Warning: Descriptor too short\n");
+			break;
+		}
+		term = get_dev_string(dev, buf[23+p+n]);
 		printf("        bUnitID             %5u\n"
 		       "        guidExtensionCode         %s\n"
 		       "        bNumControls        %5u\n"
