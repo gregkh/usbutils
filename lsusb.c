@@ -1715,10 +1715,16 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 
 	case 0x05:  /* PROCESSING_UNIT */
 		printf("(PROCESSING_UNIT)\n");
-		n = buf[7];
-		term = get_dev_string(dev, buf[8+n]);
-		if (buf[0] < 10+n)
+		if (buf[0] < 8) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
+		n = buf[7];
+		if (buf[0] < 10+n) {
+			printf("      Warning: Descriptor too short\n");
+			break;
+		}
+		term = get_dev_string(dev, buf[8+n]);
 		printf("        bUnitID             %5u\n"
 		       "        bSourceID           %5u\n"
 		       "        wMaxMultiplier      %5u\n"
