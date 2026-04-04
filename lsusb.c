@@ -2390,9 +2390,11 @@ static void dump_report_desc(unsigned char *b, int l)
 		bsize = b[i] & 0x03;
 		if (bsize == 3)
 			bsize = 4;
-		/* Truncated item: avoid OOB reads of b[i+1+j] */
-		if (bsize > 0 && i + 1 + (int)bsize > l)
-			return;
+		if (i + 1 + (int)bsize > l) {
+			/* Truncated item: avoid OOB reads of b[i+1+j] */
+			printf("            ** TRUNCATED at offset %d **\n", i);
+			break;
+		}
 		btype = b[i] & (0x03 << 2);
 		btag = b[i] & ~0x03; /* 2 LSB bits encode length */
 		printf("            Item(%-6s): %s, data=", types[btype>>2],
