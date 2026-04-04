@@ -3436,7 +3436,7 @@ static void dump_ssp_device_capability_desc(unsigned char *buf)
 	printf("      Min functional RX lanes: %u\n", buf[9] & 0x0f);
 	printf("      Min functional TX lanes: %u\n", (buf[9] >> 4) & 0x0f);
 
-	for (i = 0; i <= (buf[4] & 0x1f); i++) {
+	for (i = 0; i <= (buf[4] & 0x1f) && 12 + (i * 4) + 4 <= buf[0]; i++) {
 		ss_attr = convert_le_u32(buf + 12 + (i * 4));
 		printf("    bmSublinkSpeedAttr[%u]   0x%08x\n", i, ss_attr);
 		printf("      Speed Attribute ID: %u %u%cb/s %s %s SuperSpeed%s\n",
