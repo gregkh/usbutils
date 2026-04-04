@@ -335,6 +335,10 @@ static void dump_device(
 
 static void dump_wire_adapter(const unsigned char *buf)
 {
+	if (buf[0] < 14) {
+		printf("      Warning: Wire Adapter descriptor too short\n");
+		return;
+	}
 
 	printf("      Wire Adapter Class Descriptor:\n"
 	       "        bLength             %5u\n"
@@ -356,12 +360,15 @@ static void dump_wire_adapter(const unsigned char *buf)
 
 static void dump_rc_interface(const unsigned char *buf)
 {
+	if (buf[0] < 4) {
+		printf("      Warning: Radio Control Interface descriptor too short\n");
+		return;
+	}
 	printf("      Radio Control Interface Class Descriptor:\n"
 	       "        bLength             %5u\n"
 	       "        bDescriptorType     %5u\n"
 	       "        bcdRCIVersion       %2x.%02x\n",
 	       buf[0], buf[1], buf[3], buf[2]);
-
 }
 
 static void dump_security(const unsigned char *buf)
