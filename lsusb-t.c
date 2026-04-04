@@ -257,9 +257,9 @@ static void read_sysfs_file_string(const char *d_name, const char *file, char *b
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
 		goto error;
-	r = read(fd, buf, len);
+	r = read(fd, buf, len - 1);
 	close(fd);
-	if (r > 0 && r < len) {
+	if (r > 0) {
 		buf[r] = '\0';
 		r--;
 		while (r >= 0 && buf[r] == '\n') {
