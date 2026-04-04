@@ -20,11 +20,22 @@ static const char *devbususb = "/dev/bus/usb";
 
 /* ---------------------------------------------------------------------- */
 
-static int readlink_recursive(const char *path, char *buf, size_t bufsize)
+/* SYMLOOP_MAX is typically 40 on Linux (MAXSYMLINKS) */
+#define MAX_READLINK_DEPTH 40
+
+static int readlink_recursive_depth(const char *path, char *buf,
+				    size_t bufsize, int depth)
 {
 	char temp[PATH_MAX + 1];
 	char *ptemp;
 	int ret;
+	size_t remaining;
+
+	if (depth > MAX_READLINK_DEPTH) {
+		strncpy(buf, path, bufsize);
+		buf[bufsize - 1] = '\0';
+		return strlen(buf);
+	}
 
 	ret = readlink(path, buf, bufsize-1);
 
@@ -32,19 +43,29 @@ static int readlink_recursive(const char *path, char *buf, size_t bufsize)
 		buf[ret] = 0;
 		if (*buf != '/') {
 			strncpy(temp, path, sizeof(temp) - 1);
+			temp[sizeof(temp) - 1] = '\0';
 			ptemp = temp + strlen(temp);
 			while (*ptemp != '/' && ptemp != temp)
 				ptemp--;
 			ptemp++;
-			strncpy(ptemp, buf, bufsize + temp - ptemp - 1);
-		} else
+			remaining = sizeof(temp) - (ptemp - temp) - 1;
+			strncpy(ptemp, buf, remaining);
+			ptemp[remaining] = '\0';
+		} else {
 			strncpy(temp, buf, sizeof(temp) - 1);
-		return readlink_recursive(temp, buf, bufsize);
+			temp[sizeof(temp) - 1] = '\0';
+		}
+		return readlink_recursive_depth(temp, buf, bufsize, depth + 1);
 	} else {
 		strncpy(buf, path, bufsize);
-		buf[bufsize - 1] = 0;
+		buf[bufsize - 1] = '\0';
 		return strlen(buf);
 	}
+}
+
+static int readlink_recursive(const char *path, char *buf, size_t bufsize)
+{
+	return readlink_recursive_depth(path, buf, bufsize, 0);
 }
 
 static char *get_absolute_path(const char *path, char *result,
