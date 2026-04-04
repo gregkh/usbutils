@@ -154,7 +154,7 @@ static void dump_billboard_device_capability_desc(libusb_device_handle *dev, uns
 
 static unsigned int convert_le_u32 (const unsigned char *buf)
 {
-	return buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
+	return buf[0] | (buf[1] << 8) | (buf[2] << 16) | ((unsigned int)buf[3] << 24);
 }
 
 static unsigned int convert_le_u16 (const unsigned char *buf)
