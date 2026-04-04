@@ -213,7 +213,7 @@ static const char *get_guid(const unsigned char *buf)
 	 * structure.  The first fields fields are historically big
 	 * endian numbers, dating from Apollo mc68000 workstations.
 	 */
-	sprintf(guid, "{%02x%02x%02x%02x"
+	snprintf(guid, sizeof(guid), "{%02x%02x%02x%02x"
 			"-%02x%02x"
 			"-%02x%02x"
 			"-%02x%02x"
