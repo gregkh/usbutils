@@ -1901,7 +1901,15 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 
 	case 0x03: /* STILL_IMAGE_FRAME */
 		printf("(STILL_IMAGE_FRAME)\n");
+		if (buf[0] < 5) {
+			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		n = buf[4];
+		if (buf[0] < 6+4*n) {
+			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		m = buf[5+4*n];
 		if (buf[0] < 6+4*n+m)
 			printf("      Warning: Descriptor too short\n");
