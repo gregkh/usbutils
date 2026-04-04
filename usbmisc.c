@@ -137,6 +137,10 @@ static char *get_dev_string_ascii(libusb_device_handle *dev, size_t size,
                                   uint8_t id)
 {
 	char *buf = malloc(size);
+
+	if (!buf)
+		return strdup("(error)");
+
 	int ret = libusb_get_string_descriptor_ascii(dev, id,
 	                                             (unsigned char *) buf,
 	                                             size);
