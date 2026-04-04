@@ -1621,6 +1621,10 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 	switch (buf[2]) {
 	case 0x01:  /* HEADER */
 		printf("(HEADER)\n");
+		if (buf[0] < 12) {
+			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		n = buf[11];
 		if (buf[0] < 12+n)
 			printf("      Warning: Descriptor too short\n");
