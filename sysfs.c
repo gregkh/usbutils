@@ -43,7 +43,9 @@ int get_sysfs_name(char *buf, size_t size, libusb_device *dev)
 		return snprintf(buf, size, "usb%d", bnum);
 	}
 
-	len += snprintf(buf, size, "%d-", bnum);
+	len = snprintf(buf, size, "%d-", bnum);
+	if (len < 0 || (size_t)len >= size)
+		return -1;
 	for (int i = 0; i < num_pnums; i++) {
 		int n = snprintf(buf + len, size - len, i ? ".%d" : "%d", pnums[i]);
 		if ((n < 0) || (n >= (int)(size - len)))
