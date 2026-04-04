@@ -1642,6 +1642,10 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 
 	case 0x02:  /* INPUT_TERMINAL */
 		printf("(INPUT_TERMINAL)\n");
+		if (buf[0] < 8) {
+			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		term = get_dev_string(dev, buf[7]);
 		termt = buf[4] | (buf[5] << 8);
 		n = termt == 0x0201 ? 7 : 0;
@@ -1682,11 +1686,13 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 
 	case 0x03:  /* OUTPUT_TERMINAL */
 		printf("(OUTPUT_TERMINAL)\n");
+		if (buf[0] < 9) {
+			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		term = get_dev_string(dev, buf[8]);
 		termt = buf[4] | (buf[5] << 8);
 		get_videoterminal_string(termts, sizeof(termts), termt);
-		if (buf[0] < 9)
-			printf("      Warning: Descriptor too short\n");
 		printf("        bTerminalID         %5u\n"
 		       "        wTerminalType      0x%04x %s\n"
 		       "        bAssocTerminal      %5u\n"
@@ -1698,9 +1704,15 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 
 	case 0x04:  /* SELECTOR_UNIT */
 		printf("(SELECTOR_UNIT)\n");
-		p = buf[4];
-		if (buf[0] < 6+p)
+		if (buf[0] < 5) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
+		p = buf[4];
+		if (buf[0] < 6+p) {
+			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		term = get_dev_string(dev, buf[5+p]);
 
 		printf("        bUnitID             %5u\n"
