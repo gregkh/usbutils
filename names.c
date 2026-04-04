@@ -96,7 +96,7 @@ const char *names_vendor(uint16_t vendorid)
 {
 	char modalias[64];
 
-	sprintf(modalias, "usb:v%04X*", vendorid);
+	snprintf(modalias, sizeof(modalias), "usb:v%04X*", vendorid);
 	return hwdb_get(modalias, "ID_VENDOR_FROM_DATABASE");
 }
 
@@ -104,7 +104,7 @@ const char *names_product(uint16_t vendorid, uint16_t productid)
 {
 	char modalias[64];
 
-	sprintf(modalias, "usb:v%04Xp%04X*", vendorid, productid);
+	snprintf(modalias, sizeof(modalias), "usb:v%04Xp%04X*", vendorid, productid);
 	return hwdb_get(modalias, "ID_MODEL_FROM_DATABASE");
 }
 
@@ -112,7 +112,7 @@ const char *names_class(uint8_t classid)
 {
 	char modalias[64];
 
-	sprintf(modalias, "usb:v*p*d*dc%02X*", classid);
+	snprintf(modalias, sizeof(modalias), "usb:v*p*d*dc%02X*", classid);
 	return hwdb_get(modalias, "ID_USB_CLASS_FROM_DATABASE");
 }
 
@@ -120,7 +120,7 @@ const char *names_subclass(uint8_t classid, uint8_t subclassid)
 {
 	char modalias[64];
 
-	sprintf(modalias, "usb:v*p*d*dc%02Xdsc%02X*", classid, subclassid);
+	snprintf(modalias, sizeof(modalias), "usb:v*p*d*dc%02Xdsc%02X*", classid, subclassid);
 	return hwdb_get(modalias, "ID_USB_SUBCLASS_FROM_DATABASE");
 }
 
@@ -128,7 +128,7 @@ const char *names_protocol(uint8_t classid, uint8_t subclassid, uint8_t protocol
 {
 	char modalias[64];
 
-	sprintf(modalias, "usb:v*p*d*dc%02Xdsc%02Xdp%02X*", classid, subclassid, protocolid);
+	snprintf(modalias, sizeof(modalias), "usb:v*p*d*dc%02Xdsc%02Xdp%02X*", classid, subclassid, protocolid);
 	return hwdb_get(modalias, "ID_USB_PROTOCOL_FROM_DATABASE");
 }
 
