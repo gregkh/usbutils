@@ -1855,6 +1855,10 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 	switch (buf[2]) {
 	case 0x01: /* INPUT_HEADER */
 		printf("(INPUT_HEADER)\n");
+		if (buf[0] < 13) {
+			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		p = buf[3];
 		n = buf[12];
 		if (buf[0] < 13+p*n)
@@ -1880,6 +1884,10 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 
 	case 0x02: /* OUTPUT_HEADER */
 		printf("(OUTPUT_HEADER)\n");
+		if (buf[0] < 9) {
+			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		p = buf[3];
 		n = buf[8];
 		if (buf[0] < 9+p*n)
