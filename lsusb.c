@@ -373,6 +373,10 @@ static void dump_rc_interface(const unsigned char *buf)
 
 static void dump_security(const unsigned char *buf)
 {
+	if (buf[0] < 5) {
+		printf("    Warning: Security descriptor too short\n");
+		return;
+	}
 	printf("    Security Descriptor:\n"
 	       "      bLength             %5u\n"
 	       "      bDescriptorType     %5u\n"
@@ -383,7 +387,13 @@ static void dump_security(const unsigned char *buf)
 
 static void dump_encryption_type(const unsigned char *buf)
 {
-	int b_encryption_type = buf[2];
+	int b_encryption_type;
+
+	if (buf[0] < 5) {
+		printf("    Warning: Encryption Type descriptor too short\n");
+		return;
+	}
+	b_encryption_type = buf[2];
 
 	printf("    Encryption Type Descriptor:\n"
 	       "      bLength             %5u\n"
