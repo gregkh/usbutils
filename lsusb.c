@@ -2192,8 +2192,10 @@ static void dump_dfu_interface(const unsigned char *buf)
 {
 	if (buf[1] != USB_DT_CS_DEVICE)
 		printf("      Warning: Invalid descriptor\n");
-	else if (buf[0] < 7)
+	if (buf[0] < 7) {
 		printf("      Warning: Descriptor too short\n");
+		return;
+	}
 	printf("      Device Firmware Upgrade Interface Descriptor:\n"
 	       "        bLength                         %5u\n"
 	       "        bDescriptorType                 %5u\n"
