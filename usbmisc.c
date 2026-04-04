@@ -179,6 +179,11 @@ static char *usb_string_to_native(char * str, size_t len)
 	out_bytes_left = len * MB_CUR_MAX;
 	result = result_end = malloc(out_bytes_left + 1);
 
+	if (!result) {
+		iconv_close(conv);
+		return NULL;
+	}
+
 	num_converted = iconv(conv, &str, &in_bytes_left,
 	                      &result_end, &out_bytes_left);
 
