@@ -419,6 +419,7 @@ static unsigned int get_array_entry_count(
 		 * length from; start with the descriptor's byte-length, and
 		 * subtract the sizes of all the other fields. */
 		unsigned int size = buf_len;
+		unsigned int field_size;
 
 		for (current = desc; current->field != NULL; current++) {
 			if (current == array_entry)
@@ -441,14 +442,19 @@ static unsigned int get_array_entry_count(
 						"multiple inferred-length arrays.\n");
 					exit(EXIT_FAILURE);
 				}
-				size -= get_entry_size(buf, desc, current) *
+				field_size = get_entry_size(buf, desc, current) *
 						count;
 			} else {
-				size -= get_entry_size(buf, desc, current);
+				field_size = get_entry_size(buf, desc, current);
 			}
+
+			if (field_size > size)
+				return 0;
+			size -= field_size;
 		}
 
-		entries = size / get_entry_size(buf, desc, array_entry);
+		field_size = get_entry_size(buf, desc, array_entry);
+		entries = field_size ? size / field_size : 0;
 	}
 
 	return entries;
