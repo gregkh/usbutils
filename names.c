@@ -218,8 +218,8 @@ void get_vendor_product_with_fallback(char *vendor, int vendor_len,
 	libusb_get_device_descriptor(dev, &desc);
 
 	/* set to "[unknown]" by default unless something below finds a string */
-	strncpy(vendor, "[unknown]", vendor_len);
-	strncpy(product, "[unknown]", product_len);
+	snprintf(vendor, vendor_len, "[unknown]");
+	snprintf(product, product_len, "[unknown]");
 
 	have_vendor = !!get_vendor_string(vendor, vendor_len, desc.idVendor);
 	have_product = !!get_product_string(product, product_len,
