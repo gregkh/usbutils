@@ -1525,7 +1525,7 @@ static void dump_midistreaming_endpoint(const unsigned char *buf)
 	       "          bDescriptorSubtype  %5u (%s)\n"
 	       "          bNumEmbMIDIJack     %5u\n",
 	       buf[0], buf[1], buf[2], buf[2] == 2 ? "GENERAL" : "Invalid", buf[3]);
-	for (j = 0; j < buf[3]; j++)
+	for (j = 0; j < buf[3] && 4+j < buf[0]; j++)
 		printf("          baAssocJackID(%2u)   %5u\n", j, buf[4+j]);
 	dump_junk(buf, "          ", 4+buf[3]);
 }
