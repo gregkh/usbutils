@@ -1261,8 +1261,10 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 
 	case 0x03: /* FORMAT_SPECIFIC */
 		printf("(FORMAT_SPECIFIC)\n");
-		if (buf[0] < 5)
+		if (buf[0] < 5) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		fmttag = buf[3] | (buf[4] << 8);
 		if (fmttag <= 5)
 			fmtptr = fmtItag[fmttag];
@@ -1273,8 +1275,10 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 		printf("        wFormatTag          %5u %s\n", fmttag, fmtptr);
 		switch (fmttag) {
 		case 0x1001: /* MPEG */
-			if (buf[0] < 8)
+			if (buf[0] < 8) {
 				printf("      Warning: Descriptor too short\n");
+				break;
+			}
 			printf("        bmMPEGCapabilities 0x%04x\n",
 			       buf[5] | (buf[6] << 8));
 			if (buf[5] & 0x01)
@@ -1334,8 +1338,10 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 			break;
 
 		case 0x1002: /* AC-3 */
-			if (buf[0] < 10)
+			if (buf[0] < 10) {
 				printf("      Warning: Descriptor too short\n");
+				break;
+			}
 			printf("        bmBSID         0x%08x\n"
 			       "        bmAC3Features        0x%02x\n",
 			       buf[5] | (buf[6] << 8) | (buf[7] << 16) | (buf[8] << 24), buf[9]);
