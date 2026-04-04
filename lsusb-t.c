@@ -143,15 +143,16 @@ static const char *bDeviceClass_to_str(unsigned int dc)
 	return s;
 }
 
-static void lanes_to_str(char *lanes, unsigned int tx, unsigned int rx) {
+static void lanes_to_str(char *lanes, size_t size,
+			 unsigned int tx, unsigned int rx) {
 	if (tx == rx) {
 		if (tx < 2) {
 			*lanes = '\0';
 			return;
 		}
-		sprintf(lanes, "/x%u", tx);
+		snprintf(lanes, size, "/x%u", tx);
 	} else {
-		sprintf(lanes, "/Tx%u+Rx%u", tx, rx);
+		snprintf(lanes, size, "/Tx%u+Rx%u", tx, rx);
 	}
 }
 
@@ -160,7 +161,7 @@ static void print_usbbusnode(struct usbbusnode *b)
 	char vendor[128], product[128];
 	char lanes[32];
 
-	lanes_to_str(lanes, b->tx_lanes, b->rx_lanes);
+	lanes_to_str(lanes, sizeof(lanes), b->tx_lanes, b->rx_lanes);
 
 	printf("/:  Bus %03u.Port %03u: Dev %03u, Class=%s, Driver=%s/%up, %sM%s\n", b->busnum, 1,
 	       b->devnum, bDeviceClass_to_str(b->bDeviceClass), b->driver, b->maxchild, b->speed, lanes);
@@ -180,7 +181,7 @@ static void print_usbdevice(struct usbdevice *d, struct usbinterface *i)
 	char vendor[128], product[128];
 	char lanes[32];
 
-	lanes_to_str(lanes, d->tx_lanes, d->rx_lanes);
+	lanes_to_str(lanes, sizeof(lanes), d->tx_lanes, d->rx_lanes);
 	if (i)
 		get_class_string(subcls, sizeof(subcls), i->bInterfaceClass);
 
