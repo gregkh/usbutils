@@ -309,11 +309,14 @@ static void value_renderer(
 		/* TODO: Add support for UAC3 class-specific String descriptor */
 		printf("\n");
 		break;
-	case DESC_TERMINAL_STR:
+	case DESC_TERMINAL_STR: {
+		const char *term_name;
 		number_renderer(buf, size_chars, offset, current_size);
-		printf(" %s\n", names_audioterminal(
-				get_n_bytes_as_ull(buf, offset, current_size)));
+		term_name = names_audioterminal(
+				get_n_bytes_as_ull(buf, offset, current_size));
+		printf(" %s\n", term_name ? term_name : "(unknown)");
 		break;
+	}
 	case DESC_EXTENSION: {
 		unsigned int type = get_value_from_field(buf, desc,
 				current->extension.type_field);
