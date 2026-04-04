@@ -1120,15 +1120,19 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 		printf("(FORMAT_TYPE)\n");
 		switch (protocol) {
 		case USB_AUDIO_CLASS_1:
-			if (buf[0] < 8)
+			if (buf[0] < 8) {
 				printf("      Warning: Descriptor too short\n");
+				break;
+			}
 			printf("        bFormatType         %5u ", buf[3]);
 			switch (buf[3]) {
 			case 0x01: /* FORMAT_TYPE_I */
 				printf("(FORMAT_TYPE_I)\n");
 				j = buf[7] ? (buf[7]*3+8) : 14;
-				if (buf[0] < j)
+				if (buf[0] < j) {
 					printf("      Warning: Descriptor too short\n");
+					break;
+				}
 				printf("        bNrChannels         %5u\n"
 				       "        bSubframeSize       %5u\n"
 				       "        bBitResolution      %5u\n"
@@ -1147,9 +1151,15 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 
 			case 0x02: /* FORMAT_TYPE_II */
 				printf("(FORMAT_TYPE_II)\n");
-				j = buf[8] ? (buf[8]*3+9) : 15;
-				if (buf[0] < j)
+				if (buf[0] < 9) {
 					printf("      Warning: Descriptor too short\n");
+					break;
+				}
+				j = buf[8] ? (buf[8]*3+9) : 15;
+				if (buf[0] < j) {
+					printf("      Warning: Descriptor too short\n");
+					break;
+				}
 				printf("        wMaxBitRate         %5u\n"
 				       "        wSamplesPerFrame    %5u\n"
 				       "        bSamFreqType        %5u %s\n",
@@ -1168,8 +1178,10 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 			case 0x03: /* FORMAT_TYPE_III */
 				printf("(FORMAT_TYPE_III)\n");
 				j = buf[7] ? (buf[7]*3+8) : 14;
-				if (buf[0] < j)
+				if (buf[0] < j) {
 					printf("      Warning: Descriptor too short\n");
+					break;
+				}
 				printf("        bNrChannels         %5u\n"
 				       "        bSubframeSize       %5u\n"
 				       "        bBitResolution      %5u\n"
