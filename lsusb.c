@@ -2649,7 +2649,11 @@ static void dump_hid_device(libusb_device_handle *dev,
 
 	if (buf[1] != LIBUSB_DT_HID)
 		printf("      Warning: Invalid descriptor\n");
-	else if (buf[0] < 6+3*buf[5])
+	if (buf[0] < 6) {
+		printf("      Warning: Descriptor too short\n");
+		return;
+	}
+	if (buf[0] < 6+3*buf[5])
 		printf("      Warning: Descriptor too short\n");
 	printf("        HID Device Descriptor:\n"
 	       "          bLength             %5u\n"
@@ -2659,7 +2663,7 @@ static void dump_hid_device(libusb_device_handle *dev,
 	       "          bNumDescriptors     %5u\n",
 	       buf[0], buf[1], buf[3], buf[2], buf[4],
 	       names_countrycode(buf[4]) ? : "Unknown", buf[5]);
-	for (i = 0; i < buf[5]; i++)
+	for (i = 0; i < buf[5] && 6+3*i+3 <= buf[0]; i++)
 		printf("          bDescriptorType     %5u %s\n"
 		       "          wDescriptorLength   %5u\n",
 		       buf[6+3*i], names_hid(buf[6+3*i]),
