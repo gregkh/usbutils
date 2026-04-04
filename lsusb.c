@@ -376,7 +376,7 @@ static void dump_security(const unsigned char *buf)
 
 static void dump_encryption_type(const unsigned char *buf)
 {
-	int b_encryption_type = buf[2] & 0x4;
+	int b_encryption_type = buf[2];
 
 	printf("    Encryption Type Descriptor:\n"
 	       "      bLength             %5u\n"
@@ -385,7 +385,9 @@ static void dump_encryption_type(const unsigned char *buf)
 	       "      bEncryptionValue    %5u\n"
 	       "      bAuthKeyIndex       %5u\n",
 	       buf[0], buf[1], buf[2],
-	       encryption_type[b_encryption_type], buf[3], buf[4]);
+	       b_encryption_type < (int)(sizeof(encryption_type) / sizeof(*encryption_type))
+		       ? encryption_type[b_encryption_type] : "RESERVED",
+	       buf[3], buf[4]);
 }
 
 static void dump_association(libusb_device_handle *dev, const unsigned char *buf)
