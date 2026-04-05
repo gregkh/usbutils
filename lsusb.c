@@ -2003,8 +2003,10 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 			break;
 		}
 		m = buf[5+4*n];
-		if (buf[0] < 6+4*n+m)
+		if (buf[0] < 6+4*n+m) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		printf("        bEndpointAddress                 0x%02x  EP %u %s\n"
 		       "        bNumImageSizePatterns             %3u\n",
 		       buf[3], buf[3] & 0x0f, (buf[3] & 0x80) ? "IN" : "OUT", n);
