@@ -1887,8 +1887,10 @@ static void dump_videocontrol_interrupt_endpoint(const unsigned char *buf)
 {
 	unsigned int wMaxTransferSize;
 
-	if (buf[0] < 5)
+	if (buf[0] < 5) {
 		printf("      Warning: Descriptor too short\n");
+		return;
+	}
 	if (buf[1] != USB_DT_CS_ENDPOINT)
 		printf("      Warning: Invalid descriptor\n");
 	wMaxTransferSize = buf[3] | (buf[4] << 8);
