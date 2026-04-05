@@ -2017,8 +2017,10 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 			printf("(FORMAT_FRAME_BASED)\n");
 			len = 28;
 		}
-		if (buf[0] < len)
+		if (buf[0] < len) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		flags = buf[25];
 		printf("        bFormatIndex                    %5u\n"
 		       "        bNumFrameDescriptors            %5u\n"
@@ -2119,8 +2121,10 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 
 	case 0x06: /* FORMAT_MJPEG */
 		printf("(FORMAT_MJPEG)\n");
-		if (buf[0] < 11)
+		if (buf[0] < 11) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		flags = buf[5];
 		printf("        bFormatIndex                    %5u\n"
 		       "        bNumFrameDescriptors            %5u\n"
@@ -2177,8 +2181,10 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 
 	case 0x0d: /* COLORFORMAT */
 		printf("(COLORFORMAT)\n");
-		if (buf[0] < 6)
+		if (buf[0] < 6) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		printf("        bColorPrimaries                 %5u (%s)\n",
 		       buf[3], (buf[3] <= 5) ? colorPrims[buf[3]] : "Unknown");
 		printf("        bTransferCharacteristics        %5u (%s)\n",
