@@ -2218,8 +2218,10 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 
 	case 0x12: /* FORMAT_STREAM_BASED */
 		printf("(FORMAT_STREAM_BASED)\n");
-		if (buf[0] != 24)
-			printf("      Warning: Incorrect descriptor length\n");
+		if (buf[0] < 24) {
+			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 
 		printf("        bFormatIndex                    %5u\n"
 		       "        guidFormat                            %s\n"
