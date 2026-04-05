@@ -2072,9 +2072,15 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 			printf("(FRAME_FRAME_BASED)\n");
 			n = 21;
 		}
-		len = (buf[n] != 0) ? (26+buf[n]*4) : 38;
-		if (buf[0] < len)
+		if (buf[0] < n + 1) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
+		len = (buf[n] != 0) ? (26+buf[n]*4) : 38;
+		if (buf[0] < len) {
+			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		flags = buf[4];
 		printf("        bFrameIndex                     %5u\n"
 		       "        bmCapabilities                   0x%02x\n",
