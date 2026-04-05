@@ -1233,8 +1233,10 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 			switch (buf[3]) {
 			case 0x01: /* FORMAT_TYPE_I */
 				printf("(FORMAT_TYPE_I)\n");
-				if (buf[0] < 6)
+				if (buf[0] < 6) {
 					printf("      Warning: Descriptor too short\n");
+					break;
+				}
 				printf("        bSubslotSize        %5u\n"
 				       "        bBitResolution      %5u\n",
 				       buf[4], buf[5]);
@@ -1243,8 +1245,10 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 
 			case 0x02: /* FORMAT_TYPE_II */
 				printf("(FORMAT_TYPE_II)\n");
-				if (buf[0] < 8)
+				if (buf[0] < 8) {
 					printf("      Warning: Descriptor too short\n");
+					break;
+				}
 				printf("        wMaxBitRate         %5u\n"
 				       "        wSlotsPerFrame      %5u\n",
 				       buf[4] | (buf[5] << 8),
@@ -1254,8 +1258,10 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 
 			case 0x03: /* FORMAT_TYPE_III */
 				printf("(FORMAT_TYPE_III)\n");
-				if (buf[0] < 6)
+				if (buf[0] < 6) {
 					printf("      Warning: Descriptor too short\n");
+					break;
+				}
 				printf("        bSubslotSize        %5u\n"
 				       "        bBitResolution      %5u\n",
 				       buf[4], buf[5]);
@@ -1264,8 +1270,10 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 
 			case 0x04: /* FORMAT_TYPE_IV */
 				printf("(FORMAT_TYPE_IV)\n");
-				if (buf[0] < 4)
+				if (buf[0] < 4) {
 					printf("      Warning: Descriptor too short\n");
+					break;
+				}
 				printf("        bFormatType         %5u\n", buf[3]);
 				dump_junk(buf, "        ", 4);
 				break;
