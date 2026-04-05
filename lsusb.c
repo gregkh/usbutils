@@ -2186,8 +2186,10 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 	case 0x0a: /* FORMAT_MPEG2TS */
 		printf("(FORMAT_MPEG2TS)\n");
 		len = buf[0] < 23 ? 7 : 23;
-		if (buf[0] < len)
+		if (buf[0] < len) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		printf("        bFormatIndex                    %5u\n"
 		       "        bDataOffset                     %5u\n"
 		       "        bPacketLength                   %5u\n"
