@@ -1941,8 +1941,10 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 		}
 		p = buf[3];
 		n = buf[12];
-		if (buf[0] < 13+p*n)
+		if (buf[0] < 13+p*n) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		printf("        bNumFormats                     %5u\n"
 		       "        wTotalLength                   0x%04x\n"
 		       "        bEndpointAddress                 0x%02x  EP %u %s\n"
@@ -1970,8 +1972,10 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 		}
 		p = buf[3];
 		n = buf[8];
-		if (buf[0] < 9+p*n)
+		if (buf[0] < 9+p*n) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		printf("        bNumFormats                 %5u\n"
 		       "        wTotalLength               0x%04x\n"
 		       "        bEndpointAddress             0x%02x  EP %u %s\n"
