@@ -3097,7 +3097,7 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed,
 		   bool has_ssp)
 {
 	unsigned char buf[7 /* base descriptor */
-			+ 2 /* bitmasks */ * HUB_STATUS_BYTELEN];
+			+ 2 /* bitmasks */ * HUB_STATUS_BYTELEN] = {0};
 	int i, ret, value;
 	unsigned int link_state;
 	static const char * const link_state_descriptions[] = {
