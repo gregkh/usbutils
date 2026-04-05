@@ -1680,8 +1680,10 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 			break;
 		}
 		n = buf[11];
-		if (buf[0] < 12+n)
+		if (buf[0] < 12+n) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		freq = buf[7] | (buf[8] << 8) | (buf[9] << 16) | (buf[10] << 24);
 		printf("        bcdUVC              %2x.%02x\n"
 		       "        wTotalLength       0x%04x\n"
@@ -1704,8 +1706,10 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 		termt = buf[4] | (buf[5] << 8);
 		n = termt == 0x0201 ? 7 : 0;
 		get_videoterminal_string(termts, sizeof(termts), termt);
-		if (buf[0] < 8 + n)
+		if (buf[0] < 8 + n) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		printf("        bTerminalID         %5u\n"
 		       "        wTerminalType      0x%04x %s\n"
 		       "        bAssocTerminal      %5u\n",
@@ -1852,9 +1856,11 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 
 	case 0x07: /* ENCODING UNIT */
 		printf("(ENCODING UNIT)\n");
-		term = get_dev_string(dev, buf[5]);
-		if (buf[0] < 13)
+		if (buf[0] < 13) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
+		term = get_dev_string(dev, buf[5]);
 		printf("        bUnitID             %5u\n"
 		       "        bSourceID           %5u\n"
 		       "        iEncoding           %5u %s\n"
