@@ -594,7 +594,7 @@ static const struct genericstrtable hutus[] = {
 	{ (0x08 << 16) + 0x007, "Shift" },
 	{ (0x08 << 16) + 0x008, "Do not disturb" },
 	{ (0x08 << 16) + 0x009, "Mute" },
-	{ (0x08 << 16) + 0x00a, "Tone Enabke" },
+	{ (0x08 << 16) + 0x00a, "Tone Enable" },
 	{ (0x08 << 16) + 0x00b, "High Cut Filter" },
 	{ (0x08 << 16) + 0x00c, "Low Cut Filter" },
 	{ (0x08 << 16) + 0x00d, "Equalizer Enable" },
