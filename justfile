@@ -22,6 +22,9 @@ _help:
 @spdx:
 	reuse spdx --creator-organization="The Linux Foundation" --creator-person="Greg Kroah-Hartman <gregkh@linuxfoundation.org>" > usbutils.spdx
 
+# Build the source, setting up things if not present
+@make:
+	./autogen.sh
 
 # Run the "reuse lint" tool
 @lint:
