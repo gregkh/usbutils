@@ -2374,6 +2374,9 @@ static void dump_report_desc(unsigned char *b, int l)
 		bsize = b[i] & 0x03;
 		if (bsize == 3)
 			bsize = 4;
+		/* Truncated item: avoid OOB reads of b[i+1+j] */
+		if (bsize > 0 && i + 1 + (int)bsize > l)
+			return;
 		btype = b[i] & (0x03 << 2);
 		btag = b[i] & ~0x03; /* 2 LSB bits encode length */
 		printf("            Item(%-6s): %s, data=", types[btype>>2],
@@ -2383,7 +2386,7 @@ static void dump_report_desc(unsigned char *b, int l)
 			data = 0;
 			for (j = 0; j < bsize; j++) {
 				printf("0x%02x ", b[i+1+j]);
-				data += (b[i+1+j] << (8*j));
+				data += ((unsigned int)b[i+1+j]) << (8U*j);
 			}
 			printf("] %d", data);
 		} else
