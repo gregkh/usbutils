@@ -1106,7 +1106,10 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 	default:
 		printf("(unknown)\n"
 		       "        Invalid desc subtype:");
-		dump_bytes(buf+3, buf[0]-3);
+		if (buf[0] > 3)
+			dump_bytes(buf+3, buf[0]-3);
+		else
+			printf("\n");
 		break;
 	}
 }
@@ -1413,7 +1416,10 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 
 	default:
 		printf("        Invalid desc subtype:");
-		dump_bytes(buf+3, buf[0]-3);
+		if (buf[0] > 3)
+			dump_bytes(buf+3, buf[0]-3);
+		else
+			printf("\n");
 		break;
 	}
 }
@@ -1558,7 +1564,10 @@ static void dump_midistreaming_interface(libusb_device_handle *dev, const unsign
 
 	default:
 		printf("\n        Invalid desc subtype: ");
-		dump_bytes(buf+3, buf[0]-3);
+		if (buf[0] > 3)
+			dump_bytes(buf+3, buf[0]-3);
+		else
+			printf("\n");
 		break;
 	}
 
@@ -1884,7 +1893,10 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 	default:
 		printf("(unknown)\n"
 		       "        Invalid desc subtype:");
-		dump_bytes(buf+3, buf[0]-3);
+		if (buf[0] > 3)
+			dump_bytes(buf+3, buf[0]-3);
+		else
+			printf("\n");
 		break;
 	}
 
@@ -2232,7 +2244,10 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 
 	default:
 		printf("        Invalid desc subtype:");
-		dump_bytes(buf+3, buf[0]-3);
+		if (buf[0] > 3)
+			dump_bytes(buf+3, buf[0]-3);
+		else
+			printf("\n");
 		break;
 	}
 }
