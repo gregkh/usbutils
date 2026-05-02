@@ -1733,6 +1733,10 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 		       buf[7], term);
 		if (termt == 0x0201) {
 			n += buf[14];
+			if (buf[0] < 8 + n) {
+				printf("      Warning: Descriptor too short\n");
+				break;
+			}
 			printf("        wObjectiveFocalLengthMin  %5u\n"
 			       "        wObjectiveFocalLengthMax  %5u\n"
 			       "        wOcularFocalLength        %5u\n"
