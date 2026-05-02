@@ -121,19 +121,22 @@ static unsigned long long get_n_bytes_as_ull(
  */
 static unsigned int get_entry_size(
 		const unsigned char *buf,
+		unsigned int buf_len,
 		const struct desc *desc,
 		const struct desc *entry);
 
 /**
  * Read a value from a field of given name.
  *
- * \param[in] buf    Descriptor data.
- * \param[in] desc   First field in the descriptor definition array.
- * \param[in] field  The name of the field to get the value for.
+ * \param[in] buf      Descriptor data.
+ * \param[in] buf_len  Byte length of `buf`.
+ * \param[in] desc     First field in the descriptor definition array.
+ * \param[in] field    The name of the field to get the value for.
  * \return The value from the given field.
  */
 static unsigned long long get_value_from_field(
 		const unsigned char *buf,
+		unsigned int buf_len,
 		const struct desc *desc,
 		const char *field)
 {
@@ -145,14 +148,15 @@ static unsigned long long get_value_from_field(
 	 * gives the value of the entry we're interested in. */
 	for (current = desc; current->field != NULL; current++) {
 		if (strcmp(current->field, field) == 0) {
-			value = get_n_bytes_as_ull(buf, offset,
-					current->size);
+			if (offset + current->size <= buf_len)
+				value = get_n_bytes_as_ull(buf, offset,
+						current->size);
 			break;
 		}
 
 		/* Keep track of our offset in the descriptor data
 		 * as we look for the field we want. */
-		offset += get_entry_size(buf, desc, current);
+		offset += get_entry_size(buf, buf_len, desc, current);
 	}
 
 	return value;
@@ -318,7 +322,7 @@ static void value_renderer(
 		break;
 	}
 	case DESC_EXTENSION: {
-		unsigned int type = get_value_from_field(buf, desc,
+		unsigned int type = get_value_from_field(buf, buf_len, desc,
 				current->extension.type_field);
 		const struct desc *ext_desc;
 		const struct desc_ext *ext;
@@ -354,6 +358,7 @@ static void value_renderer(
 /* Documented at forward declaration above. */
 static unsigned int get_entry_size(
 		const unsigned char *buf,
+		unsigned int buf_len,
 		const struct desc *desc,
 		const struct desc *entry)
 {
@@ -361,7 +366,7 @@ static unsigned int get_entry_size(
 
 	if (entry->size_field != NULL) {
 		/* Variable field length, given by `size_field`'s value. */
-		size = get_value_from_field(buf, desc, entry->size_field);
+		size = get_value_from_field(buf, buf_len, desc, entry->size_field);
 	}
 
 	if (size == 0) {
@@ -399,13 +404,13 @@ static unsigned int get_array_entry_count(
 
 	if (array_entry->array.length_field1) {
 		/* We can get the array size from the length_field1. */
-		entries = get_value_from_field(buf, desc,
+		entries = get_value_from_field(buf, buf_len, desc,
 				array_entry->array.length_field1);
 
 		if (array_entry->array.length_field2 != NULL) {
 			/* There's a second field specifying length.  The two
 			 * lengths are multiplied. */
-			entries *= get_value_from_field(buf, desc,
+			entries *= get_value_from_field(buf, buf_len, desc,
 					array_entry->array.length_field2);
 		}
 
@@ -442,10 +447,10 @@ static unsigned int get_array_entry_count(
 						"multiple inferred-length arrays.\n");
 					exit(EXIT_FAILURE);
 				}
-				field_size = get_entry_size(buf, desc, current) *
+				field_size = get_entry_size(buf, buf_len, desc, current) *
 						count;
 			} else {
-				field_size = get_entry_size(buf, desc, current);
+				field_size = get_entry_size(buf, buf_len, desc, current);
 			}
 
 			if (field_size > size)
@@ -453,7 +458,7 @@ static unsigned int get_array_entry_count(
 			size -= field_size;
 		}
 
-		field_size = get_entry_size(buf, desc, array_entry);
+		field_size = get_entry_size(buf, buf_len, desc, array_entry);
 		entries = field_size ? size / field_size : 0;
 	}
 
@@ -555,7 +560,7 @@ void desc_dump(
 					desc, current);
 		}
 
-		current_size = get_entry_size(buf, desc, current);
+		current_size = get_entry_size(buf, buf_len, desc, current);
 
 		for (entry = 0; entry < entries; entry++) {
 			/* Check there's enough data in buf for this entry. */
