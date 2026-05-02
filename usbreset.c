@@ -138,7 +138,9 @@ static struct usbentry *find_device(int *bus, int *dev, int *vid, int *pid, cons
 {
 	DIR *devs = opendir("/sys/bus/usb/devices");
 
-	struct usbentry *e, *match = NULL;
+	struct usbentry *e;
+	static struct usbentry match;
+	int found = 0;
 
 	if (!devs)
 		return NULL;
@@ -147,13 +149,18 @@ static struct usbentry *find_device(int *bus, int *dev, int *vid, int *pid, cons
 		if ((bus && (e->bus_num == *bus) && (e->dev_num == *dev)) ||
 		    (vid && (e->vendor_id == *vid) && (e->product_id == *pid)) ||
 		    (serial && !strcasecmp(e->serial, serial)) || (product && !strcasecmp(e->product_name, product))) {
-			match = e;
-			break;
+			if (found++) {
+				fprintf(stderr,
+					"Multiple devices match; specify the bus/device number (BBB/DDD).\n");
+				closedir(devs);
+				return NULL;
+			}
+			match = *e;
 		}
 
 	closedir(devs);
 
-	return match;
+	return found ? &match : NULL;
 }
 
 static void reset_device(struct usbentry *dev)
