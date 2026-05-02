@@ -2484,7 +2484,7 @@ static void dump_ccid_device(const unsigned char *buf)
 	if (buf[49] == 0xff)
 		fputs("echo\n", stdout);
 	else
-		printf("  %02X\n", buf[48]);
+		printf("  %02X\n", buf[49]);
 
 	printf("        wlcdLayout           ");
 	if (!buf[50] && !buf[51])
