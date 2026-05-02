@@ -1511,8 +1511,10 @@ static void dump_midistreaming_interface(libusb_device_handle *dev, const unsign
 
 	case 0x04:
 		printf("(ELEMENT)\n");
-		if (buf[0] < 12)
+		if (buf[0] < 5 || buf[0] < 9 + 2*buf[4]) {
 			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		printf("        bElementID          %5u\n"
 		       "        bNrInputPins        %5u\n",
 		       buf[3], buf[4]);
@@ -1528,6 +1530,10 @@ static void dump_midistreaming_interface(libusb_device_handle *dev, const unsign
 		       "        bElCapsSize         %5u\n",
 		       buf[j], buf[j+1], buf[j+2], buf[j+3]);
 		capssize = buf[j+3];
+		if (buf[0] < 10 + 2*buf[4] + capssize) {
+			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		caps = 0;
 		for (j = 0; j < capssize; j++)
 			caps |= (buf[j+9+buf[4]*2] << (8*j));
