@@ -1488,7 +1488,7 @@ static void dump_midistreaming_interface(libusb_device_handle *dev, const unsign
 
 	case 0x03:
 		printf("(MIDI_OUT_JACK)\n");
-		if (buf[0] < 9) {
+		if (buf[0] < 6 || buf[0] < 7 + 2*buf[5]) {
 			printf("      Warning: Descriptor too short\n");
 			break;
 		}
