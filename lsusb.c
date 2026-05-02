@@ -2661,8 +2661,10 @@ static void dump_printer_device(libusb_device_handle *dev,
 
 	n = 4;
 	for (i = 0 ; i < buf[3] ; i++) {
-		if (n + 2 > buf[0])
+		if (n + 2 > buf[0] || n + 2 + buf[n+1] > buf[0]) {
+			printf("            Warning: Descriptor too short\n");
 			break;
+		}
 		switch (buf[n]) {
 		case 0x00: {  /* Basic capabilities */
 			uint16_t caps;
