@@ -145,7 +145,7 @@ static void dump_comm_descriptor(libusb_device_handle *dev, const unsigned char 
 static void dump_hid_device(libusb_device_handle *dev, const struct libusb_interface_descriptor *interface, const unsigned char *buf);
 static void dump_printer_device(libusb_device_handle *dev, const struct libusb_interface_descriptor *interface, const unsigned char *buf);
 static void dump_audiostreaming_endpoint(libusb_device_handle *dev, const unsigned char *buf, int protocol);
-static void dump_midistreaming_endpoint(const unsigned char *buf);
+static void dump_midistreaming_endpoint(libusb_device_handle *dev, const unsigned char *buf);
 static void dump_hub(const char *prefix, const unsigned char *p, int tt_type);
 static void dump_ccid_device(const unsigned char *buf);
 static void dump_billboard_device_capability_desc(libusb_device_handle *dev, unsigned char *buf);
@@ -783,7 +783,7 @@ static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interfa
 				if (interface->bInterfaceClass == 1 && interface->bInterfaceSubClass == 2)
 					dump_audiostreaming_endpoint(dev, buf, interface->bInterfaceProtocol);
 				else if (interface->bInterfaceClass == 1 && interface->bInterfaceSubClass == 3)
-					dump_midistreaming_endpoint(buf);
+					dump_midistreaming_endpoint(dev, buf);
 				else if (interface->bInterfaceClass == 14 &&
 					 interface->bInterfaceSubClass == 1)
 					dump_videocontrol_interrupt_endpoint(
@@ -1443,160 +1443,62 @@ static void dump_audiostreaming_endpoint(libusb_device_handle *dev, const unsign
 
 static void dump_midistreaming_interface(libusb_device_handle *dev, const unsigned char *buf)
 {
-	static const char * const jacktypes[] = {"Undefined", "Embedded", "External"};
-	char *jackstr = NULL;
-	unsigned int j, tlength, capssize;
-	unsigned long caps;
-
 	if (buf[1] != USB_DT_CS_INTERFACE)
 		printf("      Warning: Invalid descriptor\n");
-	else if (buf[0] < 3)
+	else if (buf[0] < 3) {
 		printf("      Warning: Descriptor too short\n");
+		return;
+	}
 	printf("      MIDIStreaming Interface Descriptor:\n"
 	       "        bLength             %5u\n"
 	       "        bDescriptorType     %5u\n"
 	       "        bDescriptorSubtype  %5u ",
 	       buf[0], buf[1], buf[2]);
+
 	switch (buf[2]) {
 	case 0x01:
 		printf("(HEADER)\n");
-		if (buf[0] < 7) {
-			printf("      Warning: Descriptor too short\n");
-			break;
-		}
-		tlength = buf[5] | (buf[6] << 8);
-		printf("        bcdADC              %2x.%02x\n"
-		       "        wTotalLength       0x%04x\n",
-		       buf[4], buf[3], tlength);
-		dump_junk(buf, "        ", 7);
+		desc_dump(dev, desc_midi_ms_header, buf + 3, buf[0] - 3, 4);
 		break;
-
 	case 0x02:
 		printf("(MIDI_IN_JACK)\n");
-		if (buf[0] < 6) {
-			printf("      Warning: Descriptor too short\n");
-			break;
-		}
-		jackstr = get_dev_string(dev, buf[5]);
-		printf("        bJackType           %5u %s\n"
-		       "        bJackID             %5u\n"
-		       "        iJack               %5u %s\n",
-		       buf[3], buf[3] < 3 ? jacktypes[buf[3]] : "Invalid",
-		       buf[4], buf[5], jackstr);
-		dump_junk(buf, "        ", 6);
+		desc_dump(dev, desc_midi_ms_in_jack, buf + 3, buf[0] - 3, 4);
 		break;
-
 	case 0x03:
 		printf("(MIDI_OUT_JACK)\n");
-		if (buf[0] < 6 || buf[0] < 7 + 2*buf[5]) {
-			printf("      Warning: Descriptor too short\n");
-			break;
-		}
-		printf("        bJackType           %5u %s\n"
-		       "        bJackID             %5u\n"
-		       "        bNrInputPins        %5u\n",
-		       buf[3], buf[3] < 3 ? jacktypes[buf[3]] : "Invalid",
-		       buf[4], buf[5]);
-		for (j = 0; j < buf[5]; j++) {
-			printf("        baSourceID(%2u)      %5u\n"
-			       "        BaSourcePin(%2u)     %5u\n",
-			       j, buf[2*j+6], j, buf[2*j+7]);
-		}
-		j = 6+buf[5]*2; /* midi10.pdf says, incorrectly: 5+2*p */
-		jackstr = get_dev_string(dev, buf[j]);
-		printf("        iJack               %5u %s\n",
-		       buf[j], jackstr);
-		dump_junk(buf, "        ", j+1);
+		desc_dump(dev, desc_midi_ms_out_jack, buf + 3, buf[0] - 3, 4);
 		break;
-
 	case 0x04:
 		printf("(ELEMENT)\n");
-		if (buf[0] < 5 || buf[0] < 9 + 2*buf[4]) {
-			printf("      Warning: Descriptor too short\n");
-			break;
-		}
-		printf("        bElementID          %5u\n"
-		       "        bNrInputPins        %5u\n",
-		       buf[3], buf[4]);
-		for (j = 0; j < buf[4]; j++) {
-			printf("        baSourceID(%2u)      %5u\n"
-			       "        BaSourcePin(%2u)     %5u\n",
-			       j, buf[2*j+5], j, buf[2*j+6]);
-		}
-		j = 5+buf[4]*2;
-		printf("        bNrOutputPins       %5u\n"
-		       "        bInTerminalLink     %5u\n"
-		       "        bOutTerminalLink    %5u\n"
-		       "        bElCapsSize         %5u\n",
-		       buf[j], buf[j+1], buf[j+2], buf[j+3]);
-		capssize = buf[j+3];
-		if (buf[0] < 10 + 2*buf[4] + capssize) {
-			printf("      Warning: Descriptor too short\n");
-			break;
-		}
-		caps = 0;
-		for (j = 0; j < capssize; j++)
-			caps |= (buf[j+9+buf[4]*2] << (8*j));
-		printf("        bmElementCaps  0x%08lx\n", caps);
-		if (caps & 0x01)
-			printf("          Undefined\n");
-		if (caps & 0x02)
-			printf("          MIDI Clock\n");
-		if (caps & 0x04)
-			printf("          MTC (MIDI Time Code)\n");
-		if (caps & 0x08)
-			printf("          MMC (MIDI Machine Control)\n");
-		if (caps & 0x10)
-			printf("          GM1 (General MIDI v.1)\n");
-		if (caps & 0x20)
-			printf("          GM2 (General MIDI v.2)\n");
-		if (caps & 0x40)
-			printf("          GS MIDI Extension\n");
-		if (caps & 0x80)
-			printf("          XG MIDI Extension\n");
-		if (caps & 0x100)
-			printf("          EFX\n");
-		if (caps & 0x200)
-			printf("          MIDI Patch Bay\n");
-		if (caps & 0x400)
-			printf("          DLS1 (Downloadable Sounds Level 1)\n");
-		if (caps & 0x800)
-			printf("          DLS2 (Downloadable Sounds Level 2)\n");
-		j = 9+2*buf[4]+capssize;
-		jackstr = get_dev_string(dev, buf[j]);
-		printf("        iElement            %5u %s\n", buf[j], jackstr);
-		dump_junk(buf, "        ", j+1);
+		desc_dump(dev, desc_midi_ms_element, buf + 3, buf[0] - 3, 4);
 		break;
-
 	default:
-		printf("\n        Invalid desc subtype: ");
-		if (buf[0] > 3)
-			dump_bytes(buf+3, buf[0]-3);
-		else
-			printf("\n");
+		printf("(unknown)\n"
+		       "        Invalid desc subtype:");
+		dump_bytes(buf + 3, buf[0] - 3);
 		break;
 	}
-
-	free(jackstr);
 }
 
-static void dump_midistreaming_endpoint(const unsigned char *buf)
+static void dump_midistreaming_endpoint(libusb_device_handle *dev, const unsigned char *buf)
 {
-	unsigned int j;
+	static const char * const subtypes[] = {
+		"invalid", "GENERAL", "GENERAL_2_0",
+	};
 
 	if (buf[1] != USB_DT_CS_ENDPOINT)
 		printf("      Warning: Invalid descriptor\n");
-	else if (buf[0] < 5)
+	else if (buf[0] < 3) {
 		printf("      Warning: Descriptor too short\n");
+		return;
+	}
 	printf("        MIDIStreaming Endpoint Descriptor:\n"
 	       "          bLength             %5u\n"
 	       "          bDescriptorType     %5u\n"
-	       "          bDescriptorSubtype  %5u (%s)\n"
-	       "          bNumEmbMIDIJack     %5u\n",
-	       buf[0], buf[1], buf[2], buf[2] == 2 ? "GENERAL" : "Invalid", buf[3]);
-	for (j = 0; j < buf[3] && 4+j < buf[0]; j++)
-		printf("          baAssocJackID(%2u)   %5u\n", j, buf[4+j]);
-	dump_junk(buf, "          ", 4+buf[3]);
+	       "          bDescriptorSubtype  %5u (%s)\n",
+	       buf[0], buf[1], buf[2], subtypes[buf[2] < 3 ? buf[2] : 0]);
+
+	desc_dump(dev, desc_midi_ms_endpoint_general, buf + 3, buf[0] - 3, 5);
 }
 
 /*

@@ -1113,6 +1113,100 @@ const struct desc * const desc_audio_as_isochronous_audio_data_endpoint[3] = {
 	desc_audio_3_as_isochronous_audio_data_endpoint,
 };
 
+/* ---------------------------------------------------------------------- */
+
+/* MIDI Streaming (MS) — USB Device Class Definition for MIDI Devices 1.0 */
+
+static const char * const midi_jack_types[] = {
+	[0] = "Undefined",
+	[1] = "Embedded",
+	[2] = "External",
+	[3] = NULL
+};
+
+static const char * const midi_element_caps[] = {
+	[0]  = "Undefined",
+	[1]  = "MIDI Clock",
+	[2]  = "MTC (MIDI Time Code)",
+	[3]  = "MMC (MIDI Machine Control)",
+	[4]  = "GM1 (General MIDI v.1)",
+	[5]  = "GM2 (General MIDI v.2)",
+	[6]  = "GS MIDI Extension",
+	[7]  = "XG MIDI Extension",
+	[8]  = "EFX",
+	[9]  = "MIDI Patch Bay",
+	[10] = "DLS1 (Downloadable Sounds Level 1)",
+	[11] = "DLS2 (Downloadable Sounds Level 2)",
+};
+
+/* The MIDI OUT Jack and Element descriptors interleave baSourceID(n) /
+ * baSourcePin(n) on the wire.  Represent the pair as a 2-byte array entry
+ * and unpack it here so the engine's per-field bounds checking still
+ * applies and we don't need a hand-rolled offset walk. */
+static void desc_snowflake_midi_source_pair(unsigned long long value,
+					    unsigned int indent)
+{
+	(void)indent;
+	printf(" (ID %u, Pin %u)\n",
+	       (unsigned int)(value & 0xff),
+	       (unsigned int)(value >> 8));
+}
+
+/** midi10: 6.1.2.1 Class-Specific MS Interface Header Descriptor; Table 6-2. */
+const struct desc desc_midi_ms_header[] = {
+	{ .field = "bcdMSC",       .size = 2, .type = DESC_BCD },
+	{ .field = "wTotalLength", .size = 2, .type = DESC_CONSTANT },
+	{ .field = NULL }
+};
+
+/** midi10: 6.1.2.2 MIDI IN Jack Descriptor; Table 6-3. */
+const struct desc desc_midi_ms_in_jack[] = {
+	{ .field = "bJackType", .size = 1, .type = DESC_NUMBER_STRINGS,
+			.number_strings = midi_jack_types },
+	{ .field = "bJackID",   .size = 1, .type = DESC_NUMBER },
+	{ .field = "iJack",     .size = 1, .type = DESC_STR_DESC_INDEX },
+	{ .field = NULL }
+};
+
+/** midi10: 6.1.2.3 MIDI OUT Jack Descriptor; Table 6-4. */
+const struct desc desc_midi_ms_out_jack[] = {
+	{ .field = "bJackType",    .size = 1, .type = DESC_NUMBER_STRINGS,
+			.number_strings = midi_jack_types },
+	{ .field = "bJackID",      .size = 1, .type = DESC_NUMBER },
+	{ .field = "bNrInputPins", .size = 1, .type = DESC_NUMBER },
+	{ .field = "baSource",     .size = 2, .type = DESC_SNOWFLAKE,
+			.snowflake = desc_snowflake_midi_source_pair,
+			.array = { .array = true, .length_field1 = "bNrInputPins" } },
+	{ .field = "iJack",        .size = 1, .type = DESC_STR_DESC_INDEX },
+	{ .field = NULL }
+};
+
+/** midi10: 6.1.2.4 Element Descriptor; Table 6-5. */
+const struct desc desc_midi_ms_element[] = {
+	{ .field = "bElementID",       .size = 1, .type = DESC_NUMBER },
+	{ .field = "bNrInputPins",     .size = 1, .type = DESC_NUMBER },
+	{ .field = "baSource",         .size = 2, .type = DESC_SNOWFLAKE,
+			.snowflake = desc_snowflake_midi_source_pair,
+			.array = { .array = true, .length_field1 = "bNrInputPins" } },
+	{ .field = "bNrOutputPins",    .size = 1, .type = DESC_NUMBER },
+	{ .field = "bInTerminalLink",  .size = 1, .type = DESC_NUMBER },
+	{ .field = "bOutTerminalLink", .size = 1, .type = DESC_NUMBER },
+	{ .field = "bElCapsSize",      .size = 1, .type = DESC_NUMBER },
+	{ .field = "bmElementCaps",    .size_field = "bElCapsSize",
+			.type = DESC_BITMAP_STRINGS,
+			.bitmap_strings = { .strings = midi_element_caps, .count = 12 } },
+	{ .field = "iElement",         .size = 1, .type = DESC_STR_DESC_INDEX },
+	{ .field = NULL }
+};
+
+/** midi10: 6.2.2 Class-Specific MS Bulk Data Endpoint Descriptor; Table 6-7. */
+const struct desc desc_midi_ms_endpoint_general[] = {
+	{ .field = "bNumEmbMIDIJack", .size = 1, .type = DESC_NUMBER },
+	{ .field = "baAssocJackID",   .size = 1, .type = DESC_NUMBER,
+			.array = { .array = true, .length_field1 = "bNumEmbMIDIJack" } },
+	{ .field = NULL }
+};
+
 /** USB3: 9.6.2.7 Configuration Summary Descriptor; Table 9-21. */
 const struct desc desc_usb3_dc_configuration_summary[] = {
 	{ .field = "bLength",             .size = 1, .type = DESC_NUMBER },

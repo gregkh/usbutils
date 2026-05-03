@@ -174,6 +174,13 @@ extern const struct desc * const desc_audio_ac_sample_rate_converter[3];
 extern const struct desc * const desc_audio_as_interface[3];
 extern const struct desc * const desc_audio_as_isochronous_audio_data_endpoint[3];
 
+/* MIDI Streaming (MS) descriptor definitions */
+extern const struct desc desc_midi_ms_header[];
+extern const struct desc desc_midi_ms_in_jack[];
+extern const struct desc desc_midi_ms_out_jack[];
+extern const struct desc desc_midi_ms_element[];
+extern const struct desc desc_midi_ms_endpoint_general[];
+
 /* Device Capability (DC) descriptor definitions */
 extern const struct desc desc_usb3_dc_configuration_summary[];
 
