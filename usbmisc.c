@@ -248,7 +248,11 @@ char *get_dev_string(libusb_device_handle *dev, uint8_t id)
 	buf = usb_string_to_native(unicode_buf + 2,
 	                           ((unsigned char) unicode_buf[0] - 2) / 2);
 	if (!buf)
-		return get_dev_string_ascii(dev, 127, id);
+		buf = get_dev_string_ascii(dev, 127, id);
+
+	for (char *p = buf; *p; p++)
+		if ((unsigned char)*p < 0x20 || *p == 0x7f)
+			*p = '?';
 
 	return buf;
 }
