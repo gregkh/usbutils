@@ -1147,6 +1147,10 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 
 	case 0x02: /* FORMAT_TYPE */
 		printf("(FORMAT_TYPE)\n");
+		if (buf[0] < 4) {
+			printf("      Warning: Descriptor too short\n");
+			break;
+		}
 		switch (protocol) {
 		case USB_AUDIO_CLASS_1:
 			if (buf[0] < 8) {
