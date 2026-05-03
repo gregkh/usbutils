@@ -86,10 +86,8 @@ static unsigned long long get_n_bytes_as_ull(
 {
 	unsigned long long ret = 0;
 
-	if (bytes > 8) {
-		fprintf(stderr, "Bad descriptor definition; Field size > 8.\n");
-		exit(EXIT_FAILURE);
-	}
+	if (bytes > 8)
+		bytes = 8;
 
 	buf += offset;
 
@@ -366,7 +364,7 @@ static unsigned int get_entry_size(
 
 	if (entry->size_field != NULL) {
 		/* Variable field length, given by `size_field`'s value. */
-		size = get_value_from_field(buf, buf_len, desc, entry->size_field);
+		return get_value_from_field(buf, buf_len, desc, entry->size_field);
 	}
 
 	if (size == 0) {
