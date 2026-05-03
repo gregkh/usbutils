@@ -46,6 +46,10 @@ static char *sysfs_attr(const char *dev, const char *attr)
 	while (--len > 0 && isspace(buf[len]))
 		buf[len] = 0;
 
+	for (int i = 0; i <= len; i++)
+		if ((unsigned char)buf[i] < 0x20 || buf[i] == 0x7f)
+			buf[i] = '?';
+
 	return (len >= 0) ? buf : NULL;
 }
 

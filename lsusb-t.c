@@ -267,7 +267,7 @@ static void read_sysfs_file_string(const char *d_name, const char *file, char *b
 			r--;
 		}
 		while (r >= 0) {
-			if (buf[r] == '\n')
+			if ((unsigned char)buf[r] < 0x20 || buf[r] == 0x7f)
 				buf[r] = ' ';
 			r--;
 		}

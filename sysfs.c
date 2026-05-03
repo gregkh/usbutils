@@ -75,6 +75,9 @@ int read_sysfs_prop(char *buf, size_t size, const char *sysfs_name, const char *
 		/* Strip trailing newline if present */
 		if (n > 0 && buf[n - 1] == '\n')
 			buf[n - 1] = '\0';
+		for (int i = 0; buf[i]; i++)
+			if ((unsigned char)buf[i] < 0x20 || buf[i] == 0x7f)
+				buf[i] = '?';
 	}
 
 	close(fd);
