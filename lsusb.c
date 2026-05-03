@@ -3343,7 +3343,7 @@ static const unsigned char *find_otg(const unsigned char *buf, int buflen)
 	while (buflen >= 3) {
 		if (buf[0] == 3 && buf[1] == USB_DT_OTG)
 			return buf;
-		if (buf[0] > buflen)
+		if (buf[0] < 2 || buf[0] > buflen)
 			return 0;
 		buflen -= buf[0];
 		buf += buf[0];
