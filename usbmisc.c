@@ -157,7 +157,7 @@ libusb_device *get_usb_device(libusb_context *ctx, const char *path)
 static char *get_dev_string_ascii(libusb_device_handle *dev, size_t size,
                                   uint8_t id)
 {
-	char *buf = malloc(size);
+	char *buf = calloc(1, size);
 
 	if (!buf)
 		return strdup("(error)");
@@ -176,7 +176,7 @@ static char *get_dev_string_ascii(libusb_device_handle *dev, size_t size,
 
 static uint16_t get_any_langid(libusb_device_handle *dev)
 {
-	unsigned char buf[4];
+	unsigned char buf[4] = {0};
 	int ret = libusb_get_string_descriptor(dev, 0, 0, buf, sizeof buf);
 
 	if (ret != sizeof buf)

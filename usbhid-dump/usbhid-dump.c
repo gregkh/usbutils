@@ -153,7 +153,7 @@ static bool
 dump_iface_list_descriptor(const uhd_iface *list)
 {
     const uhd_iface    *iface;
-    uint8_t             buf[UHD_MAX_DESCRIPTOR_SIZE];
+    uint8_t             buf[UHD_MAX_DESCRIPTOR_SIZE] = {0};
     int                 rc;
     enum libusb_error   err;
 

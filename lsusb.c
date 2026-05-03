@@ -2716,7 +2716,7 @@ static void dump_hid_device(libusb_device_handle *dev,
 			    const unsigned char *buf)
 {
 	int i, len;
-	unsigned char dbuf[8192];
+	unsigned char dbuf[8192] = {0};
 
 	if (buf[1] != LIBUSB_DT_HID)
 		printf("      Warning: Invalid descriptor\n");
@@ -3173,7 +3173,7 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed,
 
 	printf(" Hub Port Status:\n");
 	for (i = 0; i < buf[2]; i++) {
-		unsigned char status[8];
+		unsigned char status[8] = {0};
 
 		/* Request EXT_PORT_STATUS for USB 3.1 SuperSpeedPlus hubs,
 		   PORT_STATUS otherwise */
@@ -3252,7 +3252,7 @@ static void do_hub(libusb_device_handle *fd, unsigned tt_type, unsigned speed,
 
 static void do_dualspeed(libusb_device_handle *fd)
 {
-	unsigned char buf[10];
+	unsigned char buf[10] = {0};
 	char cls[128], subcls[128], proto[128];
 	int ret;
 
@@ -3303,7 +3303,7 @@ static void do_dualspeed(libusb_device_handle *fd)
 
 static void do_debug(libusb_device_handle *fd)
 {
-	unsigned char buf[4];
+	unsigned char buf[4] = {0};
 	int ret;
 
 	ret = usb_control_msg(fd,
@@ -3397,7 +3397,7 @@ static int do_otg(struct libusb_config_descriptor *config)
 static void
 dump_device_status(libusb_device_handle *fd, int otg, int super_speed)
 {
-	unsigned char status[8];
+	unsigned char status[8] = {0};
 	int ret;
 
 	ret = usb_control_msg(fd, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD
@@ -3594,7 +3594,7 @@ static void dump_container_id_device_capability_desc(unsigned char *buf)
 
 static char *get_webusb_url(libusb_device_handle *fd, uint8_t vendor_req, uint8_t id)
 {
-	unsigned char url_buf[255];
+	unsigned char url_buf[255] = {0};
 	const char *scheme;
 	char *url, *chr;
 	unsigned char i;
@@ -3776,7 +3776,7 @@ static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp, bool lp
 	 * allocating and reading the full BOS
 	 */
 
-	unsigned char bos_desc_static[5];
+	unsigned char bos_desc_static[5] = {0};
 	unsigned char *bos_desc;
 	unsigned int bos_desc_size;
 	int size, ret;
