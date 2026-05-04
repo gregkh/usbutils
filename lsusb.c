@@ -3448,6 +3448,10 @@ static void dump_usb2_device_capability_desc(unsigned char *buf, bool lpm_requir
 	unsigned int wide;
 	unsigned int besl;
 
+	if (buf[0] < 7) {
+		fprintf(stderr, "  Bad USB 2.0 Extension Device Capability descriptor.\n");
+		return;
+	}
 	wide = buf[3] + (buf[4] << 8) +
 		(buf[5] << 16) + (buf[6] << 24);
 	printf("  USB 2.0 Extension Device Capability:\n"
@@ -3534,6 +3538,10 @@ static void dump_ssp_device_capability_desc(unsigned char *buf)
 	static const char bitrate_prefix[] = " KMG";
 
 	if (buf[0] < 12) {
+		fprintf(stderr, "  Bad SuperSpeedPlus USB Device Capability descriptor.\n");
+		return;
+	}
+	if (buf[0] < 12 + ((buf[4] & 0x1f) + 1) * 4) {
 		fprintf(stderr, "  Bad SuperSpeedPlus USB Device Capability descriptor.\n");
 		return;
 	}
@@ -3816,8 +3824,9 @@ static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp, bool lp
 	buf = &bos_desc[5];
 
 	while (size >= 3) {
-		if (buf[0] < 3) {
-			printf("buf[0] = %u\n", buf[0]);
+		if (buf[0] < 3 || buf[0] > size) {
+			printf("  ** Bad device-capability bLength %u (%d left)\n",
+			       buf[0], size);
 			goto out;
 		}
 		switch (buf[2]) {
