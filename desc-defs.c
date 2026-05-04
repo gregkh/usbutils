@@ -969,12 +969,12 @@ static void desc_snowflake_dump_uac1_as_interface_wformattag(
 		format_string = audio_data_format_type_i[value];
 
 	} else if ((value >=  (UAC_FORMAT_TYPE_II << 12)) &&
-	           (value <= ((UAC_FORMAT_TYPE_II << 12) +
+	           (value <  ((UAC_FORMAT_TYPE_II << 12) +
 	                      ARRAY_LEN(audio_data_format_type_ii)))) {
 		format_string = audio_data_format_type_ii[value & 0xfff];
 
 	} else if ((value >=  (UAC_FORMAT_TYPE_III << 12)) &&
-	           (value <= ((UAC_FORMAT_TYPE_III << 12) +
+	           (value <  ((UAC_FORMAT_TYPE_III << 12) +
 	                      ARRAY_LEN(audio_data_format_type_iii)))) {
 		format_string = audio_data_format_type_iii[value & 0xfff];
 	}
