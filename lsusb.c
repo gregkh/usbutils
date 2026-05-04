@@ -1036,8 +1036,10 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
 
 	if (buf[1] != USB_DT_CS_INTERFACE)
 		printf("      Warning: Invalid descriptor\n");
-	else if (buf[0] < 3)
+	if (buf[0] < 3) {
 		printf("      Warning: Descriptor too short\n");
+		return;
+	}
 	printf("      AudioControl Interface Descriptor:\n"
 	       "        bLength             %5u\n"
 	       "        bDescriptorType     %5u\n"
@@ -1129,8 +1131,10 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 
 	if (buf[1] != USB_DT_CS_INTERFACE)
 		printf("      Warning: Invalid descriptor\n");
-	else if (buf[0] < 3)
+	if (buf[0] < 3) {
 		printf("      Warning: Descriptor too short\n");
+		return;
+	}
 	printf("      AudioStreaming Interface Descriptor:\n"
 	       "        bLength             %5u\n"
 	       "        bDescriptorType     %5u\n"
@@ -1430,6 +1434,10 @@ static void dump_audiostreaming_endpoint(libusb_device_handle *dev, const unsign
 
 	if (buf[1] != USB_DT_CS_ENDPOINT)
 		printf("      Warning: Invalid descriptor\n");
+	if (buf[0] < 3) {
+		printf("      Warning: Descriptor too short\n");
+		return;
+	}
 
 	printf("        AudioStreaming Endpoint Descriptor:\n"
 	       "          bLength             %5u\n"
@@ -1445,7 +1453,7 @@ static void dump_midistreaming_interface(libusb_device_handle *dev, const unsign
 {
 	if (buf[1] != USB_DT_CS_INTERFACE)
 		printf("      Warning: Invalid descriptor\n");
-	else if (buf[0] < 3) {
+	if (buf[0] < 3) {
 		printf("      Warning: Descriptor too short\n");
 		return;
 	}
@@ -1488,7 +1496,7 @@ static void dump_midistreaming_endpoint(libusb_device_handle *dev, const unsigne
 
 	if (buf[1] != USB_DT_CS_ENDPOINT)
 		printf("      Warning: Invalid descriptor\n");
-	else if (buf[0] < 3) {
+	if (buf[0] < 3) {
 		printf("      Warning: Descriptor too short\n");
 		return;
 	}
@@ -1582,8 +1590,10 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 
 	if (buf[1] != USB_DT_CS_INTERFACE)
 		printf("      Warning: Invalid descriptor\n");
-	else if (buf[0] < 3)
+	if (buf[0] < 3) {
 		printf("      Warning: Descriptor too short\n");
+		return;
+	}
 	printf("      VideoControl Interface Descriptor:\n"
 	       "        bLength             %5u\n"
 	       "        bDescriptorType     %5u\n"
@@ -1819,12 +1829,12 @@ static void dump_videocontrol_interrupt_endpoint(const unsigned char *buf)
 {
 	unsigned int wMaxTransferSize;
 
+	if (buf[1] != USB_DT_CS_ENDPOINT)
+		printf("      Warning: Invalid descriptor\n");
 	if (buf[0] < 5) {
 		printf("      Warning: Descriptor too short\n");
 		return;
 	}
-	if (buf[1] != USB_DT_CS_ENDPOINT)
-		printf("      Warning: Invalid descriptor\n");
 	wMaxTransferSize = buf[3] | (buf[4] << 8);
 	printf("        VideoControl Endpoint Descriptor:\n"
 	       "          bLength             %5u\n"
@@ -1849,8 +1859,10 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 
 	if (buf[1] != USB_DT_CS_INTERFACE)
 		printf("      Warning: Invalid descriptor\n");
-	else if (buf[0] < 3)
+	if (buf[0] < 3) {
 		printf("      Warning: Descriptor too short\n");
+		return;
+	}
 	printf("      VideoStreaming Interface Descriptor:\n"
 	       "        bLength                         %5u\n"
 	       "        bDescriptorType                 %5u\n"
@@ -2699,6 +2711,10 @@ dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, const 
 	char		*str = NULL;
 	const char	*type;
 
+	if (buf[0] < 3) {
+		printf("%sWarning: Descriptor too short\n", indent);
+		return;
+	}
 	switch (buf[2]) {
 	case 0:
 		type = "Header";
