@@ -828,7 +828,7 @@ static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interfa
 				if ((endpoint->bmAttributes & 3) == 2 &&
 						(buf[3] & 0x1f))
 					printf("        MaxStreams %14u\n",
-							(unsigned) 1 << buf[3]);
+							1U << (buf[3] & 0x1f));
 				if ((endpoint->bmAttributes & 3) == 1 &&
 						(buf[3] & 0x3))
 					printf("        Mult %20u\n",
@@ -1385,7 +1385,7 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
 			}
 			printf("        bmBSID         0x%08x\n"
 			       "        bmAC3Features        0x%02x\n",
-			       buf[5] | (buf[6] << 8) | (buf[7] << 16) | (buf[8] << 24), buf[9]);
+			       convert_le_u32(buf + 5), buf[9]);
 			if (buf[9] & 0x01)
 				printf("          RF mode\n");
 			if (buf[9] & 0x02)
@@ -1615,7 +1615,7 @@ static void dump_videocontrol_interface(libusb_device_handle *dev, const unsigne
 			printf("      Warning: Descriptor too short\n");
 			break;
 		}
-		freq = buf[7] | (buf[8] << 8) | (buf[9] << 16) | (buf[10] << 24);
+		freq = convert_le_u32(buf + 7);
 		printf("        bcdUVC              %2x.%02x\n"
 		       "        wTotalLength       0x%04x\n"
 		       "        dwClockFrequency    %5u.%06uMHz\n"
@@ -2048,34 +2048,33 @@ static void dump_videostreaming_interface(const unsigned char *buf)
 		       "        dwMinBitRate                %9u\n"
 		       "        dwMaxBitRate                %9u\n",
 		       buf[5] | (buf[6] <<  8), buf[7] | (buf[8] << 8),
-		       buf[9] | (buf[10] << 8) | (buf[11] << 16) | (buf[12] << 24),
-		       buf[13] | (buf[14] << 8) | (buf[15] << 16) | (buf[16] << 24));
+		       convert_le_u32(buf + 9),
+		       convert_le_u32(buf + 13));
 		if (buf[2] == 0x11)
 			printf("        dwDefaultFrameInterval      %9u\n"
 			       "        bFrameIntervalType              %5u\n"
 			       "        dwBytesPerLine              %9u\n",
-			       buf[17] | (buf[18] << 8) | (buf[19] << 16) | (buf[20] << 24),
+			       convert_le_u32(buf + 17),
 			       buf[21],
-			       buf[22] | (buf[23] << 8) | (buf[24] << 16) | (buf[25] << 24));
+			       convert_le_u32(buf + 22));
 		else
 			printf("        dwMaxVideoFrameBufferSize   %9u\n"
 			       "        dwDefaultFrameInterval      %9u\n"
 			       "        bFrameIntervalType              %5u\n",
-			       buf[17] | (buf[18] << 8) | (buf[19] << 16) | (buf[20] << 24),
-			       buf[21] | (buf[22] << 8) | (buf[23] << 16) | (buf[24] << 24),
+			       convert_le_u32(buf + 17),
+			       convert_le_u32(buf + 21),
 			       buf[25]);
 		if (buf[n] == 0)
 			printf("        dwMinFrameInterval          %9u\n"
 			       "        dwMaxFrameInterval          %9u\n"
 			       "        dwFrameIntervalStep         %9u\n",
-			       buf[26] | (buf[27] << 8) | (buf[28] << 16) | (buf[29] << 24),
-			       buf[30] | (buf[31] << 8) | (buf[32] << 16) | (buf[33] << 24),
-			       buf[34] | (buf[35] << 8) | (buf[36] << 16) | (buf[37] << 24));
+			       convert_le_u32(buf + 26),
+			       convert_le_u32(buf + 30),
+			       convert_le_u32(buf + 34));
 		else
 			for (i = 0; i < buf[n]; i++)
 				printf("        dwFrameInterval(%2u)         %9u\n",
-				       i, buf[26+4*i] | (buf[27+4*i] << 8) |
-				       (buf[28+4*i] << 16) | (buf[29+4*i] << 24));
+				       i, convert_le_u32(buf + 26 + 4*i));
 		dump_junk(buf, "        ", len);
 		break;
 
@@ -2592,7 +2591,7 @@ static void dump_printer_device(libusb_device_handle *dev,
 				printf("          Warning: Descriptor too short\n");
 				return;
 			}
-			caps = le16_to_cpu(buf[n+2] | (buf[n+3] << 8));
+			caps = buf[n+2] | (buf[n+3] << 8);
 			uuid = get_dev_string(dev, buf[n+5]);
 
 			printf("            iIPPVersionsSupported %5u\n", buf[n+4]);
@@ -2711,7 +2710,7 @@ static void dump_hid_device(libusb_device_handle *dev,
 static void
 dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, const char *indent)
 {
-	int		tmp;
+	unsigned int	tmp;
 	char		*str = NULL;
 	const char	*type;
 
@@ -2838,10 +2837,7 @@ dump_comm_descriptor(libusb_device_handle *dev, const unsigned char *buf, const 
 		if (buf[0] != 13)
 			goto bad;
 		str = get_dev_string(dev, buf[3]);
-		tmp = buf[7] << 8;
-		tmp |= buf[6]; tmp <<= 8;
-		tmp |= buf[5]; tmp <<= 8;
-		tmp |= buf[4];
+		tmp = convert_le_u32(buf + 4);
 		printf("%sCDC Ethernet:\n"
 		       "%s  iMacAddress             %10d %s\n"
 		       "%s  bmEthernetStatistics    0x%08x\n",
@@ -3376,8 +3372,7 @@ static void dump_usb2_device_capability_desc(unsigned char *buf, bool lpm_requir
 		fprintf(stderr, "  Bad USB 2.0 Extension Device Capability descriptor.\n");
 		return;
 	}
-	wide = buf[3] + (buf[4] << 8) +
-		(buf[5] << 16) + (buf[6] << 24);
+	wide = convert_le_u32(buf + 3);
 	printf("  USB 2.0 Extension Device Capability:\n"
 			"    bLength             %5u\n"
 			"    bDescriptorType     %5u\n"
