@@ -14,7 +14,7 @@ print_string() {
 	file=$1
 	name=$2
 	if [ -f "$file" ]; then
-		echo "S:  $name=$(tr -d '\000-\037\177' < "$file")"
+		printf 'S:  %s=%s\n' "$name" "$(tr -d '\000-\037\177' < "$file")"
 	fi
 }
 
