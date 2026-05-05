@@ -44,7 +44,7 @@ class_decode() {
 	"ef") echo "misc " ;;
 	"fe") echo "app. " ;;
 	"ff") echo "vend." ;;
-	"*")  echo "unk. " ;;
+	*)    echo "unk. " ;;
 	esac
 }
 
