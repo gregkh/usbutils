@@ -95,6 +95,10 @@ uhd_iface_list_new(uhd_dev     *dev_list,
             if (iface_desc->bInterfaceClass != LIBUSB_CLASS_HID)
                 continue;
 
+            /* 0xff is UHD_IFACE_NUM_ANY and fails uhd_iface_valid() */
+            if (iface_desc->bInterfaceNumber == UINT8_MAX)
+                continue;
+
             /*
              * Try to retrieve report descriptor length
              */
