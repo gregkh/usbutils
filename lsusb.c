@@ -3629,7 +3629,8 @@ static char *get_webusb_url(libusb_device_handle *fd, uint8_t vendor_req, uint8_
 	for (i = 3; i < url_buf[0]; i++)
 		/* crude UTF-8 to ASCII conversion */
 		if (url_buf[i] < 0x80)
-			*chr++ = url_buf[i];
+			*chr++ = (url_buf[i] < 0x20 || url_buf[i] == 0x7f)
+					? '?' : url_buf[i];
 	*chr = '\0';
 
 	return url;
