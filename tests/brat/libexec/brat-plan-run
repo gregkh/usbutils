@@ -1,0 +1,142 @@
+#!/bin/sh
+set -eu
+. brat.sh
+
+USAGE="[-j <JOBS>] [-n <PATTERN>]... [-e <PATTERN>]... <FILE>[:<LINE>]...
+
+  -j, --jobs <JOBS>        Run up to JOBS tests in parallel (default: 1)
+  -n, --name <PATTERN>     Only run test names matching /regexp/ or string
+  -e, --exclude <PATTERN>  Filter out test names matching /regexp/ or string"
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -j | --jobs )
+      [ $# -ge 2 ] || usage
+      BRAT_JOBS="$2"
+      shift 2
+      ;;
+    * )
+      break
+      ;;
+  esac
+done
+
+[ $# -gt 0 ] || usage
+
+plan="$BRAT_TMP.plan.$$"
+if [ "$1" = "-" ]; then
+  cat >"$plan"
+else
+  brat-plan-build "$@" >"$plan"
+fi
+
+BRAT_JOBS="${BRAT_JOBS:-1}"
+[ "$BRAT_JOBS" -eq "$BRAT_JOBS" ]
+[ $BRAT_JOBS -gt 0 ] || error "must have at least one job"
+
+count="$(wc -l <"$plan")"
+exec <"$plan"
+
+IFS="$TAB"
+index=0
+running=0
+success=1
+
+jobs="$BRAT_TMP.jobs.$$"
+mkfifo "$jobs"
+exec 9<>"$jobs"
+
+process_job() {
+  read -r status output <&9
+  [ "$status" -eq "$status" ]
+
+  if [ $success -eq 1 ] && [ $status -ne 0 ]; then
+    success=0
+  fi
+
+  cat "$output"
+  rm -f "$output"
+}
+
+record_job() {
+  printf "%d\t%s\n" $1 "$2" >&9
+}
+
+tap="$BRAT_TMP.tap.$$"
+mkfifo "$tap"
+brat--tap-format <"$tap" &
+
+{
+  printf "TAP version 14\n"
+  printf "1..%d\n\n" $count
+
+  while read -r line; do
+    set -- $line
+    file="$1"
+    lineno="$2"
+    kind="$3"
+    name="$4"
+
+    index=$((index + 1))
+    name="$(printf '%s' "$name" | sed -e 's/\\/\\\\/g' -e 's/#/\\#/g')"
+    label="$file:$lineno: $name"
+
+    if [ "$kind" = "skip" ]; then
+      printf "ok %d - %s  # SKIP\n" $index "$label"
+      continue
+    fi
+
+    while [ $running -ge $BRAT_JOBS ]; do
+      process_job
+      running=$((running - 1))
+    done
+
+    {
+      run_out="$BRAT_TMP.run_out.$index"
+      test_out="$BRAT_TMP.test_out.$index"
+
+      status=0
+      brat-test-run "$file" "$lineno" >"$test_out" 2>&1 || status=$?
+
+      {
+        if [ "$kind" = "todo" ]; then
+          printf "ok %d - %s  # TODO\n" $index "$label"
+        elif [ $status -eq 0 ]; then
+          printf "ok %d - %s\n" $index "$label"
+        else
+          printf "not ok %d - %s\n" $index "$label"
+        fi
+
+        if [ $status -ne 0 ]; then
+          source="$(brat_preprocess "$file")"
+          awk -f "$BRAT_LIB/rewrite-paths.awk" \
+            -v file="$file" \
+            -v source="$source" \
+            -v test_tmp="$BRAT_TMP.test." \
+            "$test_out" \
+            | tr -d '\r' \
+            | sed -e "s/^/#  /"
+          printf "#  (test failed with status %d)\n" $status
+        fi
+
+        if [ "$kind" = "todo" ]; then
+          status=0
+        fi
+      } >"$run_out"
+
+      rm -f "$test_out"
+      record_job $status "$run_out"
+    } &
+
+    running=$((running + 1))
+  done
+
+  while [ $running -gt 0 ]; do
+    process_job
+    running=$((running - 1))
+  done
+} >"$tap"
+
+wait
+exec 9>&-
+[ $success -eq 1 ]

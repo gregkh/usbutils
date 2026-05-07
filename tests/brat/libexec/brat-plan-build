@@ -1,0 +1,55 @@
+#!/bin/sh
+set -eu
+. brat.sh
+
+USAGE="[-n <PATTERN>]... [-e <PATTERN>]... <FILE>[:<LINE>]...
+
+  -n, --name <PATTERN>     Only run test names matching /regexp/ or string
+  -e, --exclude <PATTERN>  Filter out test names matching /regexp/ or string"
+
+INCLUDES= EXCLUDES= FILES=
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -n | --name )
+      [ $# -ge 2 ] || usage
+      INCLUDES="$INCLUDES$TAB$2"
+      shift 2
+      ;;
+    -e | --exclude )
+      [ $# -ge 2 ] || usage
+      EXCLUDES="$EXCLUDES$TAB$2"
+      shift 2
+      ;;
+    -* )
+      usage
+      ;;
+    * )
+      FILES="$FILES$TAB$1"
+      shift
+      ;;
+  esac
+done
+
+[ -n "$FILES" ] || usage
+
+IFS="$TAB"
+plan="$BRAT_TMP.plan.$$"
+
+printf '%s\n' $FILES \
+  | awk -f "$BRAT_LIB/plan-lines.awk" \
+  | while read -r file lines; do
+      brat-test-plan "$file" $lines
+    done >"$plan"
+
+sort -k1,1 -k2,2n "$plan" \
+  | awk -v inc="$INCLUDES" -v exc="$EXCLUDES" -f "$BRAT_LIB/plan-names.awk" \
+    >"$plan.out"
+
+if ! [ -s "$plan.out" ]; then
+  if [ -n "$INCLUDES$EXCLUDES" ] || [ "${FILES%:*}" != "$FILES" ]; then
+    error "no tests matched"
+  fi
+fi
+
+exec cat "$plan.out"

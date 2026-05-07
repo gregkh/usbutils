@@ -1,0 +1,92 @@
+#!/bin/sh
+# Brutal Router for Unix Tools
+
+set -eu
+
+export SELF="$(realpath "$0")"
+NAME="${SELF##*/}"
+ROOT="${SELF%/*/*}"
+PATH="$ROOT/libexec:$ROOT/lib/$NAME:$PATH"
+USAGE="<COMMAND>"
+unset VERSION
+
+cmds() {
+  exes | sed -e 's,.*/'"$NAME"'-,,' | sort
+}
+
+error() {
+  printf "%s: %s\n" "$NAME" "${1:-error}"
+  shift; [ $# = 0 ] || printf "%s\n" "$@"
+  return 1
+} >&2
+
+exes() {
+  IFS=:; for dir in $PATH; do
+    ! [ -d "$dir" ] || find -L "$dir" -type f \
+      \( -path "$dir" -o -prune \) \
+      \( -perm -100 -o -perm -010 -o -perm -001 \) \
+      \( -name "$NAME-*" -not -name "*--*" \) \
+      -print 2>/dev/null
+  done | awk -F / '!a[$(NF)]++'
+}
+
+usage() {
+  [ $# -gt 0 ] || set -- "$SELF" "$USAGE" "commands: $(cmds | tr '\n' ' ')"
+  formatted_name="$(printf "%s" "${1##*/}" | sed -e 's,\('"$NAME"'\)-,\1 ,')"
+  printf "usage: %s %s\n" "$formatted_name" "${2:-}"
+  shift 2; [ $# = 0 ] || printf "%s\n" "$@"
+  return 1
+} >&2
+
+version() {
+  printf "%s %s\n" "$NAME" "$VERSION"
+}
+
+init="$ROOT/lib/$NAME/_init.sh"
+if [ -r "$init" ]; then
+  . "$init"
+fi
+
+if [ $# -eq 1 ] && [ "$1" = "--version" ] && [ -n "${VERSION:-}" ]; then
+  set -- --- version
+fi
+
+if [ $# -gt 1 ] && [ "$1" = "---" ]; then
+  shift; "$@"; exit
+fi
+
+args= cmd= i=0
+
+for arg; do
+  i=$((i + 1))
+  case "$arg" in
+    -* ) ;;
+    *?--* ) [ -z "$cmd" ] && usage ;;
+    * ) [ -z "$cmd" ] && cmd="$arg" && continue ;;
+  esac
+  args="$args \"\${$i}\""
+done
+
+unhandled="$ROOT/lib/$NAME/_unhandled.sh"
+
+if [ -n "$cmd" ]; then
+  executable="${NAME}-$cmd"
+
+  if command -v "$executable" >/dev/null; then
+    eval 'exec "$executable"'"$args"
+  fi
+
+  _cmd="$cmd"
+
+  if [ -r "$unhandled" ]; then
+    . "$unhandled"
+  fi
+
+  error "$_cmd: command not found" || exit 127
+fi
+
+if [ -r "$unhandled" ]; then
+  . "$unhandled"
+fi
+
+usage

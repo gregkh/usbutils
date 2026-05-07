@@ -1,0 +1,26 @@
+#!/bin/sh
+set -eu
+. brat.sh
+
+BRAT_FORMAT="${BRAT_FORMAT:-pretty}"
+
+if ! [ -t 1 ] || ! [ -n "${TERM:-}" ]; then
+  BRAT_FORMAT="plain"
+fi
+
+if [ -n "${CI:-}" ]; then
+  BRAT_FORMAT="plain"
+fi
+
+if [ "$BRAT_FORMAT" = "pretty" ]; then
+  export LC_ALL=C
+  exec awk \
+    -f "$BRAT_LIB/terminal.awk" \
+    -f "$BRAT_LIB/wcwidth.awk" \
+    -f "$BRAT_LIB/tap-status.awk" \
+    -f "$BRAT_LIB/tap-format-pretty.awk"
+else
+  exec awk \
+    -f "$BRAT_LIB/tap-status.awk" \
+    -f "$BRAT_LIB/tap-format-plain.awk"
+fi

@@ -1,0 +1,43 @@
+#!/bin/sh
+set -eu
+. brat.sh
+
+USAGE="<FILE> [<LINE> ...]"
+
+FILE=
+LINES=
+
+for arg; do
+  case "$arg" in
+    "-"* ) usage ;;
+    * )
+      if [ -z "$FILE" ]; then
+        FILE="$arg"
+      else
+        LINES="$LINES $arg"
+      fi
+  esac
+done
+
+[ -n "$FILE" ] || usage
+
+. eval.sh
+
+for kind in skip test todo; do
+  for line in $(brat_eval_var "$kind"); do
+    if [ -n "$LINES" ]; then
+      case " $LINES " in
+        *" $line "* ) ;;
+        * ) continue
+      esac
+    fi
+    name="$(brat_eval_var "${kind}_${line}" || true)"
+    case "$name" in
+      *"$TAB"* | *"$NL"* )
+        error "$FILE:$line: invalid test name"
+    esac
+    printf "%s\t%d\t%s\t%s\n" "$FILE" "$line" "$kind" "$name"
+  done
+done >"$BRAT_TMP.plan.$$"
+
+sort -k2,2n <"$BRAT_TMP.plan.$$"

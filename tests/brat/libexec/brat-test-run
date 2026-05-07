@@ -1,0 +1,27 @@
+#!/bin/sh
+set -eu
+. brat.sh
+
+USAGE="<FILE> <LINE>"
+
+FILE= LINE=
+
+for arg; do
+  case "$arg" in
+    "-"* ) usage ;;
+    * )
+      if [ -z "$FILE" ]; then
+        FILE="$arg"
+      elif [ -z "$LINE" ]; then
+        LINE="$arg"
+      else
+        usage
+      fi
+  esac
+done
+
+[ -n "$FILE" ] && [ -n "$LINE" ] || usage
+
+. eval.sh
+. test.sh
+brat_eval_fn "$LINE"

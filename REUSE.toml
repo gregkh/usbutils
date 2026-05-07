@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+version = 1
+
+[[annotations]]
+path = "tests/brat/**"
+SPDX-FileCopyrightText = "Sam Stephenson"
+SPDX-License-Identifier = "LicenseRef-MIT-Trans-Rights"
+
+[[annotations]]
+path = "tests/brat/lib/brat/wcwidth.awk"
+SPDX-FileCopyrightText = "Eric Pruitt"
+SPDX-License-Identifier = "BSD-2-Clause"

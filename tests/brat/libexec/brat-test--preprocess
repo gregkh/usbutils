@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+. brat.sh
+
+FILE="$1"
+
+[ -r "$FILE" ] || error "$FILE: no such file"
+
+exec awk -f "$BRAT_LIB/preprocess.awk" <"$FILE"
