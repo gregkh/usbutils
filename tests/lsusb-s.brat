@@ -1,0 +1,28 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+setup() {
+	: "${LSUSB_BUILT:=$DIR/../build/lsusb}"
+	: "${LSUSB_INSTALLED:=$(command -v lsusb || true)}"
+	# "Bus 001 Device 001: ID 1d6b:0002 Linux Foundation ..."
+	set -- $("$LSUSB_BUILT" | head -n1)
+	[ $# -ge 4 ]
+	bus=$2
+	dev=${4%:}
+}
+
+@test "lsusb -s bus:dev: built and installed output is identical" {
+	[ -n "$LSUSB_INSTALLED" ]
+	"$LSUSB_BUILT"     -s "$bus:$dev" > "$TEST_TMP.built"     2>&1
+	"$LSUSB_INSTALLED" -s "$bus:$dev" > "$TEST_TMP.installed" 2>&1
+	diff -u "$TEST_TMP.installed" "$TEST_TMP.built"
+}
+
+@test "lsusb -s bus:dev -v: built and installed output is identical" {
+	[ -n "$LSUSB_INSTALLED" ]
+	"$LSUSB_BUILT"     -v -s "$bus:$dev" > "$TEST_TMP.built"     2>&1
+	"$LSUSB_INSTALLED" -v -s "$bus:$dev" > "$TEST_TMP.installed" 2>&1
+	diff -u "$TEST_TMP.installed" "$TEST_TMP.built"
+}
