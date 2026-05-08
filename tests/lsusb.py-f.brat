@@ -1,0 +1,26 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+setup() {
+	: "${LSUSB_PY_BUILT:=$DIR/../lsusb.py}"
+	: "${LSUSB_PY_INSTALLED:=$(command -v lsusb.py || true)}"
+	for ids in /usr/share/hwdata/usb.ids /usr/share/usb.ids; do
+		[ -r "$ids" ] && break
+	done
+	[ -r "$ids" ]
+}
+
+@test "lsusb.py -f path: built and installed output is identical" {
+	[ -n "$LSUSB_PY_INSTALLED" ]
+	"$LSUSB_PY_BUILT"     -f "$ids" > "$TEST_TMP.built"     2>&1
+	"$LSUSB_PY_INSTALLED" -f "$ids" > "$TEST_TMP.installed" 2>&1
+	diff -u "$TEST_TMP.installed" "$TEST_TMP.built"
+}
+
+@test "lsusb.py --usbids-path: long option matches -f" {
+	"$LSUSB_PY_BUILT" -f "$ids"             > "$TEST_TMP.short" 2>&1
+	"$LSUSB_PY_BUILT" --usbids-path "$ids"  > "$TEST_TMP.long"  2>&1
+	diff -u "$TEST_TMP.short" "$TEST_TMP.long"
+}
