@@ -1,0 +1,22 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+setup() {
+	: "${USB_DEVICES_BUILT:=$DIR/../usb-devices}"
+	: "${USB_DEVICES_INSTALLED:=$(command -v usb-devices || true)}"
+}
+
+@test "built usb-devices runs" {
+	run "$USB_DEVICES_BUILT"
+	[ $status -eq 0 ]
+	match "$stdout" '/^T:  Bus=/'
+}
+
+@test "usb-devices: built and installed output is identical" {
+	[ -n "$USB_DEVICES_INSTALLED" ]
+	"$USB_DEVICES_BUILT"     > "$TEST_TMP.built"     2>&1
+	"$USB_DEVICES_INSTALLED" > "$TEST_TMP.installed" 2>&1
+	diff -u "$TEST_TMP.installed" "$TEST_TMP.built"
+}
