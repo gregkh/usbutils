@@ -1,0 +1,22 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+setup() {
+	: "${LSUSB_BUILT:=$DIR/../build/lsusb}"
+	: "${LSUSB_INSTALLED:=$(command -v lsusb || true)}"
+}
+
+@test "lsusb -h: built and installed help text is identical" {
+	[ -n "$LSUSB_INSTALLED" ]
+	"$LSUSB_BUILT"     -h > "$TEST_TMP.built"     2>&1
+	"$LSUSB_INSTALLED" -h > "$TEST_TMP.installed" 2>&1
+	diff -u "$TEST_TMP.installed" "$TEST_TMP.built"
+}
+
+@test "lsusb --help: long option matches -h" {
+	"$LSUSB_BUILT" -h     > "$TEST_TMP.short" 2>&1
+	"$LSUSB_BUILT" --help > "$TEST_TMP.long"  2>&1
+	diff -u "$TEST_TMP.short" "$TEST_TMP.long"
+}
