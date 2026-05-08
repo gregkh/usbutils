@@ -29,3 +29,7 @@ _help:
 # Run the "reuse lint" tool
 @lint:
 	reuse lint
+
+# Run the brat test suite, comparing built lsusb against the installed one
+@test *args='':
+	./tests/run {{args}}
