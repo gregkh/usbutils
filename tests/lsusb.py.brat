@@ -1,0 +1,21 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+setup() {
+	: "${LSUSB_PY_BUILT:=$DIR/../lsusb.py}"
+	: "${LSUSB_PY_INSTALLED:=$(command -v lsusb.py || true)}"
+}
+
+@test "built lsusb.py runs" {
+	run "$LSUSB_PY_BUILT"
+	[ $status -eq 0 ]
+}
+
+@test "lsusb.py: built and installed output is identical" {
+	[ -n "$LSUSB_PY_INSTALLED" ]
+	"$LSUSB_PY_BUILT"     > "$TEST_TMP.built"     2>&1
+	"$LSUSB_PY_INSTALLED" > "$TEST_TMP.installed" 2>&1
+	diff -u "$TEST_TMP.installed" "$TEST_TMP.built"
+}
