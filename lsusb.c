@@ -2747,7 +2747,7 @@ static void dump_hid_device(libusb_device_handle *dev,
 		return;
 	}
 
-	for (i = 0; i < buf[5]; i++) {
+	for (i = 0; i < buf[5] && 6+3*i+3 <= buf[0]; i++) {
 		/* we are just interested in report descriptors*/
 		if (buf[6+3*i] != LIBUSB_DT_REPORT)
 			continue;
