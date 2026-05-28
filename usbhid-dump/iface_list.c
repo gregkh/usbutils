@@ -114,9 +114,9 @@ uhd_iface_list_new(uhd_dev     *dev_list,
                     for (hid_desc_extra = hid_desc->extra;
                          hid_desc_extra <
                             hid_desc->extra + hid_desc->bNumDescriptors &&
-                         (uint8_t *)hid_desc_extra <
+                         (uint8_t *)(hid_desc_extra + 1) <=
                             (uint8_t *)hid_desc + hid_desc->bLength &&
-                         (unsigned char *)hid_desc_extra <
+                         (unsigned char *)(hid_desc_extra + 1) <=
                             iface_desc->extra +
                             iface_desc->extra_length;
                          hid_desc_extra++) {
