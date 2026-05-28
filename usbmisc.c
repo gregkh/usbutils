@@ -88,8 +88,10 @@ static char *get_absolute_path(const char *path, char *result,
 		presult += strlen(result);
 		result_size -= strlen(result);
 
-		*presult++ = '/';
-		result_size--;
+		if (result_size > 1) {
+			*presult++ = '/';
+			result_size--;
+		}
 	}
 
 	while (*ppath != 0 && result_size > 1) {
@@ -137,6 +139,8 @@ libusb_device *get_usb_device(libusb_context *ctx, const char *path)
 
 	dev = NULL;
 	num_devs = libusb_get_device_list(ctx, &list);
+	if (num_devs < 0)
+		return NULL;
 
 	for (i = 0; i < num_devs; ++i) {
 		uint8_t bnum = libusb_get_bus_number(list[i]);
