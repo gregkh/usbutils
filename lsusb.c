@@ -482,8 +482,9 @@ static void dump_config(libusb_device_handle *dev, struct libusb_config_descript
 		const unsigned char	*buf = config->extra;
 
 		while (size >= 2) {
-			if (buf[0] < 2) {
-				dump_junk(buf, "        ", size);
+			if (buf[0] < 2 || buf[0] > size) {
+				printf("    ** Bad config-extra bLength %u (%d left)\n",
+				       buf[0], size);
 				break;
 			}
 			switch (buf[1]) {
@@ -548,8 +549,9 @@ static void dump_altsetting(libusb_device_handle *dev, const struct libusb_inter
 		size = interface->extra_length;
 		buf = interface->extra;
 		while (size >= 2 * sizeof(uint8_t)) {
-			if (buf[0] < 2) {
-				dump_junk(buf, "      ", size);
+			if (buf[0] < 2 || buf[0] > size) {
+				printf("      ** Bad interface-extra bLength %u (%u left)\n",
+				       buf[0], size);
 				break;
 			}
 
@@ -774,8 +776,9 @@ static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interfa
 		size = endpoint->extra_length;
 		buf = endpoint->extra;
 		while (size >= 2 * sizeof(uint8_t)) {
-			if (buf[0] < 2) {
-				dump_junk(buf, "        ", size);
+			if (buf[0] < 2 || buf[0] > size) {
+				printf("        ** Bad endpoint-extra bLength %u (%u left)\n",
+				       buf[0], size);
 				break;
 			}
 			switch (buf[1]) {
@@ -823,6 +826,10 @@ static void dump_endpoint(libusb_device_handle *dev, const struct libusb_interfa
 				dump_association(dev, buf);
 				break;
 			case USB_DT_SS_ENDPOINT_COMP:
+				if (buf[0] < 6) {
+					printf("        Warning: SuperSpeed Endpoint Companion descriptor too short\n");
+					break;
+				}
 				printf("        bMaxBurst %15u\n", buf[2]);
 				/* Print bulk streams info or isoc "Mult" */
 				if ((endpoint->bmAttributes & 3) == 2 &&
