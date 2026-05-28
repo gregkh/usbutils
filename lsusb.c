@@ -2467,7 +2467,7 @@ static void dump_report_desc(unsigned char *b, int l)
 		btype = b[i] & (0x03 << 2);
 		btag = b[i] & ~0x03; /* 2 LSB bits encode length */
 		printf("            Item(%-6s): %s, data=", types[btype>>2],
-				names_reporttag(btag));
+				names_reporttag(btag) ? : "Unknown");
 		if (bsize > 0) {
 			printf(" [ ");
 			data = 0;
@@ -2481,7 +2481,7 @@ static void dump_report_desc(unsigned char *b, int l)
 		printf("\n");
 		switch (btag) {
 		case 0x04: /* Usage Page */
-			printf("%s%s\n", indent, names_huts(data));
+			printf("%s%s\n", indent, names_huts(data) ? : "Unknown");
 			hut = data;
 			break;
 
@@ -2489,7 +2489,7 @@ static void dump_report_desc(unsigned char *b, int l)
 		case 0x18: /* Usage Minimum */
 		case 0x28: /* Usage Maximum */
 			printf("%s%s\n", indent,
-			       names_hutus((hut << 16) + data));
+			       names_hutus((hut << 16) + data) ? : "Unknown");
 			break;
 
 		case 0x54: /* Unit Exponent */
@@ -2661,7 +2661,7 @@ static void dump_hid_device(libusb_device_handle *dev,
 	for (i = 0; i < buf[5] && 6+3*i+3 <= buf[0]; i++)
 		printf("          bDescriptorType     %5u %s\n"
 		       "          wDescriptorLength   %5u\n",
-		       buf[6+3*i], names_hid(buf[6+3*i]),
+		       buf[6+3*i], names_hid(buf[6+3*i]) ? : "Unknown",
 		       buf[7+3*i] | (buf[8+3*i] << 8));
 	dump_junk(buf, "        ", 6+3*buf[5]);
 	if (!do_report_desc)
