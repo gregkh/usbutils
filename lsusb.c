@@ -2273,7 +2273,7 @@ static void dump_hub(const char *prefix, const unsigned char *p, int tt_type)
 		printf("%s  bHubDecLat          0.%1u micro seconds\n",
 				prefix, p[7]);
 		printf("%s  wHubDelay          %4u nano seconds\n",
-				prefix, (p[8] << 4) +(p[7]));
+				prefix, (p[9] << 8) | p[8]);
 		offset = 10;
 	} else {
 		offset = 7;
