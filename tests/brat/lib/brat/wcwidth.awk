@@ -2,7 +2,7 @@
 
 # This AWK library provides 4 functions for working with UTF-8 strings:
 #
-# - wcscolumns(string): Returns the number of colums needed to display a
+# - wcscolumns(string): Returns the number of columns needed to display a
 #   string, but unlike "wcswidth" and "wcwidth" which are written to function
 #   identically to their POSIX counterparts, this function always returns a
 #   value greater than or equal to 0.
@@ -683,7 +683,7 @@ function _wcwidth_unpack_data(_wchar,    _a, _b, _c, _data, _end, _entry,
             # Sequences for code points U+0080 and up must be composed manually
             # if the interpreter is not multi-byte safe.
 
-            # Re-use of the length encoding addended values for both endpoints
+            # Reuse of the length encoding addended values for both endpoints
             # only works if both characters consist of the same number of
             # bytes. This is enforced by the width data generator.
             _a = _start >= 65536 ? 240 : 32
