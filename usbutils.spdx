@@ -2,11 +2,11 @@ SPDXVersion: SPDX-2.1
 DataLicense: CC0-1.0
 SPDXID: SPDXRef-DOCUMENT
 DocumentName: usbutils
-DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-265b69a0-f76d-4dda-b172-7b15dbf97f97
+DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-189fdfca-df3e-490f-bfef-bf0b555c1390
 Creator: Person: Greg Kroah-Hartman <gregkh@linuxfoundation.org> ()
 Creator: Organization: The Linux Foundation ()
-Creator: Tool: reuse-6.1.2
-Created: 2025-10-22T11:57:41Z
+Creator: Tool: reuse-6.2.0
+Created: 2026-05-31T12:24:24Z
 CreatorComment: <text>This document was created automatically using available reuse information consistent with REUSE.</text>
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-68c02f636b8e3879dac8154f74e11a07
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-55ac808bfba4c56ce907af138af72acf
@@ -20,13 +20,13 @@ Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-d55ab2ed4d5fdfcf0040347a879b8f2
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-21a212edf35f19ec3cfeb707641e5d71
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-5503f4e216fc559b19e397a7433010ca
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-48837738997a8f7c8e44df92148bb30c
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-3d0f9a651bc0ef4392e82f9cd1dc57ac
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-1b01a9527b090987aa109db644e7b9e6
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-3c266a02447dff11e03fc0654ea06186
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-5a9e56b29cdc1e867b8950983068064d
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-9db087fb171bcb3d26160a4e4829fd9d
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-d677e7ba880d2b69bf8f23da8032d0da
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-e3868cd47017f499d3ae56566f2dd797
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-6e57fa87d3ce3ae7dc0d7a3f73772e93
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-06257158c5dd22f03d25b4bca4fdfda9
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-75f65fe9682d7b9f6bcf01dfa4094aed
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-60c5f0772761312cad5b32c0fc824a3d
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a9bd5f415bcf395d45744e20a813a05a
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-b0b70e0323f579db4f4251cbb6dd5734
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-0d55599d39c57a6ef592993f38cb38ee
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a9cd23771d5dd91bb7547c2bf9b6d61d
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-75b5d80d5b8e458a555bf9942bf7ed10
@@ -36,27 +36,68 @@ Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a7b2b91a40c7ab0bbe53401d34033e3
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-f4fc4054b521c527a93f6569df101ee6
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-50536ae3a0aee6056d7fb92e3331aba9
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-830fc01dabc63645c1547b64e529769c
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-ab0aa24619778bb6942ad2513cfc49f9
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-3a918af2dcb3d9c3fe74c1cd434e6d64
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-b7f35e140b6356cdb8e087dcd7b3aa0b
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-db07228bd97a32b4a5a1bf5c3f89bdff
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-44bd6ff37cd7b3a8aaf0c9439333227f
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-732ac70cbeb081518be428091ea2b7ea
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-df32fd71045b9bb4a88d11b9d0f003c3
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-c80241df39c14854b1c4e034b14ee82c
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-3227ce12616620c2a20e8a14d8af06a2
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-2d91c927116a8bfd3e2da963c04fc6f2
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-9f9ae39928f219037b61c2083fbe7f1e
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-809edd80ee9a22b6cbb54b997a5126fd
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-9fb85b09f8a2a022ca84a59419f0c6f5
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-03c4f6abffb242d6d0dccde1eff96a71
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-e9c31aa5353a2602a155942b009cd979
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-83a45e768ddcfbd90f8f19c30a9b2780
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-f8de93054989a2fd41f3c2efbfb096a9
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-c5e911e3fb38d1362fb16df2a2fefd9e
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-6bf84d40f00b2566aa73a36acd80b594
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-eae4055469224764325d52cc96cbab3b
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-e8f43573a1e1c0ff6f4673c44c1c2bc1
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-3e2dd900eedfeb6de38e4ef6631df142
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-360b67a9ce3308fc7852156090c1e75d
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-071eb02afab1f84445ce9af3e6bfa2eb
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-e86a1beac9018216b303111be6b03e4e
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-69bd878b1773bc5d2cecfdede4b81d57
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-254c7e035e3bcf1cd9a502638aa8b04e
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-049709f1770711ea4558413c0af49689
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-944b584000dd1ce8d6a5003bcd877998
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-34e66fb749b54331c2b384e291b433ed
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-ffc0e2541a5f0e9d2ad06d2aae0f25cd
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-5cfbb905a3e6d384f807ee6b0b2d85ed
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-6255cf19134a690827581d466c41d33e
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-417800d2dea07ec76c1b27b06647d2f9
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-6461588723f561fffe86e2d02e56c72a
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-61b9691bfcfc6795b602f4fb3c419880
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-7dc41c90cd97c4019704601fd113fa1c
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-79c0e03f59646c332937618578d165c3
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-9ac5de9d52d909c6f47c013f96617143
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-f6d1e15af1075fd750fe5d35bca76feb
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-7977767e1ae05785b9432dc06228c678
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-4436ad9e515f8b87aa5519a6f0263e96
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-1e7e5bed0f95bfa009d543db1bb860ab
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-ace4e536a8b25c6ef2ee575589ece0d9
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-db9fa881261298ad3dba4eca14aa66ff
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-067a7a6eb813edbf72757b0842552a51
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-4b754092bd92dda6453972edec9f97cf
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-d6124b20d6e3127b10e6829f91b61c71
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-9da5f453c7ab7532d4ededc567800aed
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-470fe677861374ce2405bf31ca4296d0
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-bb4d48127591cbfba935a001ad2a7e68
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-185df2aa002adad962987dbaefedc21c
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-077e5380ec67e40be5193faf8d0b4c12
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-3e5f493c632cb2c12d67d443cda16abf
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-cc52f431bee2755c8c6c9e94106fd0e8
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-74aadc123b626e2d4e19b3f472868674
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a9fbe4a92c6f0903a0056a6fba71305e
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-2a8aa0414935ffbd11f5fed39115b898
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-355a0409fb954c93cfa2ba803c2ee7b2
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a22e0299266ff5393dc8beaf3e2ffcd6
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-92bb052353d398aa95332362072c951e
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a32fe22e0cc78542807dd3784982fedf
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-8ef5fbae844685e006588398d54f1b8f
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-194ac2b76a3cf9463e41d1e6c3fdda99
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-59d8e50e396c6124d46bff026c66ae3e
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-1d8a8449cec4b0009e0fcf9d0b83a965
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-c1115acee993ad94922fabffa1e35235
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-041c4033577b1d699f8aef1875c3b118
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-90e82f04cc232eed838b36019e813d6a
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-b7756e3d3be88d096157ab716bbc20a5
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-56c6dc57d1a1b00f935032c7394a7ab3
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-854845852c2fd2884a46f1fd683d6adc
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-c836d4b1a73772503ba8a88e1a0a7a0a
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-5caab38b28b28a1e757052f304adfd8d
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a4ab912da758ea90ac0483b463d76f54
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-3fcb43cc533d0519e5a1ecdc4afe58ac
@@ -65,13 +106,13 @@ Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-1a8504143bfcae1608b9dadf439c07a
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-ee077519a1819cd18bdc95353d67a9a9
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-863fe4948868393488cf4374dc1bf336
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-f46891395f23dbf7ef217ba349f459cc
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-1cc5502a5bae6cc9cfaf4e7e5f11bd25
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-dbdcddf16939f9896bb4808dec44839e
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-c512878b7b8cf31c0355d5a0b73db890
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-fec14677e17d08b48398f4f72075559e
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-bb1c9a232ce0b433ce3c314df4329477
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-04eadb4435b47c57bfa272f81be4f815
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-e655c84f9cc2c2bb9a13dcd1a6e079f5
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a5946b1a9eb230da3f3752c75257b8e4
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-e99e2d061caabfd49e2c6a1967bed2c5
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-43361a8abfac03fa76abeb3eac609890
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-9ce27a3f2ace38d0bda5ac4efff82eda
 
 FileName: ./.clang-format
 SPDXID: SPDXRef-68c02f636b8e3879dac8154f74e11a07
@@ -163,38 +204,38 @@ LicenseInfoInFile: LGPL-2.1-or-later
 FileCopyrightText: <text>SPDX-FileCopyrightText: 2024 Emil Velikov <emil.l.velikov@gmail.com></text>
 
 FileName: ./.github/workflows/clang-format.yml
-SPDXID: SPDXRef-3d0f9a651bc0ef4392e82f9cd1dc57ac
-FileChecksum: SHA1: 40d9894f884639232e5e8585bb82c8a90f34d60a
+SPDXID: SPDXRef-d677e7ba880d2b69bf8f23da8032d0da
+FileChecksum: SHA1: c2d77a2e22198abf718e21b3d95d0bae7cee2932
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: LGPL-2.1-or-later
 FileCopyrightText: <text>SPDX-FileCopyrightText: 2024 Emil Velikov <emil.l.velikov@gmail.com></text>
 
 FileName: ./.github/workflows/codeql.yml
-SPDXID: SPDXRef-1b01a9527b090987aa109db644e7b9e6
-FileChecksum: SHA1: cfff478d8801e4b64cc123762ec42db4bc2e122b
+SPDXID: SPDXRef-e3868cd47017f499d3ae56566f2dd797
+FileChecksum: SHA1: 6524facc16ff8809a3cb0838b35352f143151eab
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: LGPL-2.1-or-later
 FileCopyrightText: <text>SPDX-FileCopyrightText: 2024 Emil Velikov <emil.l.velikov@gmail.com>
 SPDX-FileCopyrightText: 2024 Lucas De Marchi <lucas.de.marchi@gmail.com></text>
 
 FileName: ./.github/workflows/codespell.yml
-SPDXID: SPDXRef-3c266a02447dff11e03fc0654ea06186
-FileChecksum: SHA1: 00615e21e06d7097ac118548ed77f51c6063c407
+SPDXID: SPDXRef-6e57fa87d3ce3ae7dc0d7a3f73772e93
+FileChecksum: SHA1: d73f70e5769804a8545f266c4603b54fa0aee656
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: LGPL-2.1-or-later
 FileCopyrightText: <text>SPDX-FileCopyrightText: 2024 Emil Velikov <emil.l.velikov@gmail.com></text>
 
 FileName: ./.github/workflows/main.yml
-SPDXID: SPDXRef-5a9e56b29cdc1e867b8950983068064d
-FileChecksum: SHA1: b82aea4e495ac6b7787e99cccd30c4da389411ff
+SPDXID: SPDXRef-06257158c5dd22f03d25b4bca4fdfda9
+FileChecksum: SHA1: 5b78e63d6932ad6e095eeedb7ad615196a2d0a81
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: LGPL-2.1-or-later
 FileCopyrightText: <text>SPDX-FileCopyrightText: 2024 Emil Velikov <emil.l.velikov@gmail.com>
 SPDX-FileCopyrightText: 2024 Lucas De Marchi <lucas.de.marchi@gmail.com></text>
 
 FileName: ./.github/workflows/reuse.yml
-SPDXID: SPDXRef-9db087fb171bcb3d26160a4e4829fd9d
-FileChecksum: SHA1: 0928cf2cbba85ff5652b0a8d74036fedbc980c42
+SPDXID: SPDXRef-75f65fe9682d7b9f6bcf01dfa4094aed
+FileChecksum: SHA1: d23a0c460b9c5e4693cc0b40119c511de38b356b
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: LGPL-2.1-or-later
 FileCopyrightText: <text>SPDX-FileCopyrightText: 2024 Emil Velikov <emil.l.velikov@gmail.com></text>
@@ -208,11 +249,11 @@ FileCopyrightText: <text>Copyright (C) 2009 Greg Kroah-Hartman <gregkh@suse.de>
 Copyright (C) 2014-2021 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
 
 FileName: ./NEWS
-SPDXID: SPDXRef-a9bd5f415bcf395d45744e20a813a05a
-FileChecksum: SHA1: 289991915e6c690eeabd34d8521b0f40554d77cb
+SPDXID: SPDXRef-b0b70e0323f579db4f4251cbb6dd5734
+FileChecksum: SHA1: ae20b12bb2443053b2e5e21e6218b99f1f650823
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-only
-FileCopyrightText: <text>Copyright (C) 2018-2024 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+FileCopyrightText: <text>Copyright (C) 2018-2025 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Copyright strings</text>
 
 FileName: ./README.md
@@ -280,22 +321,22 @@ LicenseInfoInFile: CC0-1.0
 FileCopyrightText: <text>SPDX-FileCopyrightText: Rusty Russell <rusty@rustcorp.com.au></text>
 
 FileName: ./desc-defs.c
-SPDXID: SPDXRef-ab0aa24619778bb6942ad2513cfc49f9
-FileChecksum: SHA1: 3d408798b1c7085e15c58bcb3ac31f9ac4709e4b
+SPDXID: SPDXRef-db07228bd97a32b4a5a1bf5c3f89bdff
+FileChecksum: SHA1: f8ace4c4976f465b4467c2ad47216f452cc2ba68
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 2017-2018 Michael Drake <michael.drake@codethink.co.uk></text>
 
 FileName: ./desc-defs.h
-SPDXID: SPDXRef-3a918af2dcb3d9c3fe74c1cd434e6d64
-FileChecksum: SHA1: 44384e4f3633f2afc7b07ec03daa2fba1bc55ac6
+SPDXID: SPDXRef-44bd6ff37cd7b3a8aaf0c9439333227f
+FileChecksum: SHA1: ef0bbc932d7291c09178e8379e1602c44dc397e9
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 2017-2018 Michael Drake <michael.drake@codethink.co.uk></text>
 
 FileName: ./desc-dump.c
-SPDXID: SPDXRef-b7f35e140b6356cdb8e087dcd7b3aa0b
-FileChecksum: SHA1: f5286dbb2c60a597aa97491cfffa741dd821d0a0
+SPDXID: SPDXRef-732ac70cbeb081518be428091ea2b7ea
+FileChecksum: SHA1: ba9dba785d32e678578d638e2f0b5eeaa9754a7d
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 2017-2018 Michael Drake <michael.drake@codethink.co.uk></text>
@@ -308,22 +349,22 @@ LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 2017 Michael Drake <michael.drake@codethink.co.uk></text>
 
 FileName: ./justfile
-SPDXID: SPDXRef-c80241df39c14854b1c4e034b14ee82c
-FileChecksum: SHA1: 535a91d55e4c0fa2453beab5923b7c051f151c62
+SPDXID: SPDXRef-9f9ae39928f219037b61c2083fbe7f1e
+FileChecksum: SHA1: 28ced6fbe125c165c9ffc54e418418f8a3b7f789
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-only
 FileCopyrightText: <text>Copyright (C) 2024 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
 
 FileName: ./lsusb-t.c
-SPDXID: SPDXRef-3227ce12616620c2a20e8a14d8af06a2
-FileChecksum: SHA1: 4eab28b391e6c7803bd672bcfd84851543c1107e
+SPDXID: SPDXRef-809edd80ee9a22b6cbb54b997a5126fd
+FileChecksum: SHA1: d4348dadddf62ba78fbf78d9775b5f61c5554c0a
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-only
 FileCopyrightText: <text>Copyright (C) 2009 Greg Kroah-Hartman <gregkh@suse.de></text>
 
 FileName: ./lsusb.c
-SPDXID: SPDXRef-2d91c927116a8bfd3e2da963c04fc6f2
-FileChecksum: SHA1: ed966d97ad407568ab3e99f03fbfed3bb98783cb
+SPDXID: SPDXRef-9fb85b09f8a2a022ca84a59419f0c6f5
+FileChecksum: SHA1: 3f52b5db8364582f6e390c1814fcf2aef7a614c5
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 1999-2001, 2003 Thomas Sailer (t.sailer@alumni.ethz.ch)
@@ -337,8 +378,8 @@ LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright 2011 (c) Greg Kroah-Hartman <gregkh@suse.de></text>
 
 FileName: ./lsusb.py
-SPDXID: SPDXRef-e9c31aa5353a2602a155942b009cd979
-FileChecksum: SHA1: 851f40c326706911f87aa636188a86fb55e77e69
+SPDXID: SPDXRef-83a45e768ddcfbd90f8f19c30a9b2780
+FileChecksum: SHA1: b718f89f6aa8fcccff87ddc9167dffb548a94e2b
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-only
 LicenseInfoInFile: GPL-3.0-only
@@ -391,8 +432,8 @@ LicenseInfoInFile: GPL-2.0-only
 FileCopyrightText: <text>Copyright (C) 2024 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
 
 FileName: ./names.c
-SPDXID: SPDXRef-360b67a9ce3308fc7852156090c1e75d
-FileChecksum: SHA1: a8a9c959868d21977e4ffc842f08a3469360862f
+SPDXID: SPDXRef-071eb02afab1f84445ce9af3e6bfa2eb
+FileChecksum: SHA1: 139ce7e0f2b0de2a87d28d8a4b4b7fda188bb203
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 1999, 2000 Thomas Sailer (sailer@ife.ee.ethz.ch)
@@ -406,8 +447,8 @@ LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 1999, 2000 Thomas Sailer (sailer@ife.ee.ethz.ch)</text>
 
 FileName: ./sysfs.c
-SPDXID: SPDXRef-69bd878b1773bc5d2cecfdede4b81d57
-FileChecksum: SHA1: 04a962bc414e6f4b6811e5f03138964f424978d7
+SPDXID: SPDXRef-254c7e035e3bcf1cd9a502638aa8b04e
+FileChecksum: SHA1: 5576989219436f4ccc97c0a536d2ae1b3f492f91
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 1999, 2000 Thomas Sailer (sailer@ife.ee.ethz.ch)
@@ -420,9 +461,296 @@ LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 1999, 2000 Thomas Sailer (sailer@ife.ee.ethz.ch)</text>
 
+FileName: ./tests/brat/bin/brat
+SPDXID: SPDXRef-ffc0e2541a5f0e9d2ad06d2aae0f25cd
+FileChecksum: SHA1: 51766c792542f260d04d8ea71e71de8a94347804
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/lib/brat/_init.sh
+SPDXID: SPDXRef-5cfbb905a3e6d384f807ee6b0b2d85ed
+FileChecksum: SHA1: f524be585c6a044e2cf77cad0ba7e8e80e2e509b
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/lib/brat/_unhandled.sh
+SPDXID: SPDXRef-6255cf19134a690827581d466c41d33e
+FileChecksum: SHA1: ec0a3870997d31c17d4edcfe96f409df88cc446f
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/lib/brat/brat.sh
+SPDXID: SPDXRef-417800d2dea07ec76c1b27b06647d2f9
+FileChecksum: SHA1: 1aa9a6b3b6d05f4e1fc89fe3cc087579702c2507
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/lib/brat/eval.sh
+SPDXID: SPDXRef-6461588723f561fffe86e2d02e56c72a
+FileChecksum: SHA1: a325544dc9cff65ccf5c795e56d7f52f27658d7d
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/lib/brat/match.awk
+SPDXID: SPDXRef-61b9691bfcfc6795b602f4fb3c419880
+FileChecksum: SHA1: bba1d4a3a197c912001c296e91c4476731df6892
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/lib/brat/plan-lines.awk
+SPDXID: SPDXRef-7dc41c90cd97c4019704601fd113fa1c
+FileChecksum: SHA1: 2329e640271b1bb82f80f58858c3dba7ff5c7015
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/lib/brat/plan-names.awk
+SPDXID: SPDXRef-79c0e03f59646c332937618578d165c3
+FileChecksum: SHA1: 6d862ff65f870bbf84b4f34a49ff18be2d1e442f
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/lib/brat/preprocess.awk
+SPDXID: SPDXRef-9ac5de9d52d909c6f47c013f96617143
+FileChecksum: SHA1: 9f01131cb0b9cfdb38e4ec764d702ffc8ee96eb1
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/lib/brat/rewrite-paths.awk
+SPDXID: SPDXRef-f6d1e15af1075fd750fe5d35bca76feb
+FileChecksum: SHA1: 62f2173184be258b4ec310053ed433b7afcccbbd
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/lib/brat/tap-format-plain.awk
+SPDXID: SPDXRef-7977767e1ae05785b9432dc06228c678
+FileChecksum: SHA1: 58e2e256477fe2b2a5a827861a33db5f14122b49
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/lib/brat/tap-format-pretty.awk
+SPDXID: SPDXRef-4436ad9e515f8b87aa5519a6f0263e96
+FileChecksum: SHA1: b20803f22aa5e8f2ca963aa3c9beaa7ccfd10da1
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/lib/brat/tap-status.awk
+SPDXID: SPDXRef-1e7e5bed0f95bfa009d543db1bb860ab
+FileChecksum: SHA1: 1a0dd22b029de78c7b9878f18152264772b2e93a
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/lib/brat/terminal.awk
+SPDXID: SPDXRef-ace4e536a8b25c6ef2ee575589ece0d9
+FileChecksum: SHA1: 2cd0e5c5ab3d1593c38c5e10312d8e792f604748
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/lib/brat/test.sh
+SPDXID: SPDXRef-db9fa881261298ad3dba4eca14aa66ff
+FileChecksum: SHA1: 31bf65c8db47d62a0528bd5793e58cf204a3bd77
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/lib/brat/wcwidth.awk
+SPDXID: SPDXRef-067a7a6eb813edbf72757b0842552a51
+FileChecksum: SHA1: 8751c5661ee548a8d07e67ceb06b2f441b6a570c
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: BSD-2-Clause
+FileCopyrightText: <text>SPDX-FileCopyrightText: Eric Pruitt</text>
+
+FileName: ./tests/brat/libexec/brat--tap-format
+SPDXID: SPDXRef-4b754092bd92dda6453972edec9f97cf
+FileChecksum: SHA1: 5037718fe9c4248411efab0bf332ea57b42bdee4
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/libexec/brat-plan-build
+SPDXID: SPDXRef-d6124b20d6e3127b10e6829f91b61c71
+FileChecksum: SHA1: b86f90f8c820bfd912bf16110c50123266d441ba
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/libexec/brat-plan-run
+SPDXID: SPDXRef-9da5f453c7ab7532d4ededc567800aed
+FileChecksum: SHA1: 82a0861020488b7149f978440c3bb0efd885dfeb
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/libexec/brat-test--preprocess
+SPDXID: SPDXRef-470fe677861374ce2405bf31ca4296d0
+FileChecksum: SHA1: fc01586a276d8eca819efea461592c7a06fe99ec
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/libexec/brat-test-plan
+SPDXID: SPDXRef-bb4d48127591cbfba935a001ad2a7e68
+FileChecksum: SHA1: da3858e34d749acbd37d8d377670aad363069a0d
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/brat/libexec/brat-test-run
+SPDXID: SPDXRef-185df2aa002adad962987dbaefedc21c
+FileChecksum: SHA1: c067cfd65c913450cb48fb294af1228123e589ab
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-MIT-Trans-Rights
+FileCopyrightText: <text>SPDX-FileCopyrightText: Sam Stephenson</text>
+
+FileName: ./tests/lsusb-D.brat
+SPDXID: SPDXRef-077e5380ec67e40be5193faf8d0b4c12
+FileChecksum: SHA1: 5efc204d02aafe52099010953483230ca55f16f9
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb-d.brat
+SPDXID: SPDXRef-3e5f493c632cb2c12d67d443cda16abf
+FileChecksum: SHA1: 95786feb9ef10ad570ede1ee185ce651bf3a82ff
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb-h.brat
+SPDXID: SPDXRef-cc52f431bee2755c8c6c9e94106fd0e8
+FileChecksum: SHA1: 90091f29b4f1d80e80fc226d0c9cd24beaf91c70
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb-s.brat
+SPDXID: SPDXRef-74aadc123b626e2d4e19b3f472868674
+FileChecksum: SHA1: b63918b61edda7750e5305cbf6cb811baafe2aa7
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb-t.brat
+SPDXID: SPDXRef-a9fbe4a92c6f0903a0056a6fba71305e
+FileChecksum: SHA1: 7f4a4f7b1cd110a9e6d967bf503a42da0552dcde
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb.brat
+SPDXID: SPDXRef-2a8aa0414935ffbd11f5fed39115b898
+FileChecksum: SHA1: 43a8973b029637bed315538d0fcfa766c6dac89e
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb.py-C.brat
+SPDXID: SPDXRef-355a0409fb954c93cfa2ba803c2ee7b2
+FileChecksum: SHA1: 69d5b332ae0a85afb7f1707c054ed52a42f9e352
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb.py-I.brat
+SPDXID: SPDXRef-a22e0299266ff5393dc8beaf3e2ffcd6
+FileChecksum: SHA1: 4c50efe15bca80d62156ba9ecb5ebdf488013539
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb.py-U.brat
+SPDXID: SPDXRef-92bb052353d398aa95332362072c951e
+FileChecksum: SHA1: 64467fbbb83c1593221d2569a2638be71869011c
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb.py-c.brat
+SPDXID: SPDXRef-a32fe22e0cc78542807dd3784982fedf
+FileChecksum: SHA1: bd568acc522471f4ac94761caabb5b1665b7d24a
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb.py-e.brat
+SPDXID: SPDXRef-8ef5fbae844685e006588398d54f1b8f
+FileChecksum: SHA1: ae6efd5b9fecfb8cf69a45dcf9f31d5ae2f70c03
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb.py-f.brat
+SPDXID: SPDXRef-194ac2b76a3cf9463e41d1e6c3fdda99
+FileChecksum: SHA1: e294a2557b9210ee01f5a1d52ec82c1c70d16ef1
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb.py-h.brat
+SPDXID: SPDXRef-59d8e50e396c6124d46bff026c66ae3e
+FileChecksum: SHA1: cf6dce707401d3ec215b6fbf9e4738e555edb1c6
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb.py-i.brat
+SPDXID: SPDXRef-1d8a8449cec4b0009e0fcf9d0b83a965
+FileChecksum: SHA1: 4fe7059a09df80ef5fe4ab2d0227eb05952f6ba7
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb.py-u.brat
+SPDXID: SPDXRef-c1115acee993ad94922fabffa1e35235
+FileChecksum: SHA1: 940da04d549acdcc63522197694c0ffe974360fe
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb.py-w.brat
+SPDXID: SPDXRef-041c4033577b1d699f8aef1875c3b118
+FileChecksum: SHA1: 42855618bae398d95ec017e1e1c060f4f0ab05ef
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/lsusb.py.brat
+SPDXID: SPDXRef-90e82f04cc232eed838b36019e813d6a
+FileChecksum: SHA1: ec8b064efcbf7fd85b4471de0e1a8a1a974193fc
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/run
+SPDXID: SPDXRef-b7756e3d3be88d096157ab716bbc20a5
+FileChecksum: SHA1: 095ab1a440374b40747458b6606fb9e516620b92
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
+FileName: ./tests/usb-devices.brat
+SPDXID: SPDXRef-56c6dc57d1a1b00f935032c7394a7ab3
+FileChecksum: SHA1: e7da5e5655d8e9e05e31d85f3da1d1a224e40b4d
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-2.0-only
+FileCopyrightText: <text>SPDX-FileCopyrightText: 2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org></text>
+
 FileName: ./usb-devices
-SPDXID: SPDXRef-944b584000dd1ce8d6a5003bcd877998
-FileChecksum: SHA1: 336cefc7b32d865866c193de69b1277fcc28354f
+SPDXID: SPDXRef-854845852c2fd2884a46f1fd683d6adc
+FileChecksum: SHA1: fc42adb5fecf46dbf6f1434865a994acf1983cd4
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 2009 Frans Pop <elendil@planet.nl>
@@ -430,8 +758,8 @@ Copyright (C) 2009 Greg Kroah-Hartman <greg@kroah.com>
 Copyright (C) 2009 Randy Dunlap <rdunlap@xenotime.net></text>
 
 FileName: ./usb-spec.h
-SPDXID: SPDXRef-34e66fb749b54331c2b384e291b433ed
-FileChecksum: SHA1: e5f27aa2a1217a300ad6c112d38df1511f389e10
+SPDXID: SPDXRef-c836d4b1a73772503ba8a88e1a0a7a0a
+FileChecksum: SHA1: a711e87eb0f305df1304e71f3a1b72c43259500c
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 2013 Tom Gundersen <teg@jklm.no></text>
@@ -493,8 +821,8 @@ LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov <spbnick@gmail.com></text>
 
 FileName: ./usbhid-dump/iface_list.c
-SPDXID: SPDXRef-1cc5502a5bae6cc9cfaf4e7e5f11bd25
-FileChecksum: SHA1: 2be4c926b2086c7385fcd26f6b53f402a8aa44b7
+SPDXID: SPDXRef-dbdcddf16939f9896bb4808dec44839e
+FileChecksum: SHA1: 9ed8e0cfdd50b9382cfe265cbb28c0d318c505a9
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov <spbnick@gmail.com></text>
@@ -514,16 +842,16 @@ LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov <spbnick@gmail.com></text>
 
 FileName: ./usbhid-dump/usbhid-dump.c
-SPDXID: SPDXRef-bb1c9a232ce0b433ce3c314df4329477
-FileChecksum: SHA1: 8dc6a493567975f26142041149ebac1c9543c84e
+SPDXID: SPDXRef-e655c84f9cc2c2bb9a13dcd1a6e079f5
+FileChecksum: SHA1: 2c9af8c9b7e79cee7ff839974ca03108c57a6e42
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 2010 Nikolai Kondrashov\n
 Copyright (C) 2010-2011 Nikolai Kondrashov <spbnick@gmail.com></text>
 
 FileName: ./usbmisc.c
-SPDXID: SPDXRef-04eadb4435b47c57bfa272f81be4f815
-FileChecksum: SHA1: cfc2c2ce8ed4366a02f605459b7adfca31605de6
+SPDXID: SPDXRef-a5946b1a9eb230da3f3752c75257b8e4
+FileChecksum: SHA1: 98e9097907c3c06194612d979fdf136b1cb67c2d
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 2003 Aurelien Jarno (aurelien@aurel32.net)</text>
@@ -536,9 +864,32 @@ LicenseInfoInFile: GPL-2.0-or-later
 FileCopyrightText: <text>Copyright (C) 2003 Aurelien Jarno (aurelien@aurel32.net)</text>
 
 FileName: ./usbreset.c
-SPDXID: SPDXRef-43361a8abfac03fa76abeb3eac609890
-FileChecksum: SHA1: da89c8c944526a153edf18a2f562756dc4ffc179
+SPDXID: SPDXRef-9ce27a3f2ace38d0bda5ac4efff82eda
+FileChecksum: SHA1: 7822e9966623a7380c77181d22f6c067f40a2a77
 LicenseConcluded: NOASSERTION
 LicenseInfoInFile: GPL-2.0-only
 FileCopyrightText: <text>Copyright (C) 2009-2016 Alan Stern</text>
+
+LicenseID: LicenseRef-MIT-Trans-Rights
+LicenseName: NOASSERTION
+ExtractedText: <text>MIT + Trans Rights License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the “Software”), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice, this permission notice, and the affirmation that
+TRANS RIGHTS ARE HUMAN RIGHTS shall be included in all copies or substantial
+portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+</text>
 
