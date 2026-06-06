@@ -102,7 +102,7 @@ def parse_usb_ids():
 					strg = cstrg + ":" + nm
 				else:
 					strg = cstrg + ":"
-				usbclasses[vid, did, -1] = strg
+				usbclasses[cid, did, -1] = strg
 				continue
 		if ln[0] == 'C':
 			mode = modes.Class
