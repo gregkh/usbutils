@@ -57,6 +57,7 @@
 #define USB_DC_BILLBOARD		0x0d
 #define USB_DC_BILLBOARD_ALT_MODE	0x0f
 #define USB_DC_CONFIGURATION_SUMMARY	0x10
+#define USB_DC_FWSTATUS_CAPABILITY	0x11
 
 /* Conventional codes for class-specific descriptors.  The convention is
  * defined in the USB "Common Class" Spec (3.11).  Individual class specs
@@ -3693,6 +3694,27 @@ static void dump_billboard_alt_mode_capability_desc(unsigned char *buf)
 			convert_le_u32(&buf[4]));
 }
 
+static void dump_fwstatus_capability_desc(unsigned char *buf)
+{
+	if (buf[0] != 8) {
+		fprintf(stderr, "  Bad FWStatus Capability descriptor.\n");
+		return;
+	}
+
+	unsigned int flags = convert_le_u32(&buf[4]);
+	printf("  FWStatus Capability:\n"
+			"    bLength		    %5u\n"
+			"    bDescriptorType	    %5u\n"
+			"    bDevCapabilityType	    %5u\n"
+			"    bcdDescriptorVersion   %5u\n"
+			"    bmAttributes	    0x%08X\n"
+			"      Get FW Image Hash support: %s\n"
+			"      Disallow FW Update support: %s\n",
+			buf[0], buf[1], buf[2], buf[3], flags,
+			flags & (1 << 0) ? "Yes" : "No",
+			flags & (1 << 1) ? "Yes" : "No");
+}
+
 static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp, bool lpm_required)
 {
 	/* Total length of BOS descriptors varies.
@@ -3786,6 +3808,9 @@ static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp, bool lp
 			printf("  Configuration Summary Device Capability:\n");
 			desc_dump(fd, desc_usb3_dc_configuration_summary,
 					buf, DESC_BUF_LEN_FROM_BUF, 2);
+			break;
+		case USB_DC_FWSTATUS_CAPABILITY:
+			dump_fwstatus_capability_desc(buf);
 			break;
 		default:
 			printf("  ** UNRECOGNIZED: ");
