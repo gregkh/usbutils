@@ -3944,6 +3944,26 @@ static void sort_device_list(libusb_device **list, ssize_t num_devs)
 	} while(!sorted);
 }
 
+static const char *get_speed_string(libusb_device *dev) {
+	switch (libusb_get_device_speed(dev)) {
+	case LIBUSB_SPEED_LOW:
+		return "LS";
+	case LIBUSB_SPEED_FULL:
+		return "FS";
+	case LIBUSB_SPEED_HIGH:
+		return "HS";
+	case LIBUSB_SPEED_SUPER:
+		return "SS";
+	case LIBUSB_SPEED_SUPER_PLUS:
+		return "SSP";
+	case LIBUSB_SPEED_SUPER_PLUS_X2:
+		return "SSP2";
+	case LIBUSB_SPEED_UNKNOWN:
+	default:
+		return "N/A";
+	}
+}
+
 static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendorid, int productid)
 {
 	libusb_device **list;
@@ -3978,11 +3998,15 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
 
 		if (verblevel > 0)
 			printf("\n");
-		printf("Bus %03u Device %03u: ID %04x:%04x %s %s\n",
-				bnum, dnum,
-				desc.idVendor,
-				desc.idProduct,
-				vendor, product);
+
+        const char *speed_str = get_speed_string(dev);
+
+        printf("Bus %03u Device %03u: ID %04x:%04x %s %s [%s]\n",
+                bnum, dnum,
+                desc.idVendor,
+                desc.idProduct,
+                vendor, product, speed_str);
+
 		if (verblevel > 0)
 			dumpdev(dev);
 	}
