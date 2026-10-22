@@ -1,11 +1,165 @@
 # usbutils old-style "NEWS" file
 # SPDX-License-Identifier: GPL-2.0-only
 #
-# Copyright (c) 2018-2025 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+# Copyright (c) 2018-2026 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 #
 # This file is here for people who do not have access to the git commit
 # history (i.e. packaged versions of the software).
 #
+
+usbutils 020
+============
+
+Armin Wolf (1):
+      lsusb: Add support for FWStatus Capability decoding
+
+Greg Kroah-Hartman (124):
+      justfile: add 'make' target
+      usb-spec.h: fix up spelling mistake for "Tone Enable" entry
+      tests: vendor brat 0.10.1 as the test runner
+      tests: compare built lsusb against the installed copy
+      tests: lsusb -h: compare built against installed
+      tests: lsusb -t: compare built against installed
+      tests: lsusb -s: compare built against installed
+      tests: lsusb -d: compare built against installed
+      tests: lsusb -D: compare built against installed
+      tests: usb-devices: compare built against installed
+      tests: lsusb.py: compare built against installed
+      tests: lsusb.py -h: compare built against installed
+      tests: lsusb.py -i: compare built against installed
+      tests: lsusb.py -I: compare built against installed
+      tests: lsusb.py -u: compare built against installed
+      tests: lsusb.py -U: compare built against installed
+      tests: lsusb.py -c: compare built against installed
+      tests: lsusb.py -C: compare built against installed
+      tests: lsusb.py -e: compare built against installed
+      tests: lsusb.py -w: compare built against installed
+      tests: lsusb.py -f: compare built against installed
+      justfile: add 'test' target
+      desc-dump: fix operator precedence bug in bit-to-byte conversion
+      usbmisc: fix NULL dereference on getcwd() failure in get_absolute_path()
+      usbmisc: check malloc() return in get_dev_string_ascii()
+      usbmisc: check malloc() return in usb_string_to_native()
+      usbmisc: fix unbounded recursion and strncpy issues in readlink_recursive()
+      names: replace sprintf() with snprintf() for modalias formatting
+      lsusb-t: replace sprintf() with snprintf() in lanes_to_str()
+      desc-dump: fix NULL pointer dereference for unknown audio terminal types
+      desc-dump: fix integer underflow in get_array_entry_count()
+      names: fix missing null termination in get_vendor_product_with_fallback()
+      sysfs: fix buffer handling in read_sysfs_prop()
+      sysfs: check initial snprintf() return value in get_sysfs_name()
+      lsusb: fix out-of-bounds array access in dump_encryption_type()
+      lsusb: fix out-of-bounds reads in video EXTENSION_UNIT descriptor parsing
+      lsusb: fix unaligned memory access in dump_printer_device()
+      lsusb: fix out-of-bounds read in video HEADER descriptor parsing
+      lsusb: fix out-of-bounds read in HID report descriptor parsing
+      lsusb: replace sprintf() with snprintf() in get_guid()
+      lsusb: fix out-of-bounds read in MIDI streaming endpoint descriptor
+      lsusb: fix out-of-bounds read in STILL_IMAGE_FRAME descriptor parsing
+      lsusb-t: fix buffer handling in read_sysfs_file_string()
+      lsusb: fix wrong variable in FORMAT_TYPE_II descriptor length calculation
+      lsusb: fix out-of-bounds reads in video INPUT_HEADER and OUTPUT_HEADER
+      lsusb: fix out-of-bounds reads in video PROCESSING_UNIT descriptor
+      lsusb: fix out-of-bounds reads in video terminal and selector descriptors
+      lsusb: fix undefined behavior in convert_le_u32() signed shift
+      lsusb: fix OOB reads in UAC1 audio FORMAT_TYPE descriptor parsing
+      lsusb: fix out-of-bounds read in SuperSpeedPlus capability descriptor
+      lsusb: fix OOB reads in audio FORMAT_SPECIFIC descriptor parsing
+      lsusb: fix out-of-bounds reads in IPP printer descriptor parsing
+      lsusb: add missing length checks in dump_wire_adapter and dump_rc_interface
+      lsusb: add missing length checks in dump_security and dump_encryption_type
+      lsusb: fix OOB read in dump_dfu_interface on short descriptors
+      lsusb: add missing length check in dump_association()
+      lsusb: fix out-of-bounds reads in dump_hid_device() on short descriptors
+      lsusb: fix OOB reads in UAC2 FORMAT_TYPE descriptor parsing
+      lsusb: fix OOB reads in MIDI HEADER and MIDI_IN_JACK descriptor parsing
+      lsusb: fix OOB read in dump_videocontrol_interrupt_endpoint()
+      lsusb: fix OOB reads in video streaming format descriptors
+      lsusb: fix OOB reads in video FRAME descriptor parsing
+      lsusb: fix remaining OOB read in MIDI_OUT_JACK initial fields
+      lsusb: fix remaining OOB reads in video descriptor warn-and-continue paths
+      lsusb: fix OOB reads in video INPUT_HEADER and OUTPUT_HEADER data loops
+      lsusb: fix OOB read in STILL_IMAGE_FRAME compression pattern loop
+      lsusb: fix OOB read in FORMAT_MPEG2TS descriptor on short descriptors
+      lsusb: zero hub descriptor buffer to prevent reading uninitialized data
+      lsusb: fix OOB read in FORMAT_STREAM_BASED descriptor parsing
+      lsusb: fix unsigned integer underflow in dump_bytes calls for short descriptors
+      lsusb: fix wrong byte printed for CCID bClassEnvelope
+      lsusb: bounds-check MIDI ELEMENT bNrInputPins/bElCapsSize against bLength
+      lsusb: bounds-check UVC INPUT_TERMINAL bControlSize against bLength
+      lsusb.py: strip control characters from device-supplied sysfs strings
+      usbreset: refuse ambiguous selectors that match more than one device
+      usbmisc, usb-devices: strip control characters from device-supplied strings
+      lsusb: don't loop forever in find_otg() on a zero-bLength sub-descriptor
+      desc-defs: fix off-by-one in UAC1 wFormatTag string lookup
+      lsusb: bounds-check the BOS device-capability walk
+      usbhid-dump: skip interfaces with bInterfaceNumber 0xff
+      usb-devices: use printf instead of echo for device-supplied strings
+      usb-devices: fix default case in class_decode()
+      lsusb: strip control characters from the WebUSB landing-page URL
+      lsusb: bound the report-fetch loop in dump_hid_device() too
+      lsusb: bounds-check MIDI OUT_JACK bNrInputPins against bLength
+      lsusb: bounds-check IPP printer capability walk against bLength
+      desc-dump: bound get_value_from_field() against descriptor length
+      sysfs: strip control characters from device-supplied string attributes
+      lsusb, usbmisc, usbhid-dump: zero-init buffers passed to libusb control transfers
+      lsusb: migrate the MIDIStreaming parsers onto the desc-dump table engine
+      desc-dump: don't exit() on a device-supplied size_field value
+      lsusb: return on short bLength in the class-specific descriptor dispatchers
+      lsusb: check FORMAT_TYPE bLength before reading bFormatType
+      lsusb: avoid undefined behaviour when assembling u32s from descriptor bytes
+      lsusb: bound the extra[] dispatch loops by remaining size
+      lsusb: fix wHubDelay decoding in the USB3 hub descriptor dump
+      usbhid-dump: bound the HID-descriptor-extra walk by entry end, not start
+      lsusb: fix two -D path-resolution edge cases in usbmisc.c
+      lsusb: don't pass NULL into %s for unknown HID report/usage tags
+      tests: brat: fix some spelling issues
+      usbutils.spdx: update with new files added
+      lsusb: add expected length message for video descriptor endpoint
+      meson.build: turn off -Wno-unused-function
+      lsusb: fix up parsing for older uvc devices
+      tests: usbhid-dump: compare built against installed
+      tests: usbhid-dump -h: compare built against installed
+      tests: usbhid-dump -s: compare built against installed
+      tests: usbhid-dump -d: compare built against installed
+      tests: usbhid-dump -i: compare built against installed
+      tests: usbhid-dump -e: compare built against installed
+      tests: add lsusb argument-combination brat tests
+      tests: add lsusb.py argument-combination brat tests
+      tests: add lsusb -h/-V interaction test
+      tests: add lsusb -t precedence test (-s/-d/-D ignored under -t)
+      tests: add lsusb -D precedence test (-s/-d ignored under -D)
+      tests: add lsusb -V precedence test
+      tests: add lsusb -h precedence test
+      tests: add lsusb repeated -s/-d/-D test
+      tests: add lsusb -d :pid product-only filter test
+      tests: add lsusb -D error-path tests
+      tests: add lsusb -P/-p vestigial-option test
+      tests: add lsusb -- end-of-options test
+      test/lsusb-vv.brat: send errors to /dev/null
+      lsusb-t: fall back to the sysfs vendor/product strings
+
+Jefferson Kline (1):
+      usbreset: return failure when device reset fails
+
+John Whittington (1):
+      lsusb.c: fix typo dwMaxiumumClock
+
+MingHao Chen (1):
+      lsusb.py: fix parse_usb_ids
+
+MoJl4yH (1):
+      lsusb: fix shift UB and truncated-item reads in HID report dump
+
+dependabot[bot] (8):
+      ci: bump github/codeql-action in the all-actions group
+      ci: bump the all-actions group with 5 updates
+      ci: bump the all-actions group across 1 directory with 4 updates
+      ci: bump github/codeql-action in the all-actions group
+      ci: bump the all-actions group with 2 updates
+      ci: bump the all-actions group with 5 updates
+      ci: bump the all-actions group with 5 updates
+      ci: bump the all-actions group across 1 directory with 3 updates
 
 usbutils 019
 ============
