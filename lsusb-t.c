@@ -196,7 +196,11 @@ static void print_usbdevice(struct usbdevice *d, struct usbinterface *i)
 	if (verblevel >= 1) {
 		printf(" %*s", indent, "    ");
 		get_vendor_string(vendor, sizeof(vendor), d->idVendor);
+		if (strlen(vendor) == 0)
+			strcpy(vendor, d->manufacturer);
 		get_product_string(product, sizeof(product), d->idVendor, d->idProduct);
+		if (strlen(product) == 0)
+			strcpy(product, d->product);
 		printf("ID %04x:%04x %s %s\n", d->idVendor, d->idProduct, vendor, product);
 	}
 	if (verblevel >= 2) {
