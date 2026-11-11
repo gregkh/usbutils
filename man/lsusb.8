@@ -45,6 +45,12 @@ The device file should be something like /dev/bus/usb/001/001.
 This option displays detailed information like the \fB-v\fP option;
 you must be root to do this.
 .TP
+.B \-F \fIfile\fP
+Read descriptors from a file instead of scanning the /dev/bus/usb directory.
+The file is typically obtained by reading it from
+/sys/bus/usb/devices/[device-bus-id]/descriptors.
+This option displays detailed information like the \fB-v\fP option.
+.TP
 .BR \-t ", " \-\-tree
 Tells
 .I lsusb

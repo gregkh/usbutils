@@ -85,6 +85,8 @@ install_man(['man/lsusb.8', 'man/lsusb.py.1', 'man/usb-devices.1', 'man/usbhid-d
 lsusb_sources = [
   'desc-defs.c',
   'desc-defs.h',
+  'desc-file.c',
+  'desc-file.h',
   'desc-dump.c',
   'desc-dump.h',
   'lsusb-t.c',
