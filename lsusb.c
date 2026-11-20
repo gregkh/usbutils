@@ -54,6 +54,7 @@
 #define USB_DC_CONTAINER_ID		0x04
 #define USB_DC_PLATFORM 		0x05
 #define USB_DC_SUPERSPEEDPLUS		0x0a
+#define USB_DC_PTM 0x0b
 #define USB_DC_BILLBOARD		0x0d
 #define USB_DC_BILLBOARD_ALT_MODE	0x0f
 #define USB_DC_CONFIGURATION_SUMMARY	0x10
@@ -3729,6 +3730,20 @@ static void dump_fwstatus_capability_desc(unsigned char *buf)
 			flags & (1 << 1) ? "Yes" : "No");
 }
 
+static void dump_ptm_capability_desc(unsigned char *buf)
+{
+	if (buf[0] < 3) {
+		fprintf(stderr, "  Bad PTM Capability descriptor.\n");
+		return;
+	}
+
+	printf("  Precision Time Measurement Capability:\n"
+	       "    bLength                 %5u\n"
+	       "    bDescriptorType         %5u\n"
+	       "    bDevCapabilityType      %5u\n",
+	       buf[0], buf[1], buf[2]);
+}
+
 static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp, bool lpm_required)
 {
 	/* Total length of BOS descriptors varies.
@@ -3805,6 +3820,9 @@ static void dump_bos_descriptor(libusb_device_handle *fd, bool* has_ssp, bool lp
 		case USB_DC_SUPERSPEEDPLUS:
 			dump_ssp_device_capability_desc(buf);
 			*has_ssp = true;
+			break;
+		case USB_DC_PTM:
+			dump_ptm_capability_desc(buf);
 			break;
 		case USB_DC_CONTAINER_ID:
 			dump_container_id_device_capability_desc(buf);
